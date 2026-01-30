@@ -29,7 +29,7 @@ jobs:
           uv run ruff format --check
 
       - name: Type check with mypy
-        run: uv run mypy extensions/cix/src
+        run: uv run mypy tools/cix/src
 
   test:
     runs-on: ubuntu-latest
@@ -70,11 +70,6 @@ jobs:
           import re
 
           pattern = re.compile(r'^(feat|fix|docs|refactor|test|chore|perf)(\(.+\))?\!?: .+')
-
-          result = subprocess.run(
-              ['git', 'log', '--format=%s', f'origin/{sys.argv[1]}..HEAD'],
-              capture_output=True, text=True, env={'BASE_REF': ''}
-          )
 
           import os
           base_ref = os.environ.get('BASE_REF', 'main')

@@ -365,7 +365,8 @@ class Cix:
             if source is None:
                 sources = self._registry.list_sources()
                 if not sources:
-                    raise SourceNotFoundError("No sources registered. Add one with 'cix source add'")
+                    msg = "No sources registered. Add one with 'cix source add'"
+                    raise SourceNotFoundError(msg)
                 source = sources[0]  # Use first source if no default
 
         return source, package_name
