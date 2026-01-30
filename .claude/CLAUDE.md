@@ -204,6 +204,223 @@ Extensions should make humans better at the domain, not dependent on the tool.
 **Pattern:** Bridges systems, human orchestrates
 **Example:** Knowledge base connector
 
+### Commands
+**Purpose:** User-initiated workflow shortcuts
+**Pattern:** Human triggers, extension executes defined procedure
+**Example:** `/commit` for conventional commit workflow
+
+---
+
+## Extension Anatomy
+
+### The Dual-Content Model
+
+Every extension serves two audiences with different needs:
+
+| Audience | Optimized For | Content Type | Location |
+|----------|--------------|--------------|----------|
+| **Claude** | Token efficiency, activation triggers | Decision frameworks, patterns | `SKILL.md` (< 500 lines) |
+| **Human** | Learning, traceability, deep understanding | Explanations, sources, examples | `references/` (unlimited) |
+
+**Why this matters:**
+- Claude needs concise, actionable guidance that fits in context
+- Humans need explanations, reasoning, and sources to learn and verify
+- Mixing them wastes tokens OR leaves humans without understanding
+
+### Skill Structure
+
+```
+skills/skill-name/
+├── SKILL.md           # Claude-optimized (< 500 lines)
+│                      # - Decision frameworks
+│                      # - When to use what
+│                      # - Non-obvious gotchas
+│                      # - Pointers to references
+│
+└── references/        # Human-optimized (unlimited)
+    ├── patterns.md    # Full examples with explanation
+    ├── sources.md     # Research citations, traceability
+    └── deep-dive.md   # Extended learning material
+```
+
+### Agent Structure
+
+Agents are single markdown files, but still serve dual audiences:
+
+```markdown
+---
+name: agent-name
+description: |
+  [Claude-optimized: When to trigger, what it does]
+
+  <example>
+  Context: [Situation]
+  user: "[Request]"
+  assistant: "[How to respond]"
+  <commentary>[Why this triggers the agent]</commentary>
+  </example>
+
+model: inherit
+color: blue
+tools: [Read, Grep, Glob]
+---
+
+[Claude-optimized: System prompt - HOW the agent thinks and operates]
+
+## Orthogonality Lock
+
+**Cannot discuss**: [out-of-scope topics]
+**Must focus on**: [single domain]
+
+[Human-optimized: WHY the agent is designed this way,
+what perspective it brings, how it fits with other agents]
+```
+
+**The dual content in agents:**
+
+| Section | Optimized For | Purpose |
+|---------|--------------|---------|
+| `description` | Claude | Trigger conditions, activation examples |
+| System prompt body | Claude | Agent behavior, methodology, output format |
+| Orthogonality Lock | Both | Claude: behavioral constraint; Human: design rationale |
+| README/comments | Human | Design decisions, relationship to other agents |
+
+### Hook Structure
+
+Hooks have two distinct patterns based on purpose:
+
+**Validation Hooks** (PreToolUse, most PostToolUse):
+```json
+{
+  "decision": "allow",
+  "message": "Consider X instead of Y. Proceeding with Y."
+}
+```
+- Suggest alternatives, let user proceed
+- Preserve agency over individual actions
+
+**Action-Triggering Hooks** (pattern detection):
+```json
+{
+  "decision": "allow",
+  "message": "🐺 PATTERN DETECTED. You MUST now: 1) [action] 2) [action]"
+}
+```
+- Use directive language that causes action
+- Interrupt patterns where that's the whole point
+
+**Why the distinction:**
+- Validation hooks: user should retain choice
+- Action-triggering hooks: the pattern itself is the problem being solved
+
+### Command Structure
+
+Commands are user-initiated procedures:
+
+```markdown
+---
+name: command-name
+description: What this command does
+arguments:
+  - name: arg1
+    description: What this argument is
+    required: false
+---
+
+[Claude-optimized: Instructions for executing the command]
+
+[Human-optimized (in comments/README):
+ Why this workflow exists, what it replaces]
+```
+
+### Plugin-Level Documentation
+
+For human understanding, plugins should include:
+
+```
+plugin-name/
+├── README.md              # Human-optimized: Plugin purpose, agent relationships
+├── references/
+│   ├── methodology.md     # Human-optimized: Design philosophy, research basis
+│   └── sources.md         # Human-optimized: Citations, evidence
+├── agents/                # Individual agents (dual-content as above)
+├── skills/                # Individual skills (dual-content as above)
+├── hooks/                 # Hook definitions
+└── commands/              # User-initiated commands
+```
+
+### Summary: Dual-Content Philosophy
+
+| Extension | Claude Content | Human Content |
+|-----------|---------------|---------------|
+| **Skill** | SKILL.md (< 500 lines) | references/ (unlimited) |
+| **Agent** | Description + system prompt | Orthogonality Lock rationale, README |
+| **Hook** | JSON config + script | Comments explaining WHY this trigger |
+| **Command** | Procedure instructions | README explaining workflow purpose |
+| **Plugin** | Component files | README.md, references/methodology.md |
+
+**The principle:** Claude gets efficient, actionable content. Humans get explanations, reasoning, and sources. Never mix them in ways that waste tokens or leave humans without understanding.
+
+### Progressive Disclosure
+
+Treat tokens as a public good — context is shared across the conversation.
+
+| Level | Content | When Loaded |
+|-------|---------|-------------|
+| **Metadata** | ~100 words: triggers, "Use when:" | Always (skill selection) |
+| **SKILL.md** | < 500 lines: decisions, frameworks | When skill activates |
+| **References** | Unlimited: depth, sources, examples | On-demand when needed |
+
+### The Orthogonality Lock
+
+Agents should provide **one perspective**, not try to be comprehensive.
+
+```markdown
+## Orthogonality Lock
+
+**Cannot discuss**: [topics outside scope]
+**Must focus on**: [single domain of expertise]
+
+If asked about something outside your domain, say:
+"That's outside my orthogonality lock. {Agent} should assess that."
+```
+
+**Why this works:**
+- Forces human synthesis across multiple perspectives
+- Prevents single-agent tunnel vision
+- Each agent can be maximally expert in one thing
+- Human remains the integrator
+
+### Intent-Driven Activation
+
+Trigger on **user goals**, not tool names.
+
+| Wrong | Right |
+|-------|-------|
+| "Use when: Midjourney prompting" | "Use when: creating artwork, images, visual assets" |
+| "Use when: using pytest" | "Use when: writing tests, test-driven development" |
+| "Use when: kubectl" | "Use when: deploying to Kubernetes, managing clusters" |
+
+**Why:** Users think in goals ("I need an image"), not tools ("I need Midjourney").
+
+---
+
+## Research-Backed Effect Sizes
+
+These findings inform extension design:
+
+| Lever | Effect Size | Implication |
+|-------|------------|-------------|
+| **Control** | β = 0.507 | User agency is the strongest lever |
+| **Transparency** | β = 0.415 | Showing reasoning prevents blind trust |
+| **Mastery orientation** | OR = 35.7 | Users focused on learning maintain capability |
+| **Performance orientation** | Z = -6.295 | Users focused on output degrade |
+
+**Design implications:**
+- Control > Transparency > everything else
+- Build extensions that encourage mastery, not just performance
+- Show reasoning; don't just give answers
+
 ---
 
 ## The Verification Imperative
