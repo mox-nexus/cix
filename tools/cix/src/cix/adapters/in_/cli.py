@@ -20,15 +20,15 @@ from rich.panel import Panel
 from rich.table import Table
 
 from cix import __version__
+from cix.adapters.out.claude_code_target import ClaudeCodeTargetAdapter
+from cix.adapters.out.filesystem_registry import FilesystemRegistryAdapter
+from cix.adapters.out.git_repository import GitSourceAdapter
 from cix.application.use_cases import (
     Cix,
     CixError,
     PackageNotFoundError,
     SourceNotFoundError,
 )
-from cix.adapters.out.filesystem_registry import FilesystemRegistryAdapter
-from cix.adapters.out.git_repository import GitSourceAdapter
-from cix.adapters.out.claude_code_target import ClaudeCodeTargetAdapter
 
 console = Console()
 
@@ -238,7 +238,8 @@ def list_packages(available: bool, verbose: bool) -> None:
                 pkg.extensions.summary,
             ]
             if verbose:
-                row.append(pkg.description[:60] + "..." if len(pkg.description) > 60 else pkg.description)
+                desc = pkg.description
+                row.append(desc[:60] + "..." if len(desc) > 60 else desc)
             table.add_row(*row)
 
         console.print(table)
@@ -393,7 +394,7 @@ Collaborative Intelligence Extensions
         status = "[green]✓ available[/green]" if available else "[red]✗ not found[/red]"
         panel_content += f"  {name}: {status}\n"
 
-    panel_content += f"""
+    panel_content += """
 [bold]Paths:[/bold]
   Config: ~/.cix/
   Cache: ~/.cix/cache/
