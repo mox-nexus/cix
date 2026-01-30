@@ -295,8 +295,8 @@ cix/
 │       ├── ports/          # Interface definitions
 │       ├── adapters/       # Implementations
 │       └── application/    # Use case orchestration
-├── extensions/             # Extension packages (future)
-└── research/              # Evidence base and synthesis
+├── plugins/                # Marketplace plugins (distributable)
+└── .claude/                # Project-specific Claude extensions
 ```
 
 ### Hexagonal Architecture
