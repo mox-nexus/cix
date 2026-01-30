@@ -237,11 +237,28 @@ skills/skill-name/
 │                      # - Non-obvious gotchas
 │                      # - Pointers to references
 │
-└── references/        # Human-optimized (unlimited)
-    ├── patterns.md    # Full examples with explanation
-    ├── sources.md     # Research citations, traceability
-    └── deep-dive.md   # Extended learning material
+├── references/        # Claude-optimized (load on demand)
+│   ├── patterns.md    # Extended patterns Claude can reference
+│   ├── examples.md    # Code examples for Claude to draw from
+│   └── edge-cases.md  # Detailed edge case handling
+│
+├── templates/         # Claude-optimized (code/config templates)
+├── scripts/           # Claude-optimized (executable utilities)
+│
+└── docs/              # Human-optimized (Diátaxis format)
+    ├── tutorials/     # Learning-oriented: "Follow along to learn X"
+    ├── how-to/        # Task-oriented: "Steps to accomplish Y"
+    ├── explanation/   # Understanding-oriented: "Why this works"
+    └── reference/     # Information-oriented: "API, options, specs"
 ```
+
+**Diátaxis documentation framework** (for human content):
+| Type | Purpose | Form |
+|------|---------|------|
+| **Tutorial** | Learning | "Follow me as we..." |
+| **How-to** | Task completion | "Steps to achieve X" |
+| **Explanation** | Understanding | "Why this works, background" |
+| **Reference** | Information lookup | "Complete list of options" |
 
 ### Agent Structure
 
@@ -282,8 +299,8 @@ what perspective it brings, how it fits with other agents]
 |---------|--------------|---------|
 | `description` | Claude | Trigger conditions, activation examples |
 | System prompt body | Claude | Agent behavior, methodology, output format |
-| Orthogonality Lock | Both | Claude: behavioral constraint; Human: design rationale |
-| README/comments | Human | Design decisions, relationship to other agents |
+| Orthogonality Lock | Claude | Behavioral constraint, scope enforcement |
+| `docs/` directory | Human | Design rationale, relationship to other agents (Diátaxis) |
 
 ### Hook Structure
 
@@ -335,31 +352,45 @@ arguments:
 
 ### Plugin-Level Documentation
 
-For human understanding, plugins should include:
-
 ```
 plugin-name/
-├── README.md              # Human-optimized: Plugin purpose, agent relationships
-├── references/
-│   ├── methodology.md     # Human-optimized: Design philosophy, research basis
-│   └── sources.md         # Human-optimized: Citations, evidence
-├── agents/                # Individual agents (dual-content as above)
-├── skills/                # Individual skills (dual-content as above)
-├── hooks/                 # Hook definitions
-└── commands/              # User-initiated commands
+├── .claude-plugin/
+│   └── plugin.json        # Manifest
+│
+├── agents/                # Claude-optimized: agent definitions
+├── skills/                # Claude-optimized: skill definitions
+├── hooks/                 # Claude-optimized: event handlers
+├── commands/              # Claude-optimized: user procedures
+├── references/            # Claude-optimized: shared context
+├── templates/             # Claude-optimized: code/config templates
+├── scripts/               # Claude-optimized: executable utilities
+│
+└── docs/                  # Human-optimized (Diátaxis format)
+    ├── README.md          # Overview, quick start
+    ├── tutorials/         # Learning-oriented guides
+    ├── how-to/            # Task-oriented guides
+    ├── explanation/       # Design philosophy, research basis
+    │   ├── methodology.md # Why agents are designed this way
+    │   └── sources.md     # Citations, evidence
+    └── reference/         # Complete specs, options
 ```
 
 ### Summary: Dual-Content Philosophy
 
-| Extension | Claude Content | Human Content |
-|-----------|---------------|---------------|
-| **Skill** | SKILL.md (< 500 lines) | references/ (unlimited) |
-| **Agent** | Description + system prompt | Orthogonality Lock rationale, README |
-| **Hook** | JSON config + script | Comments explaining WHY this trigger |
-| **Command** | Procedure instructions | README explaining workflow purpose |
-| **Plugin** | Component files | README.md, references/methodology.md |
+| For Claude | For Humans |
+|------------|------------|
+| SKILL.md (< 500 lines) | docs/tutorials/ |
+| references/ (load on demand) | docs/how-to/ |
+| templates/ (code patterns) | docs/explanation/ |
+| scripts/ (utilities) | docs/reference/ |
+| Agent system prompts | docs/explanation/methodology.md |
+| Hook configs + scripts | docs/explanation/ (design rationale) |
 
-**The principle:** Claude gets efficient, actionable content. Humans get explanations, reasoning, and sources. Never mix them in ways that waste tokens or leave humans without understanding.
+**The principle:**
+- **Claude content**: Efficient, actionable, token-conscious. Load on demand.
+- **Human content**: Diátaxis-structured for different learning modes. Explains WHY, provides traceability.
+
+Never mix them — Claude doesn't need tutorial prose, humans don't need terse decision tables.
 
 ### Progressive Disclosure
 
