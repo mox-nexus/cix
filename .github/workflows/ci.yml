@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Lint with ruff
+        run: |
+          uv run ruff check
+          uv run ruff format --check
+
+      - name: Type check with mypy
+        run: uv run mypy extensions/cix/src
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run tests
+        run: uv run pytest -v
+
+  commit-lint:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commit messages
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          # Validate conventional commit format using a script
+          # This avoids direct interpolation of commit messages in shell
+          python3 << 'SCRIPT'
+          import subprocess
+          import sys
+          import re
+
+          pattern = re.compile(r'^(feat|fix|docs|refactor|test|chore|perf)(\(.+\))?\!?: .+')
+
+          result = subprocess.run(
+              ['git', 'log', '--format=%s', f'origin/{sys.argv[1]}..HEAD'],
+              capture_output=True, text=True, env={'BASE_REF': ''}
+          )
+
+          import os
+          base_ref = os.environ.get('BASE_REF', 'main')
+          result = subprocess.run(
+              ['git', 'log', '--format=%s', f'origin/{base_ref}..HEAD'],
+              capture_output=True, text=True
+          )
+
+          commits = [c for c in result.stdout.strip().split('\n') if c]
+          failed = False
+
+          for msg in commits:
+              if pattern.match(msg):
+                  print(f'✓ Valid: {msg}')
+              else:
+                  print(f'❌ Invalid: {msg}')
+                  failed = True
+
+          if failed:
+              print()
+              print('Commits must follow conventional commits format:')
+              print('  <type>(<scope>): <description>')
+              print()
+              print('Types: feat, fix, docs, refactor, test, chore, perf')
+              sys.exit(1)
+          SCRIPT

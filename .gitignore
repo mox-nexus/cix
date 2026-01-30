@@ -1,0 +1,89 @@
+# Scratch directories
+scratch/
+.scratch/
+**/scratch/
+**/.scratch/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+ENV/
+.env
+*.env.local
+.python-version
+pip-log.txt
+pip-delete-this-directory.txt
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Bun / Node / TypeScript
+node_modules/
+.npm
+*.tsbuildinfo
+.eslintcache
+.prettiercache
+bun.lockb
+.bun/
+.turbo/
+.next/
+.nuxt/
+.output/
+.vercel/
+.netlify/
+
+# Svelte / SvelteKit
+.svelte-kit/
+
+# Rust
+target/
+Cargo.lock
+**/*.rs.bk
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# UV
+uv.lock
+
+# cix state (user-local)
+.cix/
+
+# Local configuration overrides
+*.local.md
