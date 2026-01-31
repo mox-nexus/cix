@@ -245,20 +245,22 @@ skills/skill-name/
 ├── templates/         # Claude-optimized (code/config templates)
 ├── scripts/           # Claude-optimized (executable utilities)
 │
-└── docs/              # Human-optimized (Diátaxis format)
-    ├── tutorials/     # Learning-oriented: "Follow along to learn X"
-    ├── how-to/        # Task-oriented: "Steps to accomplish Y"
-    ├── explanation/   # Understanding-oriented: "Why this works"
-    └── reference/     # Information-oriented: "API, options, specs"
+└── docs/
+    └── explanation/   # Human-optimized
+        ├── methodology.md  # WHY designed this way
+        └── sources.md      # Citations for verification
 ```
 
-**Diátaxis documentation framework** (for human content):
-| Type | Purpose | Form |
-|------|---------|------|
-| **Tutorial** | Learning | "Follow me as we..." |
-| **How-to** | Task completion | "Steps to achieve X" |
-| **Explanation** | Understanding | "Why this works, background" |
-| **Reference** | Information lookup | "Complete list of options" |
+**Why explanation only?**
+
+For cognitive extensions, Claude handles the HOW. Humans need to understand WHY:
+- To calibrate trust appropriately
+- To know when to override
+- To learn (not just consume)
+- To verify claims against sources
+- To enhance the extension effectively
+
+Traditional docs (tutorials, how-to, reference) are for software where humans interact directly. Extensions are mediated through Claude — the extension IS the how-to.
 
 ### Agent Structure
 
@@ -361,36 +363,35 @@ plugin-name/
 ├── skills/                # Claude-optimized: skill definitions
 ├── hooks/                 # Claude-optimized: event handlers
 ├── commands/              # Claude-optimized: user procedures
-├── references/            # Claude-optimized: shared context
+├── references/            # Claude-optimized: shared context (load on demand)
 ├── templates/             # Claude-optimized: code/config templates
 ├── scripts/               # Claude-optimized: executable utilities
 │
-└── docs/                  # Human-optimized (Diátaxis format)
-    ├── README.md          # Overview, quick start
-    ├── tutorials/         # Learning-oriented guides
-    ├── how-to/            # Task-oriented guides
-    ├── explanation/       # Design philosophy, research basis
-    │   ├── methodology.md # Why agents are designed this way
-    │   └── sources.md     # Citations, evidence
-    └── reference/         # Complete specs, options
+├── README.md              # Quick overview (both audiences)
+└── docs/
+    └── explanation/       # Human-optimized
+        ├── methodology.md # Design philosophy, agent relationships
+        └── sources.md     # Citations, evidence, traceability
 ```
 
 ### Summary: Dual-Content Philosophy
 
 | For Claude | For Humans |
 |------------|------------|
-| SKILL.md (< 500 lines) | docs/tutorials/ |
-| references/ (load on demand) | docs/how-to/ |
-| templates/ (code patterns) | docs/explanation/ |
-| scripts/ (utilities) | docs/reference/ |
-| Agent system prompts | docs/explanation/methodology.md |
-| Hook configs + scripts | docs/explanation/ (design rationale) |
+| SKILL.md (< 500 lines) | docs/explanation/methodology.md |
+| references/ (load on demand) | docs/explanation/sources.md |
+| templates/, scripts/ | README.md (overview) |
+| Agent system prompts | |
+| Hook configs | |
 
 **The principle:**
-- **Claude content**: Efficient, actionable, token-conscious. Load on demand.
-- **Human content**: Diátaxis-structured for different learning modes. Explains WHY, provides traceability.
+- **Claude content**: Efficient, actionable, token-conscious. Decision frameworks, patterns, examples.
+- **Human content**: Explains WHY, provides sources for verification, enables learning and enhancement.
 
-Never mix them — Claude doesn't need tutorial prose, humans don't need terse decision tables.
+**The goal:** Transparent extensions that humans can:
+1. **Learn from** — understand the reasoning, not just the output
+2. **Verify** — trace claims to sources
+3. **Enhance** — improve the extension with understanding of its design
 
 ### Progressive Disclosure
 
