@@ -462,6 +462,69 @@ These findings inform extension design:
 
 ---
 
+## Observability
+
+### Where Logs Live
+
+Claude Code logs all conversations and agent outputs to JSONL:
+
+```
+~/.claude/projects/<project-path>/
+├── <session-uuid>.jsonl                    # Main conversation
+└── <session-uuid>/subagents/
+    └── agent-<id>.jsonl                    # Subagent outputs
+```
+
+### Log Format
+
+```json
+{
+  "type": "user|assistant",
+  "agentId": "a1b59b6",
+  "timestamp": "2026-01-30T21:19:38.857Z",
+  "message": {
+    "role": "assistant",
+    "content": [{"type": "text", ...}, {"type": "tool_use", ...}]
+  }
+}
+```
+
+### What Can Be Observed
+
+| Observable | Source | Method |
+|------------|--------|--------|
+| **Agent activation** | JSONL logs | Parse `agentId`, `timestamp` |
+| **Tool call sequences** | JSONL `content[type=tool_use]` | Parse tool names, args |
+| **Token usage** | API response metadata | Capture in hooks |
+| **Session patterns** | JSONL timestamps | Time-series analysis |
+
+### What Requires Evaluation
+
+**Decision quality** cannot be directly observed — it requires:
+- **Human feedback** — user ratings on outputs
+- **Evals** — automated checks (see `evals/` in plugins)
+- **Downstream metrics** — bugs, PR rejections, rework
+
+### Querying Logs
+
+DuckDB can query JSONL directly:
+
+```sql
+SELECT
+  json_extract_string(line, '$.agentId') as agent,
+  json_extract_string(line, '$.timestamp') as ts,
+  json_extract_string(line, '$.type') as msg_type
+FROM read_json_auto('~/.claude/projects/.../agent-*.jsonl')
+WHERE json_extract_string(line, '$.type') = 'assistant';
+```
+
+For streaming/incremental updates, use DuckDB with:
+- `tributary` extension (Kafka integration)
+- ADBC for high-throughput inserts
+- Tail + append pattern for JSONL
+
+---
+
 ## The Verification Imperative
 
 > "Can't vibe through answers. Must ground in evidence."
