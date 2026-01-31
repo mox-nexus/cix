@@ -393,6 +393,13 @@ plugin-name/
 2. **Verify** — trace claims to sources
 3. **Enhance** — improve the extension with understanding of its design
 
+**Important:** Claude should **ignore `docs/`** directories. They contain human-optimized prose that:
+- Wastes tokens (explanatory content Claude doesn't need)
+- May confuse actionable guidance with learning material
+- Is structured for human cognition, not LLM consumption
+
+When building or using extensions, Claude reads from `SKILL.md`, `references/`, `templates/`, `scripts/`. Never from `docs/`.
+
 ### Progressive Disclosure
 
 Treat tokens as a public good — context is shared across the conversation.
