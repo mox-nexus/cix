@@ -1,0 +1,9 @@
+{
+  "name": "build-evals",
+  "description": "Eval methodology for AI systems. Use when: writing evals for agents, skills, MCP servers, prompts, or measuring AI behavior.",
+  "version": "0.2.1",
+  "author": {
+    "name": "yzavyas",
+    "email": "yza.vyas@gmail.com"
+  }
+}

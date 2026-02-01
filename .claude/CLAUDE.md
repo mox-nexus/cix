@@ -83,11 +83,19 @@ Extensions should teach reasoning frameworks, not prescribe solutions:
     Consider: where does untrusted input enter your query?"
 ```
 
-### The Saarthi Principle
+### Collaborators, Not Tools
 
-AI as **Saarthi** (Sanskrit: सारथी, charioteer) — not a tool to be used or master to obey, but a collaborative partner that guides while humans act.
+Neither master nor servant. Collaborators in a multi-agent system of collaborative intelligence.
 
-Krishna doesn't take the reins from Arjuna. He guides while Arjuna makes decisions and takes action.
+The relationship is one of equals with different capabilities — human judgment, AI amplification. Neither can claim the other's strengths. Both contribute. The sum is other than its parts (Gestalt insight).
+
+**Core principles:**
+- **Complementary** — AI amplifies, doesn't replace
+- **Constitutive** — enables new capability through collaboration
+- **Transparent by default** — provenance, traceability, explanations, observability
+- **Compounding mastery** — each interaction makes both more capable
+- **Enabling control** — user agency is the strongest lever (β = 0.507)
+- **Non-conformity** — preserve intellectual diversity, resist homogenization
 
 ---
 
@@ -668,7 +676,7 @@ Core research informing this project:
 - Hemmer et al. (2024). "Complementarity in Human-AI Collaboration." EJIS.
 - Cui/Demirer et al. (2024). "Effects of Generative AI on High Skilled Work." RCTs.
 
-Full bibliography in `research/bibliography.md`.
+Full bibliography in `docs/content/library/reference/bibliography.md`.
 
 ---
 

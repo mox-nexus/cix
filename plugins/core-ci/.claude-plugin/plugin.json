@@ -1,0 +1,9 @@
+{
+  "name": "core-ci",
+  "description": "Core collaborative intelligence patterns. Use when: making decisions, verifying claims, avoiding self-deception, applying first principles, building with transparency and control.",
+  "version": "0.2.1",
+  "author": {
+    "name": "yzavyas",
+    "email": "yza.vyas@gmail.com"
+  }
+}
