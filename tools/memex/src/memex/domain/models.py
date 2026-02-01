@@ -9,7 +9,6 @@ from enum import Enum
 
 from pydantic import BaseModel
 
-
 # SourceKind as string type for extensibility (Ace recommendation)
 # Third-party adapters can use any string, not limited to enum
 SourceKind = str
@@ -24,6 +23,7 @@ SOURCE_CUSTOM = "custom"
 
 class Completeness(str, Enum):
     """Fragment completeness."""
+
     FULL = "full"
     TRUNCATED = "truncated"
     PARTIAL = "partial"
@@ -31,6 +31,7 @@ class Completeness(str, Enum):
 
 class Provenance(BaseModel):
     """Source-agnostic origin tracking."""
+
     source_kind: str  # Extensible string, not enum
     source_id: str
     timestamp: datetime | None = None
@@ -44,6 +45,7 @@ class Fragment(BaseModel):
     This is THE canonical domain entity (Karman).
     All adapters produce Fragments, not DataFrames.
     """
+
     id: str
     conversation_id: str | None = None
     role: str

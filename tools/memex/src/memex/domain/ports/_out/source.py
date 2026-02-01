@@ -4,8 +4,9 @@ Adapters produce Iterator[Fragment], the canonical domain entity (Karman).
 No infrastructure types (DataFrame) in port contracts (Burner).
 """
 
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator, Protocol
+from typing import Protocol
 
 from memex.domain.models import Fragment
 

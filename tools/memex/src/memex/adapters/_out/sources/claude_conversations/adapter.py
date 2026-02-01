@@ -1,14 +1,14 @@
 """Claude.ai conversations source adapter."""
 
 import json
-import zipfile
 import tempfile
+import zipfile
+from collections.abc import Iterator
 from datetime import datetime
 from importlib.resources import files
 from pathlib import Path
-from typing import Iterator
 
-from memex.domain.models import Fragment, Provenance, SOURCE_CLAUDE_CONVERSATIONS
+from memex.domain.models import SOURCE_CLAUDE_CONVERSATIONS, Fragment, Provenance
 
 
 class ClaudeConversationsAdapter:
@@ -53,7 +53,7 @@ class ClaudeConversationsAdapter:
         return skill_file.read_text()
 
     def _ingest_json(self, path: Path) -> Iterator[Fragment]:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
 
         for conversation in data:
@@ -84,7 +84,9 @@ class ClaudeConversationsAdapter:
     def _ingest_zip(self, path: Path) -> Iterator[Fragment]:
         """Extract and ingest from zip file."""
         with zipfile.ZipFile(path, "r") as zf:
-            json_files = [n for n in zf.namelist() if n.endswith(".json") and "conversation" in n.lower()]
+            json_files = [
+                n for n in zf.namelist() if n.endswith(".json") and "conversation" in n.lower()
+            ]
             if not json_files:
                 json_files = [n for n in zf.namelist() if n.endswith(".json")]
 

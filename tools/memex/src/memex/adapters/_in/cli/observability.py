@@ -4,17 +4,18 @@ Provides transparent feedback to users about what's happening.
 OTEL tracing is opt-in via MEMEX_OTEL_ENABLED=true.
 """
 
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from functools import wraps
-from typing import Any, Callable, Iterator
+from typing import Any
 
 from rich.console import Console
 from rich.progress import (
+    BarColumn,
     Progress,
     SpinnerColumn,
-    TextColumn,
-    BarColumn,
     TaskProgressColumn,
+    TextColumn,
     TimeElapsedColumn,
 )
 from rich.table import Table
@@ -36,14 +37,12 @@ def get_tracer():
     if _tracer is None:
         try:
             from opentelemetry import trace
+            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
             from opentelemetry.sdk.trace import TracerProvider
             from opentelemetry.sdk.trace.export import BatchSpanProcessor
-            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 
             provider = TracerProvider()
-            processor = BatchSpanProcessor(
-                OTLPSpanExporter(endpoint=settings.otel_endpoint)
-            )
+            processor = BatchSpanProcessor(OTLPSpanExporter(endpoint=settings.otel_endpoint))
             provider.add_span_processor(processor)
             trace.set_tracer_provider(provider)
             _tracer = trace.get_tracer(settings.otel_service_name)
@@ -67,6 +66,7 @@ def span(name: str, attributes: dict | None = None):
 
 def traced(name: str | None = None):
     """Decorator to trace a function."""
+
     def decorator(fn: Callable) -> Callable:
         span_name = name or fn.__name__
 
@@ -74,7 +74,9 @@ def traced(name: str | None = None):
         def wrapper(*args, **kwargs):
             with span(span_name):
                 return fn(*args, **kwargs)
+
         return wrapper
+
     return decorator
 
 

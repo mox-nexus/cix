@@ -4,7 +4,8 @@ No SQL in port contract (Karman) - that's implementation detail.
 Uses domain types only (Burner).
 """
 
-from typing import Iterable, Protocol
+from collections.abc import Iterable
+from typing import Protocol
 
 from memex.domain.models import Fragment
 

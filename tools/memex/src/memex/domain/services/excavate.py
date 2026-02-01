@@ -4,8 +4,8 @@ Orchestrates ingestion and search through ports (Burner).
 Uses domain types only, no infrastructure leakage.
 """
 
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 from memex.domain.models import Fragment
 from memex.domain.ports._out.corpus import CorpusPort
