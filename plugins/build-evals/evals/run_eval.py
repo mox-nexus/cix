@@ -17,20 +17,21 @@ Usage:
 import asyncio
 import json
 import sys
-from pathlib import Path
 from dataclasses import dataclass
-from typing import Optional
+from pathlib import Path
 
 # Try imports
 try:
-    from claude_agent_sdk import query, ClaudeAgentOptions
+    from claude_agent_sdk import ClaudeAgentOptions, query
     from claude_agent_sdk.types import AssistantMessage, ToolUseBlock
+
     HAS_SDK = True
 except ImportError:
     HAS_SDK = False
 
 try:
     import anthropic
+
     HAS_ANTHROPIC = True
 except ImportError:
     HAS_ANTHROPIC = False
@@ -70,10 +71,7 @@ async def test_skill_activation(prompt: str, expected_skill: str = "build-eval")
     if not HAS_SDK:
         return False
 
-    async for message in query(
-        prompt=prompt,
-        options=ClaudeAgentOptions(allowed_tools=["Skill"])
-    ):
+    async for message in query(prompt=prompt, options=ClaudeAgentOptions(allowed_tools=["Skill"])):
         if isinstance(message, AssistantMessage):
             for block in message.content:
                 if isinstance(block, ToolUseBlock):
@@ -118,13 +116,15 @@ async def run_activation_eval(suite: dict, n_trials: int = 5, dry_run: bool = Fa
         expected_activation = case["expectation"] == "must_trigger"
         correct = activated == expected_activation
 
-        results.append(ActivationResult(
-            case_id=case["id"],
-            prompt=case["prompt"][:50] + "...",
-            expectation=case["expectation"],
-            activation_rate=activation_rate,
-            correct=correct
-        ))
+        results.append(
+            ActivationResult(
+                case_id=case["id"],
+                prompt=case["prompt"][:50] + "...",
+                expectation=case["expectation"],
+                activation_rate=activation_rate,
+                correct=correct,
+            )
+        )
 
         status = "OK" if correct else "FAIL"
         print(f"  {case['id']}: {status} (rate={activation_rate:.0%})")
@@ -148,9 +148,12 @@ async def run_activation_eval(suite: dict, n_trials: int = 5, dry_run: bool = Fa
             "precision": precision,
             "recall": recall,
             "f1": f1,
-            "tp": tp, "fp": fp, "fn": fn, "tn": tn
+            "tp": tp,
+            "fp": fp,
+            "fn": fn,
+            "tn": tn,
         },
-        "interpretation": interpret_activation(precision, recall, f1)
+        "interpretation": interpret_activation(precision, recall, f1),
     }
 
 
@@ -178,11 +181,7 @@ def interpret_activation(precision: float, recall: float, f1: float) -> dict:
     else:
         status = "poor"
 
-    return {
-        "status": status,
-        "issues": issues,
-        "suggestions": suggestions
-    }
+    return {"status": status, "issues": issues, "suggestions": suggestions}
 
 
 async def run_methodology_eval(rubric: dict, n_trials: int = 1, dry_run: bool = False) -> dict:
@@ -208,7 +207,7 @@ async def run_methodology_eval(rubric: dict, n_trials: int = 1, dry_run: bool = 
             response = client.messages.create(
                 model="claude-sonnet-4-20250514",
                 max_tokens=2048,
-                messages=[{"role": "user", "content": case["prompt"]}]
+                messages=[{"role": "user", "content": case["prompt"]}],
             )
             response_text = response.content[0].text
             scores = await score_methodology(client, response_text, case, rubric["rubric"])
@@ -219,13 +218,15 @@ async def run_methodology_eval(rubric: dict, n_trials: int = 1, dry_run: bool = 
             for c in rubric["rubric"]["criteria"]
         )
 
-        results.append(MethodologyResult(
-            case_id=case["id"],
-            prompt=case["prompt"][:50] + "...",
-            scores=scores,
-            total_score=total,
-            passed=total >= case["min_score"]
-        ))
+        results.append(
+            MethodologyResult(
+                case_id=case["id"],
+                prompt=case["prompt"][:50] + "...",
+                scores=scores,
+                total_score=total,
+                passed=total >= case["min_score"],
+            )
+        )
 
         status = "PASS" if total >= case["min_score"] else "FAIL"
         print(f"  {case['id']}: {status} (score={total:.0%})")
@@ -241,7 +242,8 @@ async def run_methodology_eval(rubric: dict, n_trials: int = 1, dry_run: bool = 
         criterion_avgs[name] = sum(r.scores[name] for r in results) / len(results)
 
     weak_criteria = [
-        name for name, avg in criterion_avgs.items()
+        name
+        for name, avg in criterion_avgs.items()
         if avg < 2.0  # Below "good" threshold
     ]
 
@@ -250,13 +252,15 @@ async def run_methodology_eval(rubric: dict, n_trials: int = 1, dry_run: bool = 
         "metrics": {
             "avg_score": avg_total,
             "pass_rate": pass_rate,
-            "criterion_averages": criterion_avgs
+            "criterion_averages": criterion_avgs,
         },
         "interpretation": {
-            "status": "excellent" if avg_total >= 0.85 else "good" if avg_total >= 0.70 else "needs_work",
+            "status": (
+                "excellent" if avg_total >= 0.85 else "good" if avg_total >= 0.70 else "needs_work"
+            ),
             "weak_criteria": weak_criteria,
-            "suggestions": generate_methodology_suggestions(weak_criteria)
-        }
+            "suggestions": generate_methodology_suggestions(weak_criteria),
+        },
     }
 
 
@@ -270,7 +274,7 @@ async def score_methodology(client, response: str, case: dict, rubric: dict) -> 
 
     judge_prompt = f"""Score this response on eval methodology adherence.
 
-PROMPT: {case['prompt']}
+PROMPT: {case["prompt"]}
 
 RESPONSE:
 {response[:2000]}
@@ -279,13 +283,14 @@ CRITERIA:
 {criteria_text}
 
 For each criterion, output a score 0-3 based on the levels defined.
-Output JSON only: {{"metric_selection": N, "failure_modes": N, "non_determinism": N, "framework_guidance": N, "pitfall_awareness": N, "actionability": N}}
+Output JSON only with keys: metric_selection, failure_modes, non_determinism,
+framework_guidance, pitfall_awareness, actionability (each with score N).
 """
 
     judge_response = client.messages.create(
         model="claude-sonnet-4-20250514",
         max_tokens=256,
-        messages=[{"role": "user", "content": judge_prompt}]
+        messages=[{"role": "user", "content": judge_prompt}],
     )
 
     try:
@@ -294,7 +299,7 @@ Output JSON only: {{"metric_selection": N, "failure_modes": N, "non_determinism"
         end = text.rfind("}") + 1
         if start >= 0 and end > start:
             return json.loads(text[start:end])
-    except:
+    except (json.JSONDecodeError, IndexError, AttributeError):
         pass
 
     # Fallback: neutral scores
@@ -309,23 +314,23 @@ def generate_methodology_suggestions(weak_criteria: list) -> list:
         "non_determinism": "Make pass@k/pass^k guidance more prominent",
         "framework_guidance": "Expand framework decision matrix with more use cases",
         "pitfall_awareness": "Add more entries to the common pitfalls table",
-        "actionability": "Include more code examples in references"
+        "actionability": "Include more code examples in references",
     }
     return [suggestions.get(c, f"Review {c} section") for c in weak_criteria]
 
 
 def print_results(eval_type: str, results: dict):
     """Pretty print evaluation results."""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"  {eval_type.upper()} EVALUATION RESULTS")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     if eval_type == "activation":
         m = results["metrics"]
         print(f"Precision: {m['precision']:.1%}")
         print(f"Recall:    {m['recall']:.1%}")
         print(f"F1:        {m['f1']:.1%}")
-        print(f"\nConfusion Matrix:")
+        print("\nConfusion Matrix:")
         print(f"  TP={m['tp']} FP={m['fp']}")
         print(f"  FN={m['fn']} TN={m['tn']}")
 
@@ -344,7 +349,7 @@ def print_results(eval_type: str, results: dict):
         m = results["metrics"]
         print(f"Average Score: {m['avg_score']:.1%}")
         print(f"Pass Rate:     {m['pass_rate']:.1%}")
-        print(f"\nCriterion Averages (0-3 scale):")
+        print("\nCriterion Averages (0-3 scale):")
         for name, avg in m["criterion_averages"].items():
             status = "OK" if avg >= 2.0 else "WEAK"
             print(f"  {name}: {avg:.1f} [{status}]")
