@@ -1,0 +1,110 @@
+{
+  "name": "cix",
+  "owner": {
+    "name": "mox-labs",
+    "email": "yza.vyas@gmail.com"
+  },
+  "metadata": {
+    "description": "Collaborative Intelligence Extensions - Cognitive extensions that enhance human capability, not replace it.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "arch-guild",
+      "source": "./plugins/arch-guild",
+      "description": "Architectural reasoning with The Guild. 13 specialized agents with orthogonal perspectives for multi-viewpoint architecture review.",
+      "version": "0.1.0",
+      "author": {
+        "name": "yzavyas",
+        "email": "yza.vyas@gmail.com"
+      },
+      "license": "MIT",
+      "keywords": [
+        "architecture",
+        "design",
+        "multi-agent",
+        "review",
+        "hexagonal",
+        "operations"
+      ],
+      "category": "architecture"
+    },
+    {
+      "name": "core-ci",
+      "source": "./plugins/core-ci",
+      "description": "Core collaborative intelligence patterns. Use when: making decisions, verifying claims, avoiding self-deception, applying first principles, building with transparency and control.",
+      "version": "0.1.0",
+      "author": {
+        "name": "mox-labs",
+        "email": "yza.vyas@gmail.com"
+      },
+      "license": "MIT",
+      "keywords": [
+        "collaborative-intelligence",
+        "reasoning",
+        "verification",
+        "transparency",
+        "control"
+      ],
+      "category": "foundation"
+    },
+    {
+      "name": "build-evals",
+      "source": "./plugins/build-evals",
+      "description": "Eval methodology for AI systems. Use when: writing evals for agents, skills, MCP servers, prompts, or measuring AI behavior.",
+      "version": "0.1.0",
+      "author": {
+        "name": "yzavyas",
+        "email": "yza.vyas@gmail.com"
+      },
+      "license": "MIT",
+      "keywords": [
+        "evals",
+        "evaluation",
+        "testing",
+        "agents",
+        "skills",
+        "mcp"
+      ],
+      "category": "testing"
+    },
+    {
+      "name": "plugin-scaffolds",
+      "source": "./plugins/plugin-scaffolds",
+      "description": "CI methodology for building cognitive extensions. Composes with plugin-dev. Use when: creating extensions that enhance human capability, applying transparency/control patterns.",
+      "version": "0.1.0",
+      "author": {
+        "name": "mox-labs",
+        "email": "yza.vyas@gmail.com"
+      },
+      "license": "MIT",
+      "keywords": [
+        "collaborative-intelligence",
+        "extensions",
+        "methodology",
+        "transparency",
+        "control"
+      ],
+      "category": "meta"
+    },
+    {
+      "name": "experience",
+      "source": "./plugins/experience",
+      "description": "Experience design with non-conformist agents. Artist, architect, designer, labcoat. Helps users find their own direction, not prescribe templates.",
+      "version": "0.1.0",
+      "author": {
+        "name": "mox-labs",
+        "email": "mox.rnd@gmail.com"
+      },
+      "license": "MIT",
+      "keywords": [
+        "experience",
+        "design",
+        "aesthetic",
+        "non-conformist",
+        "discovery"
+      ],
+      "category": "creative"
+    }
+  ]
+}

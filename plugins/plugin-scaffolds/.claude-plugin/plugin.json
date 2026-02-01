@@ -1,0 +1,17 @@
+{
+  "name": "plugin-scaffolds",
+  "description": "CI methodology for building cognitive extensions. Composes with plugin-dev. Use when: creating extensions that enhance human capability, need dual-content structure, applying transparency/control patterns.",
+  "version": "0.1.0",
+  "author": {
+    "name": "mox-labs",
+    "email": "yza.vyas@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "collaborative-intelligence",
+    "extensions",
+    "methodology",
+    "transparency",
+    "control"
+  ]
+}
