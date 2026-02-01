@@ -149,6 +149,87 @@ Extensions should make humans better at the domain, not dependent on the tool.
 
 ---
 
+## Design Principles
+
+### Defaults for Most, Complexity for Few (80/20)
+
+Design for the common case, but don't block the uncommon.
+
+```
+┌─────────────────────────────────────────────────────┐
+│  DEFAULTS THAT WORK (80%)                          │
+│  Intent-driven, zero-config, just works            │
+│  Example: memex dig "where did I decide on auth?"  │
+└─────────────────────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────────┐
+│  TRANSPARENT ABSTRACTIONS                          │
+│  You can see what's happening                      │
+│  Reasoning visible, not hidden                     │
+└─────────────────────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────────┐
+│  COMPLEXITY FOR THE FEW (20%)                      │
+│  Escape hatches: SQL, raw access, flags            │
+│  Example: memex query "SELECT * FROM..."           │
+└─────────────────────────────────────────────────────┘
+```
+
+### Pit of Success
+
+Make the right thing the only obvious path.
+
+Don't rely on documentation or willpower. Structure interfaces so mistakes are hard and correct behavior is natural.
+
+**The test:** Could someone unfamiliar fall into the right pattern?
+
+```
+✅ memex dig "auth decisions" → natural, works
+✅ memex query "..." → explicit escape hatch, user knows they're opting out
+❌ Requiring SQL for basic search → wrong default
+```
+
+### Transparent Abstractions
+
+If you can't see through it, you can't learn from it.
+
+| Property | Meaning |
+|----------|---------|
+| **Readable** | Plaintext, no magic |
+| **Forkable** | Copy, modify, make your own |
+| **Verifiable** | Claims have sources |
+| **Observable** | See what the tool does |
+
+### Compound Value
+
+Every change should make the next change easier.
+
+Quick fixes, workarounds, special cases compound cost. Clean abstractions, complete implementations, single source of truth compound value.
+
+**Before acting:** Does this make the next change easier or harder?
+
+### Defense in Depth
+
+Single solutions fail. Multiple complementary approaches succeed.
+
+- Intent-driven interface (primary)
+- SQL escape hatch (secondary)
+- Raw file access (tertiary)
+
+If one approach doesn't work for a user's case, another catches them.
+
+### Mistake-Proofing
+
+Catch errors where they originate.
+
+- Validate input early
+- Surface uncertainty at decision points
+- Fail fast with clear diagnostics
+
+**The test:** If this goes wrong, where will we find out?
+
+---
+
 ## The Collaboration Loop
 
 ```

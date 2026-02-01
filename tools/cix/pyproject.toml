@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.scripts]
-cix = "cix.adapters.in_.cli:main"
+cix = "cix.adapters._in.cli:main"
 
 [build-system]
 requires = ["hatchling"]
