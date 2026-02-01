@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Pre-commit hook: run linters before committing
+
+set -e
+
+echo "Running ruff check..."
+uv run ruff check
+
+echo "Running ruff format --check..."
+uv run ruff format --check
+
+echo "✓ All checks passed"
