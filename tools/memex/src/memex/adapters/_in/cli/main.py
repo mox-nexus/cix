@@ -9,12 +9,12 @@ import rich_click as click
 from rich.panel import Panel
 from rich.table import Table
 
+from memex import skill as skill_module
+from memex.adapters._in.cli import observability as obs
 from memex.adapters._out.corpus import DuckDBCorpus
 from memex.adapters._out.sources import ClaudeConversationsAdapter, OpenAIConversationsAdapter
-from memex.domain.services import ExcavationService
 from memex.config.settings import settings
-from memex.adapters._in.cli import observability as obs
-from memex import skill as skill_module
+from memex.domain.services import ExcavationService
 
 
 def get_service() -> ExcavationService:
@@ -165,6 +165,7 @@ def query(sql: str, fmt: str):
 
             if fmt == "json":
                 import json
+
                 obs.console.print(json.dumps(rows, indent=2, default=str))
             elif fmt == "csv":
                 if rows:
@@ -200,12 +201,12 @@ def corpus():
 
         table.add_row("Fragments", f"{stats['total_fragments']:,}")
         table.add_row("Conversations", f"{stats['conversations']:,}")
-        table.add_row("Sources", str(stats['sources']))
+        table.add_row("Sources", str(stats["sources"]))
         table.add_row("Corpus Path", str(settings.corpus_path))
-        if stats['earliest']:
-            table.add_row("Earliest", stats['earliest'].strftime("%Y-%m-%d"))
-        if stats['latest']:
-            table.add_row("Latest", stats['latest'].strftime("%Y-%m-%d"))
+        if stats["earliest"]:
+            table.add_row("Earliest", stats["earliest"].strftime("%Y-%m-%d"))
+        if stats["latest"]:
+            table.add_row("Latest", stats["latest"].strftime("%Y-%m-%d"))
 
         obs.console.print(table)
 
@@ -224,11 +225,7 @@ def schema_cmd():
             table.add_column("Nullable")
 
             for col in columns:
-                table.add_row(
-                    col["name"],
-                    col["type"],
-                    "✓" if col["nullable"] else "✗"
-                )
+                table.add_row(col["name"], col["type"], "✓" if col["nullable"] else "✗")
             obs.console.print(table)
             obs.console.print()
 
@@ -283,11 +280,7 @@ def sources():
 
     for adapter in service.source_adapters:
         # source_kind is now a string, not enum
-        table.add_row(
-            adapter.source_kind(),
-            adapter.__class__.__name__,
-            ".json, .zip"
-        )
+        table.add_row(adapter.source_kind(), adapter.__class__.__name__, ".json, .zip")
 
     obs.console.print(table)
     obs.console.print()

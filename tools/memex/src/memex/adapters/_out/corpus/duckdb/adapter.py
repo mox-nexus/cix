@@ -3,9 +3,9 @@
 Implements CorpusPort. SQL is implementation detail, not port contract (Karman).
 """
 
+from collections.abc import Iterable
 from importlib.resources import files
 from pathlib import Path
-from typing import Iterable
 
 import duckdb
 
@@ -50,7 +50,8 @@ class DuckDBCorpus:
             try:
                 self.con.execute(
                     """
-                    INSERT INTO fragments (id, conversation_id, role, content, timestamp, source_kind, source_id)
+                    INSERT INTO fragments
+                        (id, conversation_id, role, content, timestamp, source_kind, source_id)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT (id) DO NOTHING
                     """,
@@ -126,10 +127,7 @@ class DuckDBCorpus:
         """).fetchall()
 
         return {
-            "fragments": [
-                {"name": c[0], "type": c[1], "nullable": c[2] == "YES"}
-                for c in columns
-            ]
+            "fragments": [{"name": c[0], "type": c[1], "nullable": c[2] == "YES"} for c in columns]
         }
 
     def skill(self) -> str:

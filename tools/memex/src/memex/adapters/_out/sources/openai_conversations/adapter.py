@@ -1,14 +1,14 @@
 """ChatGPT/OpenAI conversations source adapter."""
 
 import json
-import zipfile
 import tempfile
-from datetime import datetime, timezone
+import zipfile
+from collections.abc import Iterator
+from datetime import UTC, datetime
 from importlib.resources import files
 from pathlib import Path
-from typing import Iterator
 
-from memex.domain.models import Fragment, Provenance, SOURCE_OPENAI
+from memex.domain.models import SOURCE_OPENAI, Fragment, Provenance
 
 
 class OpenAIConversationsAdapter:
@@ -64,7 +64,7 @@ class OpenAIConversationsAdapter:
         return skill_file.read_text()
 
     def _ingest_json(self, path: Path) -> Iterator[Fragment]:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
 
         for conversation in data:
@@ -124,8 +124,7 @@ class OpenAIConversationsAdapter:
         with zipfile.ZipFile(path, "r") as zf:
             # Look for conversations.json
             json_files = [
-                n for n in zf.namelist()
-                if n.endswith(".json") and "conversation" in n.lower()
+                n for n in zf.namelist() if n.endswith(".json") and "conversation" in n.lower()
             ]
             if not json_files:
                 # Try any json file
@@ -143,6 +142,6 @@ class OpenAIConversationsAdapter:
         if not ts:
             return None
         try:
-            return datetime.fromtimestamp(ts, tz=timezone.utc)
+            return datetime.fromtimestamp(ts, tz=UTC)
         except (ValueError, OSError):
             return None

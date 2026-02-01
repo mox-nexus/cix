@@ -4,7 +4,6 @@ Skills are versioned with the package in src/memex/assets/skills/.
 """
 
 from importlib import resources
-from pathlib import Path
 
 
 def _get_skill_files() -> resources.abc.Traversable:
