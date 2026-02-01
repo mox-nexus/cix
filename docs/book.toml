@@ -1,0 +1,12 @@
+[book]
+title = "cix"
+authors = ["Mox Labs"]
+language = "en"
+src = "content"
+
+[output.html]
+additional-css = ["theme/css/custom.css"]
+default-theme = "coal"
+preferred-dark-theme = "coal"
+git-repository-url = "https://github.com/mox-labs/cix"
+no-section-label = true

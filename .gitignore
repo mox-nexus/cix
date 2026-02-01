@@ -87,3 +87,6 @@ uv.lock
 
 # Local configuration overrides
 *.local.md
+
+# mdbook output
+docs/book/
