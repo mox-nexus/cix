@@ -20,9 +20,9 @@ from rich.panel import Panel
 from rich.table import Table
 
 from cix import __version__
-from cix.adapters.out.claude_code_target import ClaudeCodeTargetAdapter
-from cix.adapters.out.filesystem_registry import FilesystemRegistryAdapter
-from cix.adapters.out.git_repository import GitSourceAdapter
+from cix.adapters._out.claude_code_target import ClaudeCodeTargetAdapter
+from cix.adapters._out.filesystem_registry import FilesystemRegistryAdapter
+from cix.adapters._out.git_repository import GitSourceAdapter
 from cix.application.use_cases import (
     Cix,
     CixError,

@@ -12,9 +12,9 @@ enables testing and flexibility.
 from datetime import datetime
 
 from cix.domain.models import Installation, Package, Source
-from cix.ports.out.registry import RegistryPort
-from cix.ports.out.repository import SourcePort
-from cix.ports.out.target import TargetPort
+from cix.domain.ports._out.registry import RegistryPort
+from cix.domain.ports._out.repository import SourcePort
+from cix.domain.ports._out.target import TargetPort
 
 
 class CixError(Exception):
