@@ -116,12 +116,12 @@ model = SentenceTransformer(
 - **SigLIP 2** — Google DeepMind, improved objective
 - **EVA-CLIP** — High-resolution fine-grained vision
 
-### Why Skip for memex
+### When to Skip Multimodal
 
-- Requires 1024-4096 dimensions
-- GPU infrastructure needed
-- 10-50x slower than text-only
-- Memex is primarily text-driven (conversations)
+- Requires 1024-4096 dimensions (3x+ storage)
+- GPU infrastructure needed for reasonable latency
+- 10-50x slower than text-only models
+- Only needed if your corpus has significant image content
 
 ---
 
