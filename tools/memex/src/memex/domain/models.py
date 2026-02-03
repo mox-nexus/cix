@@ -5,7 +5,7 @@ Fragment is THE canonical entity (Karman recommendation).
 """
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel
 
@@ -21,7 +21,7 @@ SOURCE_GEMINI = "gemini"
 SOURCE_CUSTOM = "custom"
 
 
-class Completeness(str, Enum):
+class Completeness(StrEnum):
     """Fragment completeness."""
 
     FULL = "full"
