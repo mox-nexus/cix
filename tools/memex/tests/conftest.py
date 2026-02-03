@@ -3,7 +3,6 @@
 from datetime import datetime
 
 import pytest
-
 from memex.domain.models import Fragment, Provenance
 
 

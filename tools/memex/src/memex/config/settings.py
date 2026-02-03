@@ -21,6 +21,7 @@ def _load_config_file() -> dict[str, Any]:
 
     try:
         import tomllib
+
         with open(config_path, "rb") as f:
             data = tomllib.load(f)
 

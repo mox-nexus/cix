@@ -102,9 +102,7 @@ class ExcavationService:
             return []
 
         query_embedding = self.embedder.embed(query)
-        return self.corpus.semantic_search(
-            query_embedding, limit, source_kind, min_score
-        )
+        return self.corpus.semantic_search(query_embedding, limit, source_kind, min_score)
 
     def hybrid_search(
         self,
@@ -158,16 +156,13 @@ class ExcavationService:
                     fragments[frag.id] = frag
 
         # Sort by RRF score
-        combined = [
-            (fragments[frag_id], score)
-            for frag_id, score in scores.items()
-        ]
+        combined = [(fragments[frag_id], score) for frag_id, score in scores.items()]
         combined.sort(key=lambda x: x[1], reverse=True)
 
         # Apply reranking if available
         if self.reranker and use_reranker:
             # Take top candidates for reranking (50-100 is typical)
-            rerank_candidates = [frag for frag, _ in combined[:min(50, len(combined))]]
+            rerank_candidates = [frag for frag, _ in combined[: min(50, len(combined))]]
             return self.reranker.rerank(query, rerank_candidates, limit)
 
         return combined[:limit]
@@ -215,9 +210,7 @@ class ExcavationService:
         """
         if not self.embedder:
             return 0
-        return self.corpus.backfill_embeddings(
-            self.embedder.embed_batch, batch_size, on_progress
-        )
+        return self.corpus.backfill_embeddings(self.embedder.embed_batch, batch_size, on_progress)
 
     def embedding_coverage(self) -> tuple[int, int]:
         """Get embedding coverage stats.

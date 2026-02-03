@@ -14,7 +14,15 @@ dev = [
     "pytest-asyncio>=0.24",
     "ruff>=0.8",
     "mypy>=1.8",
+    "pytz>=2024.1",  # Required by DuckDB TIMESTAMPTZ
+    "memex",  # Workspace package
+    "cix",    # Workspace package
 ]
+
+# Install workspace packages for testing
+[tool.uv.sources]
+memex = { workspace = true }
+cix = { workspace = true }
 
 [tool.ruff]
 line-length = 100
