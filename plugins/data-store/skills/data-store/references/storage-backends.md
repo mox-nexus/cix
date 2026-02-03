@@ -31,7 +31,7 @@ What's your scale?
 
 ## When to Use What
 
-### DuckDB (Current memex choice)
+### DuckDB (Embedded, Personal Use)
 
 **Use when:**
 - Personal/single-user application

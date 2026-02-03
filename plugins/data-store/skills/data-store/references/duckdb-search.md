@@ -53,7 +53,7 @@ PRAGMA drop_fts_index('fragments');
 PRAGMA create_fts_index('fragments', 'id', 'content');
 ```
 
-For memex: Rebuild after `ingest` commands.
+**Tip:** Rebuild after bulk ingest operations.
 
 ---
 
@@ -178,20 +178,20 @@ RRF preferred — simpler, more robust.
 
 ---
 
-## Production Recommendations for memex
+## Production Recommendations
 
-### Phase 1 (Current): Keyword with naive ILIKE
-- Works for small corpus
-- Replace with BM25 when time permits
+### Phase 1: Keyword Search
+- BM25 via FTS extension (not naive ILIKE)
+- Works well for small-to-medium corpus
 
-### Phase 2 (Recommended): BM25 + Embeddings
+### Phase 2: Hybrid Search
 1. Add FTS index for keyword search
 2. Add embedding column + VSS index
-3. Implement RRF hybrid in ExcavationService
+3. Implement RRF hybrid in service layer
 
-### Phase 3 (Future): Graduate if needed
-- If >50K fragments: Consider Weaviate
-- If <100ms latency required: Dedicated vector DB
+### Phase 3: Scale Out
+- If >50K documents: Consider dedicated vector DB (Weaviate, Qdrant)
+- If <100ms latency required: Move to PostgreSQL + pgvector or dedicated VDB
 
 ---
 
