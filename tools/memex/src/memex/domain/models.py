@@ -28,6 +28,7 @@ class EmbeddingConfig(BaseModel):
         """Check if two embedding configs are compatible."""
         return self.dimensions == other.dimensions
 
+
 # Common source kinds (not exhaustive)
 SOURCE_CLAUDE_CONVERSATIONS = "claude_conversations"
 SOURCE_CLAUDE_CODE_LOGS = "claude_code_logs"

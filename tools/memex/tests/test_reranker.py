@@ -2,7 +2,6 @@
 
 import numpy as np
 import pytest
-
 from memex.adapters._out.reranking.cross_encoder import CrossEncoderReranker
 from memex.domain.models import Fragment
 

@@ -181,7 +181,8 @@ class DuckDBCorpus:
     ) -> int:
         """Store fragments with embeddings. Returns count of new fragments."""
         if not self._embedding_dim:
-            raise ValueError("Corpus created without embedding support. Pass embedding_dim to constructor.")
+            msg = "Corpus created without embedding support. Pass embedding_dim."
+            raise ValueError(msg)
 
         inserted = 0
         for frag in fragments:
@@ -401,7 +402,8 @@ class DuckDBCorpus:
             Number of fragments updated.
         """
         if not self._embedding_dim:
-            raise ValueError("Corpus created without embedding support. Pass embedding_dim to constructor.")
+            msg = "Corpus created without embedding support. Pass embedding_dim."
+            raise ValueError(msg)
 
         total = self.count_without_embeddings()
         if total == 0:
@@ -466,7 +468,7 @@ class DuckDBCorpus:
                 # Parse "FLOAT[768]" to extract 768
                 dtype = result[0]
                 if "[" in dtype and "]" in dtype:
-                    dim_str = dtype[dtype.index("[") + 1:dtype.index("]")]
+                    dim_str = dtype[dtype.index("[") + 1 : dtype.index("]")]
                     return int(dim_str)
             return None
         except Exception:

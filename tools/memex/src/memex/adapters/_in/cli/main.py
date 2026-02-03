@@ -48,11 +48,13 @@ click.rich_click.COMMAND_GROUPS = {
 def main(verbose: bool):
     """Memex - Extended memory for you and your agents."""
     from memex.config.settings import settings
+
     if verbose:
         settings.verbose = True
 
 
 # --- Setup Commands ---
+
 
 @main.command()
 def init():
@@ -72,12 +74,8 @@ def init():
 
     obs.console.print("\n[bold]Welcome to Memex[/bold]\n")
     obs.console.print("Extended memory for you and your agents.\n")
-    obs.console.print(
-        "Your AI conversations hold decisions, context, and trails of thought."
-    )
-    obs.console.print(
-        "Memex makes them findable - by you, and by the agents you work with.\n"
-    )
+    obs.console.print("Your AI conversations hold decisions, context, and trails of thought.")
+    obs.console.print("Memex makes them findable - by you, and by the agents you work with.\n")
 
     memex_dir = get_memex_dir()
     config_path = get_config_path()
@@ -96,6 +94,7 @@ def init():
 
     # Initialize corpus (just create empty if not exists)
     from memex.config.settings import settings
+
     if not settings.corpus_path.exists():
         corpus = create_corpus()
         corpus.close()
@@ -110,12 +109,13 @@ def init():
     obs.console.print()
     obs.console.print("  2. Import: [cyan]memex ingest ~/Downloads/conversations.json[/cyan]")
     obs.console.print()
-    obs.console.print("  3. Search: [cyan]memex dig \"that auth decision\"[/cyan]")
+    obs.console.print('  3. Search: [cyan]memex dig "that auth decision"[/cyan]')
     obs.console.print()
     obs.console.print("Run [cyan]memex status[/cyan] anytime to see what's indexed.\n")
 
 
 # --- Search Commands ---
+
 
 @main.command()
 @click.argument("query")
@@ -231,9 +231,8 @@ def semantic(query: str, limit: int, source: str | None, min_score: float, fmt: 
     format_fragments(results, fmt, obs.console)
 
 
-
-
 # --- Ingestion Commands ---
+
 
 @main.command()
 @click.argument("path", type=click.Path(exists=True, path_type=Path))
@@ -291,16 +290,14 @@ def ingest(path: Path, no_embed: bool):
 
         # Phase 2: Embed if requested (batch, efficient)
         if should_embed and total > 0 and service.embedder:
+
             def embed_progress(processed: int, batch_total: int):
                 pct = processed / batch_total * 100 if batch_total > 0 else 100
                 obs.console.print(
-                    f"\r[dim]Embedding... {processed:,}/{batch_total:,} ({pct:.0f}%)[/dim]",
-                    end=""
+                    f"\r[dim]Embedding... {processed:,}/{batch_total:,} ({pct:.0f}%)[/dim]", end=""
                 )
 
-            embedded = service.backfill_embeddings(
-                settings.batch_size, embed_progress
-            )
+            embedded = service.backfill_embeddings(settings.batch_size, embed_progress)
             obs.console.print()  # newline after progress
 
             if embedded < total:
@@ -309,7 +306,7 @@ def ingest(path: Path, no_embed: bool):
                 obs.info("Run 'memex backfill' to retry")
 
         # Rebuild FTS index (DuckDB FTS doesn't auto-update)
-        if hasattr(service.corpus, 'rebuild_fts_index'):
+        if hasattr(service.corpus, "rebuild_fts_index"):
             with obs.status("Building search index..."):
                 service.corpus.rebuild_fts_index()
 
@@ -335,7 +332,7 @@ def rebuild():
     corpus = create_corpus()
 
     # Rebuild FTS index
-    if hasattr(corpus, 'rebuild_fts_index') and corpus.has_fts():
+    if hasattr(corpus, "rebuild_fts_index") and corpus.has_fts():
         with obs.status("Rebuilding FTS (BM25) index..."):
             corpus.rebuild_fts_index()
         obs.success("FTS index rebuilt")
@@ -424,6 +421,7 @@ def reset(yes: bool, backup: bool):
     if backup:
         backup_path = corpus_path.with_suffix(".duckdb.bak")
         import shutil
+
         shutil.copy2(corpus_path, backup_path)
         obs.success(f"Backed up to {backup_path}")
 
@@ -433,6 +431,7 @@ def reset(yes: bool, backup: bool):
 
 
 # --- Discovery Commands ---
+
 
 @main.command()
 def status():
@@ -486,15 +485,11 @@ def status():
 
     # Semantic search
     if dimension_mismatch:
-        obs.console.print(
-            "  Semantic Search: [red]Dimension mismatch[/red] (requires reset)"
-        )
+        obs.console.print("  Semantic Search: [red]Dimension mismatch[/red] (requires reset)")
     elif service and service.has_semantic_search():
         obs.console.print("  Semantic Search: [green]HNSW via DuckDB VSS[/green]")
     else:
-        obs.console.print(
-            "  Semantic Search: [yellow]Not available[/yellow] (VSS not loaded)"
-        )
+        obs.console.print("  Semantic Search: [yellow]Not available[/yellow] (VSS not loaded)")
 
     # Reranking
     if dimension_mismatch:
@@ -502,8 +497,7 @@ def status():
             obs.console.print("  Reranking:       [dim]Available (after reset)[/dim]")
         else:
             obs.console.print(
-                "  Reranking:       [yellow]Not installed[/yellow] "
-                "(uv add sentence-transformers)"
+                "  Reranking:       [yellow]Not installed[/yellow] (uv add sentence-transformers)"
             )
     elif service and service.has_reranker():
         model_name = service.reranker_model_name() or "cross-encoder"
@@ -512,8 +506,7 @@ def status():
         obs.console.print("  Reranking:       [dim]Available (auto-enabled in dig)[/dim]")
     else:
         obs.console.print(
-            "  Reranking:       [yellow]Not installed[/yellow] "
-            "(uv add sentence-transformers)"
+            "  Reranking:       [yellow]Not installed[/yellow] (uv add sentence-transformers)"
         )
 
     obs.console.print()
@@ -522,10 +515,12 @@ def status():
     pending = []
 
     if dimension_mismatch:
-        pending.append(
-            f"[red]Corpus has {corpus_dims}-dim embeddings but embedder is {embedder.dimensions}-dim.[/red]\n"
+        msg = (
+            f"[red]Corpus has {corpus_dims}-dim embeddings "
+            f"but embedder is {embedder.dimensions}-dim.[/red]\n"
             f"    Run: [bold]memex reset[/bold] then re-ingest"
         )
+        pending.append(msg)
     elif coverage[0] < coverage[1]:
         missing = coverage[1] - coverage[0]
         pending.append(f"{missing:,} fragments need embeddings. Run: [bold]memex backfill[/bold]")
@@ -600,6 +595,7 @@ def sources():
 
 # --- SQL Escape Hatch ---
 
+
 @main.command()
 @click.argument("sql_query")
 @click.option("--format", "-f", "fmt", type=click.Choice(["table", "json", "csv"]), default="table")
@@ -672,6 +668,7 @@ def sql():
 
 # --- Skill Command ---
 
+
 @main.command()
 @click.option("--reference", "-r", help="Specific reference to load")
 @click.option("--list", "-l", "list_refs", is_flag=True, help="List available references")
@@ -711,6 +708,7 @@ def skill(reference: str | None, list_refs: bool, source: str | None, show_corpu
 
 
 # --- Helpers ---
+
 
 def _handle_no_results(query: str, service):
     """Helpful guidance on no results."""
