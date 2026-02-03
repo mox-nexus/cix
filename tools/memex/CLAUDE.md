@@ -1,8 +1,34 @@
 # Memex
 
-> Excavating Collaborative Intelligence Artifacts
+> Extended memory for you and your agents
 
 Memex retrieves and connects historical human-AI collaboration artifacts across heterogeneous sources. Named for Vannevar Bush's 1945 vision of an "enlarged intimate supplement to memory."
+
+---
+
+## Tooling
+
+Best-in-class, modern tooling only. No legacy.
+
+| Task | Use | Never |
+|------|-----|-------|
+| Python | `uv` | pip, conda, poetry, raw python |
+| Run scripts | `uv run` | python directly |
+| Add deps | `uv add` | pip install |
+| JS (if needed) | `bun` | npm, yarn, node |
+
+```bash
+# YES
+uv run pytest
+uv run python -m py_compile src/memex/cli.py
+uv add rich
+
+# NO
+python -m pytest
+pip install rich
+```
+
+---
 
 ## What Memex Is
 

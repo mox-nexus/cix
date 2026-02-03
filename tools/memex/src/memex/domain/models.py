@@ -13,6 +13,21 @@ from pydantic import BaseModel
 # Third-party adapters can use any string, not limited to enum
 SourceKind = str
 
+
+class EmbeddingConfig(BaseModel):
+    """Captures the embedding contract for a corpus.
+
+    Domain invariant: fragments stored with one embedding model
+    cannot be semantically searched with another. Dimensions must match.
+    """
+
+    model_name: str
+    dimensions: int
+
+    def is_compatible_with(self, other: "EmbeddingConfig") -> bool:
+        """Check if two embedding configs are compatible."""
+        return self.dimensions == other.dimensions
+
 # Common source kinds (not exhaustive)
 SOURCE_CLAUDE_CONVERSATIONS = "claude_conversations"
 SOURCE_CLAUDE_CODE_LOGS = "claude_code_logs"

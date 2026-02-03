@@ -1,12 +1,16 @@
-"""Claude.ai conversations source adapter."""
+"""Claude.ai conversations source adapter.
 
-import json
+Uses ijson for streaming JSON parse to handle large exports without OOM.
+"""
+
 import tempfile
 import zipfile
 from collections.abc import Iterator
 from datetime import datetime
 from importlib.resources import files
 from pathlib import Path
+
+import ijson
 
 from memex.domain.models import SOURCE_CLAUDE_CONVERSATIONS, Fragment, Provenance
 
@@ -53,33 +57,33 @@ class ClaudeConversationsAdapter:
         return skill_file.read_text()
 
     def _ingest_json(self, path: Path) -> Iterator[Fragment]:
-        with open(path, encoding="utf-8") as f:
-            data = json.load(f)
+        """Stream parse JSON using ijson for O(1) memory regardless of file size."""
+        with open(path, "rb") as f:
+            # Stream through each conversation in the array
+            for conversation in ijson.items(f, "item"):
+                conv_id = conversation.get("uuid", "")
+                messages = conversation.get("chat_messages", [])
 
-        for conversation in data:
-            conv_id = conversation.get("uuid", "")
-            messages = conversation.get("chat_messages", [])
+                for msg in messages:
+                    content = msg.get("text", "")
+                    if not content:
+                        continue
 
-            for msg in messages:
-                content = msg.get("text", "")
-                if not content:
-                    continue
+                    msg_id = msg.get("uuid", "")
+                    timestamp = self._parse_timestamp(msg.get("created_at"))
+                    role = "user" if msg.get("sender") == "human" else "assistant"
 
-                msg_id = msg.get("uuid", "")
-                timestamp = self._parse_timestamp(msg.get("created_at"))
-                role = "user" if msg.get("sender") == "human" else "assistant"
-
-                yield Fragment(
-                    id=msg_id,
-                    conversation_id=conv_id,
-                    role=role,
-                    content=content,
-                    provenance=Provenance(
-                        source_kind=self.source_kind(),
-                        source_id=msg_id,
-                        timestamp=timestamp,
-                    ),
-                )
+                    yield Fragment(
+                        id=msg_id,
+                        conversation_id=conv_id,
+                        role=role,
+                        content=content,
+                        provenance=Provenance(
+                            source_kind=self.source_kind(),
+                            source_id=msg_id,
+                            timestamp=timestamp,
+                        ),
+                    )
 
     def _ingest_zip(self, path: Path) -> Iterator[Fragment]:
         """Extract and ingest from zip file."""

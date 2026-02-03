@@ -1,12 +1,16 @@
-"""ChatGPT/OpenAI conversations source adapter."""
+"""ChatGPT/OpenAI conversations source adapter.
 
-import json
+Uses ijson for streaming JSON parse to handle large exports without OOM.
+"""
+
 import tempfile
 import zipfile
 from collections.abc import Iterator
 from datetime import UTC, datetime
 from importlib.resources import files
 from pathlib import Path
+
+import ijson
 
 from memex.domain.models import SOURCE_OPENAI, Fragment, Provenance
 
@@ -64,60 +68,60 @@ class OpenAIConversationsAdapter:
         return skill_file.read_text()
 
     def _ingest_json(self, path: Path) -> Iterator[Fragment]:
-        with open(path, encoding="utf-8") as f:
-            data = json.load(f)
+        """Stream parse JSON using ijson for O(1) memory regardless of file size."""
+        with open(path, "rb") as f:
+            # Stream through each conversation in the array
+            for conversation in ijson.items(f, "item"):
+                conv_id = conversation.get("id", conversation.get("title", ""))
+                mapping = conversation.get("mapping", {})
 
-        for conversation in data:
-            conv_id = conversation.get("id", conversation.get("title", ""))
-            mapping = conversation.get("mapping", {})
+                for node_id, node in mapping.items():
+                    message = node.get("message")
+                    if not message:
+                        continue
 
-            for node_id, node in mapping.items():
-                message = node.get("message")
-                if not message:
-                    continue
+                    author = message.get("author", {})
+                    role = author.get("role", "")
 
-                author = message.get("author", {})
-                role = author.get("role", "")
+                    # Skip system messages
+                    if role == "system":
+                        continue
 
-                # Skip system messages
-                if role == "system":
-                    continue
+                    # Normalize role
+                    if role not in ("user", "assistant"):
+                        continue
 
-                # Normalize role
-                if role not in ("user", "assistant"):
-                    continue
+                    # Extract content
+                    content_obj = message.get("content", {})
+                    parts = content_obj.get("parts", [])
 
-                # Extract content
-                content_obj = message.get("content", {})
-                parts = content_obj.get("parts", [])
+                    # Handle different content types
+                    text_parts = []
+                    for part in parts:
+                        if isinstance(part, str):
+                            text_parts.append(part)
+                        elif isinstance(part, dict) and "text" in part:
+                            text_parts.append(part["text"])
 
-                # Handle different content types
-                text_parts = []
-                for part in parts:
-                    if isinstance(part, str):
-                        text_parts.append(part)
-                    elif isinstance(part, dict) and "text" in part:
-                        text_parts.append(part["text"])
+                    content = "\n".join(text_parts)
+                    if not content.strip():
+                        continue
 
-                content = "\n".join(text_parts)
-                if not content.strip():
-                    continue
+                    # Parse timestamp
+                    timestamp = self._parse_timestamp(message.get("create_time"))
+                    msg_id = message.get("id", node_id)
 
-                # Parse timestamp
-                timestamp = self._parse_timestamp(message.get("create_time"))
-                msg_id = message.get("id", node_id)
-
-                yield Fragment(
-                    id=msg_id,
-                    conversation_id=conv_id,
-                    role=role,
-                    content=content,
-                    provenance=Provenance(
-                        source_kind=self.source_kind(),
-                        source_id=msg_id,
-                        timestamp=timestamp,
-                    ),
-                )
+                    yield Fragment(
+                        id=msg_id,
+                        conversation_id=conv_id,
+                        role=role,
+                        content=content,
+                        provenance=Provenance(
+                            source_kind=self.source_kind(),
+                            source_id=msg_id,
+                            timestamp=timestamp,
+                        ),
+                    )
 
     def _ingest_zip(self, path: Path) -> Iterator[Fragment]:
         """Extract and ingest from zip file."""

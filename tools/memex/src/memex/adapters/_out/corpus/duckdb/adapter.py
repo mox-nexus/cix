@@ -1,9 +1,12 @@
 """DuckDB corpus adapter.
 
 Implements CorpusPort. SQL is implementation detail, not port contract (Karman).
+Supports:
+- Semantic search via VSS extension (HNSW index, cosine similarity)
+- Full-text search via FTS extension (BM25 scoring)
 """
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from importlib.resources import files
 from pathlib import Path
 
@@ -13,15 +16,51 @@ from memex.domain.models import Fragment, Provenance
 
 
 class DuckDBCorpus:
-    """DuckDB implementation of CorpusPort."""
+    """DuckDB implementation of CorpusPort with semantic and full-text search.
 
-    def __init__(self, path: Path):
+    Embedding dimensions are received at construction time from the composition root.
+    This ensures schema matches the embedder that will populate it.
+    """
+
+    def __init__(self, path: Path, embedding_dim: int | None = None):
+        """Initialize DuckDB corpus.
+
+        Args:
+            path: Path to the DuckDB database file
+            embedding_dim: Embedding dimensions for semantic search schema.
+                          If None, corpus operates in FTS-only mode.
+        """
         self.path = path
+        self._embedding_dim = embedding_dim
         path.parent.mkdir(parents=True, exist_ok=True)
         self.con = duckdb.connect(str(path))
+        self._init_extensions()
         self._init_schema()
 
+    def _init_extensions(self) -> None:
+        """Initialize search extensions."""
+        # VSS for semantic search
+        try:
+            self.con.execute("INSTALL vss")
+            self.con.execute("LOAD vss")
+            self._vss_available = True
+        except duckdb.Error:
+            self._vss_available = False
+
+        # FTS for BM25 full-text search
+        try:
+            self.con.execute("INSTALL fts")
+            self.con.execute("LOAD fts")
+            self._fts_available = True
+        except duckdb.Error:
+            self._fts_available = False
+
     def _init_schema(self) -> None:
+        """Initialize database schema.
+
+        Creates embedding column only if embedding_dim is provided.
+        """
+        # Base schema without embedding column
         self.con.execute("""
             CREATE TABLE IF NOT EXISTS fragments (
                 id VARCHAR PRIMARY KEY,
@@ -33,6 +72,11 @@ class DuckDBCorpus:
                 source_id VARCHAR NOT NULL
             )
         """)
+
+        # Add embedding column if dimensions specified
+        if self._embedding_dim:
+            self._ensure_embedding_column()
+
         self.con.execute(
             "CREATE INDEX IF NOT EXISTS idx_fragments_timestamp ON fragments(timestamp)"
         )
@@ -42,6 +86,66 @@ class DuckDBCorpus:
         self.con.execute(
             "CREATE INDEX IF NOT EXISTS idx_fragments_source ON fragments(source_kind)"
         )
+
+        # HNSW index for semantic search (if VSS available and embeddings enabled)
+        if self._vss_available and self._embedding_dim:
+            try:
+                self.con.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_fragments_embedding
+                    ON fragments USING HNSW (embedding)
+                    WITH (metric = 'cosine')
+                """)
+            except duckdb.Error:
+                # Index creation might fail if column has NULLs, that's OK
+                pass
+
+    def _ensure_embedding_column(self) -> None:
+        """Ensure embedding column exists with correct dimensions."""
+        columns = self.con.execute(
+            "SELECT column_name FROM information_schema.columns WHERE table_name = 'fragments'"
+        ).fetchall()
+        column_names = {row[0] for row in columns}
+
+        if "embedding" not in column_names:
+            self.con.execute(
+                f"ALTER TABLE fragments ADD COLUMN embedding FLOAT[{self._embedding_dim}]"
+            )
+
+    def _ensure_fts_index(self) -> None:
+        """Create FTS index if it doesn't exist."""
+        if not self._fts_available:
+            return
+        try:
+            # Check if index exists by trying to use it
+            self.con.execute(
+                "SELECT * FROM fts_main_fragments.match_bm25('test', fields := 'content') LIMIT 0"
+            )
+        except duckdb.Error:
+            # Index doesn't exist, create it
+            try:
+                self.con.execute("""
+                    PRAGMA create_fts_index(
+                        'fragments', 'id', 'content',
+                        stemmer = 'english',
+                        stopwords = 'english',
+                        ignore = '[^a-zA-Z0-9]',
+                        strip_accents = 1,
+                        lower = 1
+                    )
+                """)
+            except duckdb.Error:
+                # Index creation failed, fall back to ILIKE
+                self._fts_available = False
+
+    def rebuild_fts_index(self) -> None:
+        """Rebuild FTS index after data changes."""
+        if not self._fts_available:
+            return
+        try:
+            self.con.execute("PRAGMA drop_fts_index('fragments')")
+        except duckdb.Error:
+            pass
+        self._ensure_fts_index()
 
     def store(self, fragments: Iterable[Fragment]) -> int:
         """Store fragments. Returns count of new fragments."""
@@ -70,19 +174,143 @@ class DuckDBCorpus:
                 pass
         return inserted
 
-    def search(self, query: str, limit: int = 20) -> list[Fragment]:
-        """Search fragments by content."""
+    def store_with_embeddings(
+        self,
+        fragments: Iterable[Fragment],
+        embedder: Callable[[str], list[float]],
+    ) -> int:
+        """Store fragments with embeddings. Returns count of new fragments."""
+        if not self._embedding_dim:
+            raise ValueError("Corpus created without embedding support. Pass embedding_dim to constructor.")
+
+        inserted = 0
+        for frag in fragments:
+            try:
+                embedding = embedder(frag.content)
+                self.con.execute(
+                    f"""
+                    INSERT INTO fragments (
+                        id, conversation_id, role, content,
+                        timestamp, source_kind, source_id, embedding
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?::FLOAT[{self._embedding_dim}])
+                    ON CONFLICT (id) DO NOTHING
+                    """,
+                    [
+                        frag.id,
+                        frag.conversation_id,
+                        frag.role,
+                        frag.content,
+                        frag.timestamp,
+                        frag.provenance.source_kind,
+                        frag.provenance.source_id,
+                        embedding,
+                    ],
+                )
+                inserted += 1
+            except duckdb.ConstraintException:
+                pass
+        return inserted
+
+    def _escape_ilike(self, s: str) -> str:
+        """Escape ILIKE wildcards in user input."""
+        return s.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
+    def search(
+        self,
+        query: str,
+        limit: int = 20,
+        source_kind: str | None = None,
+    ) -> list[Fragment]:
+        """Search fragments by content using BM25 (with ILIKE fallback).
+
+        Uses DuckDB FTS extension for proper BM25 ranking when available.
+        Falls back to ILIKE matching if FTS not installed.
+
+        Args:
+            query: Search terms
+            limit: Maximum results to return
+            source_kind: Optional filter by source type
+        """
+        if not query.strip():
+            return []
+
+        # Try BM25 first, fall back to ILIKE
+        if self._fts_available:
+            self._ensure_fts_index()
+            return self._search_bm25(query, limit, source_kind)
+        else:
+            return self._search_ilike(query, limit, source_kind)
+
+    def _search_bm25(
+        self,
+        query: str,
+        limit: int,
+        source_kind: str | None,
+    ) -> list[Fragment]:
+        """BM25 full-text search using DuckDB FTS extension."""
+        try:
+            # Build query with optional source filter
+            source_filter = ""
+            params = [query, limit]
+            if source_kind:
+                source_filter = "AND f.source_kind = ?"
+                params = [query, source_kind, limit]
+
+            rows = self.con.execute(
+                f"""
+                SELECT f.id, f.conversation_id, f.role, f.content,
+                       f.timestamp, f.source_kind, f.source_id, fts.score
+                FROM fts_main_fragments.match_bm25(?, fields := 'content') AS fts
+                JOIN fragments f ON f.id = fts.id
+                WHERE 1=1 {source_filter}
+                ORDER BY fts.score DESC
+                LIMIT ?
+                """,
+                params,
+            ).fetchall()
+            return [self._row_to_fragment(row[:7]) for row in rows]
+        except duckdb.Error:
+            # BM25 failed, fall back to ILIKE
+            return self._search_ilike(query, limit, source_kind)
+
+    def _search_ilike(
+        self,
+        query: str,
+        limit: int,
+        source_kind: str | None,
+    ) -> list[Fragment]:
+        """Fallback ILIKE search (all words must match)."""
+        words = query.split()
+        if not words:
+            return []
+
+        # Build: content ILIKE '%word1%' AND content ILIKE '%word2%' ...
+        conditions = ["content ILIKE ?" for _ in words]
+        params: list = [f"%{self._escape_ilike(word)}%" for word in words]
+
+        if source_kind:
+            conditions.append("source_kind = ?")
+            params.append(source_kind)
+
+        where_clause = " AND ".join(conditions)
+        params.append(limit)
+
         rows = self.con.execute(
-            """
+            f"""
             SELECT id, conversation_id, role, content, timestamp, source_kind, source_id
             FROM fragments
-            WHERE content ILIKE ?
+            WHERE {where_clause}
             ORDER BY timestamp DESC
             LIMIT ?
             """,
-            [f"%{query}%", limit],
+            params,
         ).fetchall()
         return [self._row_to_fragment(row) for row in rows]
+
+    def has_fts(self) -> bool:
+        """Check if FTS (BM25) is available."""
+        return self._fts_available
 
     def find_by_conversation(self, conversation_id: str) -> list[Fragment]:
         """Get all fragments in a conversation."""
@@ -96,6 +324,153 @@ class DuckDBCorpus:
             [conversation_id],
         ).fetchall()
         return [self._row_to_fragment(row) for row in rows]
+
+    def semantic_search(
+        self,
+        query_embedding: list[float],
+        limit: int = 20,
+        source_kind: str | None = None,
+        min_score: float = 0.0,
+    ) -> list[tuple[Fragment, float]]:
+        """Search fragments by semantic similarity.
+
+        Args:
+            query_embedding: Query vector (same dimensions as stored embeddings)
+            limit: Maximum results to return
+            source_kind: Optional filter by source type
+            min_score: Minimum cosine similarity threshold (0-1)
+
+        Returns:
+            List of (Fragment, score) tuples, sorted by similarity descending.
+        """
+        if not self._vss_available or not self._embedding_dim:
+            return []
+
+        conditions = ["embedding IS NOT NULL"]
+        params: list = [query_embedding]
+
+        if source_kind:
+            conditions.append("source_kind = ?")
+            params.append(source_kind)
+
+        where_clause = " AND ".join(conditions)
+        params.append(limit)
+
+        rows = self.con.execute(
+            f"""
+            SELECT
+                id, conversation_id, role, content, timestamp, source_kind, source_id,
+                array_cosine_similarity(embedding, ?::FLOAT[{self._embedding_dim}]) as score
+            FROM fragments
+            WHERE {where_clause}
+            ORDER BY score DESC
+            LIMIT ?
+            """,
+            params,
+        ).fetchall()
+
+        results = []
+        for row in rows:
+            score = row[7]
+            if score >= min_score:
+                fragment = self._row_to_fragment(row[:7])
+                results.append((fragment, score))
+        return results
+
+    def count_without_embeddings(self) -> int:
+        """Count fragments without embeddings (for backfill progress)."""
+        result = self.con.execute(
+            "SELECT COUNT(*) FROM fragments WHERE embedding IS NULL"
+        ).fetchone()
+        return result[0] if result else 0
+
+    def backfill_embeddings(
+        self,
+        embedder_batch: Callable[[list[str]], list[list[float]]],
+        batch_size: int = 100,
+        on_progress: Callable[[int, int], None] | None = None,
+    ) -> int:
+        """Backfill embeddings for existing fragments using batch embedding.
+
+        Args:
+            embedder_batch: Function to convert texts to embedding vectors (batch)
+            batch_size: Number of fragments to process per batch
+            on_progress: Callback(processed, total) for progress updates
+
+        Returns:
+            Number of fragments updated.
+        """
+        if not self._embedding_dim:
+            raise ValueError("Corpus created without embedding support. Pass embedding_dim to constructor.")
+
+        total = self.count_without_embeddings()
+        if total == 0:
+            return 0
+
+        updated = 0
+        while True:
+            # Fetch batch of fragments without embeddings
+            rows = self.con.execute(
+                f"""
+                SELECT id, content
+                FROM fragments
+                WHERE embedding IS NULL
+                LIMIT {batch_size}
+                """
+            ).fetchall()
+
+            if not rows:
+                break
+
+            # Extract IDs and contents
+            ids = [row[0] for row in rows]
+            contents = [row[1] for row in rows]
+
+            # Generate embeddings in batch (10x faster than one-by-one)
+            embeddings = embedder_batch(contents)
+
+            # Update all in batch
+            for frag_id, embedding in zip(ids, embeddings):
+                self.con.execute(
+                    f"""
+                    UPDATE fragments
+                    SET embedding = ?::FLOAT[{self._embedding_dim}]
+                    WHERE id = ?
+                    """,
+                    [embedding, frag_id],
+                )
+
+            updated += len(rows)
+
+            if on_progress:
+                on_progress(updated, total)
+
+        return updated
+
+    def has_vss(self) -> bool:
+        """Check if VSS extension is available."""
+        return self._vss_available and self._embedding_dim is not None
+
+    def embedding_dimensions(self) -> int | None:
+        """Return stored embedding dimensions from schema.
+
+        Queries information_schema to get the FLOAT array dimension.
+        Returns None if no embedding column exists.
+        """
+        try:
+            result = self.con.execute("""
+                SELECT data_type FROM information_schema.columns
+                WHERE table_name = 'fragments' AND column_name = 'embedding'
+            """).fetchone()
+            if result:
+                # Parse "FLOAT[768]" to extract 768
+                dtype = result[0]
+                if "[" in dtype and "]" in dtype:
+                    dim_str = dtype[dtype.index("[") + 1:dtype.index("]")]
+                    return int(dim_str)
+            return None
+        except Exception:
+            return None
 
     def stats(self) -> dict:
         """Get corpus statistics."""
