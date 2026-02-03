@@ -1,0 +1,18 @@
+{
+  "name": "data-store",
+  "version": "0.1.0",
+  "description": "Data storage and retrieval patterns. Use when: choosing databases, implementing search, designing hybrid retrieval, selecting embedding models, building RAG systems.",
+  "author": {
+    "name": "Yash Vyas"
+  },
+  "license": "MIT",
+  "keywords": [
+    "storage",
+    "retrieval",
+    "search",
+    "embeddings",
+    "vector-db",
+    "rag",
+    "hybrid-search"
+  ]
+}
