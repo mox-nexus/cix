@@ -11,13 +11,13 @@ Design principle: No external dependencies. These are pure domain objects.
 """
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 
 from pydantic import BaseModel, Field
 
 
-class ExtensionKind(str, Enum):
+class ExtensionKind(StrEnum):
     """
     Types of cognitive extensions.
 
