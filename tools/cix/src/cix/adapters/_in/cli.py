@@ -95,16 +95,24 @@ def info(message: str) -> None:
 # =============================================================================
 
 
-@click.group()
+@click.group(invoke_without_command=True)
+@click.option("--skill", is_flag=True, help="Output skill documentation for Claude")
+@click.option("--reference", "-r", help="Specific skill reference (use with --skill)")
 @click.version_option(__version__, prog_name="cix")
-def main() -> None:
+@click.pass_context
+def main(ctx: click.Context, skill: bool, reference: str | None) -> None:
     """
     cix - Collaborative Intelligence Extensions
 
     Discover, install, and manage cognitive extensions that enhance
     rather than replace human capability.
     """
-    pass
+    if skill:
+        from cix import skill as skill_module
+
+        content = skill_module.get_skill(reference)
+        console.print(content)
+        ctx.exit(0)
 
 
 # =============================================================================
