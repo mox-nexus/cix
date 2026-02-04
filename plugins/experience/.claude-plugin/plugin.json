@@ -1,9 +1,0 @@
-{
-  "name": "experience",
-  "description": "Experience design with non-conformist agents. Artist, architect, designer, labcoat. Use when: building interactive experiences, discovering aesthetic direction, making design decisions. Helps users find their own direction, not prescribe templates.",
-  "version": "0.1.0",
-  "author": {
-    "name": "mox-labs",
-    "email": "mox.rnd@gmail.com"
-  }
-}

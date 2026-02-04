@@ -25,9 +25,19 @@ Research accumulating across disciplines points toward the same pattern: AI impr
 - [Blaurock et al. (2024). AI-Based Service Contingencies. Journal of Service Research.](https://journals.sagepub.com/doi/10.1177/10946705241253322)
 - [Bansal et al. (2021). AI Explanations and Trust. CHI.](https://dl.acm.org/doi/10.1145/3411764.3445717)
 
-**Homogenization**
+**Homogenization & Diversity**
+- [Jiang et al. (2025). Artificial Hivemind. NeurIPS Best Paper.](https://arxiv.org/abs/2510.22954)
+- [Doshi & Hauser (2024). Individual Creativity vs Collective Diversity. Science Advances.](https://www.science.org/doi/10.1126/sciadv.adn5290)
+- [Meta-analysis (2025). Generative AI and Creativity. arXiv.](https://arxiv.org/abs/2505.17241)
+- [Hintze et al. (2026). Visual Elevator Music. Patterns/Cell.](https://www.cell.com/patterns/fulltext/S2666-3899(25)00299-5)
 - [Xu et al. (2025). Echoes in AI: LLM Homogenization. PNAS.](https://www.pnas.org/doi/10.1073/pnas.2504966122)
 - [Zhang et al. (2025). AI and Survey Homogenization. Sociological Methods & Research.](https://journals.sagepub.com/doi/10.1177/00491241251327130)
+
+**Disempowerment**
+- [Sharma et al. (2026). Who's in Charge? Disempowerment Patterns. Anthropic.](https://arxiv.org/abs/2601.19062)
+
+**Longitudinal**
+- [Zhou et al. (2025). Creative Scar. Technology in Society.](https://www.sciencedirect.com/science/article/abs/pii/S0160791X25002775)
 
 ---
 
@@ -41,7 +51,8 @@ The evidence clusters into five hypotheses, each supported by multiple independe
 | **Cognitive degradation is measurable** | β = -0.69 (AI confidence → less thinking) | Lee, Kosmyna, Gerlich, Budzyń |
 | **Perception gap hides harm** | 43-point gap (predicted vs actual) | METR, Stack Overflow |
 | **Control and transparency work** | β = 0.507 (control), β = 0.415 (transparency) | Blaurock |
-| **Homogenization threatens diversity** | 67-75% vs 30-45% content overlap | Xu, Zhang |
+| **Homogenization threatens diversity** | g = -0.863 diversity reduction | Meta-analysis, Jiang (NeurIPS Best Paper), Doshi |
+| **Users misjudge what helps them** | Harmful interactions rated favorably | Sharma (Anthropic) |
 
 ---
 
@@ -99,11 +110,39 @@ Bansal (CHI 2021) explained why explanations alone fail: they increased acceptan
 
 ### Homogenization threatens diversity
 
-Xu et al. (PNAS 2025) analyzed LLM story generation. Idiosyncratic plot elements echoed across generations and across different models. 50/100 GPT-4 Kafka continuations had the policeman give directions to take the "second left."
+**The Artificial Hivemind (NeurIPS 2025 Best Paper):** Jiang et al. tested 70+ LLMs on 26,000 open-ended queries. When 25 different models wrote "a metaphor about time," only 2 dominant clusters emerged. Temperature and ensembling don't help — RLHF over-fits to consensus, penalizing valid but idiosyncratic responses.
 
-Zhang et al. found AI-assisted survey responses showed 67-75% content overlap versus 30-45% human baseline. The responses were also systematically more positive, masking underlying variation.
+**Meta-analysis (28 studies, n=8,214):** Pooled effect size for diversity reduction: **g = -0.863** (CI: -1.328 to -0.398, p<0.001). Large negative effect. Individual creative performance goes up (+0.27), but collective diversity goes down hard.
+
+**Visual convergence:** Hintze et al. (Patterns/Cell, Jan 2026) ran 700 iterative AI image generation loops. ALL converged to just 12 motifs (lighthouses, Gothic cathedrals, rustic buildings...) regardless of starting prompt. "What they generated is bland, pop culture, generic."
+
+Doshi & Hauser (Science Advances) quantified the social dilemma: individual novelty +8.1%, story similarity +10.7%. Individually better off, collectively homogenized.
+
+**Cultural homogenization:** Agarwal et al. (CHI 2025) found AI pushes writing toward Western norms. Cultural classification accuracy dropped from 90.6% to 83.5% with AI assistance.
 
 When everyone uses the same AI, outputs converge. The diversity that enables collective intelligence — Hong & Page showed diverse groups outperform best-ability groups — disappears.
+
+**Mitigation evidence:** Wan & Kalman (2025) showed that using 10 diverse AI "personas" eliminated the homogenization effect. Within-persona similarity: 0.92, across-persona: 0.20. Diversity can be preserved through design.
+
+### Users misjudge what helps them
+
+Sharma et al. (Anthropic, Jan 2026) analyzed ~1.5 million Claude.ai conversations. The finding: **users rate disempowering interactions MORE favorably** in the moment. Interactions that distorted reality, value judgments, or actions felt good.
+
+But when users actually **acted on AI outputs**, satisfaction dropped **below baseline**. Users expressed regret: "I should have listened to my own intuition."
+
+This explains why the perception gap (METR: predicted 24% speedup, actual 19% slowdown) persists. Short-term satisfaction ≠ long-term benefit. Users can't self-correct because the feedback loop is broken — the harm feels helpful.
+
+**Implication:** Design must compensate for miscalibrated user preferences. Transparency and control aren't just nice-to-have — they're necessary because users can't reliably judge what's good for them in the moment.
+
+### The creative scar
+
+Zhou et al. (Technology in Society, 2025) ran a 7-day lab experiment with 2-month follow-up. 61 participants, 3,593 ideas.
+
+Key finding: **creativity drops remarkably when AI is withdrawn, and homogeneity keeps climbing even months later.** The "creative scar" persists.
+
+> "Users do not truly acquire the ability to create but easily lose it once generative AI is no longer available."
+
+This is the longitudinal evidence that was missing. Not just correlation — capability degradation over time, persisting after AI removal.
 
 ### The pattern across hypotheses
 

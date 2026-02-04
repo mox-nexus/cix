@@ -26,7 +26,7 @@ The Guild activates when you:
 
 ## The 13 Agents
 
-Agents are named after thought leaders whose work defines their domain (Lamport for distributed systems, Dijkstra for correctness, Taleb for resilience). See `references/sources.md` for the full lineage.
+Agents are named after thought leaders whose work defines their domain (Lamport for distributed systems, Dijkstra for correctness, Taleb for resilience). See `docs/explanation/bibliography.md` for the full lineage.
 
 ### 7 Masters (Always Active)
 
@@ -117,7 +117,7 @@ The agents draw from foundational work in computer science:
 | Taleb | *Antifragile* (2012) — resilience under stress |
 | Knuth | "Structured Programming with go to Statements" (1974) — complexity analysis |
 
-Full bibliography with 24 verified sources: `references/sources.md`
+Full bibliography with 24 verified sources: `docs/explanation/bibliography.md`
 
 ## License
 
