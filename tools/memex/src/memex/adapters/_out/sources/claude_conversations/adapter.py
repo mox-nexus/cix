@@ -27,7 +27,22 @@ class ClaudeConversationsAdapter:
         if path.suffix not in (".json", ".zip"):
             return False
         name = path.name.lower()
-        return "conversation" in name or "claude" in name
+        # Match old format (conversations.json, claude-export.zip)
+        # and new format (data-2026-02-03-*.zip with conversations.json inside)
+        if "conversation" in name or "claude" in name:
+            return True
+        # Check for new Anthropic export format (data-YYYY-MM-DD-*.zip)
+        if name.startswith("data-") and path.suffix == ".zip":
+            return self._is_claude_zip(path)
+        return False
+
+    def _is_claude_zip(self, path: Path) -> bool:
+        """Check if zip contains conversations.json (Claude export marker)."""
+        try:
+            with zipfile.ZipFile(path, "r") as zf:
+                return "conversations.json" in zf.namelist()
+        except (zipfile.BadZipFile, OSError):
+            return False
 
     def source_kind(self) -> str:
         return SOURCE_CLAUDE_CONVERSATIONS

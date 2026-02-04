@@ -17,6 +17,8 @@ dependencies = [
     "pandas>=2.0",
     "sentence-transformers>=3.0",
     "ijson>=3.2",
+    "einops>=0.7",  # Required by Nomic embedding model
+    "pytz>=2024.1",  # Required by DuckDB for timezone handling
 ]
 
 [project.optional-dependencies]
