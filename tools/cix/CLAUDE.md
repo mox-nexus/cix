@@ -42,6 +42,8 @@ cix show <package>             # Show extension details
 ### Info
 ```bash
 cix info                       # Show configuration and status
+cix --skill                    # Output skill for Claude
+cix --skill --reference sources    # Source management patterns
 ```
 
 ---

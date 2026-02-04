@@ -36,21 +36,29 @@ click.rich_click.COMMAND_GROUPS = {
         },
         {
             "name": "Power User",
-            "commands": ["query", "sql", "skill"],
+            "commands": ["query", "sql"],
         },
     ]
 }
 
 
-@click.group()
+@click.group(invoke_without_command=True)
 @click.option("--verbose", "-v", is_flag=True, help="Verbose output")
+@click.option("--skill", is_flag=True, help="Output skill documentation for Claude")
+@click.option("--reference", "-r", help="Specific skill reference (use with --skill)")
 @click.version_option()
-def main(verbose: bool):
+@click.pass_context
+def main(ctx: click.Context, verbose: bool, skill: bool, reference: str | None):
     """Memex - Extended memory for you and your agents."""
     from memex.config.settings import settings
 
     if verbose:
         settings.verbose = True
+
+    if skill:
+        content = skill_module.get_skill(reference)
+        obs.console.print(content)
+        ctx.exit(0)
 
 
 # --- Setup Commands ---
@@ -664,47 +672,6 @@ def sql():
         corpus.close()
 
     obs.console.print("\n[dim]Goodbye.[/]")
-
-
-# --- Skill Command ---
-
-
-@main.command()
-@click.option("--reference", "-r", help="Specific reference to load")
-@click.option("--list", "-l", "list_refs", is_flag=True, help="List available references")
-@click.option("--source", "-s", help="Get skill for a specific source adapter")
-@click.option("--corpus", "-c", "show_corpus", is_flag=True, help="Get skill for corpus backend")
-def skill(reference: str | None, list_refs: bool, source: str | None, show_corpus: bool):
-    """Output skill documentation for Claude.
-
-    Example:
-        memex skill                          # Main skill
-        memex skill --reference query        # Query patterns
-        memex skill -l                       # List references
-    """
-    service = create_service()
-
-    if source:
-        content = service.get_source_skill(source)
-        if content:
-            obs.console.print(content)
-        else:
-            obs.error(f"Unknown source: {source}")
-        return
-
-    if show_corpus:
-        obs.console.print(service.get_corpus_skill())
-        return
-
-    if list_refs:
-        refs = skill_module.list_references()
-        obs.console.print("[bold]Available references:[/]")
-        for ref in refs:
-            obs.console.print(f"  • {ref}")
-        return
-
-    content = skill_module.get_skill(reference)
-    obs.console.print(content)
 
 
 # --- Helpers ---
