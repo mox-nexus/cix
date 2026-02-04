@@ -141,11 +141,12 @@ class OpenAIConversationsAdapter:
                 extracted = zf.extract(json_files[0], tmpdir)
                 yield from self._ingest_json(Path(extracted))
 
-    def _parse_timestamp(self, ts: float | None) -> datetime | None:
+    def _parse_timestamp(self, ts: float | int | None) -> datetime | None:
         """Parse Unix timestamp to datetime."""
         if not ts:
             return None
         try:
-            return datetime.fromtimestamp(ts, tz=UTC)
-        except (ValueError, OSError):
+            # Handle Decimal or other numeric types from JSON
+            return datetime.fromtimestamp(float(ts), tz=UTC)
+        except (ValueError, OSError, TypeError):
             return None
