@@ -1,0 +1,22 @@
+{
+  "name": "extension-dev",
+  "version": "0.1.0",
+  "description": "Build extensions that enable effective human-AI collaboration. Use when: creating skills, agents, hooks, commands, MCPs, or tools/APIs. Patterns for transparency, control, observability, diversity.",
+  "author": {
+    "name": "Mox Labs",
+    "email": "mox.rnd@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "extensions",
+    "skills",
+    "agents",
+    "hooks",
+    "commands",
+    "mcp",
+    "transparency",
+    "control",
+    "observability",
+    "collaborative-intelligence"
+  ]
+}

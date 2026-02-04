@@ -1,0 +1,34 @@
+{
+  "name": "cix",
+  "owner": {
+    "name": "Mox Labs",
+    "email": "mox.rnd@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "arch-guild",
+      "source": "./arch-guild",
+      "description": "Architectural reasoning with The Guild. Use when: reviewing architecture, evaluating design, checking production readiness, scaffolding services, making boundary decisions."
+    },
+    {
+      "name": "build-evals",
+      "source": "./build-evals",
+      "description": "Eval methodology for AI systems. Use when: writing evals for agents, skills, MCP servers, prompts, or measuring AI behavior."
+    },
+    {
+      "name": "core-ci",
+      "source": "./core-ci",
+      "description": "Core collaborative intelligence patterns. Use when: making decisions, verifying claims, avoiding self-deception, applying first principles, building with transparency and control."
+    },
+    {
+      "name": "data-store",
+      "source": "./data-store",
+      "description": "Data storage and retrieval patterns. Use when: choosing databases, implementing search, designing hybrid retrieval, selecting embedding models, building RAG systems."
+    },
+    {
+      "name": "extension-dev",
+      "source": "./extension-dev",
+      "description": "Build extensions that enable effective human-AI collaboration. Use when: creating skills, agents, hooks, commands, MCPs, or tools/APIs. Patterns for transparency, control, observability, diversity."
+    }
+  ]
+}
