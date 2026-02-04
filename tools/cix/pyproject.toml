@@ -16,6 +16,9 @@ dependencies = [
     "gitpython>=3.1",
 ]
 
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
 [project.scripts]
 cix = "cix.adapters._in.cli:main"
 
