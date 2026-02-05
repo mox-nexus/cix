@@ -16,24 +16,20 @@ Guides you through running [OpenClaw](https://github.com/anthropics/openclaw) in
 ## Quick Start
 
 ```bash
-# 1. Copy SRT config template
-cp ~/.claude/plugins/openclaw-srt/skills/openclaw-srt-setup/templates/srt-settings.json ~/.srt-settings.json
+# Check dependencies
+bash ~/.claude/plugins/openclaw-srt/skills/openclaw-srt-setup/scripts/check-deps.sh
 
-# 2. Customize allowedDomains for your use case
-# Edit ~/.srt-settings.json
+# Run installer (auto-detects macOS/Linux)
+bash ~/.claude/plugins/openclaw-srt/skills/openclaw-srt-setup/scripts/install.sh
 
-# 3. Install OpenClaw daemon
-openclaw daemon install
+# Or with a specific template
+bash ~/.claude/plugins/openclaw-srt/skills/openclaw-srt-setup/scripts/install.sh --template developer
 
-# 4. Patch plist to add SRT wrapper
-python3 ~/.claude/plugins/openclaw-srt/skills/openclaw-srt-setup/scripts/patch-plist.py
-
-# 5. Start daemon
-launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/ai.openclaw.gateway.plist
-
-# 6. Verify
+# Verify
 openclaw status --all
 ```
+
+**Templates:** `minimal`, `default`, `ai-research`, `developer`, `job-hunting`
 
 ## Contents
 
@@ -43,6 +39,10 @@ openclaw status --all
 
 ### Scripts
 
+- `install.sh` - Unified installer (auto-detects OS)
+- `install-macos.sh` - macOS installer (launchd)
+- `install-linux.sh` - Linux installer (systemd)
+- `check-deps.sh` - Verify prerequisites
 - `patch-plist.py` - Adds SRT wrapper to OpenClaw launchd plist
 - `verify-sandbox.sh` - Verifies sandbox is active
 
@@ -50,12 +50,18 @@ openclaw status --all
 
 - `srt-settings.json` - Pre-configured SRT config for job hunting + AI news use case
 
-### References
+### References (Claude-optimized)
 
 - `architecture.md` - How SRT sandboxing actually works
 - `gotchas.md` - Hard-won debugging lessons (including the critical `--` separator issue)
 - `security-model.md` - What's protected and why
-- `linux-setup.md` - Setup for Linux with systemd
+- `macos-setup.md` / `linux-setup.md` - Platform-specific setup
+
+### Docs (Human verification)
+
+- `docs/explanation/architecture.md` - System architecture with Mermaid diagrams
+- `docs/explanation/methodology.md` - Why sandbox? Design rationale
+- `docs/explanation/sources.md` - Primary sources, citations
 
 ## Key Gotcha
 
@@ -73,10 +79,20 @@ The patch script adds this automatically.
 
 ## Requirements
 
+### Common (both platforms)
 - Node.js 22+
-- OpenClaw (`npm install -g openclaw`)
-- SRT (`npm install -g @anthropic-ai/sandbox-runtime`)
-- macOS (sandbox-exec) or Linux (bubblewrap + socat)
+- bun (preferred) or npm
+- OpenClaw (`bun install -g openclaw`)
+- SRT (`bun install -g @anthropic-ai/sandbox-runtime`)
+
+### macOS
+- uv (preferred) or Python3 (for patch script)
+- sandbox-exec (built-in)
+
+### Linux
+- bubblewrap (`apt/dnf/pacman install bubblewrap`)
+- socat (`apt/dnf/pacman install socat`)
+- User namespaces enabled (`sysctl kernel.unprivileged_userns_clone=1`)
 
 ## License
 
