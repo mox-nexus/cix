@@ -1,0 +1,84 @@
+{
+  "$comment": "OpenClaw SRT sandbox config - customize allowedDomains for your use case",
+  "network": {
+    "allowedDomains": [
+      "api.anthropic.com",
+      "api.telegram.org",
+
+      "linkedin.com",
+      "*.linkedin.com",
+      "greenhouse.io",
+      "*.greenhouse.io",
+      "lever.co",
+      "*.lever.co",
+      "levels.fyi",
+      "*.levels.fyi",
+      "wellfound.com",
+      "*.wellfound.com",
+      "ycombinator.com",
+      "*.ycombinator.com",
+      "news.ycombinator.com",
+      "workatastartup.com",
+      "*.workatastartup.com",
+
+      "anthropic.com",
+      "*.anthropic.com",
+      "openai.com",
+      "*.openai.com",
+      "deepmind.google",
+      "*.deepmind.google",
+
+      "arxiv.org",
+      "*.arxiv.org",
+      "huggingface.co",
+      "*.huggingface.co",
+
+      "techcrunch.com",
+      "*.techcrunch.com",
+      "theverge.com",
+      "*.theverge.com",
+      "arstechnica.com",
+      "*.arstechnica.com",
+      "wired.com",
+      "*.wired.com",
+
+      "x.com",
+      "*.x.com",
+      "twitter.com",
+      "*.twitter.com",
+
+      "github.com",
+      "*.github.com",
+      "githubusercontent.com",
+      "*.githubusercontent.com"
+    ],
+    "deniedDomains": [],
+    "allowLocalBinding": true
+  },
+  "filesystem": {
+    "denyRead": [
+      "~/.ssh",
+      "~/.gnupg",
+      "~/.aws",
+      "~/.config/gcloud",
+      "~/Library/Keychains",
+      "~/.password-store",
+      "~/.1password",
+      "~/.kube",
+      "~/.docker",
+      "~/.npmrc"
+    ],
+    "allowWrite": [
+      "~/.openclaw",
+      "/tmp",
+      "/var/folders"
+    ],
+    "denyWrite": [
+      "~/.bashrc",
+      "~/.zshrc",
+      "~/.profile",
+      "~/.gitconfig",
+      ".git/hooks"
+    ]
+  }
+}
