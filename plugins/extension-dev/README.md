@@ -2,30 +2,45 @@
 
 Build extensions that enable effective human-AI collaboration.
 
-## What This Is
+## Skills
 
-Implementation patterns for applying transparency, control, observability, and diversity preservation to each extension type.
+| Skill | Purpose | Use When |
+|-------|---------|----------|
+| **build-plugin** | Claude Code extensions (skills, commands, agents, hooks, MCP) | Creating any Claude Code component |
+| **build-capability** | General capability authoring patterns | Creating skills, CLIs, APIs, any tool |
 
-**For templates/structure**: use `plugin-dev`
-**For implementation patterns**: use this
+## Relationship
 
-## Scope
+```
+build-capability (general patterns)
+       ↓
+build-plugin (Claude Code specifics)
+       ↓
+plugin-dev (templates & structure)
+```
 
-| Principle | What This Plugin Provides |
-|-----------|---------------------------|
-| **Transparency** | How to make each extension type show reasoning |
-| **Control** | How to give users agency in each extension type |
-| **Observability** | How to make each extension type traceable |
-| **Non-conformity** | How to preserve diversity, resist homogenization |
-
-Plus: CLI/API patterns for LLM clients (bundle skill with capability).
+- **build-capability:** Universal patterns (progressive disclosure, degrees of freedom, feedback loops)
+- **build-plugin:** Claude Code specific (skills, agents, hooks, commands, MCP, composition)
+- **plugin-dev:** Templates and directory structure (referenced, not duplicated)
 
 ## When to Use
 
-- Building a skill, agent, hook, command, or MCP
-- Creating a CLI tool or API that Claude will use
-- Need patterns for transparency, control, observability
-- Want to evaluate/optimize extension quality
+| Need | Use |
+|------|-----|
+| Creating a Claude Code skill | build-plugin |
+| Creating a Claude Code agent | build-plugin |
+| Creating a hook or command | build-plugin |
+| Building an MCP server | build-plugin |
+| Authoring any capability (skill, CLI, API) | build-capability |
+| Understanding progressive disclosure | build-capability |
+| Plugin directory structure | plugin-dev |
+
+## Agents
+
+| Agent | Purpose |
+|-------|---------|
+| evaluator | Quality validation for extensions |
+| optimizer | Fix identified issues |
 
 ## Structure
 
@@ -33,18 +48,20 @@ Plus: CLI/API patterns for LLM clients (bundle skill with capability).
 extension-dev/
 ├── .claude-plugin/plugin.json
 ├── docs/
-│   └── explanation/           # Human-optimized (Diátaxis)
-│       ├── methodology.md     # Why these principles
-│       ├── sources.md         # Research bibliography
-│       ├── evaluator.md       # Why evaluator gates
-│       └── optimizer.md       # Why optimizer patterns
+│   └── explanation/           # Human-optimized (Diataxis)
+│       ├── methodology.md
+│       ├── sources.md
+│       ├── evaluator.md
+│       └── optimizer.md
 ├── agents/
-│   ├── evaluator.md           # Quality validator
-│   └── optimizer.md           # Fix identified issues
+│   ├── evaluator.md
+│   └── optimizer.md
 ├── skills/
-│   └── building-extensions/
-│       ├── SKILL.md           # Implementation patterns
-│       └── references/        # Detailed patterns
+│   ├── build-plugin/          # Claude Code extensions
+│   │   └── SKILL.md
+│   └── build-capability/      # General capability authoring
+│       ├── SKILL.md
+│       └── references/
 └── README.md
 ```
 
