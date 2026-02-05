@@ -13,7 +13,12 @@ Architecture note (from Burner):
 from functools import lru_cache
 
 from memex.adapters._out.corpus import DuckDBCorpus
-from memex.adapters._out.embedding import NomicEmbedder
+from memex.adapters._out.embedding import LocalEmbedder
+
+# NOTE: Nomic (768-dim) is flaky on macOS 14 due to PyTorch MPS limitation.
+# Matrix operations > 2^32 entries fail silently with long text fragments.
+# Using MiniLM (384-dim) until macOS 15+ or workaround available.
+# See: https://github.com/pytorch/pytorch/issues/XXX
 from memex.adapters._out.sources import ClaudeConversationsAdapter, OpenAIConversationsAdapter
 from memex.config.settings import settings
 from memex.domain.ports._out.embedding import EmbeddingPort
@@ -30,9 +35,10 @@ class EmbeddingDimensionMismatchError(Exception):
 def get_embedder() -> EmbeddingPort:
     """Get or create embedder (cached, lazy load).
 
-    Uses Nomic by default (768-dim, better quality).
+    Uses MiniLM (384-dim) - stable on macOS 14.
+    Nomic (768-dim) has MPS overflow issues with long texts.
     """
-    return NomicEmbedder()
+    return LocalEmbedder()
 
 
 def reranker_available() -> bool:

@@ -6,6 +6,13 @@ Thin driving adapter. Wiring in composition root. Formatting in formatters.
 from pathlib import Path
 
 import rich_click as click
+from rich.progress import (
+    BarColumn,
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    TimeElapsedColumn,
+)
 from rich.table import Table
 
 from memex import skill as skill_module
@@ -46,10 +53,10 @@ click.rich_click.COMMAND_GROUPS = {
 @click.option("--verbose", "-v", is_flag=True, help="Verbose output")
 @click.option("--skill", is_flag=True, help="Output skill documentation for Claude")
 @click.option("--reference", "-r", help="Specific skill reference (use with --skill)")
-@click.version_option()
+@click.version_option(prog_name="memex (experimental)")
 @click.pass_context
 def main(ctx: click.Context, verbose: bool, skill: bool, reference: str | None):
-    """Memex - Extended memory for you and your agents."""
+    """Memex - Extended memory for you and your agents. [experimental]"""
     from memex.config.settings import settings
 
     if verbose:
@@ -356,8 +363,11 @@ def rebuild():
 def backfill(batch_size: int):
     """Generate embeddings for existing fragments.
 
+    Shows progress bar with ETA. Observable by default.
+
     Example:
         memex backfill
+        memex backfill --batch-size 50  # Smaller batches for lower memory
     """
     with obs.status("Loading embedding model..."):
         service = create_service(with_embedder=True)
@@ -371,14 +381,28 @@ def backfill(batch_size: int):
             return
 
         obs.info(f"Fragments without embeddings: {without:,}")
+        obs.info(f"Batch size: {batch_size}")
+        model = getattr(service.embedder, "model_name", "unknown")
+        obs.info(f"Model: {model}")
 
-        def progress(processed: int, total: int):
-            pct = processed / total * 100 if total > 0 else 100
-            obs.console.print(f"\r[dim]Progress: {processed:,}/{total:,} ({pct:.1f}%)[/]", end="")
+        # Rich progress bar with ETA
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            TextColumn("({task.completed:,}/{task.total:,})"),
+            TimeElapsedColumn(),
+            console=obs.console,
+            transient=False,
+        ) as progress_bar:
+            task = progress_bar.add_task("Embedding", total=without)
 
-        updated = service.backfill_embeddings(batch_size, progress)
+            def on_progress(processed: int, total: int):
+                progress_bar.update(task, completed=processed)
 
-        obs.console.print()
+            updated = service.backfill_embeddings(batch_size, on_progress)
+
         obs.success(f"Generated embeddings for {updated:,} fragments")
     finally:
         service.corpus.close()
@@ -470,7 +494,17 @@ def status():
         coverage = (0, stats["total_fragments"])  # All need re-embedding
         corpus.close()
 
-    obs.console.print("\n[bold]Memex Configuration[/bold]")
+    from memex import __status__, __version__
+
+    status_color = {
+        "experimental": "yellow",
+        "beta": "cyan",
+        "stable": "green",
+        "deprecated": "red",
+    }
+    color = status_color.get(__status__, "dim")
+
+    obs.console.print(f"\n[bold]Memex[/bold] v{__version__} [{color}]{__status__}[/{color}]")
     obs.console.print("─" * 40)
 
     # Corpus info

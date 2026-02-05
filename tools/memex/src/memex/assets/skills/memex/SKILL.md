@@ -128,3 +128,4 @@ For detailed patterns, use `memex --skill -r <name>`:
 | query | `memex --skill -r query` | SQL query patterns, output formats |
 | ingest | `memex --skill -r ingest` | Ingest workflow, embedding options |
 | schema | `memex --skill -r schema` | Full schema, index details |
+| embeddings | `memex --skill -r embeddings` | Model selection, dimension mismatch, backfill patterns |
