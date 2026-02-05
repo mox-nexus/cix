@@ -32,22 +32,34 @@ OpenClaw can execute code, access network, read/write files. Without sandboxing:
 
 ## Setup Flow
 
-### Step 1: Prerequisites
+### Quick Install (Recommended)
 
 ```bash
-# Check Node.js 22+
-node --version
+# Check dependencies first
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-deps.sh
 
-# Install OpenClaw
-npm install -g openclaw
+# Run installer (auto-detects OS)
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/install.sh
 
-# Install SRT
-npm install -g @anthropic-ai/sandbox-runtime
-
-# Verify
-openclaw --version
-srt --version
+# Or with specific template
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/install.sh --template developer
 ```
+
+### Manual Setup
+
+#### Step 1: Prerequisites
+
+| OS | Required | Install |
+|----|----------|---------|
+| **Both** | Node.js 22+ | `brew install node@22` / distro package |
+| **Both** | bun (preferred) | `curl -fsSL https://bun.sh/install \| bash` |
+| **Both** | OpenClaw | `bun install -g openclaw` |
+| **Both** | SRT | `bun install -g @anthropic-ai/sandbox-runtime` |
+| **macOS** | uv (preferred) | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| **Linux** | bubblewrap | `apt/dnf/pacman install bubblewrap` |
+| **Linux** | socat | `apt/dnf/pacman install socat` |
+
+**Linux extra:** Enable user namespaces: `sudo sysctl -w kernel.unprivileged_userns_clone=1`
 
 ### Step 2: Create SRT Config
 
@@ -250,6 +262,7 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/ai.openclaw.gateway.plis
 | CLI gotchas, edge cases | [gotchas.md](references/gotchas.md) |
 | Full security analysis | [security-model.md](references/security-model.md) |
 | Telegram bot setup | [telegram-setup.md](references/telegram-setup.md) |
+| Logging & debugging | [observability.md](references/observability.md) |
 
 ## Config Templates
 

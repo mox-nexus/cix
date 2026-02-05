@@ -4,21 +4,13 @@ OpenClaw + SRT on Linux using systemd and bubblewrap.
 
 ## Prerequisites
 
-```bash
-# Install bubblewrap and socat (required for SRT)
-# Debian/Ubuntu:
-sudo apt install bubblewrap socat
-
-# Fedora/RHEL:
-sudo dnf install bubblewrap socat
-
-# Arch:
-sudo pacman -S bubblewrap socat
-
-# Verify
-bwrap --version
-socat -V
-```
+| Tool | Debian/Ubuntu | Fedora/RHEL | Arch |
+|------|---------------|-------------|------|
+| bubblewrap | `apt install bubblewrap` | `dnf install bubblewrap` | `pacman -S bubblewrap` |
+| socat | `apt install socat` | `dnf install socat` | `pacman -S socat` |
+| Node.js 22+ | NodeSource or nvm | dnf module | `pacman -S nodejs` |
+| OpenClaw | `npm install -g openclaw` | same | same |
+| SRT | `npm install -g @anthropic-ai/sandbox-runtime` | same | same |
 
 ## Check Kernel Support
 

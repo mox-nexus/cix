@@ -1,25 +1,16 @@
 # macOS Setup
 
-Complete guide for OpenClaw + SRT on macOS using launchd.
+OpenClaw + SRT on macOS using launchd.
 
 ## Prerequisites
 
-```bash
-# Node.js 22+ (via Homebrew)
-brew install node@22
-node --version  # Should be v22.x+
+| Tool | Install | Common Path |
+|------|---------|-------------|
+| Node.js 22+ | `brew install node@22` | /opt/homebrew/bin/node |
+| OpenClaw | `npm install -g openclaw` | varies |
+| SRT | `npm install -g @anthropic-ai/sandbox-runtime` | ~/.bun/bin/srt |
 
-# OpenClaw
-npm install -g openclaw
-openclaw --version
-
-# SRT (Sandbox Runtime)
-npm install -g @anthropic-ai/sandbox-runtime
-srt --version
-
-# Find where srt is installed
-which srt  # Usually ~/.bun/bin/srt or /usr/local/bin/srt
-```
+**Find srt:** `which srt` — you'll need the full path for the plist patch.
 
 ## Step 1: Initialize OpenClaw
 
