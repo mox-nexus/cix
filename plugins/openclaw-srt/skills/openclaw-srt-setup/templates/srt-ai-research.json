@@ -1,0 +1,84 @@
+{
+  "$comment": "AI Research monitoring - labs, arxiv, HuggingFace, news",
+  "network": {
+    "allowedDomains": [
+      "api.anthropic.com",
+      "api.telegram.org",
+
+      "anthropic.com",
+      "*.anthropic.com",
+      "openai.com",
+      "*.openai.com",
+      "deepmind.google",
+      "*.deepmind.google",
+      "ai.meta.com",
+      "*.ai.meta.com",
+      "research.google",
+      "*.research.google",
+      "ai.google",
+      "*.ai.google",
+      "mistral.ai",
+      "*.mistral.ai",
+
+      "arxiv.org",
+      "*.arxiv.org",
+      "huggingface.co",
+      "*.huggingface.co",
+      "paperswithcode.com",
+      "*.paperswithcode.com",
+      "semanticscholar.org",
+      "*.semanticscholar.org",
+
+      "github.com",
+      "*.github.com",
+      "githubusercontent.com",
+      "*.githubusercontent.com",
+
+      "techcrunch.com",
+      "*.techcrunch.com",
+      "theverge.com",
+      "*.theverge.com",
+      "wired.com",
+      "*.wired.com",
+      "arstechnica.com",
+      "*.arstechnica.com",
+      "venturebeat.com",
+      "*.venturebeat.com",
+      "theinformation.com",
+      "*.theinformation.com",
+
+      "x.com",
+      "*.x.com",
+      "twitter.com",
+      "*.twitter.com"
+    ],
+    "deniedDomains": [],
+    "allowLocalBinding": true
+  },
+  "filesystem": {
+    "denyRead": [
+      "~/.ssh",
+      "~/.gnupg",
+      "~/.aws",
+      "~/.config/gcloud",
+      "~/Library/Keychains",
+      "~/.password-store",
+      "~/.1password",
+      "~/.kube",
+      "~/.docker",
+      "~/.npmrc"
+    ],
+    "allowWrite": [
+      "~/.openclaw",
+      "/tmp",
+      "/var/folders"
+    ],
+    "denyWrite": [
+      "~/.bashrc",
+      "~/.zshrc",
+      "~/.profile",
+      "~/.gitconfig",
+      ".git/hooks"
+    ]
+  }
+}

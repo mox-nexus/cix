@@ -1,0 +1,91 @@
+{
+  "$comment": "Job hunting - job boards, company career pages, LinkedIn",
+  "network": {
+    "allowedDomains": [
+      "api.anthropic.com",
+      "api.telegram.org",
+
+      "linkedin.com",
+      "*.linkedin.com",
+
+      "greenhouse.io",
+      "*.greenhouse.io",
+      "lever.co",
+      "*.lever.co",
+      "ashbyhq.com",
+      "*.ashbyhq.com",
+      "workday.com",
+      "*.workday.com",
+      "icims.com",
+      "*.icims.com",
+      "smartrecruiters.com",
+      "*.smartrecruiters.com",
+      "jobvite.com",
+      "*.jobvite.com",
+
+      "levels.fyi",
+      "*.levels.fyi",
+      "glassdoor.com",
+      "*.glassdoor.com",
+      "indeed.com",
+      "*.indeed.com",
+      "builtin.com",
+      "*.builtin.com",
+
+      "ycombinator.com",
+      "*.ycombinator.com",
+      "news.ycombinator.com",
+      "workatastartup.com",
+      "*.workatastartup.com",
+      "wellfound.com",
+      "*.wellfound.com",
+
+      "careers.google.com",
+      "jobs.apple.com",
+      "amazon.jobs",
+      "*.amazon.jobs",
+      "careers.microsoft.com",
+      "*.careers.microsoft.com",
+      "meta.com",
+      "*.meta.com",
+
+      "anthropic.com",
+      "*.anthropic.com",
+      "openai.com",
+      "*.openai.com",
+      "deepmind.google",
+      "*.deepmind.google",
+
+      "github.com",
+      "*.github.com"
+    ],
+    "deniedDomains": [],
+    "allowLocalBinding": true
+  },
+  "filesystem": {
+    "denyRead": [
+      "~/.ssh",
+      "~/.gnupg",
+      "~/.aws",
+      "~/.config/gcloud",
+      "~/Library/Keychains",
+      "~/.password-store",
+      "~/.1password",
+      "~/.kube",
+      "~/.docker",
+      "~/.npmrc"
+    ],
+    "allowWrite": [
+      "~/.openclaw",
+      "/tmp",
+      "/var/folders"
+    ],
+    "denyWrite": [
+      "~/.bashrc",
+      "~/.zshrc",
+      "~/.profile",
+      "~/.gitconfig",
+      ".git/hooks"
+    ]
+  }
+}
