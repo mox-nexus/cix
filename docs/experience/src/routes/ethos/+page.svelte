@@ -4,6 +4,9 @@
 	import ScrollySection from '$lib/components/ethos/ScrollySection.svelte';
 	import Step from '$lib/components/ethos/Step.svelte';
 	import ProgressNav from '$lib/components/ethos/ProgressNav.svelte';
+	import DuelingStat from '$lib/components/ethos/DuelingStat.svelte';
+	import ExtendedMindDiagram from '$lib/components/ethos/ExtendedMindDiagram.svelte';
+	import PrincipleCard from '$lib/components/ethos/PrincipleCard.svelte';
 	import { GlyphBackground } from '$lib/components/atmosphere';
 	import { setLenisInstance, prefersReducedMotion, currentSection } from '$lib/stores/scroll';
 
@@ -13,8 +16,10 @@
 		{ id: 'illusion', title: 'The Productivity Illusion' },
 		{ id: 'hollowing', title: 'The Hollowing Problem' },
 		{ id: 'collaboration', title: 'What Makes Collaboration Work' },
+		{ id: 'trust', title: 'The Trust Paradox' },
 		{ id: 'complementary', title: 'Complementary vs Substitutive' },
-		{ id: 'principles', title: 'Core Principles' },
+		{ id: 'cognition', title: 'Cognitive Extensions' },
+		{ id: 'principles', title: 'Design Principles' },
 		{ id: 'goal', title: 'The Goal' }
 	];
 
@@ -236,6 +241,56 @@
 		</Step>
 	</ScrollySection>
 
+	<!-- The Trust Paradox -->
+	<ScrollySection id="trust">
+		<Step>
+			<h2>The trust paradox</h2>
+			<p>The numbers don't add up — until they do.</p>
+		</Step>
+		<Step>
+			<DuelingStat
+				leftValue={84}
+				leftLabel="use AI"
+				rightValue={33}
+				rightLabel="trust it"
+			/>
+			<p class="paradox-note">
+				46% actively distrust. Only 60% view AI favorably, down from 77% in 2023.
+				People adopt tools they don't believe in.
+			</p>
+		</Step>
+		<Step>
+			<p>The paradox resolves when you look at who ships.</p>
+			<div class="trust-comparison">
+				<div class="trust-group">
+					<span class="trust-label">Seniors</span>
+					<span class="trust-stat warning">20% high distrust</span>
+					<span class="trust-outcome success">Ship 2.5x more AI code</span>
+				</div>
+				<div class="trust-group">
+					<span class="trust-label">Juniors</span>
+					<span class="trust-stat">17% rely without editing</span>
+					<span class="trust-outcome warning">Can't verify, can't catch errors</span>
+				</div>
+			</div>
+			<p>
+				<strong>Low trust enables high output.</strong> Seniors treat AI as rough draft material —
+				fast generation, heavy revision. The productivity comes from rapid correction, not AI correctness.
+			</p>
+		</Step>
+		<Step>
+			<p>
+				Explanations don't fix miscalibrated trust. Bansal et al. (CHI 2021) found that
+				detailed AI explanations <em>increase</em> overreliance.
+			</p>
+			<p>
+				What works: cognitive forcing functions. Requiring engagement before accepting output.
+				It improves calibration but hurts satisfaction.
+				<strong>The interventions that work aren't the ones people like.</strong>
+			</p>
+		</Step>
+	</ScrollySection>
+
 	<!-- Complementary vs Substitutive -->
 	<ScrollySection id="complementary">
 		<Step>
@@ -282,32 +337,75 @@
 		</Step>
 	</ScrollySection>
 
-	<!-- Core Principles -->
-	<ScrollySection id="principles">
+	<!-- Cognitive Extensions -->
+	<ScrollySection id="cognition">
 		<Step>
-			<h2>Core principles</h2>
-			<p>From the research:</p>
+			<h2>Cognitive extensions</h2>
+			<p class="lead">Your notebook isn't just storage. It's part of how you think.</p>
 		</Step>
 		<Step>
-			<dl class="principles">
-				<dt>Complementary</dt>
-				<dd>AI amplifies, doesn't replace. Human remains central.</dd>
+			<p>
+				Clark and Chalmers (1998) proposed the <strong>extended mind thesis</strong>:
+				cognitive processes don't stop at the skull.
+			</p>
+			<p>
+				Otto uses a notebook to remember the museum address. Inga uses biological memory.
+				Philosophy of mind says: if we call Inga's process "remembering,"
+				we should call Otto's the same. <em>The notebook is part of Otto's mind.</em>
+			</p>
+		</Step>
+		<Step>
+			<ExtendedMindDiagram />
+		</Step>
+		<Step>
+			<p>
+				<strong>The parity principle:</strong> if a process were done in the head,
+				we'd call it cognition. When external but functionally equivalent, it's cognitive extension.
+			</p>
+			<p>
+				This is why we call them cognitive extensions, not tools.
+				They become part of how you think.
+			</p>
+			<p class="the-question">
+				The question isn't "is AI helpful?"<br />
+				It's <strong>"what kind of mind are you building?"</strong>
+			</p>
+		</Step>
+	</ScrollySection>
 
-				<dt>Constitutive</dt>
-				<dd>Enables new capability through collaboration. The whole is other than the sum of its parts.</dd>
-
-				<dt>Transparent by default</dt>
-				<dd>Provenance, traceability, explanations, observability. Show reasoning at every step.</dd>
-
-				<dt>Compounding mastery</dt>
-				<dd>Each interaction makes both human and AI more capable. Learning compounds.</dd>
-
-				<dt>Enabling control</dt>
-				<dd>User agency is the strongest lever (β = 0.507). Shape how, not just what.</dd>
-
-				<dt>Non-conformity</dt>
-				<dd>Preserve intellectual diversity. Resist homogenization. Different perspectives enable collective intelligence.</dd>
-			</dl>
+	<!-- Design Principles -->
+	<ScrollySection id="principles">
+		<Step>
+			<h2>Design principles</h2>
+			<p>From the research, four principles for extension design:</p>
+		</Step>
+		<Step>
+			<div class="principles-grid">
+				<PrincipleCard
+					name="Collaborative Agency"
+					description="Both human and AI retain agency. Transparency requires AI that shows its work. Control requires AI that can be directed. Neither master nor servant — collaborators."
+					accent="blue"
+					delay={0}
+				/>
+				<PrincipleCard
+					name="Bidirectional Learning"
+					description="The human learns, not just consumes. Reciprocity predicts good outcomes. Passive consumption predicts atrophy. Each interaction should make you more capable."
+					accent="green"
+					delay={150}
+				/>
+				<PrincipleCard
+					name="Transparent Abstractions"
+					description="Extensions should be readable, forkable, verifiable. If you can't see through it, you can't learn from it. Black boxes don't build trust."
+					accent="neutral"
+					delay={300}
+				/>
+				<PrincipleCard
+					name="Compounding Engineering"
+					description="Each solution makes the next one faster. Write it down, build on it. Mastery compounds with every use."
+					accent="green"
+					delay={450}
+				/>
+			</div>
 		</Step>
 	</ScrollySection>
 
@@ -360,30 +458,92 @@
 	}
 
 	.warning {
-		color: var(--dao-red);
+		color: var(--ci-red);
 	}
 
 	.success {
-		color: var(--dao-green);
+		color: var(--emergence-core);
 	}
 
-	.principles {
-		display: grid;
-		gap: var(--space-2);
-	}
-
-	.principles dt {
-		font-family: var(--font-sans);
-		font-weight: 600;
-		color: var(--dao-blue);
-		margin-bottom: var(--space-1);
-	}
-
-	.principles dd {
-		margin: 0 0 var(--space-2) 0;
-		padding-left: var(--space-2);
-		border-left: 2px solid var(--dao-border);
+	/* Trust Paradox Styles */
+	.paradox-note {
+		font-size: var(--type-sm);
 		color: var(--dao-muted);
+		text-align: center;
+		margin-top: var(--space-2);
+	}
+
+	.trust-comparison {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--space-4);
+		margin: var(--space-3) 0;
+	}
+
+	.trust-group {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+		padding: var(--space-2);
+		background: var(--dao-surface);
+		border-radius: var(--radius-sm);
+	}
+
+	.trust-label {
+		font-family: var(--font-sans);
+		font-size: var(--type-sm);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wider);
+		color: var(--dao-text);
+	}
+
+	.trust-stat {
+		font-family: var(--font-mono);
+		font-size: var(--type-sm);
+		color: var(--dao-muted);
+	}
+
+	.trust-stat.warning {
+		color: var(--ci-red);
+	}
+
+	.trust-outcome {
+		font-family: var(--font-mono);
+		font-size: var(--type-sm);
+		padding-top: var(--space-1);
+		border-top: 1px solid var(--dao-border);
+	}
+
+	.trust-outcome.success {
+		color: var(--emergence-core);
+	}
+
+	.trust-outcome.warning {
+		color: var(--ci-red);
+	}
+
+	/* Cognitive Extensions Styles */
+	.the-question {
+		font-size: var(--type-lg);
+		text-align: center;
+		margin-top: var(--space-4);
+		padding: var(--space-3);
+		background: var(--dao-surface);
+		border-left: 4px solid var(--spark-core);
+	}
+
+	.the-question strong {
+		color: var(--spark-core);
+		display: block;
+		font-size: var(--type-xl);
+		margin-top: var(--space-1);
+	}
+
+	/* Principles Grid */
+	.principles-grid {
+		display: grid;
+		gap: var(--space-4);
 	}
 
 	blockquote {
@@ -406,7 +566,13 @@
 		font-family: var(--font-sans);
 		font-size: var(--type-lg);
 		font-weight: 600;
-		color: var(--dao-green);
-		border-bottom-color: var(--dao-green);
+		color: var(--emergence-core);
+		border-bottom-color: var(--emergence-core);
+	}
+
+	@media (max-width: 640px) {
+		.trust-comparison {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>
