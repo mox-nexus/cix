@@ -25,10 +25,16 @@ class OpenAIConversationsAdapter:
     def can_handle(self, path: Path) -> bool:
         """Check if this looks like a ChatGPT export."""
         name = path.name.lower()
+        # Check filename first
+        if "chatgpt" in name or "openai" in name:
+            return path.suffix in (".zip", ".json")
+        # For zip files, check contents for conversations.json (ChatGPT export signature)
         if path.suffix == ".zip":
-            return "chatgpt" in name or "openai" in name
-        if path.suffix == ".json":
-            return "chatgpt" in name or "openai" in name
+            try:
+                with zipfile.ZipFile(path, "r") as zf:
+                    return "conversations.json" in zf.namelist()
+            except zipfile.BadZipFile:
+                return False
         return False
 
     def source_kind(self) -> str:
