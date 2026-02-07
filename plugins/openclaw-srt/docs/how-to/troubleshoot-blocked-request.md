@@ -170,7 +170,7 @@ srt --settings ~/.srt-settings.json -- curl -sI "https://api.github.com"
 If the three-step debug doesn't find it, enable SRT debug output:
 
 ```bash
-DEBUG=1 srt -d --settings ~/.srt-settings.json -- curl -v "https://failing-domain.com" 2>&1 | tee /tmp/srt-debug.log
+SRT_DEBUG=1 srt -d --settings ~/.srt-settings.json -- curl -v "https://failing-domain.com" 2>&1 | tee /tmp/srt-debug.log
 ```
 
 Look for:

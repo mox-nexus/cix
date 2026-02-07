@@ -1,81 +1,127 @@
 ---
 name: openclaw-srt-setup
-description: "Sets up OpenClaw with SRT sandbox. Use when: installing OpenClaw securely, configuring network/filesystem restrictions, setting up daemon with sandboxing, troubleshooting SRT issues."
+description: "Restrict what OpenClaw can access on your machine using OS-level sandboxing. Use when: protecting credentials (SSH keys, API tokens) from the gateway process, limiting network to approved domains, preventing unauthorized file writes, hardening OpenClaw deployment, setting up SRT sandbox, troubleshooting sandbox issues. Works with: healthcheck skill for full security posture."
+metadata:
+  openclaw:
+    emoji: null
+    requires: { bins: ["srt"] }
+    install:
+      - id: npm-srt
+        kind: npm
+        package: "@anthropic-ai/sandbox-runtime"
+        bins: ["srt"]
+        label: "Install Sandbox Runtime (npm)"
 ---
 
-# OpenClaw + SRT Setup
+# OpenClaw + SRT Sandbox
 
-Run OpenClaw inside SRT (Sandbox Runtime) for defense-in-depth.
+Wrap the OpenClaw gateway process with OS-level restrictions (filesystem, network) using Anthropic's Sandbox Runtime.
 
-## Why Sandbox?
+## Why This Matters
 
-| Risk | Impact | SRT Mitigation |
-|------|--------|----------------|
-| Credential theft | SSH keys, API tokens exposed | `denyRead: ~/.ssh, ~/.aws` |
-| Exfiltration | Data sent to attacker | `allowedDomains` whitelist |
-| Persistence | Shell configs backdoored | `denyWrite: ~/.bashrc` |
+OpenClaw's Docker sandbox protects against malicious agent tool execution. SRT protects the **gateway process itself** — the Node.js process that manages sessions, calls APIs, and connects to channels. These are different layers with different failure modes (Swiss Cheese Model).
 
-## Quick Decision
-
-| Situation | Action |
-|-----------|--------|
-| Fresh install | `bash ${CLAUDE_PLUGIN_ROOT}/scripts/install.sh` |
-| Existing OpenClaw | Patch plist (Step 3 below) |
-| Just want config | Copy template, customize domains |
-| Network issues | See [gotchas.md](references/gotchas.md) |
-
----
-
-## Setup Checklist
-
-Work through steps sequentially. Each depends on the previous.
-
-- [ ] Prerequisites installed (Node 22+, bun, OpenClaw, SRT)
-- [ ] SRT config created (`~/.srt-settings.json`)
-- [ ] Daemon installed (`openclaw daemon install`)
-- [ ] Plist patched for SRT (`patch-plist.py`)
-- [ ] Sandbox verified (`verify-sandbox.sh`)
+| Threat | Docker Sandbox | SRT | Both |
+|--------|---------------|-----|------|
+| Malicious agent tool reads ~/.ssh | Blocked (container) | N/A | Blocked |
+| Supply chain attack on gateway dependency | **NOT blocked** | Blocked (kernel denyRead) | Blocked |
+| Gateway exfiltrates to attacker.com | **NOT blocked** | Blocked (proxy allowlist) | Blocked |
 
 ---
 
-## Setup Flow
+## Core Rules
 
-### Prerequisites
+- Require explicit approval before any state-changing action
+- Infer OS, existing installation state, and prerequisites before asking user
+- Show exact command before executing — never run launchctl/systemctl silently
+- If verification fails, diagnose and offer fix (don't just say "fix and retry")
+- Present choices as numbered options so user can reply with a single digit
+- Default to minimal security profile — every domain addition is a conscious decision
 
-| OS | Required |
-|----|----------|
-| Both | Node 22+, bun, OpenClaw, SRT |
-| Linux | bubblewrap, socat, `kernel.unprivileged_userns_clone=1` |
+---
 
-### Step 1: Create SRT Config
+## Workflow
 
+Follow these phases in order. Each builds on the previous.
+
+### 1) Infer context (read-only)
+
+Check before asking:
+- OS (macOS or Linux)
+- OpenClaw installed? (`which openclaw`)
+- SRT installed? (`which srt`)
+- Gateway running? (`ps aux | grep openclaw`)
+- Already sandboxed? (`ps aux | grep "srt.*settings"`)
+- Existing SRT config? (`ls ~/.srt-settings.json`)
+
+Report: "Here's what I found: [state]. Here's what's needed: [gaps]."
+
+### 2) Choose security profile
+
+Present numbered options:
+
+1. **Minimal** (recommended) — Claude API + Telegram only (2 domains). Maximum security.
+2. **Developer** — Adds GitHub, npm, docs (~50 domains).
+3. **AI Research** — Adds arXiv, HuggingFace, AI blogs (~30 domains).
+4. **Custom** — Start minimal, add domains as needed.
+
+Copy the chosen template:
 ```bash
-cp ${CLAUDE_PLUGIN_ROOT}/templates/srt-settings.json ~/.srt-settings.json
+cp assets/srt-minimal.json ~/.srt-settings.json
 ```
 
-**Critical:** `*.example.com` does NOT match `example.com`. Include both.
+**Critical wildcard gotcha:** `*.example.com` does NOT match `example.com`. Always include both.
 
-### Step 2: Install Daemon
+### 3) Show plan
 
+Before any changes, present the exact steps:
+- "I will: install daemon, patch plist to wrap with SRT, verify sandbox is active"
+- Show the commands that will run
+- Wait for approval
+
+### 4) Execute with approval
+
+**macOS:**
 ```bash
+# Install daemon (if not running)
 openclaw daemon install
-```
 
-### Step 3: Patch for SRT (macOS)
-
-```bash
-launchctl bootout gui/$(id -u)/ai.openclaw.gateway
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/patch-plist.py
+# Stop, patch, restart with SRT
+launchctl bootout gui/$(id -u)/ai.openclaw.gateway 2>/dev/null || true
+python3 scripts/patch-plist.py
 launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/ai.openclaw.gateway.plist
 ```
 
-### Step 4: Verify
+**Linux:** See [linux-setup.md](references/linux-setup.md) for systemd equivalent.
+
+Each command: show it, explain what it does, get approval before running.
+
+### 5) Verify
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/verify-sandbox.sh
+bash scripts/verify-sandbox.sh
 ```
 
-**Feedback loop:** If verification fails, fix the issue and re-run Step 4. Only proceed when all checks pass.
+If any check fails:
+1. Read the error message (the script provides specific diagnostics)
+2. Diagnose the cause
+3. Offer a fix
+4. Re-run verification
+
+Only report success when all checks pass.
+
+---
+
+## After OpenClaw Upgrades
+
+`openclaw daemon install --force` overwrites plist. Re-run from Phase 4:
+
+```bash
+launchctl bootout gui/$(id -u)/ai.openclaw.gateway
+python3 scripts/patch-plist.py
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/ai.openclaw.gateway.plist
+bash scripts/verify-sandbox.sh
+```
 
 ---
 
@@ -95,16 +141,31 @@ The patch script adds `--` automatically. If manually running commands through S
 
 ---
 
-## Architecture Summary
+## Architecture
 
 ```
 launchd → srt --settings → sandbox-exec (kernel) + HTTP proxy (network)
 ```
 
-- Filesystem: kernel-enforced via seatbelt
-- Network: proxy-enforced via domain allowlist
+- **Filesystem:** kernel-enforced via Seatbelt (macOS) / bubblewrap (Linux)
+- **Network:** macOS: kernel-enforced Seatbelt blocks all non-localhost + proxy filters by domain. Linux: network namespace isolation + proxy.
 
 See [architecture.md](references/architecture.md) for internals.
+
+---
+
+## Limitations
+
+What SRT does **NOT** protect against:
+
+| Limitation | Why | Mitigation |
+|---|---|---|
+| Docker socket abuse | Gateway needs Docker access to manage agent containers | Monitor Docker activity |
+| Kernel exploits | Beyond application sandbox | Keep OS patched |
+| Config tampering | If `~/.srt-settings.json` is writable | Not under any allowWrite path by default |
+| Side-channel attacks | Timing, cache, spectre | Beyond scope |
+
+SRT is defense-in-depth, not a silver bullet. It raises the bar significantly but does not eliminate all risk. The Docker socket is the most significant remaining gap — a compromised gateway could use it to create privileged containers.
 
 ---
 
@@ -116,19 +177,7 @@ See [architecture.md](references/architecture.md) for internals.
 | Restart | `launchctl kickstart -k gui/$(id -u)/ai.openclaw.gateway` |
 | Logs | `tail -f ~/.openclaw/logs/gateway.log` |
 | Stop | `launchctl bootout gui/$(id -u)/ai.openclaw.gateway` |
-
----
-
-## After Upgrades
-
-`openclaw daemon install --force` overwrites plist. Re-patch:
-
-```bash
-launchctl bootout gui/$(id -u)/ai.openclaw.gateway
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/patch-plist.py
-launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/ai.openclaw.gateway.plist
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/verify-sandbox.sh
-```
+| Debug SRT | `srt -d --settings ~/.srt-settings.json -- echo test` |
 
 ---
 
@@ -144,11 +193,14 @@ bash ${CLAUDE_PLUGIN_ROOT}/scripts/verify-sandbox.sh
 | Telegram bot | [telegram-setup.md](references/telegram-setup.md) |
 | Logging | [observability.md](references/observability.md) |
 
-## Templates
+## Config Templates
 
-| Template | Use Case |
-|----------|----------|
-| `srt-minimal.json` | Claude + Telegram only |
-| `srt-settings.json` | Full featured (default) |
-| `srt-developer.json` | GitHub, npm, docs |
-| `srt-job-hunting.json` | LinkedIn, job boards |
+Available in `assets/`:
+
+| Template | Domains | Use Case |
+|----------|---------|----------|
+| `srt-minimal.json` | 2 | Claude + Telegram only (recommended default) |
+| `srt-developer.json` | ~50 | GitHub, npm, docs |
+| `srt-ai-research.json` | ~30 | arXiv, HuggingFace, AI blogs |
+| `srt-job-hunting.json` | ~25 | LinkedIn, job boards |
+| `srt-settings.json` | ~50 | All-inclusive (use specific templates instead) |

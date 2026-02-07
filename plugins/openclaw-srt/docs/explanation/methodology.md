@@ -65,18 +65,19 @@ flowchart TB
 
 **Why OS-level enforcement matters:**
 
-| Approach | Bypass Risk | Why |
-|----------|-------------|-----|
-| Application-level filtering | High | Code can be subverted |
-| Docker | Medium | Requires privilege, desktop UX poor |
-| VM | Low | Heavy, slow, isolation overkill |
-| SRT (kernel-enforced) | Low | Kernel enforces, lightweight |
+OpenClaw already uses Docker to sandbox agent tool execution (`--read-only`, `--network none`, `--cap-drop ALL`). But the gateway process itself — the Node.js process handling messages, calling Claude, managing channels — runs outside Docker. SRT wraps that process at the OS level.
+
+| Layer | What | Bypass Risk | Why |
+|-------|------|-------------|-----|
+| OpenClaw Docker | Agent tools | Low | Container isolation, no network, no capabilities |
+| SRT (kernel-enforced) | Gateway process | Low | Seatbelt/bwrap, kernel enforces |
+| Both together | Full stack | Very low | Different mechanisms, different holes (Swiss Cheese) |
 
 SRT uses:
 - **macOS**: `sandbox-exec` + Seatbelt profiles (TrustedBSD MAC framework)
 - **Linux**: `bubblewrap` + namespace isolation
 
-These are kernel-level mechanisms. An application can't bypass them without kernel exploits.
+These are kernel-level mechanisms. An application can't bypass them without kernel exploits. And they protect the gateway process that OpenClaw's Docker sandbox cannot reach.
 
 ---
 

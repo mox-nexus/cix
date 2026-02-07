@@ -240,6 +240,44 @@ flowchart TB
     style BLOCKED fill:#999,color:#fff
 ```
 
+### Two Sandbox Layers (Swiss Cheese Model)
+
+OpenClaw has its own Docker-based sandbox for agent tool execution — containers with `--read-only` root, `--network none`, `--cap-drop ALL`, exec approval systems, and tool allow/deny policies. So why add SRT on top?
+
+Because these two systems protect different things:
+
+```mermaid
+flowchart TB
+    subgraph "Layer 2: SRT (OS-Level)"
+        subgraph "Layer 1: OpenClaw Docker (App-Level)"
+            AGENT[Agent Tool Execution]
+        end
+        GATEWAY[OpenClaw Gateway Process]
+    end
+
+    GATEWAY -.-> |"denyRead"| CREDS[~/.ssh, ~/.aws]
+    GATEWAY --> |"allowedDomains"| PROXY[SRT Proxy]
+    AGENT -.-> |"--network none"| NONET[No Network]
+    AGENT -.-> |"--read-only"| NOFS[Read-Only Root]
+
+    style CREDS fill:#f66,color:#fff
+    style NONET fill:#f66,color:#fff
+    style NOFS fill:#f66,color:#fff
+```
+
+| | OpenClaw Docker Sandbox | SRT |
+|--|---|---|
+| **What it protects** | Host from agent tool execution | Host from the gateway process itself |
+| **Network** | Binary: on or off (`--network none`) | Granular: domain allowlist |
+| **Filesystem** | Container-scoped (`--read-only`) | Host-scoped (`denyRead`, `denyWrite`) |
+| **If bypassed** | Agent gains host access — but SRT still restricts | Gateway gains full OS access — but agent tools still in Docker |
+
+**The critical gap SRT fills:** The OpenClaw gateway is a Node.js process with a dependency tree (commander, zod, lodash-es, and transitive deps). If any dependency is compromised via supply chain attack, the attacker runs as the gateway — outside all Docker containers, with full host access. SRT's kernel-enforced restrictions still hold: credentials unreadable, network filtered, persistence blocked.
+
+**The critical gap Docker fills:** SRT wraps the gateway process but cannot restrict what happens inside Docker containers launched by that process. OpenClaw's Docker sandbox provides per-agent isolation with zero capabilities and no network — SRT cannot see into these containers.
+
+Neither layer alone is sufficient. Together, their holes don't align.
+
 ### Complete Message Flow
 
 When you send a message via Telegram:

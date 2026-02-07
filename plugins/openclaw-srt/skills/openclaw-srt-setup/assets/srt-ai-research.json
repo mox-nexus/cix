@@ -1,25 +1,9 @@
 {
-  "$comment": "OpenClaw SRT sandbox config - customize allowedDomains for your use case",
+  "$comment": "AI Research monitoring - labs, arxiv, HuggingFace, news",
   "network": {
     "allowedDomains": [
       "api.anthropic.com",
       "api.telegram.org",
-
-      "linkedin.com",
-      "*.linkedin.com",
-      "greenhouse.io",
-      "*.greenhouse.io",
-      "lever.co",
-      "*.lever.co",
-      "levels.fyi",
-      "*.levels.fyi",
-      "wellfound.com",
-      "*.wellfound.com",
-      "ycombinator.com",
-      "*.ycombinator.com",
-      "news.ycombinator.com",
-      "workatastartup.com",
-      "*.workatastartup.com",
 
       "anthropic.com",
       "*.anthropic.com",
@@ -27,30 +11,46 @@
       "*.openai.com",
       "deepmind.google",
       "*.deepmind.google",
+      "ai.meta.com",
+      "*.ai.meta.com",
+      "research.google",
+      "*.research.google",
+      "ai.google",
+      "*.ai.google",
+      "mistral.ai",
+      "*.mistral.ai",
 
       "arxiv.org",
       "*.arxiv.org",
       "huggingface.co",
       "*.huggingface.co",
+      "paperswithcode.com",
+      "*.paperswithcode.com",
+      "semanticscholar.org",
+      "*.semanticscholar.org",
+
+      "github.com",
+      "*.github.com",
+      "githubusercontent.com",
+      "*.githubusercontent.com",
 
       "techcrunch.com",
       "*.techcrunch.com",
       "theverge.com",
       "*.theverge.com",
-      "arstechnica.com",
-      "*.arstechnica.com",
       "wired.com",
       "*.wired.com",
+      "arstechnica.com",
+      "*.arstechnica.com",
+      "venturebeat.com",
+      "*.venturebeat.com",
+      "theinformation.com",
+      "*.theinformation.com",
 
       "x.com",
       "*.x.com",
       "twitter.com",
-      "*.twitter.com",
-
-      "github.com",
-      "*.github.com",
-      "githubusercontent.com",
-      "*.githubusercontent.com"
+      "*.twitter.com"
     ],
     "deniedDomains": [],
     "allowLocalBinding": true
@@ -61,12 +61,16 @@
       "~/.gnupg",
       "~/.aws",
       "~/.config/gcloud",
+      "~/.azure",
       "~/Library/Keychains",
+      "~/.local/share/keyrings",
       "~/.password-store",
       "~/.1password",
       "~/.kube",
       "~/.docker",
-      "~/.npmrc"
+      "~/.npmrc",
+      "~/.netrc",
+      "~/.config/gh"
     ],
     "allowWrite": [
       "~/.openclaw",
@@ -75,7 +79,10 @@
     ],
     "denyWrite": [
       "~/.bashrc",
+      "~/.bash_profile",
       "~/.zshrc",
+      "~/.zshenv",
+      "~/.zprofile",
       "~/.profile",
       "~/.gitconfig",
       ".git/hooks"
