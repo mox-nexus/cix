@@ -103,6 +103,57 @@ Match constraint level to the task:
 | **Medium** | Preferred pattern, variation OK | "Default to X, adjust for Y" |
 | **Low** | Fragile operations, consistency critical | "ALWAYS...", exact steps, checklists |
 
+### Recipe vs Workflow
+
+Skills that perform multi-step operations have two modes. Know which you need.
+
+| Recipe | Workflow |
+|--------|----------|
+| Static checklist — user executes steps | Claude-driven — Claude infers, acts, verifies |
+| User drives, skill is reference | Claude drives, user approves at checkpoints |
+| Errors discovered at step N | Prerequisites caught at step 0 |
+| Good for: simple installs, one-time setup | Good for: stateful operations, security, deployment |
+
+**The workflow pattern:**
+1. **Infer** — Check OS, existing state, prerequisites (read-only)
+2. **Assess** — Report current state to user
+3. **Choose** — Present numbered options (user replies with digit)
+4. **Plan** — Show exact steps before any changes
+5. **Execute** — Each step with explicit approval
+6. **Verify** — Run checks, diagnose failures, offer fixes
+
+**Anti-pattern:** Using a recipe when a workflow is needed. If the skill performs state-changing actions, prefers the workflow pattern — Claude can check prerequisites, detect errors early, and handle failures that a static checklist cannot.
+
+### Core Rules (for State-Changing Skills)
+
+Skills that modify files, configs, or system state need explicit behavioral constraints:
+
+```markdown
+## Core rules
+- Require explicit approval before any state-changing action
+- Infer OS, existing state, prerequisites before asking user
+- Show exact command before executing
+- Stop on unexpected output and ask for guidance
+- Numbered choices so user can reply with a single digit
+```
+
+Without core rules, Claude may execute destructive operations without confirmation or skip prerequisite checks.
+
+### Fail-Safe Defaults
+
+Skills that generate configs, templates, or security settings must default to the most restrictive option.
+
+```markdown
+# Bad — permissive default, user must restrict
+Default: allow all domains, user removes unsafe ones
+
+# Good — minimal default, user expands consciously
+Default: allow only required domains (2)
+User adds domains as needed, each addition is a decision
+```
+
+Every permission expansion is a conscious user decision. This applies to: network allowlists, file access, API scopes, CI permissions, deployment targets.
+
 ### Feedback Loops
 
 For operations with observable success/failure:
@@ -133,6 +184,10 @@ For complex multi-step workflows where steps matter:
 | **Too many options** | Decision paralysis | Default + escape hatch |
 | **Deep nesting** | Files get skipped | One level deep max |
 | **Vague description** | Poor activation | Include "Use when:" |
+| **Jargon description** | Won't activate for real users | Use intent language, test against user queries |
+| **Recipe for stateful ops** | Errors caught late, no recovery | Use workflow pattern (infer → plan → execute → verify) |
+| **Permissive defaults** | Security/access risks | Default to minimal, user expands |
+| **Missing limitations** | Overclaiming erodes trust | Add "does NOT protect against" section |
 | **No TOC** | Long files unreadable | Add TOC for > 100 lines |
 | **Time-sensitive info** | Goes stale | Use "deprecated patterns" section |
 
@@ -273,16 +328,37 @@ Agent does work. Hooks enforce guardrails.
 
 Command triggers. Agent executes.
 
+### Cross-Skill References
+
+Skills that complement each other should say so. Users who need one often need the other.
+
+```yaml
+# In skill A's description:
+description: "Audits host security. Use when: security review. Works with: sandbox skill for OS-level process containment."
+
+# In skill B's description:
+description: "Restricts process access. Use when: hardening. After running: healthcheck for full posture."
+```
+
+Without cross-references, users discover complementary skills by accident or not at all.
+
 ---
 
 ## Validation Checklist
 
 ### Skills
 - [ ] Description includes "Use when:" triggers
+- [ ] Description uses intent language, not implementation jargon
+- [ ] Description tested: "Would a user saying X activate this?"
 - [ ] SKILL.md < 500 lines
 - [ ] References one level deep
 - [ ] Files > 100 lines have TOC
 - [ ] No explaining what Claude already knows
+- [ ] Multi-step operations use workflow pattern (not recipe)
+- [ ] State-changing skills have Core Rules section
+- [ ] Config-generating skills use fail-safe (minimal) defaults
+- [ ] Security/reliability claims have Limitations section
+- [ ] Complementary skills cross-referenced
 
 ### Agents
 - [ ] Clear objective and constraints
