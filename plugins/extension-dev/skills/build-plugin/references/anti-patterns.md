@@ -9,6 +9,7 @@ What to avoid when authoring capabilities.
 - [Content Anti-Patterns](#content-anti-patterns)
 - [Structure Anti-Patterns](#structure-anti-patterns)
 - [Description Anti-Patterns](#description-anti-patterns)
+- [Operational Anti-Patterns](#operational-anti-patterns)
 - [Workflow Anti-Patterns](#workflow-anti-patterns)
 
 ---
@@ -158,6 +159,81 @@ description: "I can help you analyze your data and find insights."
 # Good
 description: "Analyzes data and surfaces insights. Use when: user asks for 'data analysis' or 'insights'."
 ```
+
+---
+
+## Operational Anti-Patterns
+
+### Recipe When Workflow Needed
+
+**Problem:** Multi-step state-changing operations presented as a static checklist instead of an interactive workflow.
+
+```markdown
+# Bad — Recipe: user executes blind steps
+## Setup
+- [ ] Install dependencies
+- [ ] Copy config file
+- [ ] Run patch script
+- [ ] Verify installation
+
+# Good — Workflow: Claude drives, user approves
+## Workflow
+1. Infer: Check OS, existing installation, current state
+2. Assess: "You have X installed, Y missing"
+3. Choose: Present numbered options for config profile
+4. Plan: Show exact steps before any changes
+5. Execute: Each step with explicit approval
+6. Verify: Run checks, diagnose failures, offer fixes
+```
+
+**Rule:** If the skill performs state-changing actions (writes files, modifies configs, installs software), use the workflow pattern. Claude can check prerequisites, detect the OS, handle errors, and verify outcomes — a static checklist cannot.
+
+### Permissive Defaults
+
+**Problem:** Config-generating skills default to the most permissive option.
+
+```markdown
+# Bad — default allows everything, user must restrict
+"allowedDomains": ["*.com", "*.org", "*.io"]
+
+# Good — default allows minimum, user expands
+"allowedDomains": ["api.anthropic.com"]
+# User adds domains as needed
+```
+
+**Rule:** Default to the most restrictive option. Every expansion is a conscious decision. This matters especially for security configs, network allowlists, file permissions, and API scopes.
+
+### Missing Limitations
+
+**Problem:** Skills making security or reliability claims without disclosing what they do NOT protect against.
+
+```markdown
+# Bad — claim without bounds
+"This skill secures your deployment."
+
+# Good — honest scope
+## Limitations
+- Does NOT protect against: kernel exploits, physical access
+- Mitigated but not eliminated: proxy bypass on apps ignoring HTTP_PROXY
+- Out of scope: container-level isolation (see Docker docs)
+```
+
+**Rule:** Every security/reliability skill needs a "Limitations" or "What this does NOT protect against" section. Overclaiming erodes trust. Honest bounds build calibrated trust (β = 0.415).
+
+### Untested Descriptions
+
+**Problem:** Descriptions written from the author's perspective, not the user's.
+
+```yaml
+# Bad — implementation jargon
+description: "Configures SRT sandbox runtime wrapper for process isolation"
+
+# Good — user intent language
+description: "Restrict what the AI assistant can access on your machine.
+ Use when: protecting credentials, limiting network, preventing unauthorized writes"
+```
+
+**Test:** Before shipping, ask "If a user said [common query], would this description match?" Run at least 3 realistic user queries against the description.
 
 ---
 
