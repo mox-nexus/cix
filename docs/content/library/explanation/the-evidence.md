@@ -112,7 +112,7 @@ Bansal (CHI 2021) explained why explanations alone fail: they increased acceptan
 
 **The Artificial Hivemind (NeurIPS 2025 Best Paper):** Jiang et al. tested 70+ LLMs on 26,000 open-ended queries. When 25 different models wrote "a metaphor about time," only 2 dominant clusters emerged. Temperature and ensembling don't help — RLHF over-fits to consensus, penalizing valid but idiosyncratic responses.
 
-**Meta-analysis (28 studies, n=8,214):** Pooled effect size for diversity reduction: **g = -0.863** (CI: -1.328 to -0.398, p<0.001). Large negative effect. Individual creative performance goes up (+0.27), but collective diversity goes down hard.
+**Meta-analysis (28 studies, n=8,214):** Pooled effect size for diversity reduction: **g = -0.863** (CI: -1.328 to -0.398, p&lt;0.001). Large negative effect. Individual creative performance goes up (+0.27), but collective diversity goes down hard.
 
 **Visual convergence:** Hintze et al. (Patterns/Cell, Jan 2026) ran 700 iterative AI image generation loops. ALL converged to just 12 motifs (lighthouses, Gothic cathedrals, rustic buildings...) regardless of starting prompt. "What they generated is bland, pop culture, generic."
 
