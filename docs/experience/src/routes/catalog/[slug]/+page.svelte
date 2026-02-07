@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { base } from '$app/paths';
 	import { marked } from 'marked';
 	import { GlyphBackground } from '$lib/components/atmosphere';
 
@@ -32,7 +33,7 @@
 
 <main id="main" class="detail-page" style="--variant-color: {variantColor[data.plugin.variant]}">
 	<nav class="detail-back">
-		<a href="/catalog">&larr; catalog</a>
+		<a href="{base}/catalog">&larr; catalog</a>
 	</nav>
 
 	<header class="detail-header">

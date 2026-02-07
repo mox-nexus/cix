@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Quadrant, LibraryEntry } from '$lib/data/library';
 	import { getQuadrant } from '$lib/data/library';
+	import { base } from '$app/paths';
 	import ArticleNav from './ArticleNav.svelte';
 	import { GlyphBackground } from '$lib/components/atmosphere';
 
@@ -28,9 +29,9 @@
 
 <div class="article-wrapper">
 	<nav class="article-breadcrumb">
-		<a href="/library">library</a>
+		<a href="{base}/library">library</a>
 		<span class="breadcrumb-sep">/</span>
-		<a href="/library#{quadrant}">{quadrantMeta.label.toLowerCase()}</a>
+		<a href="{base}/library#{quadrant}">{quadrantMeta.label.toLowerCase()}</a>
 	</nav>
 
 	<article class="prose">
@@ -41,7 +42,7 @@
 		<ArticleNav {quadrant} {position} {total} {prev} {next} />
 	{:else}
 		<nav class="article-back">
-			<a href="/library#{quadrant}">&larr; {quadrantMeta.label}</a>
+			<a href="{base}/library#{quadrant}">&larr; {quadrantMeta.label}</a>
 		</nav>
 	{/if}
 </div>

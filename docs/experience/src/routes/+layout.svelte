@@ -1,11 +1,14 @@
 <script lang="ts">
 	import '../app.css';
 	import { page } from '$app/state';
+	import { base } from '$app/paths';
 	import { SiteNav } from '$lib/components/nav';
 
 	let { children } = $props();
 
-	let isLanding = $derived(page.url.pathname === '/');
+	let isLanding = $derived(
+		page.url.pathname === `${base}/` || page.url.pathname === base || page.url.pathname === '/'
+	);
 </script>
 
 <svelte:head>

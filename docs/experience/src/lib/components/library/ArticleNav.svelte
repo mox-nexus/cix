@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Quadrant, LibraryEntry } from '$lib/data/library';
+	import { base } from '$app/paths';
 
 	interface Props {
 		quadrant: Quadrant;
@@ -17,7 +18,7 @@
 
 	<div class="article-nav-links">
 		{#if prev}
-			<a href="/library/{quadrant}/{prev.slug}" class="nav-prev">
+			<a href="{base}/library/{quadrant}/{prev.slug}" class="nav-prev">
 				<span class="nav-arrow">&larr;</span>
 				<span class="nav-label">{prev.title}</span>
 			</a>
@@ -26,12 +27,12 @@
 		{/if}
 
 		{#if next}
-			<a href="/library/{quadrant}/{next.slug}" class="nav-next">
+			<a href="{base}/library/{quadrant}/{next.slug}" class="nav-next">
 				<span class="nav-label">{next.title}</span>
 				<span class="nav-arrow">&rarr;</span>
 			</a>
 		{:else}
-			<a href="/library" class="nav-next">
+			<a href="{base}/library" class="nav-next">
 				<span class="nav-label">Back to Library</span>
 				<span class="nav-arrow">&rarr;</span>
 			</a>

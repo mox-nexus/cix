@@ -1,20 +1,22 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { base } from '$app/paths';
 
 	const allLinks = [
-		{ href: '/ethos', label: 'ethos', description: 'understand why', variant: 'spark' as const },
-		{ href: '/catalog', label: 'catalog', description: 'explore extensions', variant: 'emergence' as const },
-		{ href: '/library', label: 'library', description: 'deep research', variant: 'constraint' as const }
+		{ path: '/ethos', label: 'ethos', description: 'understand why', variant: 'spark' as const },
+		{ path: '/catalog', label: 'catalog', description: 'explore extensions', variant: 'emergence' as const },
+		{ path: '/library', label: 'library', description: 'deep research', variant: 'constraint' as const }
 	];
 
-	let links = $derived(allLinks.filter((l) => !page.url.pathname.startsWith(l.href)));
+	let currentPath = $derived(page.url.pathname.slice(base.length) || '/');
+	let links = $derived(allLinks.filter((l) => !currentPath.startsWith(l.path)));
 </script>
 
 <nav class="cross-links" aria-label="Explore other sections">
 	<span class="cross-links-label">explore</span>
 	<div class="cross-links-list">
 		{#each links as link}
-			<a href={link.href} class="cross-link cross-link-{link.variant}">
+			<a href="{base}{link.path}" class="cross-link cross-link-{link.variant}">
 				<span class="link-label">{link.label}</span>
 				<span class="link-arrow">&rarr;</span>
 				<span class="link-description">{link.description}</span>

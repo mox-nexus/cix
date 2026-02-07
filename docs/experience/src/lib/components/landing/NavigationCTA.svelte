@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { base } from '$app/paths';
+
 	interface Link {
-		href: string;
+		path: string;
 		label: string;
 		description: string;
 		variant?: 'spark' | 'emergence' | 'constraint';
@@ -12,16 +14,16 @@
 
 	let {
 		links = [
-			{ href: '/ethos', label: 'ethos', description: 'understand why', variant: 'spark' },
-			{ href: '/catalog', label: 'catalog', description: 'explore extensions', variant: 'emergence' },
-			{ href: '/library', label: 'library', description: 'deep research', variant: 'constraint' }
+			{ path: '/ethos', label: 'ethos', description: 'understand why', variant: 'spark' },
+			{ path: '/catalog', label: 'catalog', description: 'explore extensions', variant: 'emergence' },
+			{ path: '/library', label: 'library', description: 'deep research', variant: 'constraint' }
 		]
 	}: Props = $props();
 </script>
 
 <nav class="nav-links">
 	{#each links as link}
-		<a href={link.href} class="link link-{link.variant ?? 'spark'}">
+		<a href="{base}{link.path}" class="link link-{link.variant ?? 'spark'}">
 			<span class="label">{link.label}</span>
 			<span class="arrow">→</span>
 			<span class="description">{link.description}</span>

@@ -53,4 +53,4 @@
 
 ---
 
-*Sources in [bibliography](/library/reference/bibliography)*
+*Sources in [bibliography](../reference/bibliography)*

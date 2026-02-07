@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { CatalogPlugin } from '$lib/types/catalog';
+	import { base } from '$app/paths';
 
 	interface Props {
 		plugin: CatalogPlugin;
@@ -25,7 +26,7 @@
 </script>
 
 <a
-	href="/catalog/{plugin.slug}"
+	href="{base}/catalog/{plugin.slug}"
 	class="catalog-entry"
 	style="--stagger-delay: {delay}ms; --variant-color: {variantColor[plugin.variant]}"
 >

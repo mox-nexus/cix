@@ -23,18 +23,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup mdbook
-        uses: peaceiris/actions-mdbook@v2
-        with:
-          mdbook-version: 'latest'
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
-      - name: Build docs
-        run: mdbook build docs
+      - name: Install dependencies
+        working-directory: docs/experience
+        run: bun install --frozen-lockfile
+
+      - name: Build site
+        working-directory: docs/experience
+        run: bun run build
+        env:
+          BASE_PATH: /cix
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs/book
+          path: ./docs/experience/build
 
   deploy:
     environment:
