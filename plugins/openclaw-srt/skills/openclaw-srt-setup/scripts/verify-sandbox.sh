@@ -287,7 +287,7 @@ if [[ -f "$HOME/.srt-settings.json" ]]; then
     fi
 else
     fail "Config file not found at ~/.srt-settings.json"
-    echo "     Copy a template: cp templates/srt-settings.json ~/.srt-settings.json"
+    echo "     Copy a template: cp assets/srt-settings.json ~/.srt-settings.json"
     FAILED=1
 fi
 

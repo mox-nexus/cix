@@ -1,12 +1,12 @@
 {
-  "$comment": "Minimal SRT config - just Claude API + Telegram",
+  "$comment": "Minimal SRT config - just Claude API + Telegram. Maximum security.",
   "network": {
     "allowedDomains": [
       "api.anthropic.com",
       "api.telegram.org"
     ],
     "deniedDomains": [],
-    "allowLocalBinding": true
+    "allowLocalBinding": false
   },
   "filesystem": {
     "denyRead": [
@@ -14,12 +14,16 @@
       "~/.gnupg",
       "~/.aws",
       "~/.config/gcloud",
+      "~/.azure",
       "~/Library/Keychains",
+      "~/.local/share/keyrings",
       "~/.password-store",
       "~/.1password",
       "~/.kube",
       "~/.docker",
-      "~/.npmrc"
+      "~/.npmrc",
+      "~/.netrc",
+      "~/.config/gh"
     ],
     "allowWrite": [
       "~/.openclaw",
@@ -28,7 +32,10 @@
     ],
     "denyWrite": [
       "~/.bashrc",
+      "~/.bash_profile",
       "~/.zshrc",
+      "~/.zshenv",
+      "~/.zprofile",
       "~/.profile",
       "~/.gitconfig",
       ".git/hooks"

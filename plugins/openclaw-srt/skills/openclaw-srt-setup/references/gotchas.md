@@ -96,7 +96,7 @@ launchctl kickstart -k gui/$(id -u)/ai.openclaw.gateway
 
 ```bash
 launchctl bootout gui/$(id -u)/ai.openclaw.gateway
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/patch-plist.py
+python3 scripts/patch-plist.py
 launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/ai.openclaw.gateway.plist
 ```
 
@@ -104,10 +104,16 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/ai.openclaw.gateway.plis
 
 ## 7. Debug Output Not Appearing
 
-Both `-d` flag AND `DEBUG=1` env may be needed:
+Use the `-d` flag (which sets `SRT_DEBUG=true` internally):
 
 ```bash
-DEBUG=1 srt -d --settings ~/.srt-settings.json -- echo "test"
+srt -d --settings ~/.srt-settings.json -- echo "test"
+```
+
+If `-d` isn't reaching early enough, set the env var directly:
+
+```bash
+SRT_DEBUG=1 srt --settings ~/.srt-settings.json -- echo "test"
 ```
 
 ---
@@ -154,7 +160,7 @@ srt --settings ~/.srt-settings.json -- bash -c 'cat ~/.ssh/id_rsa'
 # Checklist - run through in order:
 
 # 1. Config loading?
-DEBUG=1 srt -d --settings ~/.srt-settings.json -- echo "test" 2>&1 | grep allowedHosts
+SRT_DEBUG=1 srt -d --settings ~/.srt-settings.json -- echo "test" 2>&1 | grep allowedHosts
 
 # 2. Domain in allowlist? (Check base AND wildcard)
 grep "example.com" ~/.srt-settings.json

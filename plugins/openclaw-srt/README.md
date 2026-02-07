@@ -4,7 +4,7 @@ Set up OpenClaw with SRT sandbox for secure personal AI assistant operation.
 
 ## What This Plugin Does
 
-Guides you through running [OpenClaw](https://github.com/anthropics/openclaw) inside Anthropic's [Sandbox Runtime (SRT)](https://github.com/anthropics/sandbox-runtime) for defense-in-depth security.
+Guides you through running [OpenClaw](https://github.com/openclaw/openclaw) inside Anthropic's [Sandbox Runtime (SRT)](https://github.com/anthropic-experimental/sandbox-runtime) for defense-in-depth security.
 
 **Why sandbox?** OpenClaw can execute code, access network, and read/write files. Without sandboxing, a compromised agent could steal credentials, exfiltrate data, or establish persistence.
 

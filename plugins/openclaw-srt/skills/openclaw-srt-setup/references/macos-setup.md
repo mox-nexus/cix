@@ -74,7 +74,7 @@ openclaw config set gateway.mode "local"
 ### Step 4: SRT Config
 
 ```bash
-cp ${CLAUDE_PLUGIN_ROOT}/templates/srt-settings.json ~/.srt-settings.json
+cp assets/srt-settings.json ~/.srt-settings.json
 # Edit allowedDomains as needed
 ```
 
@@ -88,7 +88,7 @@ openclaw daemon install
 
 ```bash
 launchctl bootout gui/$(id -u)/ai.openclaw.gateway 2>/dev/null || true
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/patch-plist.py
+python3 scripts/patch-plist.py
 launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/ai.openclaw.gateway.plist
 ```
 
@@ -104,7 +104,7 @@ ps aux | grep "srt.*settings"   # SRT wrapper visible
 openclaw status --all           # Gateway reachable
 
 # Full verification (recommended)
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/verify-sandbox.sh
+bash scripts/verify-sandbox.sh
 ```
 
 **Feedback loop:** If verification fails, fix the issue and re-run Step 7. Only proceed when all checks pass.
@@ -131,11 +131,11 @@ bash ${CLAUDE_PLUGIN_ROOT}/scripts/verify-sandbox.sh
 
 ```bash
 launchctl bootout gui/$(id -u)/ai.openclaw.gateway
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/patch-plist.py
+python3 scripts/patch-plist.py
 launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/ai.openclaw.gateway.plist
 
 # Verify again
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/verify-sandbox.sh
+bash scripts/verify-sandbox.sh
 ```
 
 ---

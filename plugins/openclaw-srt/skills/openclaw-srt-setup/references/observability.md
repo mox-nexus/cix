@@ -4,10 +4,10 @@
 
 ```bash
 # One-time
-DEBUG=1 srt -d --settings ~/.srt-settings.json -- echo "test" 2>&1
+SRT_DEBUG=1 srt -d --settings ~/.srt-settings.json -- echo "test" 2>&1
 
 # Check config loaded
-DEBUG=1 srt -d ... 2>&1 | grep allowedHosts
+SRT_DEBUG=1 srt -d ... 2>&1 | grep allowedHosts
 ```
 
 ## Log Locations
