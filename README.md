@@ -1,0 +1,243 @@
+# cix
+
+Collaborative Intelligence Extensions — a marketplace of cognitive extensions for Claude Code.
+
+## The Problem
+
+AI tools create a paradox: they make you faster today while making you less capable tomorrow.
+
+Research from premier venues (CHI, PNAS, Nature, NeurIPS) shows the pattern consistently:
+
+| Finding | Source | What It Means |
+|---------|--------|---------------|
+| 26% more tasks completed | Cui/Demirer RCTs (n=4,867) | Immediate productivity gains are real |
+| 17% worse performance without AI | Bastani et al. PNAS (n=1,000) | Learning degradation is measurable |
+| 20% skill reduction after 3 months | Lancet colonoscopy study | Expertise atrophies from disuse |
+| 83% couldn't recall their own work | Lee et al. CHI 2025 | Cognitive offloading has memory costs |
+
+The problem isn't AI. The problem is **substitutive AI** — tools designed to do your thinking for you.
+
+## The Solution
+
+**Complementary AI** — tools that amplify your capability rather than replace it.
+
+Same technology. Different design philosophy. Opposite outcomes.
+
+Consider GPT Tutor research (Bastani et al.):
+- **GPT Base** (direct answers): 17% harm to learning
+- **GPT Tutor** (hints only): No harm to learning
+
+The difference: one substitutes for thinking, the other supports it.
+
+cix provides extensions built on complementary principles:
+- Extensions show reasoning, not just answers
+- Human makes the decisions, AI provides perspectives
+- Each interaction builds capability rather than dependency
+- Control remains with you
+
+## Quick Start
+
+**Prerequisites:**
+- Claude Code
+- Python 3.11+ (via uv)
+- Bun (for the docs site)
+
+**Install:**
+```bash
+# Clone the repository
+git clone https://github.com/yza-vyas/cix.git
+cd cix
+
+# Install the CLI
+cd tools/cix
+uv sync
+uv run cix --help
+
+# Install a plugin
+uv run cix install arch-guild
+```
+
+**Verify installation:**
+```bash
+# List installed plugins
+uv run cix list
+
+# Check Claude Code recognizes it
+# Start Claude Code and type: "What extensions are loaded?"
+```
+
+For detailed installation and usage, see the [experience site](https://mox.nexus/cix/).
+
+## The Extensions
+
+cix includes 7 plugins spanning engineering practice, architecture, research, and development.
+
+### core-1337
+
+Engineering excellence methodology for builders.
+
+Provides the `build-core` skill (craftsmanship standards, evidence-based decisions, first principles reasoning) and Mr. Wolf, a structured problem solver who activates when debugging loops or frustration patterns are detected.
+
+**Use when:** Writing code, making technical decisions, debugging.
+
+### arch-guild
+
+Architectural reasoning through 13 specialized agents, each with an orthogonality lock to their domain.
+
+Each agent provides one perspective (security, distributed systems, performance, resilience). You synthesize across perspectives. This forces genuine diversity and prevents single-viewpoint tunnel vision.
+
+**Use when:** Architecture reviews, design decisions, production readiness checks.
+
+### extension-dev
+
+Build extensions that enable effective human-AI collaboration.
+
+Includes `build-plugin` (Claude Code specifics) and `build-capability` (general patterns: progressive disclosure, degrees of freedom, feedback loops). Also provides evaluator and optimizer agents for extension quality.
+
+**Use when:** Creating skills, agents, hooks, commands, or MCP servers.
+
+### promptfu
+
+Prompt engineering grounded in research. Different model architectures need different techniques.
+
+Skills for deep reasoning models (o1, o3, Gemini Deep Think), AI-assisted research with citation accuracy, multi-paper synthesis, and style replication from examples.
+
+**Use when:** Working with reasoning models, conducting research, analyzing papers.
+
+### build-evals
+
+Test automation and evaluation for extensions.
+
+Provides patterns for testing Claude Code extensions, including activation tests, response quality checks, and regression detection.
+
+**Use when:** Building or maintaining extensions, ensuring quality.
+
+### data-store
+
+Knowledge substrate patterns for shared context.
+
+Designs for storing, querying, and evolving knowledge that both humans and AI can access. Emphasizes single source of truth and traceability.
+
+**Use when:** Building knowledge systems, memex implementations, shared context layers.
+
+### openclaw-srt
+
+Structured citation tracking for AI-assisted research.
+
+Ensures claims are traceable to sources, distinguishes findings from inferences, and maintains academic rigor in AI collaboration.
+
+**Use when:** Research, technical writing, any work requiring citation accuracy.
+
+## Design Principles
+
+Every extension in cix follows these principles:
+
+**Complementary, not substitutive.** Extensions amplify human capability. They show reasoning and provide perspectives, but you make the decisions.
+
+**Transparent by default.** You see the reasoning, not just the conclusion. Evidence levels (Strong/Moderate/Weak/Speculative) communicate certainty honestly.
+
+**Human-initiated control.** Extensions respond to your direction, not autonomous optimization. Control is the strongest lever (β = 0.507 per research).
+
+**Composable, not comprehensive.** Small, focused extensions that combine rather than one monolithic tool. Forces you to synthesize perspectives.
+
+**Teach frameworks, not answers.** Extensions make you better at the domain. They explain "why" and "how to think about this," not just "do this."
+
+Research shows these design choices work: users maintain critical thinking (OR = 35.7) when tools support mastery rather than just performance.
+
+## Why This Matters
+
+> "An AI that makes humans dependent has failed. An AI that makes humans more capable has succeeded."
+
+The goal isn't better tools. The goal is better humans.
+
+cix exists because:
+- 40-50% of AI-generated code contains security vulnerabilities
+- Developers spend only 22.4% of time verifying AI suggestions
+- Senior developers trust AI least but use it most effectively
+- Neural connectivity "systematically scales down" with unreflective AI use
+
+The industry needs extensions designed with human capability as the success metric, not task completion speed.
+
+## Architecture
+
+```
+cix/
+├── tools/cix/              # CLI (Python + uv)
+│   └── src/cix/
+│       ├── domain/         # Pure business logic
+│       ├── ports/          # Interface definitions
+│       ├── adapters/       # Implementations
+│       └── application/    # Use case orchestration
+├── plugins/                # Marketplace (7 published)
+├── docs/
+│   ├── experience/         # SvelteKit static site
+│   └── content/            # Markdown content (mdsvex)
+└── .claude/                # Project-specific extensions
+```
+
+The CLI uses hexagonal architecture for testability and protocol independence. Plugins are distributable packages that Claude Code loads.
+
+## Contributing
+
+cix is pre-alpha. Everything is subject to change.
+
+**To contribute an extension:**
+
+1. Follow the dual-content model (Claude-optimized SKILL.md, human-optimized docs/explanation/)
+2. Ensure complementary design (amplify, don't replace)
+3. Ground claims in evidence with traceable sources
+4. Include evals demonstrating activation and quality
+5. Submit a pull request to this repository
+
+See `plugins/extension-dev` for authoring guidance.
+
+**Design standards:**
+- Extensions must make humans more capable, not dependent
+- Reasoning must be transparent
+- Control remains with the human
+- Claims must be evidence-based and sourced
+
+**Quality bar:**
+- Does the extension teach, or just execute?
+- Can the user work without it after using it?
+- Is the reasoning visible, not hidden?
+- Are success criteria human capability, not task speed?
+
+## Documentation
+
+The [experience site](https://mox.nexus/cix/) provides:
+- Full methodology and research synthesis
+- Plugin reference documentation
+- Evidence base with citations
+- Design philosophy and patterns
+
+For local development:
+```bash
+cd docs/experience
+bun install
+bun run dev
+```
+
+## Research Foundation
+
+cix is grounded in research synthesis from:
+
+- Bastani et al. (2025). "Generative AI without guardrails can harm learning." PNAS.
+- Lee et al. (2025). "The Impact of Generative AI on Critical Thinking." CHI.
+- Kosmyna et al. (2025). "Your Brain on ChatGPT: Cognitive Debt." MIT Media Lab.
+- Hemmer et al. (2024). "Complementarity in Human-AI Collaboration." EJIS.
+- Cui/Demirer et al. (2024). "Effects of Generative AI on High Skilled Work." Multiple RCTs.
+
+Full bibliography with 50+ sources: `docs/content/library/reference/bibliography.md`
+
+## Status
+
+Pre-alpha. The core thesis is stable, but APIs and structure may change. Use in production at your own risk.
+
+## License
+
+MIT
+
+---
+
+*This is the alpha era of cix. Every decision should be evidence-based, every extension should be complementary, every user should become more capable.*
