@@ -1,0 +1,194 @@
+/* ===========================================
+   DAO TYPOGRAPHY
+   Monospace body signals: "This is a tool, not a magazine."
+   =========================================== */
+
+/* --- Font Imports (Google Fonts) --- */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;600&display=swap');
+
+/* --- Base Typography --- */
+body {
+	font-family: var(--font-mono);
+	font-size: var(--type-base);
+	line-height: var(--leading-snug);
+	letter-spacing: var(--tracking-normal);
+	font-feature-settings: 'kern' 1, 'liga' 0;  /* no ligatures in mono */
+	color: var(--dao-text);
+	background: var(--dao-bg);
+}
+
+/* --- Headings --- */
+h1, h2, h3, h4, h5, h6 {
+	font-family: var(--font-sans);
+	font-weight: 600;
+	line-height: var(--leading-tight);
+	letter-spacing: var(--tracking-tight);
+	color: var(--dao-text);
+	margin: 0;
+}
+
+h1 {
+	font-size: var(--type-xl);      /* 36px - page identity */
+	margin-block-start: var(--space-4);
+	margin-block-end: var(--space-3);
+}
+
+h2 {
+	font-size: var(--type-lg);      /* 27px - navigation level */
+	margin-block-start: var(--space-4);
+	margin-block-end: var(--space-2);
+}
+
+h3 {
+	font-size: var(--type-base);    /* 18px - section markers */
+	margin-block-start: var(--space-3);
+	margin-block-end: var(--space-1);
+}
+
+h4 {
+	font-size: var(--type-base);
+	font-weight: 600;
+	margin-block-start: var(--space-2);
+	margin-block-end: var(--space-1);
+}
+
+/* --- Body Elements --- */
+p, ul, ol, blockquote, pre, table {
+	margin-block: var(--space-2);
+}
+
+/* --- Links --- */
+a {
+	color: var(--color-link);
+	text-decoration: none;
+	border-bottom: 1px solid transparent;
+	transition: border-color var(--duration-fast) var(--easing-linear);
+}
+
+a:hover {
+	border-bottom-color: var(--color-link);
+}
+
+a:visited {
+	color: var(--color-link-visited);
+}
+
+a:focus-visible {
+	outline: 2px solid var(--color-focus);
+	outline-offset: 2px;
+}
+
+/* --- Code --- */
+code:not(pre code) {
+	color: var(--color-code);
+	background: var(--dao-surface);
+	padding: 0.1em 0.3em;
+	border-radius: var(--radius-sm);
+	font-size: 0.9em;
+}
+
+pre {
+	background: var(--dao-surface);
+	border: var(--border-width) solid var(--dao-border);
+	border-radius: var(--radius-sm);
+	padding: var(--space-2);
+	overflow-x: auto;
+	font-size: var(--type-sm);
+	line-height: var(--leading-snug);
+}
+
+pre code {
+	color: var(--dao-text);
+	background: transparent;
+	padding: 0;
+	font-size: inherit;
+}
+
+/* --- Blockquotes --- */
+blockquote {
+	border-left: var(--border-accent) solid var(--dao-blue);
+	padding-left: var(--space-3);
+	margin-inline: 0;
+	color: var(--dao-muted);
+	font-style: normal;  /* No italic — monospace italic is ugly */
+}
+
+blockquote cite {
+	display: block;
+	margin-top: var(--space-1);
+	font-size: var(--type-sm);
+	color: var(--dao-blue);
+}
+
+blockquote cite::before {
+	content: '— ';
+}
+
+/* --- Tables --- */
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: var(--type-sm);
+}
+
+th {
+	font-family: var(--font-sans);
+	font-weight: 600;
+	text-align: left;
+	background: var(--dao-surface);
+	border: var(--border-width) solid var(--dao-border);
+	padding: var(--space-1) var(--space-2);
+}
+
+td {
+	border: var(--border-width) solid var(--dao-border);
+	padding: var(--space-1) var(--space-2);
+	vertical-align: top;
+}
+
+tbody tr:nth-child(even) {
+	background: oklch(from var(--dao-surface) l c h / 0.5);
+}
+
+/* --- Lists --- */
+ul, ol {
+	padding-inline-start: var(--space-3);
+}
+
+li {
+	margin-block: var(--space-1);
+}
+
+li > ul, li > ol {
+	margin-block: var(--space-1);
+}
+
+/* --- Horizontal Rules --- */
+hr {
+	border: none;
+	height: 1px;
+	background: var(--dao-border);
+	margin-block: var(--space-4);
+}
+
+/* --- Small/Meta Text --- */
+small, .caption, .meta {
+	font-size: var(--type-sm);
+	color: var(--dao-muted);
+}
+
+/* --- Focus States --- */
+:focus-visible {
+	outline: 2px solid var(--color-focus);
+	outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+	outline: none;
+}
+
+/* --- Selection --- */
+::selection {
+	background: oklch(from var(--dao-blue) l c h / 0.3);
+	color: var(--dao-text);
+}
