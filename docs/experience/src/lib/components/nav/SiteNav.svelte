@@ -1,25 +1,26 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { base } from '$app/paths';
 
 	const links = [
-		{ href: '/ethos', label: 'ethos' },
-		{ href: '/catalog', label: 'catalog' },
-		{ href: '/library', label: 'library' }
+		{ path: '/ethos', label: 'ethos' },
+		{ path: '/catalog', label: 'catalog' },
+		{ path: '/library', label: 'library' }
 	];
 
-	let currentPath = $derived(page.url.pathname);
+	let currentPath = $derived(page.url.pathname.slice(base.length) || '/');
 </script>
 
 <nav class="site-nav" aria-label="Site navigation">
-	<a href="/" class="nav-wordmark">cix</a>
+	<a href="{base}/" class="nav-wordmark">cix</a>
 
 	<div class="nav-links">
 		{#each links as link}
 			<a
-				href={link.href}
+				href="{base}{link.path}"
 				class="nav-link"
-				class:active={currentPath.startsWith(link.href)}
-				aria-current={currentPath.startsWith(link.href) ? 'page' : undefined}
+				class:active={currentPath.startsWith(link.path)}
+				aria-current={currentPath.startsWith(link.path) ? 'page' : undefined}
 			>
 				{link.label}
 			</a>

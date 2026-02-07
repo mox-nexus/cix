@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Quadrant, LibraryEntry } from '$lib/data/library';
+	import { base } from '$app/paths';
 
 	interface Props {
 		quadrant: Quadrant;
@@ -12,7 +13,7 @@
 
 <nav class="content-list" aria-label="{quadrant} articles">
 	{#each entries as entry, i}
-		<a href="/library/{quadrant}/{entry.slug}" class="list-entry">
+		<a href="{base}/library/{quadrant}/{entry.slug}" class="list-entry">
 			{#if ordered}
 				<span class="entry-number">{String(i + 1).padStart(2, '0')}</span>
 			{/if}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { LIBRARY } from '$lib/data/library';
+	import { base } from '$app/paths';
 	import { ContentList } from '$lib/components/library';
 	import { CrossLinks } from '$lib/components/nav';
 	import { GlyphBackground } from '$lib/components/atmosphere';
@@ -50,7 +51,7 @@
 				<ContentList quadrant={quadrant.id} entries={quadrant.entries} ordered={true} />
 			{:else if quadrant.id === 'reference'}
 				{#each quadrant.entries as entry}
-					<a href="/library/reference/{entry.slug}" class="ref-link">
+					<a href="{base}/library/reference/{entry.slug}" class="ref-link">
 						<span class="ref-title">{entry.title}</span>
 						<span class="ref-description">{entry.description}</span>
 					</a>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
+	import { base } from '$app/paths';
 	import ScrollySection from '$lib/components/ethos/ScrollySection.svelte';
 	import Step from '$lib/components/ethos/Step.svelte';
 	import ProgressNav from '$lib/components/ethos/ProgressNav.svelte';
@@ -461,7 +462,7 @@
 		</Step>
 		<Step>
 			<p class="cta">
-				<a href="/library">Explore the evidence &rarr;</a>
+				<a href="{base}/library">Explore the evidence &rarr;</a>
 			</p>
 		</Step>
 	</ScrollySection>
