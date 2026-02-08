@@ -16,7 +16,7 @@ uv tool install cix
 
 ```bash
 # Add a source (marketplace of extensions)
-cix source add https://github.com/mox-labs/cix-extensions
+cix source add https://github.com/mox-nexus/cix-extensions
 
 # List available extensions
 cix list -a

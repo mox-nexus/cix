@@ -66,7 +66,7 @@ The fundamental design decision for every extension:
 
 ### The WHY > HOW Principle
 
-From claude-1337 research:
+From cix research:
 
 | Approach | Outcome |
 |----------|---------|

@@ -27,5 +27,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pydantic models for domain objects
 - Protocol-based port interfaces
 
-[Unreleased]: https://github.com/mox-labs/cix/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/mox-labs/cix/releases/tag/v0.1.0
+[Unreleased]: https://github.com/mox-nexus/cix/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/mox-nexus/cix/releases/tag/v0.1.0

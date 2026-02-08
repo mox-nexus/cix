@@ -396,7 +396,7 @@ Software is built by humans, for humans, maintained by humans.
 
 Every choice that ignores the human—the reader, the modifier, the debugger—creates friction that compounds over the system's lifetime.
 
-The principles in core-1337 aren't about perfection. They're about **respect**—for the person who comes next, including your future self.
+The principles in core-ci aren't about perfection. They're about **respect**—for the person who comes next, including your future self.
 
 That respect, practiced consistently, is what transforms a codebase from a liability into an asset.
 

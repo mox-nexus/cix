@@ -1,5 +1,5 @@
 #!/bin/bash
-# Installs claude-1337 plugins as user-defined components in ~/.claude/
+# Installs cix plugins as user-defined components in ~/.claude/
 #
 # This bypasses the plugin system by copying skills/, agents/, commands/, hooks/
 # directly to ~/.claude/ as user-defined components.
@@ -12,7 +12,7 @@ CLAUDE_DIR="$HOME/.claude"
 
 # Available plugins
 PLUGINS=(
-  "core-1337:Engineering excellence - reasoning verification, design principles"
+  "core-ci:Engineering excellence - reasoning verification, design principles"
   "terminal-1337:Modern terminal tools - ripgrep, fd, bat, eza, fzf"
   "rust-1337:Rust production patterns - async, crates, domains"
   "kotlin-1337:Kotlin patterns - coroutines, Flow, Spring, Android"
@@ -26,7 +26,7 @@ PLUGINS=(
 usage() {
   echo "Usage: $0 [options] [plugin...]"
   echo ""
-  echo "Installs claude-1337 plugins as user-defined components in ~/.claude/"
+  echo "Installs cix plugins as user-defined components in ~/.claude/"
   echo ""
   echo "Options:"
   echo "  -a, --all      Install all plugins"
@@ -35,7 +35,7 @@ usage() {
   echo ""
   echo "Examples:"
   echo "  $0 --all                    # Install all plugins"
-  echo "  $0 core-1337 rust-1337      # Install specific plugins"
+  echo "  $0 core-ci rust-1337      # Install specific plugins"
   echo "  $0 --list                   # Show available plugins"
 }
 

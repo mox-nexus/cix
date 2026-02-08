@@ -6,13 +6,13 @@
 
 ```bash
 cix add arch-guild
-cix add core-1337
+cix add core-ci
 ```
 
 ### From specific source
 
 ```bash
-cix add claude-1337/arch-guild
+cix add cix/arch-guild
 cix add my-local/test-plugin
 ```
 

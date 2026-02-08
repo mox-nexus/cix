@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Writing style validator for claude-1337
+# Writing style validator for cix
 # Checks for em dash overuse and false dichotomies
 #
 # Usage: check-style.sh [file|directory]

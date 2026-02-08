@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "A marketplace of plugins is available at `~/.claude/plugins/marketplaces/claude-1337/plugins/`. Review the installed plugins - they contain skills, agents, and hooks that may be useful. Review descriptions to understand when each is relevant."
+            "prompt": "A marketplace of plugins is available at `~/.claude/plugins/marketplaces/cix/plugins/`. Review the installed plugins - they contain skills, agents, and hooks that may be useful. Review descriptions to understand when each is relevant."
           }
         ]
       }

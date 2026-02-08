@@ -24,6 +24,3 @@ export interface CatalogExtension {
 	variant: 'spark' | 'emergence' | 'constraint';
 	tags: string[];
 }
-
-/** @deprecated Use CatalogExtension */
-export type CatalogPlugin = CatalogExtension;
