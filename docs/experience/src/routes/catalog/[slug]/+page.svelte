@@ -2,7 +2,6 @@
 	import type { PageData } from './$types';
 	import { base } from '$app/paths';
 	import { marked } from 'marked';
-	import { GlyphBackground } from '$lib/components/atmosphere';
 
 	let { data }: { data: PageData } = $props();
 
@@ -28,8 +27,6 @@
 	<title>{data.plugin.slug} — cix</title>
 	<meta name="description" content={data.plugin.narrativeHook || data.plugin.manifest.description} />
 </svelte:head>
-
-<GlyphBackground />
 
 <main id="main" class="detail-page" style="--variant-color: {variantColor[data.plugin.variant]}">
 	<nav class="detail-back">

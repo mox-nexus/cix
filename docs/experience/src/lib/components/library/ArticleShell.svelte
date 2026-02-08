@@ -3,7 +3,6 @@
 	import { getQuadrant } from '$lib/data/library';
 	import { base } from '$app/paths';
 	import ArticleNav from './ArticleNav.svelte';
-	import { GlyphBackground } from '$lib/components/atmosphere';
 
 	interface Props {
 		quadrant: Quadrant;
@@ -24,8 +23,6 @@
 <svelte:head>
 	<title>{metadata?.title || 'Article'} — cix Library</title>
 </svelte:head>
-
-<GlyphBackground />
 
 <div class="article-wrapper">
 	<nav class="article-breadcrumb">

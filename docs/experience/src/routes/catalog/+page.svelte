@@ -2,7 +2,6 @@
 	import type { PageData } from './$types';
 	import { CatalogEntry } from '$lib/components/catalog';
 	import { CrossLinks } from '$lib/components/nav';
-	import { GlyphBackground } from '$lib/components/atmosphere';
 
 	let { data }: { data: PageData } = $props();
 </script>
@@ -11,8 +10,6 @@
 	<title>Catalog — cix</title>
 	<meta name="description" content="Cognitive extensions for collaborative intelligence. {data.plugins.length} published extensions." />
 </svelte:head>
-
-<GlyphBackground />
 
 <main id="main" class="catalog-page">
 	<header class="catalog-header">

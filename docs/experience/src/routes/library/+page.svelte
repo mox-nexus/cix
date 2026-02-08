@@ -3,7 +3,6 @@
 	import { base } from '$app/paths';
 	import { ContentList } from '$lib/components/library';
 	import { CrossLinks } from '$lib/components/nav';
-	import { GlyphBackground } from '$lib/components/atmosphere';
 
 	let populated = $derived(LIBRARY.filter((q) => q.entries.length > 0));
 </script>
@@ -15,8 +14,6 @@
 		content="Research and practice of collaborative intelligence. Understanding, learning, doing, looking up."
 	/>
 </svelte:head>
-
-<GlyphBackground />
 
 <div class="library-index">
 	<header class="library-header">
