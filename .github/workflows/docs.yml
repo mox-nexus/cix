@@ -38,7 +38,7 @@ jobs:
         working-directory: docs/experience
         run: bun run build
         env:
-          BASE_PATH: ${{ github.event_name == 'pull_request' && format('/cix/pr-preview/{0}', github.event.pull_request.number) || '/cix' }}
+          BASE_PATH: ${{ github.event_name == 'pull_request' && format('/cix/pr-preview/pr-{0}', github.event.pull_request.number) || '/cix' }}
 
       - name: Deploy PR Preview
         if: github.event_name == 'pull_request'
