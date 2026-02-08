@@ -1,13 +1,14 @@
 <script lang="ts">
-	import type { CatalogPlugin } from '$lib/types/catalog';
+	import type { CatalogExtension } from '$lib/types/catalog';
 	import { base } from '$app/paths';
 
 	interface Props {
-		plugin: CatalogPlugin;
+		extension: CatalogExtension;
 		delay?: number;
 	}
 
-	let { plugin, delay = 0 }: Props = $props();
+	let { extension, delay = 0 }: Props = $props();
+	let expanded = $state(false);
 
 	const variantColor: Record<string, string> = {
 		spark: 'var(--spark-core)',
@@ -17,45 +18,71 @@
 
 	const componentParts = $derived(
 		[
-			plugin.components.agents > 0 && `${plugin.components.agents} agent${plugin.components.agents !== 1 ? 's' : ''}`,
-			plugin.components.skills > 0 && `${plugin.components.skills} skill${plugin.components.skills !== 1 ? 's' : ''}`,
-			plugin.components.hooks > 0 && `${plugin.components.hooks} hook${plugin.components.hooks !== 1 ? 's' : ''}`,
-			plugin.components.commands > 0 && `${plugin.components.commands} cmd${plugin.components.commands !== 1 ? 's' : ''}`
+			extension.components.agents > 0 &&
+				`${extension.components.agents} agent${extension.components.agents !== 1 ? 's' : ''}`,
+			extension.components.skills > 0 &&
+				`${extension.components.skills} skill${extension.components.skills !== 1 ? 's' : ''}`,
+			extension.components.hooks > 0 &&
+				`${extension.components.hooks} hook${extension.components.hooks !== 1 ? 's' : ''}`,
+			extension.components.commands > 0 &&
+				`${extension.components.commands} cmd${extension.components.commands !== 1 ? 's' : ''}`
 		].filter(Boolean) as string[]
 	);
 </script>
 
-<a
-	href="{base}/catalog/{plugin.slug}"
+<!-- Layer 1: Collapsed card -->
+<div
 	class="catalog-entry"
-	style="--stagger-delay: {delay}ms; --variant-color: {variantColor[plugin.variant]}"
+	class:expanded
+	style="--stagger-delay: {delay}ms; --variant-color: {variantColor[extension.variant]}"
 >
-	<div class="entry-header">
-		<h2 class="entry-name">{plugin.slug}</h2>
-		<span class="entry-version">{plugin.manifest.version}</span>
-	</div>
+	<button
+		class="entry-toggle"
+		onclick={() => (expanded = !expanded)}
+		aria-expanded={expanded}
+	>
+		<div class="entry-header">
+			<span class="entry-name">{extension.slug}</span>
+			<span class="entry-kind">{extension.kind}</span>
+			<span class="entry-version">{extension.manifest.version}</span>
+		</div>
+		<p class="entry-description">{extension.manifest.description}</p>
+	</button>
 
-	<p class="entry-description">{plugin.narrativeHook || plugin.tagline}</p>
+	<!-- Layer 2: Expanded detail -->
+	{#if expanded}
+		<div class="entry-detail">
+			{#if extension.tagline && extension.tagline !== extension.manifest.description}
+				<p class="entry-tagline">{extension.tagline}</p>
+			{/if}
 
-	{#if plugin.constraint}
-		<p class="entry-constraint">Embodies: {plugin.constraint}</p>
+			{#if componentParts.length > 0}
+				<div class="entry-components">
+					{#each componentParts as part}
+						<span class="component-badge">{part}</span>
+					{/each}
+				</div>
+			{/if}
+
+			{#if extension.tags.length > 0}
+				<div class="entry-tags">
+					{#each extension.tags as tag}
+						<span class="tag">{tag}</span>
+					{/each}
+				</div>
+			{/if}
+
+			<a href="{base}/catalog/{extension.slug}" class="entry-docs-link">
+				open docs &rarr;
+			</a>
+		</div>
 	{/if}
-
-	<div class="entry-footer">
-		{#if componentParts.length > 0}
-			<span class="entry-components">{componentParts.join('  ')}</span>
-		{/if}
-		<span class="entry-explore">Explore &rarr;</span>
-	</div>
-</a>
+</div>
 
 <style>
 	.catalog-entry {
-		display: block;
-		text-decoration: none;
 		border: 1px solid var(--dao-border);
 		border-left: 3px solid var(--variant-color);
-		padding: var(--space-2) var(--space-3);
 		background: var(--dao-surface);
 
 		opacity: 0;
@@ -76,11 +103,23 @@
 		border-color: var(--variant-color);
 	}
 
+	.entry-toggle {
+		display: block;
+		width: 100%;
+		padding: var(--space-2) var(--space-3);
+		background: none;
+		border: none;
+		cursor: pointer;
+		text-align: left;
+		color: inherit;
+		font: inherit;
+	}
+
 	.entry-header {
 		display: flex;
 		align-items: baseline;
-		justify-content: space-between;
-		margin-bottom: var(--space-1);
+		gap: var(--space-1);
+		margin-bottom: var(--space-0-5);
 	}
 
 	.entry-name {
@@ -88,13 +127,22 @@
 		font-size: var(--type-base);
 		font-weight: 600;
 		color: var(--dao-text);
-		margin: 0;
+	}
+
+	.entry-kind {
+		font-family: var(--font-mono);
+		font-size: var(--type-xs);
+		color: var(--variant-color);
+		border: 1px solid var(--variant-color);
+		padding: 0 0.5ch;
+		line-height: 1.6;
 	}
 
 	.entry-version {
 		font-family: var(--font-mono);
 		font-size: var(--type-xs);
 		color: var(--dao-muted);
+		margin-left: auto;
 	}
 
 	.entry-description {
@@ -102,33 +150,65 @@
 		font-size: var(--type-sm);
 		color: var(--dao-text-secondary);
 		line-height: var(--leading-relaxed);
-		margin: 0 0 var(--space-1) 0;
+		margin: 0;
 	}
 
-	.entry-constraint {
+	/* Layer 2: Expanded */
+	.entry-detail {
+		padding: 0 var(--space-3) var(--space-2);
+		border-top: 1px solid var(--dao-border-subtle);
+	}
+
+	.entry-tagline {
 		font-family: var(--font-mono);
-		font-size: var(--type-xs);
-		color: var(--variant-color);
-		margin: 0 0 var(--space-1-5) 0;
-	}
-
-	.entry-footer {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
+		font-size: var(--type-sm);
+		color: var(--dao-text);
+		line-height: var(--leading-relaxed);
+		margin: var(--space-1) 0;
 	}
 
 	.entry-components {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-1);
+		margin: var(--space-1) 0;
+	}
+
+	.component-badge {
 		font-family: var(--font-mono);
 		font-size: var(--type-xs);
 		color: var(--dao-muted);
+		background: var(--dao-surface-2);
+		padding: 2px var(--space-1);
 	}
 
-	.entry-explore {
+	.entry-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-0-5);
+		margin: var(--space-1) 0;
+	}
+
+	.tag {
+		font-family: var(--font-mono);
+		font-size: var(--type-xs);
+		color: var(--dao-muted);
+		border: 1px solid var(--dao-border-subtle);
+		padding: 1px var(--space-0-5);
+	}
+
+	.entry-docs-link {
+		display: inline-block;
 		font-family: var(--font-mono);
 		font-size: var(--type-sm);
 		color: var(--variant-color);
-		margin-left: auto;
+		text-decoration: none;
+		margin-top: var(--space-1);
+		transition: opacity var(--duration-fast) var(--easing-linear);
+	}
+
+	.entry-docs-link:hover {
+		opacity: 0.8;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -136,6 +216,10 @@
 			opacity: 1;
 			transform: none;
 			animation: none;
+		}
+
+		.entry-docs-link {
+			transition: none;
 		}
 	}
 </style>

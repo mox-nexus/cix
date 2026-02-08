@@ -14,13 +14,16 @@ export interface PluginManifest {
 	license?: string;
 }
 
-export interface CatalogPlugin {
+export interface CatalogExtension {
 	slug: string;
+	kind: 'plugin' | 'tool';
 	manifest: PluginManifest;
 	tagline: string;
 	readme: string;
 	components: PluginComponents;
 	variant: 'spark' | 'emergence' | 'constraint';
-	narrativeHook?: string;
-	constraint?: string;
+	tags: string[];
 }
+
+/** @deprecated Use CatalogExtension */
+export type CatalogPlugin = CatalogExtension;

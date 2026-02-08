@@ -1,10 +1,10 @@
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import type { PageServerLoad } from './$types';
-import type { CatalogPlugin, PluginManifest, PluginComponents } from '$lib/types/catalog';
-import { CATALOG_NARRATIVES } from '$lib/data/catalog-narratives';
+import type { CatalogExtension, PluginManifest, PluginComponents } from '$lib/types/catalog';
 
 const PLUGINS_DIR = resolve(process.cwd(), '../../plugins');
+const TOOLS_DIR = resolve(process.cwd(), '../../tools');
 const VARIANTS = ['spark', 'emergence', 'constraint'] as const;
 
 function countFiles(dir: string, extension = '.md'): number {
@@ -29,28 +29,31 @@ function extractTagline(readme: string): string {
 		const trimmed = line.trim();
 		if (trimmed === '') continue;
 		if (trimmed.startsWith('#')) break;
-		return trimmed;
+		// Strip leading > for blockquote taglines
+		return trimmed.replace(/^>\s*/, '');
 	}
 	return '';
 }
 
-function discoverComponents(pluginDir: string): PluginComponents {
+function discoverComponents(dir: string): PluginComponents {
 	return {
-		agents: countFiles(join(pluginDir, 'agents')),
-		skills: countDirs(join(pluginDir, 'skills')),
-		hooks: countFiles(join(pluginDir, 'hooks'), '.sh'),
-		commands: countDirs(join(pluginDir, 'commands'))
+		agents: countFiles(join(dir, 'agents')),
+		skills: countDirs(join(dir, 'skills')),
+		hooks: countFiles(join(dir, 'hooks'), '.sh'),
+		commands: countDirs(join(dir, 'commands'))
 	};
 }
 
-export const load: PageServerLoad = async () => {
+function loadPlugins(): CatalogExtension[] {
 	const marketplacePath = join(PLUGINS_DIR, '.claude-plugin', 'marketplace.json');
+	if (!existsSync(marketplacePath)) return [];
+
 	const marketplace = JSON.parse(readFileSync(marketplacePath, 'utf-8'));
 	const publishedNames = new Set(
 		marketplace.plugins.map((p: { name: string }) => p.name)
 	);
 
-	const plugins: CatalogPlugin[] = [];
+	const extensions: CatalogExtension[] = [];
 
 	for (const entry of readdirSync(PLUGINS_DIR)) {
 		if (!publishedNames.has(entry)) continue;
@@ -64,21 +67,71 @@ export const load: PageServerLoad = async () => {
 		const manifest: PluginManifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
 		const readmePath = join(pluginDir, 'README.md');
 		const readme = existsSync(readmePath) ? readFileSync(readmePath, 'utf-8') : '';
-		const narrative = CATALOG_NARRATIVES[manifest.name];
 
-		plugins.push({
+		extensions.push({
 			slug: manifest.name,
+			kind: 'plugin',
 			manifest,
 			tagline: extractTagline(readme),
 			readme,
 			components: discoverComponents(pluginDir),
-			variant: VARIANTS[plugins.length % VARIANTS.length],
-			narrativeHook: narrative?.narrativeHook,
-			constraint: narrative?.constraint
+			variant: VARIANTS[extensions.length % VARIANTS.length],
+			tags: manifest.keywords ?? []
 		});
 	}
 
-	plugins.sort((a, b) => a.slug.localeCompare(b.slug));
+	return extensions;
+}
 
-	return { plugins };
+function loadTools(): CatalogExtension[] {
+	const marketplacePath = join(TOOLS_DIR, '.claude-plugin', 'marketplace.json');
+	if (!existsSync(marketplacePath)) return [];
+
+	const marketplace = JSON.parse(readFileSync(marketplacePath, 'utf-8'));
+	const toolEntries: Array<{ name: string; description: string }> = marketplace.tools ?? [];
+
+	const extensions: CatalogExtension[] = [];
+
+	for (const tool of toolEntries) {
+		const toolDir = join(TOOLS_DIR, tool.name);
+		if (!existsSync(toolDir) || !statSync(toolDir).isDirectory()) continue;
+
+		const readmePath = join(toolDir, 'README.md');
+		const readme = existsSync(readmePath) ? readFileSync(readmePath, 'utf-8') : '';
+
+		// Read version from pyproject.toml if available
+		const pyprojectPath = join(toolDir, 'pyproject.toml');
+		let version = '0.1.0';
+		if (existsSync(pyprojectPath)) {
+			const pyproject = readFileSync(pyprojectPath, 'utf-8');
+			const versionMatch = pyproject.match(/^version\s*=\s*"([^"]+)"/m);
+			if (versionMatch) version = versionMatch[1];
+		}
+
+		extensions.push({
+			slug: tool.name,
+			kind: 'tool',
+			manifest: {
+				name: tool.name,
+				version,
+				description: tool.description,
+				author: { name: 'Mox Labs' }
+			},
+			tagline: extractTagline(readme),
+			readme,
+			components: discoverComponents(toolDir),
+			variant: VARIANTS[extensions.length % VARIANTS.length],
+			tags: ['tool', 'cli']
+		});
+	}
+
+	return extensions;
+}
+
+export const load: PageServerLoad = async () => {
+	const plugins = loadPlugins();
+	const tools = loadTools();
+	const extensions = [...plugins, ...tools].sort((a, b) => a.slug.localeCompare(b.slug));
+
+	return { extensions };
 };
