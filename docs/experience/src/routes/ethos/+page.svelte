@@ -9,7 +9,6 @@
 	import ExtendedMindDiagram from '$lib/components/ethos/ExtendedMindDiagram.svelte';
 	import ConstraintCard from '$lib/components/ethos/ConstraintCard.svelte';
 	import ResearchTable from '$lib/components/ethos/ResearchTable.svelte';
-	import { GlyphBackground } from '$lib/components/atmosphere';
 	import { setLenisInstance, prefersReducedMotion, currentSection } from '$lib/stores/scroll';
 
 	// Section definitions
@@ -88,7 +87,6 @@
 	<meta name="description" content="What we build and why, grounded in research. The evidence for collaborative intelligence." />
 </svelte:head>
 
-<GlyphBackground>
 <main id="main" class="ethos">
 	<ProgressNav {sections} currentSection={activeSection} />
 
@@ -467,7 +465,6 @@
 		</Step>
 	</ScrollySection>
 </main>
-</GlyphBackground>
 
 <style>
 	.ethos {
