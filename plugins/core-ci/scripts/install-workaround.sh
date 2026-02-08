@@ -1,12 +1,12 @@
 #!/bin/bash
-# Installs the workaround hook for claude-1337 marketplace
+# Installs the workaround hook for cix marketplace
 
 SETTINGS_FILE="$HOME/.claude/settings.json"
-MARKETPLACE_DIR="$HOME/.claude/plugins/marketplaces/claude-1337"
+MARKETPLACE_DIR="$HOME/.claude/plugins/marketplaces/cix"
 
 if [ ! -d "$MARKETPLACE_DIR" ]; then
   echo "Error: Marketplace not installed. Run first:"
-  echo "  /plugin marketplace add yzavyas/claude-1337"
+  echo "  /plugin marketplace add yzavyas/cix"
   exit 1
 fi
 
@@ -16,7 +16,7 @@ HOOK_JSON='{
       "hooks": [
         {
           "type": "prompt",
-          "prompt": "A marketplace of plugins is available at `~/.claude/plugins/marketplaces/claude-1337/plugins/`. Review the installed plugins - they contain skills, agents, and hooks that may be useful."
+          "prompt": "A marketplace of plugins is available at `~/.claude/plugins/marketplaces/cix/plugins/`. Review the installed plugins - they contain skills, agents, and hooks that may be useful."
         }
       ]
     }

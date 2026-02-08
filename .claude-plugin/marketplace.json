@@ -15,7 +15,7 @@
       "description": "Architectural reasoning with The Guild. 13 specialized agents with orthogonal perspectives for multi-viewpoint architecture review.",
       "version": "0.1.0",
       "author": {
-        "name": "yzavyas",
+        "name": "mox-labs",
         "email": "yza.vyas@gmail.com"
       },
       "license": "MIT",
@@ -54,7 +54,7 @@
       "description": "Eval methodology for AI systems. Use when: writing evals for agents, skills, MCP servers, prompts, or measuring AI behavior.",
       "version": "0.1.0",
       "author": {
-        "name": "yzavyas",
+        "name": "mox-labs",
         "email": "yza.vyas@gmail.com"
       },
       "license": "MIT",

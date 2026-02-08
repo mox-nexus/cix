@@ -1,18 +1,18 @@
 #!/bin/sh
-# Outputs plugin triggers from claude-1337 marketplace
+# Outputs plugin triggers from cix marketplace
 # POSIX-compliant
 
 MARKETPLACES_FILE="$HOME/.claude/plugins/known_marketplaces.json"
 
 # Get install location if marketplace exists
 if [ -f "$MARKETPLACES_FILE" ]; then
-  INSTALL_LOC=$(grep -A5 '"claude-1337"' "$MARKETPLACES_FILE" 2>/dev/null | grep 'installLocation' | sed 's/.*: *"\([^"]*\)".*/\1/')
+  INSTALL_LOC=$(grep -A5 '"cix"' "$MARKETPLACES_FILE" 2>/dev/null | grep 'installLocation' | sed 's/.*: *"\([^"]*\)".*/\1/')
 fi
 
-# Always output core-1337 instruction
-echo "## claude-1337"
+# Always output core-ci instruction
+echo "## cix"
 echo ""
-echo "**Load now:** \`$INSTALL_LOC/plugins/core-1337/SKILL.md\`"
+echo "**Load now:** \`$INSTALL_LOC/plugins/core-ci/SKILL.md\`"
 
 # If we have the marketplace, show the trigger table
 if [ -n "$INSTALL_LOC" ] && [ -f "$INSTALL_LOC/.claude-plugin/marketplace.json" ]; then
@@ -26,7 +26,7 @@ if [ -n "$INSTALL_LOC" ] && [ -f "$INSTALL_LOC/.claude-plugin/marketplace.json" 
       desc = $4
       sub(/.*Use when: /, "", desc)
       sub(/\..*/, "", desc)
-      if (name != "core-1337" && name != "") {
+      if (name != "core-ci" && name != "") {
         print "- **" name "** → " desc " → `" loc "/plugins/" name "/SKILL.md`"
       }
     }

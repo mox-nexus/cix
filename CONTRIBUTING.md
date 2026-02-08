@@ -134,7 +134,7 @@ How to test these changes.
 
 ```bash
 # Clone
-git clone https://github.com/mox-labs/cix
+git clone https://github.com/mox-nexus/cix
 cd cix
 
 # Install dependencies

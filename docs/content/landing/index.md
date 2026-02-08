@@ -6,12 +6,12 @@ Cognitive extensions that amplify human capability, not replace it.
 
 **CLI tool**
 ```bash
-uv tool install git+https://github.com/mox-labs/cix
+uv tool install git+https://github.com/mox-nexus/cix
 ```
 
 **Claude Code plugin**
 ```
-/plugin install https://github.com/mox-labs/cix
+/plugin install https://github.com/mox-nexus/cix
 ```
 
 ## Browse

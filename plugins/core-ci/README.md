@@ -1,4 +1,4 @@
-# core-1337
+# core-ci
 
 Engineering excellence methodology for builders.
 
@@ -52,7 +52,7 @@ SKIP_MRWOLF_HOOKS=1 claude
 ## Structure
 
 ```
-core-1337/
+core-ci/
 ├── skills/build-core/
 │   ├── SKILL.md              # Engineering methodology
 │   └── references/           # Deep dives (verification, reasoning, etc.)
