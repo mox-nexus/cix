@@ -37,54 +37,39 @@ cix provides extensions built on complementary principles:
 
 ## Quick Start
 
-**Prerequisites:**
-- Claude Code
-- Python 3.11+ (via uv)
-- Bun (for the docs site)
-
-**Install:**
+**Try it now** (zero install):
 ```bash
-# Clone the repository
-git clone https://github.com/yza-vyas/cix.git
-cd cix
-
-# Install the CLI
-cd tools/cix
-uv sync
-uv run cix --help
-
-# Install a plugin
-uv run cix install arch-guild
+uvx cix install arch-guild
 ```
 
-**Verify installation:**
+**Install the CLI:**
 ```bash
-# List installed plugins
-uv run cix list
-
-# Check Claude Code recognizes it
-# Start Claude Code and type: "What extensions are loaded?"
+uv tool install cix
+cix install arch-guild
 ```
 
-For detailed installation and usage, see the [experience site](https://mox.nexus/cix/).
+**Or via Claude Code marketplace:**
+```bash
+claude plugin marketplace add mox-nexus/cix
+```
+
+For detailed usage, see the [experience site](https://mox-nexus.github.io/cix/).
 
 ## The Extensions
 
-cix includes 7 plugins spanning engineering practice, architecture, research, and development.
+### core-ci
 
-### core-1337
+Core collaborative intelligence patterns.
 
-Engineering excellence methodology for builders.
+Decision frameworks, verification workflows, first-principles reasoning. Mr. Wolf activates when debugging loops or frustration patterns are detected.
 
-Provides the `build-core` skill (craftsmanship standards, evidence-based decisions, first principles reasoning) and Mr. Wolf, a structured problem solver who activates when debugging loops or frustration patterns are detected.
-
-**Use when:** Writing code, making technical decisions, debugging.
+**Use when:** Making decisions, verifying claims, applying first principles.
 
 ### arch-guild
 
 Architectural reasoning through 13 specialized agents, each with an orthogonality lock to their domain.
 
-Each agent provides one perspective (security, distributed systems, performance, resilience). You synthesize across perspectives. This forces genuine diversity and prevents single-viewpoint tunnel vision.
+Each agent provides one perspective (security, distributed systems, performance, resilience). You synthesize across perspectives. Forces genuine diversity.
 
 **Use when:** Architecture reviews, design decisions, production readiness checks.
 
@@ -92,41 +77,25 @@ Each agent provides one perspective (security, distributed systems, performance,
 
 Build extensions that enable effective human-AI collaboration.
 
-Includes `build-plugin` (Claude Code specifics) and `build-capability` (general patterns: progressive disclosure, degrees of freedom, feedback loops). Also provides evaluator and optimizer agents for extension quality.
+Plugin structure, skill development, agent design, hook patterns. Includes evaluator and optimizer agents for quality validation.
 
 **Use when:** Creating skills, agents, hooks, commands, or MCP servers.
 
-### promptfu
-
-Prompt engineering grounded in research. Different model architectures need different techniques.
-
-Skills for deep reasoning models (o1, o3, Gemini Deep Think), AI-assisted research with citation accuracy, multi-paper synthesis, and style replication from examples.
-
-**Use when:** Working with reasoning models, conducting research, analyzing papers.
-
 ### build-evals
 
-Test automation and evaluation for extensions.
+Eval methodology for AI systems.
 
-Provides patterns for testing Claude Code extensions, including activation tests, response quality checks, and regression detection.
+Patterns for testing Claude Code extensions — activation tests, response quality, regression detection. Covers DeepEval, Braintrust, RAGAS frameworks.
 
-**Use when:** Building or maintaining extensions, ensuring quality.
+**Use when:** Building or maintaining extensions, measuring agent effectiveness.
 
 ### data-store
 
-Knowledge substrate patterns for shared context.
+Data storage and retrieval patterns.
 
-Designs for storing, querying, and evolving knowledge that both humans and AI can access. Emphasizes single source of truth and traceability.
+Database selection, hybrid search with RRF, embedding models, RAG architecture. Single source of truth and traceability.
 
-**Use when:** Building knowledge systems, memex implementations, shared context layers.
-
-### openclaw-srt
-
-Structured citation tracking for AI-assisted research.
-
-Ensures claims are traceable to sources, distinguishes findings from inferences, and maintains academic rigor in AI collaboration.
-
-**Use when:** Research, technical writing, any work requiring citation accuracy.
+**Use when:** Choosing databases, implementing search, building knowledge systems.
 
 ## Design Principles
 
@@ -168,7 +137,7 @@ cix/
 │       ├── ports/          # Interface definitions
 │       ├── adapters/       # Implementations
 │       └── application/    # Use case orchestration
-├── plugins/                # Marketplace (7 published)
+├── plugins/                # Marketplace extensions
 ├── docs/
 │   ├── experience/         # SvelteKit static site
 │   └── content/            # Markdown content (mdsvex)
@@ -205,7 +174,7 @@ See `plugins/extension-dev` for authoring guidance.
 
 ## Documentation
 
-The [experience site](https://mox.nexus/cix/) provides:
+The [experience site](https://mox-nexus.github.io/cix/) provides:
 - Full methodology and research synthesis
 - Plugin reference documentation
 - Evidence base with citations
