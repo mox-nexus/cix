@@ -47,12 +47,12 @@ The evidence clusters into five hypotheses, each supported by multiple independe
 
 | Hypothesis | Key Effect | Sources |
 |------------|-----------|---------|
-| **Engagement model determines outcome** | 86% vs 24% mastery from same AI | Shen & Tamkin, Bastani |
-| **Cognitive degradation is measurable** | β = -0.69 (AI confidence → less thinking) | Lee, Kosmyna, Gerlich, Budzyń |
-| **Perception gap hides harm** | 43-point gap (predicted vs actual) | METR, Stack Overflow |
-| **Control and transparency work** | β = 0.507 (control), β = 0.415 (transparency) | Blaurock |
-| **Homogenization threatens diversity** | g = -0.863 diversity reduction | Meta-analysis, Jiang (NeurIPS Best Paper), Doshi |
-| **Users misjudge what helps them** | Harmful interactions rated favorably | Sharma (Anthropic) |
+| **Engagement model determines outcome** | 86% vs 24% mastery from same AI | Shen & Tamkin, Bastani | <span class="ev ev-moderate" title="RCT, n=52 + n=1,000">◐</span> |
+| **Cognitive degradation is measurable** | β = -0.69 (AI confidence → less thinking) | Lee, Kosmyna, Gerlich, Budzyń | <span class="ev ev-strong" title="4 independent studies, multiple methods">●</span> |
+| **Perception gap hides harm** | 43-point gap (predicted vs actual) | METR, Stack Overflow | <span class="ev ev-moderate" title="RCT n=16 + survey data">◐</span> |
+| **Control and transparency work** | β = 0.507 (control), β = 0.415 (transparency) | Blaurock | <span class="ev ev-strong" title="Meta-analysis, 106 studies, 654 professionals">●</span> |
+| **Homogenization threatens diversity** | g = -0.863 diversity reduction | Meta-analysis, Jiang (NeurIPS Best Paper), Doshi | <span class="ev ev-strong" title="Meta-analysis, 28 studies, n=8,214">●</span> |
+| **Users misjudge what helps them** | Harmful interactions rated favorably | Sharma (Anthropic) | <span class="ev ev-moderate" title="~1.5M conversations, single study">◐</span> |
 
 ---
 
@@ -60,7 +60,7 @@ The evidence clusters into five hypotheses, each supported by multiple independe
 
 ### Engagement model determines outcome
 
-Shen & Tamkin (Anthropic, 2026) ran an RCT with 52 engineers learning a new library. Six interaction patterns emerged from identical AI access:
+Shen & Tamkin (Anthropic, 2026) ran an RCT with 52 engineers learning a new library. <span class="ev ev-moderate" title="RCT, n=52, single study">◐</span> Six interaction patterns emerged from identical AI access:
 
 | Pattern | Mastery | Behavior |
 |---------|---------|----------|
@@ -73,21 +73,21 @@ Shen & Tamkin (Anthropic, 2026) ran an RCT with 52 engineers learning a new libr
 
 Same tool. Mastery ranging from 24% to 86%. The interaction pattern, not the technology, determined learning.
 
-Bastani's PNAS study (n=1,000 students) confirmed this in education. Unrestricted ChatGPT caused 17% worse exam performance. Scaffolded ChatGPT with guardrails showed no significant difference from control. Design shapes outcome.
+Bastani's PNAS study (n=1,000 students) confirmed this in education. <span class="ev ev-strong" title="RCT, n=1,000, PNAS peer-reviewed">●</span> Unrestricted ChatGPT caused 17% worse exam performance. Scaffolded ChatGPT with guardrails showed no significant difference from control. Design shapes outcome.
 
 ### Cognitive degradation is measurable
 
-Lee et al. (CHI 2025, n=319 knowledge workers) found confidence in AI negatively correlated with critical thinking enacted (β = -0.69). Workers shift from execution to oversight without maintaining verification rigor.
+Lee et al. (CHI 2025, n=319 knowledge workers) found confidence in AI negatively correlated with critical thinking enacted (β = -0.69). <span class="ev ev-strong" title="CHI peer-reviewed, n=319, structural equation modeling">●</span> Workers shift from execution to oversight without maintaining verification rigor.
 
-Kosmyna (MIT Media Lab) measured this neurologically. EEG during AI-assisted writing showed reduced memory encoding. 83% couldn't recall content from their own work — they never learned it.
+Kosmyna (MIT Media Lab) measured this neurologically. <span class="ev ev-moderate" title="EEG study, MIT Media Lab, single study">◐</span> EEG during AI-assisted writing showed reduced memory encoding. 83% couldn't recall content from their own work — they never learned it.
 
-Budzyń (Lancet, crossover RCT) showed skill atrophy directly. After 3 months with AI-assisted polyp detection, endoscopists' unaided detection rate dropped from 28.4% to 22.4%. A 20% decline in 12 weeks.
+Budzyń (Lancet, crossover RCT) showed skill atrophy directly. <span class="ev ev-moderate" title="Lancet crossover RCT, single study, medical domain">◐</span> After 3 months with AI-assisted polyp detection, endoscopists' unaided detection rate dropped from 28.4% to 22.4%. A 20% decline in 12 weeks.
 
-Gerlich (n=666) found AI use negatively predicts critical thinking (β = -1.76) with younger users most affected.
+Gerlich (n=666) found AI use negatively predicts critical thinking (β = -1.76) with younger users most affected. <span class="ev ev-moderate" title="Survey, n=666, single study">◐</span>
 
 ### Perception gap hides harm
 
-METR's RCT (16 experienced developers, 246 real tasks) showed a 43-point perception gap: predicted 24% speedup, actual 19% slowdown.
+METR's RCT (16 experienced developers, 246 real tasks) showed a 43-point perception gap: predicted 24% speedup, actual 19% slowdown. <span class="ev ev-moderate" title="RCT, n=16, small sample but rigorous design">◐</span>
 
 Stack Overflow surveys show the paradox at scale: trust in AI accuracy dropped 10 points (43% → 33%) while adoption rose 8 points (76% → 84%). People use tools they don't trust, perceive benefits they don't get.
 
@@ -95,7 +95,7 @@ The gap prevents correction. You can't fix what you don't notice.
 
 ### Control and transparency work
 
-Blaurock's meta-analysis (106 studies, 654 professionals) identified what predicts good outcomes:
+Blaurock's meta-analysis (106 studies, 654 professionals) identified what predicts good outcomes: <span class="ev ev-strong" title="Meta-analysis, 106 studies, 654 professionals">●</span>
 
 | Factor | Effect Size |
 |--------|-------------|
@@ -106,27 +106,27 @@ Blaurock's meta-analysis (106 studies, 654 professionals) identified what predic
 
 Control is the strongest lever. Transparency is second. Engagement features (AI asking questions) actually hurt frequent users.
 
-Bansal (CHI 2021) explained why explanations alone fail: they increased acceptance regardless of correctness. When AI was right, small improvement. When wrong, performance degraded. Explanations build trust without calibrating it.
+Bansal (CHI 2021) explained why explanations alone fail: they increased acceptance regardless of correctness. <span class="ev ev-strong" title="CHI peer-reviewed, controlled experiment">●</span> When AI was right, small improvement. When wrong, performance degraded. Explanations build trust without calibrating it.
 
 ### Homogenization threatens diversity
 
-**The Artificial Hivemind (NeurIPS 2025 Best Paper):** Jiang et al. tested 70+ LLMs on 26,000 open-ended queries. When 25 different models wrote "a metaphor about time," only 2 dominant clusters emerged. Temperature and ensembling don't help — RLHF over-fits to consensus, penalizing valid but idiosyncratic responses.
+**The Artificial Hivemind (NeurIPS 2025 Best Paper):** Jiang et al. tested 70+ LLMs on 26,000 open-ended queries. <span class="ev ev-strong" title="NeurIPS Best Paper, 70+ models, 26,000 queries">●</span> When 25 different models wrote "a metaphor about time," only 2 dominant clusters emerged. Temperature and ensembling don't help — RLHF over-fits to consensus, penalizing valid but idiosyncratic responses.
 
-**Meta-analysis (28 studies, n=8,214):** Pooled effect size for diversity reduction: **g = -0.863** (CI: -1.328 to -0.398, p&lt;0.001). Large negative effect. Individual creative performance goes up (+0.27), but collective diversity goes down hard.
+**Meta-analysis (28 studies, n=8,214):** <span class="ev ev-strong" title="Meta-analysis, 28 studies, n=8,214, p&lt;0.001">●</span> Pooled effect size for diversity reduction: **g = -0.863** (CI: -1.328 to -0.398, p&lt;0.001). Large negative effect. Individual creative performance goes up (+0.27), but collective diversity goes down hard.
 
-**Visual convergence:** Hintze et al. (Patterns/Cell, Jan 2026) ran 700 iterative AI image generation loops. ALL converged to just 12 motifs (lighthouses, Gothic cathedrals, rustic buildings...) regardless of starting prompt. "What they generated is bland, pop culture, generic."
+**Visual convergence:** Hintze et al. (Patterns/Cell, Jan 2026) ran 700 iterative AI image generation loops. <span class="ev ev-moderate" title="Single study, 700 trials, Patterns/Cell">◐</span> ALL converged to just 12 motifs (lighthouses, Gothic cathedrals, rustic buildings...) regardless of starting prompt. "What they generated is bland, pop culture, generic."
 
-Doshi & Hauser (Science Advances) quantified the social dilemma: individual novelty +8.1%, story similarity +10.7%. Individually better off, collectively homogenized.
+Doshi & Hauser (Science Advances) quantified the social dilemma: individual novelty +8.1%, story similarity +10.7%. <span class="ev ev-strong" title="Science Advances peer-reviewed, controlled experiment">●</span> Individually better off, collectively homogenized.
 
-**Cultural homogenization:** Agarwal et al. (CHI 2025) found AI pushes writing toward Western norms. Cultural classification accuracy dropped from 90.6% to 83.5% with AI assistance.
+**Cultural homogenization:** Agarwal et al. (CHI 2025) found AI pushes writing toward Western norms. <span class="ev ev-strong" title="CHI peer-reviewed, classification study">●</span> Cultural classification accuracy dropped from 90.6% to 83.5% with AI assistance.
 
 When everyone uses the same AI, outputs converge. The diversity that enables collective intelligence — Hong & Page showed diverse groups outperform best-ability groups — disappears.
 
-**Mitigation evidence:** Wan & Kalman (2025) showed that using 10 diverse AI "personas" eliminated the homogenization effect. Within-persona similarity: 0.92, across-persona: 0.20. Diversity can be preserved through design.
+**Mitigation evidence:** Wan & Kalman (2025) showed that using 10 diverse AI "personas" eliminated the homogenization effect. <span class="ev ev-moderate" title="Single study, promising but needs replication">◐</span> Within-persona similarity: 0.92, across-persona: 0.20. Diversity can be preserved through design.
 
 ### Users misjudge what helps them
 
-Sharma et al. (Anthropic, Jan 2026) analyzed ~1.5 million Claude.ai conversations. The finding: **users rate disempowering interactions MORE favorably** in the moment. Interactions that distorted reality, value judgments, or actions felt good.
+Sharma et al. (Anthropic, Jan 2026) analyzed ~1.5 million Claude.ai conversations. <span class="ev ev-moderate" title="Large-scale observational study, ~1.5M conversations, single platform">◐</span> The finding: **users rate disempowering interactions MORE favorably** in the moment. Interactions that distorted reality, value judgments, or actions felt good.
 
 But when users actually **acted on AI outputs**, satisfaction dropped **below baseline**. Users expressed regret: "I should have listened to my own intuition."
 
@@ -136,7 +136,7 @@ This explains why the perception gap (METR: predicted 24% speedup, actual 19% sl
 
 ### The creative scar
 
-Zhou et al. (Technology in Society, 2025) ran a 7-day lab experiment with 2-month follow-up. 61 participants, 3,593 ideas.
+Zhou et al. (Technology in Society, 2025) ran a 7-day lab experiment with 2-month follow-up. 61 participants, 3,593 ideas. <span class="ev ev-moderate" title="Longitudinal experiment, n=61, 2-month follow-up">◐</span>
 
 Key finding: **creativity drops remarkably when AI is withdrawn, and homogeneity keeps climbing even months later.** The "creative scar" persists.
 

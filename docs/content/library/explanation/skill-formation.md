@@ -13,7 +13,7 @@ How AI assistance affects learning and capability development.
 
 ## Abstract
 
-AI assistance produces productivity gains but impairs skill acquisition. In a randomized experiment with 52 software engineers learning a new Python library, AI users scored 17% lower on mastery assessments (d = 0.738, p = 0.01) without significant speed improvement.
+AI assistance produces productivity gains but impairs skill acquisition. In a randomized experiment with 52 software engineers learning a new Python library, AI users scored 17% lower on mastery assessments (d = 0.738, p = 0.01) without significant speed improvement. <span class="ev ev-moderate" title="RCT, n=52, Anthropic 2026">◐</span>
 
 Six distinct interaction patterns emerged. Three preserved learning (65-86% scores): asking conceptual questions only, requesting explanations with code, or generating code then asking follow-up questions. Three impaired learning (24-39% scores): full delegation, progressive reliance, or iterative AI debugging.
 
@@ -38,7 +38,7 @@ This is Anthropic's own research confirming that *how* you use AI determines whe
 
 **Why errors matter:**
 
-The control group (no AI) encountered median 3 errors vs 1 for AI users. Those errors — especially Trio-specific ones like TypeError and RuntimeWarning — forced understanding of how the library actually works.
+The control group (no AI) encountered median 3 errors vs 1 for AI users. <span class="ev ev-moderate" title="Same RCT, n=52">◐</span> Those errors — especially Trio-specific ones like TypeError and RuntimeWarning — forced understanding of how the library actually works.
 
 AI users who delegated never hit those errors. They completed the task without learning anything about async patterns, error handling, or the library's execution model.
 

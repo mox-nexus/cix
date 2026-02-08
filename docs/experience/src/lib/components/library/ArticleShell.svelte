@@ -140,6 +140,32 @@
 		margin: var(--space-4) 0;
 	}
 
+	/* --- Evidence Level Badges (●/◐/○/◌) --- */
+	.prose :global(.ev) {
+		font-family: var(--font-sans);
+		font-size: var(--type-xs);
+		cursor: help;
+		margin-left: 0.25ch;
+		vertical-align: super;
+		line-height: 1;
+	}
+
+	.prose :global(.ev-strong) {
+		color: var(--emergence-core);
+	}
+
+	.prose :global(.ev-moderate) {
+		color: var(--spark-core);
+	}
+
+	.prose :global(.ev-weak) {
+		color: var(--constraint-core);
+	}
+
+	.prose :global(.ev-speculative) {
+		color: var(--dao-muted);
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.article-breadcrumb a,
 		.article-back a {
