@@ -1,0 +1,19 @@
+{
+  "name": "cix-tools",
+  "owner": {
+    "name": "Mox Labs",
+    "email": "mox.rnd@gmail.com"
+  },
+  "tools": [
+    {
+      "name": "cix",
+      "source": "./cix",
+      "description": "Package manager for cognitive extensions. Discovers, installs, and manages Claude Code extensions from marketplace repositories."
+    },
+    {
+      "name": "memex",
+      "source": "./memex",
+      "description": "Extended memory for you and your agents. Excavates and connects historical human-AI collaboration artifacts across heterogeneous sources."
+    }
+  ]
+}

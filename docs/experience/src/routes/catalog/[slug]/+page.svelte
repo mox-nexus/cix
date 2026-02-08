@@ -11,41 +11,44 @@
 		constraint: 'var(--ci-red)'
 	};
 
-	let htmlContent = $derived(marked.parse(data.plugin.readme));
+	let htmlContent = $derived(marked.parse(data.extension.readme));
 
 	const componentParts = $derived(
 		[
-			data.plugin.components.agents > 0 && `${data.plugin.components.agents} agent${data.plugin.components.agents !== 1 ? 's' : ''}`,
-			data.plugin.components.skills > 0 && `${data.plugin.components.skills} skill${data.plugin.components.skills !== 1 ? 's' : ''}`,
-			data.plugin.components.hooks > 0 && `${data.plugin.components.hooks} hook${data.plugin.components.hooks !== 1 ? 's' : ''}`,
-			data.plugin.components.commands > 0 && `${data.plugin.components.commands} cmd${data.plugin.components.commands !== 1 ? 's' : ''}`
+			data.extension.components.agents > 0 &&
+				`${data.extension.components.agents} agent${data.extension.components.agents !== 1 ? 's' : ''}`,
+			data.extension.components.skills > 0 &&
+				`${data.extension.components.skills} skill${data.extension.components.skills !== 1 ? 's' : ''}`,
+			data.extension.components.hooks > 0 &&
+				`${data.extension.components.hooks} hook${data.extension.components.hooks !== 1 ? 's' : ''}`,
+			data.extension.components.commands > 0 &&
+				`${data.extension.components.commands} cmd${data.extension.components.commands !== 1 ? 's' : ''}`
 		].filter(Boolean) as string[]
 	);
 </script>
 
 <svelte:head>
-	<title>{data.plugin.slug} — cix</title>
-	<meta name="description" content={data.plugin.narrativeHook || data.plugin.manifest.description} />
+	<title>{data.extension.slug} — cix</title>
+	<meta name="description" content={data.extension.manifest.description} />
 </svelte:head>
 
-<main id="main" class="detail-page" style="--variant-color: {variantColor[data.plugin.variant]}">
+<main
+	id="main"
+	class="detail-page"
+	style="--variant-color: {variantColor[data.extension.variant]}"
+>
 	<nav class="detail-back">
 		<a href="{base}/catalog">&larr; catalog</a>
 	</nav>
 
 	<header class="detail-header">
 		<div class="header-top">
-			<h1>{data.plugin.slug}</h1>
-			<span class="detail-version">{data.plugin.manifest.version}</span>
+			<h1>{data.extension.slug}</h1>
+			<span class="detail-kind">{data.extension.kind}</span>
+			<span class="detail-version">{data.extension.manifest.version}</span>
 		</div>
 
-		{#if data.plugin.narrativeHook}
-			<p class="detail-narrative">{data.plugin.narrativeHook}</p>
-		{/if}
-
-		{#if data.plugin.constraint}
-			<p class="detail-constraint">Embodies: {data.plugin.constraint}</p>
-		{/if}
+		<p class="detail-description">{data.extension.manifest.description}</p>
 
 		{#if componentParts.length > 0}
 			<div class="detail-inventory">
@@ -55,10 +58,10 @@
 			</div>
 		{/if}
 
-		{#if data.plugin.manifest.keywords?.length}
-			<div class="detail-keywords">
-				{#each data.plugin.manifest.keywords as keyword}
-					<span class="keyword">{keyword}</span>
+		{#if data.extension.tags.length > 0}
+			<div class="detail-tags">
+				{#each data.extension.tags as tag}
+					<span class="tag">{tag}</span>
 				{/each}
 			</div>
 		{/if}
@@ -114,25 +117,28 @@
 		margin: 0;
 	}
 
+	.detail-kind {
+		font-family: var(--font-mono);
+		font-size: var(--type-xs);
+		color: var(--variant-color);
+		border: 1px solid var(--variant-color);
+		padding: 0 0.5ch;
+		line-height: 1.6;
+	}
+
 	.detail-version {
 		font-family: var(--font-mono);
 		font-size: var(--type-sm);
 		color: var(--dao-muted);
+		margin-left: auto;
 	}
 
-	.detail-narrative {
+	.detail-description {
 		font-family: var(--font-mono);
 		font-size: var(--type-sm);
 		color: var(--dao-text-secondary);
 		line-height: var(--leading-relaxed);
 		margin: 0 0 var(--space-1) 0;
-	}
-
-	.detail-constraint {
-		font-family: var(--font-mono);
-		font-size: var(--type-xs);
-		color: var(--variant-color);
-		margin: 0 0 var(--space-1-5) 0;
 	}
 
 	.detail-inventory {
@@ -148,21 +154,18 @@
 		color: var(--variant-color);
 	}
 
-	.detail-keywords {
+	.detail-tags {
 		display: flex;
 		gap: var(--space-0-5);
 		flex-wrap: wrap;
 	}
 
-	.keyword {
-		font-family: var(--font-sans);
+	.tag {
+		font-family: var(--font-mono);
 		font-size: var(--type-xs);
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-widest);
 		color: var(--dao-muted);
-		padding: 2px var(--space-0-5);
-		border: 1px solid var(--dao-border);
-		border-radius: var(--radius-sm);
+		border: 1px solid var(--dao-border-subtle);
+		padding: 1px var(--space-0-5);
 	}
 
 	/* README prose styles */
