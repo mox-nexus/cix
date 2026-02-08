@@ -17,11 +17,11 @@ AI reliably improves task completion while degrading the capabilities that enabl
 
 ## Abstract
 
-People complete 26% more tasks with AI assistance (Cui/Demirer, n=4,867). They also score 17% worse on unassisted assessments (Bastani, n=1,000) and lose 20% of skill proficiency after three months of AI use (Budzyń).
+People complete 26% more tasks with AI assistance (Cui/Demirer, n=4,867). <span class="ev ev-strong" title="Multiple RCTs, n=4,867">●</span> They also score 17% worse on unassisted assessments (Bastani, n=1,000) <span class="ev ev-strong" title="RCT, n=1,000, PNAS">●</span> and lose 20% of skill proficiency after three months of AI use (Budzyń). <span class="ev ev-moderate" title="Lancet crossover RCT, medical domain">◐</span>
 
-The perception gap compounds the problem. Experienced developers predicted AI would make them 24% faster; measurements showed they were 19% slower — a 43-point gap between perception and reality (METR). Trust in AI coding accuracy dropped from 43% to 33% in one year, yet adoption rose from 76% to 84% (Stack Overflow). People use tools they don't trust, perceive benefits they don't get.
+The perception gap compounds the problem. Experienced developers predicted AI would make them 24% faster; measurements showed they were 19% slower — a 43-point gap between perception and reality (METR). <span class="ev ev-moderate" title="RCT, n=16, rigorous but small">◐</span> Trust in AI coding accuracy dropped from 43% to 33% in one year, yet adoption rose from 76% to 84% (Stack Overflow). <span class="ev ev-moderate" title="Large survey, observational">◐</span> People use tools they don't trust, perceive benefits they don't get.
 
-Confidence in AI negatively correlates with critical thinking (β = -0.69, Lee). The more you rely on AI, the less you verify it. The less you verify, the more errors propagate.
+Confidence in AI negatively correlates with critical thinking (β = -0.69, Lee). <span class="ev ev-strong" title="CHI peer-reviewed, n=319, SEM">●</span> The more you rely on AI, the less you verify it. The less you verify, the more errors propagate.
 
 ---
 
@@ -37,11 +37,11 @@ The productivity illusion persists because generation was visible effort. Verifi
 
 **Three mechanisms drive hollowing:**
 
-*Cognitive offloading.* When AI handles thinking, humans stop doing it. Kosmyna's MIT study showed this neurologically — 83% couldn't recall content from their own AI-assisted writing. They didn't forget. They never encoded it.
+*Cognitive offloading.* When AI handles thinking, humans stop doing it. Kosmyna's MIT study showed this neurologically — 83% couldn't recall content from their own AI-assisted writing. <span class="ev ev-moderate" title="EEG study, MIT Media Lab">◐</span> They didn't forget. They never encoded it.
 
-*Trust without calibration.* Explanations increase acceptance regardless of correctness (Bansal, CHI 2021). When AI is right, explanations help slightly. When AI is wrong, performance degrades. Trust rises; verification falls.
+*Trust without calibration.* Explanations increase acceptance regardless of correctness (Bansal, CHI 2021). <span class="ev ev-strong" title="CHI peer-reviewed, controlled experiment">●</span> When AI is right, explanations help slightly. When AI is wrong, performance degrades. Trust rises; verification falls.
 
-*Skill atrophy.* Skills require practice. Remove the practice, lose the skill. The Lancet study is cleanest: 20% detection rate decline in 12 weeks after AI removal. No equivalent study exists for developers — the technology is too new. But the cognitive mechanisms are identical.
+*Skill atrophy.* Skills require practice. Remove the practice, lose the skill. The Lancet study is cleanest: 20% detection rate decline in 12 weeks after AI removal. <span class="ev ev-moderate" title="Lancet crossover RCT, medical domain">◐</span> No equivalent study exists for developers — the technology is too new. But the cognitive mechanisms are identical. <span class="ev ev-speculative" title="Inference from adjacent domain">◌</span>
 
 **The perception gap prevents correction.**
 

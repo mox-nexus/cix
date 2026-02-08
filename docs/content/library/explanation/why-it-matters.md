@@ -18,9 +18,9 @@ Patterns established now compound. The foundations being set in 2025-2026 determ
 
 Cognitive offloading compounds. Each cycle of delegation makes the next easier to accept. Each reduction in critical thinking makes verification less likely. Each skill that atrophies makes AI feel more essential.
 
-The positive case also compounds. Mastery-oriented users — those who focus on learning rather than output — show 35.7x odds of maintaining critical thinking (ACU Research Bank 2025). Control and transparency (β = 0.507, 0.415) create virtuous cycles where each interaction builds capability.
+The positive case also compounds. Mastery-oriented users — those who focus on learning rather than output — show 35.7x odds of maintaining critical thinking (ACU Research Bank 2025). <span class="ev ev-moderate" title="Single study, odds ratio">◐</span> Control and transparency (β = 0.507, 0.415) create virtuous cycles where each interaction builds capability. <span class="ev ev-strong" title="Meta-analysis, 106 studies">●</span>
 
-The stakes are systemic. When everyone uses the same AI, outputs converge. Hong & Page showed diverse groups outperform best-ability groups. Haldane documented how monoculture thinking caused the 2008 financial crisis. Ashby's Law: only variety absorbs variety. Homogenization reduces collective capacity to handle complexity.
+The stakes are systemic. When everyone uses the same AI, outputs converge. Hong & Page showed diverse groups outperform best-ability groups. <span class="ev ev-strong" title="PNAS, formal mathematical proof + simulation">●</span> Haldane documented how monoculture thinking caused the 2008 financial crisis. <span class="ev ev-weak" title="Expert analysis, single domain analogy">○</span> Ashby's Law: only variety absorbs variety. Homogenization reduces collective capacity to handle complexity.
 
 ---
 
@@ -28,9 +28,9 @@ The stakes are systemic. When everyone uses the same AI, outputs converge. Hong 
 
 ### Compounding works both directions
 
-Negative compounding is visible in the research. The Lancet study showed 20% skill degradation in 3 months. The Lee study showed confidence in AI correlates negatively with critical thinking (β = -0.69). The perception gap means people don't notice the degradation. Each effect feeds the next.
+Negative compounding is visible in the research. The Lancet study showed 20% skill degradation in 3 months. <span class="ev ev-moderate" title="Lancet crossover RCT">◐</span> The Lee study showed confidence in AI correlates negatively with critical thinking (β = -0.69). <span class="ev ev-strong" title="CHI, n=319, SEM">●</span> The perception gap means people don't notice the degradation. Each effect feeds the next.
 
-Positive compounding is also visible. Shen & Tamkin's "Generation-Then-Comprehension" users achieved 86% mastery — they generated code, then asked follow-up questions to understand it. Each cycle built capability for the next. Blaurock's mastery-oriented users maintained critical thinking at 35.7x the odds of performance-oriented users.
+Positive compounding is also visible. Shen & Tamkin's "Generation-Then-Comprehension" users achieved 86% mastery — they generated code, then asked follow-up questions to understand it. <span class="ev ev-moderate" title="RCT, n=52, Anthropic">◐</span> Each cycle built capability for the next. Blaurock's mastery-oriented users maintained critical thinking at 35.7x the odds of performance-oriented users. <span class="ev ev-moderate" title="Single study, odds ratio">◐</span>
 
 The same tool, used differently, produces opposite trajectories.
 
@@ -42,15 +42,15 @@ If the foundation is substitutive — accept output, skip verification, optimize
 
 If the foundation is complementary — understand output, verify reasoning, build judgment — capability compounds across generations. The baseline rises.
 
-Shen & Tamkin showed this starkly. Junior developers showed the largest productivity gains (27-39%) and also the largest learning deficits. Seniors showed smaller productivity gains (7-16%) but maintained capability. The pattern isn't about individual skill — it's about whether the collaboration builds or erodes the foundation.
+Shen & Tamkin showed this starkly. Junior developers showed the largest productivity gains (27-39%) and also the largest learning deficits. Seniors showed smaller productivity gains (7-16%) but maintained capability. <span class="ev ev-moderate" title="RCT, n=52, Anthropic">◐</span> The pattern isn't about individual skill — it's about whether the collaboration builds or erodes the foundation.
 
 ### Diversity is not optional
 
-Collective intelligence requires diversity. Hong & Page proved this formally: randomly selected diverse groups outperformed best-ability homogeneous groups. The mechanism is mathematical — diverse perspectives search the solution space more effectively.
+Collective intelligence requires diversity. Hong & Page proved this formally: randomly selected diverse groups outperformed best-ability homogeneous groups. <span class="ev ev-strong" title="PNAS, formal proof + simulation">●</span> The mechanism is mathematical — diverse perspectives search the solution space more effectively.
 
 AI threatens this at scale. When everyone uses the same models trained on the same data, outputs converge. Xu et al. found idiosyncratic plot elements echoing across different LLMs. Zhang et al. found AI-assisted responses showed 67-75% content overlap.
 
-Haldane's analysis of the 2008 crisis is instructive. By 2008, hedge fund strategies showed average pairwise correlation of ~0.35. Everyone optimized for the same signals. When the market turned, they all failed together.
+Haldane's analysis of the 2008 crisis is instructive. <span class="ev ev-weak" title="Expert analysis, historical case study">○</span> By 2008, hedge fund strategies showed average pairwise correlation of ~0.35. Everyone optimized for the same signals. When the market turned, they all failed together.
 
 Ashby's Law of Requisite Variety: a control system must possess at least as much variety as the disturbances it must handle. If problems are varied but solutions are homogeneous, the system cannot cope.
 
