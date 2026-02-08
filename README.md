@@ -55,47 +55,9 @@ claude plugin marketplace add mox-nexus/cix
 
 For detailed usage, see the [experience site](https://mox-nexus.github.io/cix/).
 
-## The Extensions
+## Extensions
 
-### core-ci
-
-Core collaborative intelligence patterns.
-
-Decision frameworks, verification workflows, first-principles reasoning. Mr. Wolf activates when debugging loops or frustration patterns are detected.
-
-**Use when:** Making decisions, verifying claims, applying first principles.
-
-### arch-guild
-
-Architectural reasoning through 13 specialized agents, each with an orthogonality lock to their domain.
-
-Each agent provides one perspective (security, distributed systems, performance, resilience). You synthesize across perspectives. Forces genuine diversity.
-
-**Use when:** Architecture reviews, design decisions, production readiness checks.
-
-### extension-dev
-
-Build extensions that enable effective human-AI collaboration.
-
-Plugin structure, skill development, agent design, hook patterns. Includes evaluator and optimizer agents for quality validation.
-
-**Use when:** Creating skills, agents, hooks, commands, or MCP servers.
-
-### build-evals
-
-Eval methodology for AI systems.
-
-Patterns for testing Claude Code extensions — activation tests, response quality, regression detection. Covers DeepEval, Braintrust, RAGAS frameworks.
-
-**Use when:** Building or maintaining extensions, measuring agent effectiveness.
-
-### data-store
-
-Data storage and retrieval patterns.
-
-Database selection, hybrid search with RRF, embedding models, RAG architecture. Single source of truth and traceability.
-
-**Use when:** Choosing databases, implementing search, building knowledge systems.
+Browse the [catalog](https://mox-nexus.github.io/cix/catalog).
 
 ## Design Principles
 
