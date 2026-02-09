@@ -51,13 +51,24 @@ System-level architectural reasoning using The Guild methodology.
 - `scale` → Knuth, Erlang
 - `resilience` → Taleb, Erlang, Vector
 
+## Domain Context Overlay
+
+Before deliberating, check the project's CLAUDE.md for a `## Guild Vocabulary` section. If present:
+
+1. Read the vocabulary mappings defined there
+2. Translate your agent metaphors into the domain terms (e.g., Erlang's "Valve" might map to a project-specific concurrency primitive)
+3. Reason using the domain's language, not generic architecture abstractions
+
+This lets the Guild reason about any domain with precision — the project teaches the Guild its vocabulary, the Guild brings orthogonal reasoning.
+
 ## Review Process
 
-1. Present the architectural decision or proposal
-2. Masters evaluate from orthogonal perspectives
-3. Specialists trigger based on context
-4. Surface consensus/dissent explicitly
-5. Ixian closes with validation criteria (mandatory)
+1. Check for domain vocabulary overlay (CLAUDE.md)
+2. Present the architectural decision or proposal
+3. Masters evaluate from orthogonal perspectives
+4. Specialists trigger based on context
+5. Surface consensus/dissent explicitly
+6. Ixian closes with validation criteria (mandatory)
 
 ## Verdicts
 
@@ -114,6 +125,7 @@ After significant decisions, capture learnings to `.claude/guild-ratchet.md`:
 ## Additional Resources
 
 - **`references/guild-protocol.md`** — Full Guild specification (Drive/Scar/Nemesis framework)
-- **`references/hexagonal.md`** — Ports & Adapters pattern for LLM development
+- **`references/hexagonal.md`** — Ports & Adapters pattern (Protocol > ABC for Python)
+- **`references/stat-rigor.md`** — Statistical rigor for validation (Bayesian, clustered SE, pass@k)
 - **`references/event-driven.md`** — CQRS, sagas, outbox patterns
 - **`references/agent-patterns.md`** — Multi-agent coordination workflows
