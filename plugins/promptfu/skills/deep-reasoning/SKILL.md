@@ -11,6 +11,17 @@ Prompting for models with internal reinforcement learning: o1, o3, Gemini Deep T
 
 ---
 
+## Two Modes
+
+| Mode | Input | Output | Use When |
+|------|-------|--------|----------|
+| **Direct** | You write the XML constraints | XML → reasoning model | You know the domain |
+| **Meta (Deep Think Architect)** | You describe what you need | Meta-prompt generates XML for you | Domain is unfamiliar, want auto-scenario-injection |
+
+The Deep Think Architect meta-prompt is in `references/deep-think.md`. Feed it to a standard model (Claude, GPT-4) with your context, and it outputs copy-pasteable XML for the reasoning model.
+
+---
+
 ## The Difference
 
 | Autoregressive (Claude, GPT-4) | Reasoning (o1, Deep Think) |
