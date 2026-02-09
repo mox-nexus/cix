@@ -12,7 +12,8 @@ fi
 # Always output collab-scaffolds instruction
 echo "## cix"
 echo ""
-echo "**Load now:** \`$INSTALL_LOC/plugins/collab-scaffolds/SKILL.md\`"
+echo "**Load now:** \`$INSTALL_LOC/plugins/collab-scaffolds/skills/collab-craft/SKILL.md\`"
+echo "**Problem solving:** \`$INSTALL_LOC/plugins/collab-scaffolds/skills/problem-solving/SKILL.md\`"
 
 # If we have the marketplace, show the trigger table
 if [ -n "$INSTALL_LOC" ] && [ -f "$INSTALL_LOC/.claude-plugin/marketplace.json" ]; then
