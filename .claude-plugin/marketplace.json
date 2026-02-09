@@ -99,6 +99,19 @@
       "license": "MIT",
       "keywords": ["prompt-engineering", "reasoning", "research", "synthesis", "style-transfer"],
       "category": "methodology"
+    },
+    {
+      "name": "craft-explanations",
+      "source": "./plugins/craft-explanations",
+      "description": "Explanation craft through simultaneous encoding. Use when: writing docs, explaining concepts, teaching in conversation, creating tutorials, curating documentation collections, making diagrams for explanation.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Mox Labs",
+        "email": "mox.rnd@gmail.com"
+      },
+      "license": "MIT",
+      "keywords": ["explanations", "documentation", "teaching", "diagrams", "visual-communication", "information-architecture", "pedagogy"],
+      "category": "communication"
     }
   ]
 }
