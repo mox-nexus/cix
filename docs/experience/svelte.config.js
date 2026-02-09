@@ -41,8 +41,7 @@ const config = {
 		}),
 		prerender: {
 			handleHttpError({ path, referrer, message }) {
-				// Library content has .md cross-references that don't match SvelteKit routes
-				// These will be fixed in Phase 2 (library Diátaxis restructure)
+				// Library markdown may contain .md cross-references that don't match routes
 				if (path.endsWith('.md')) {
 					console.warn(`[prerender] Ignoring .md link: ${path} (from ${referrer})`);
 					return;

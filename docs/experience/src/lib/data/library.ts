@@ -24,6 +24,21 @@ export const LIBRARY: QuadrantMeta[] = [
 		variant: 'spark',
 		entries: [
 			{
+				slug: 'what-is-ci',
+				title: 'What is CI',
+				description: 'The collaborative intelligence thesis.'
+			},
+			{
+				slug: 'the-risks',
+				title: 'The Risks',
+				description: 'What goes wrong when AI substitutes for thinking.'
+			},
+			{
+				slug: 'the-path-forward',
+				title: 'The Path Forward',
+				description: 'Evidence-based approaches that preserve capability.'
+			},
+			{
 				slug: 'the-problem',
 				title: 'The Problem',
 				description: 'AI improves task performance while degrading capability.'
@@ -44,10 +59,34 @@ export const LIBRARY: QuadrantMeta[] = [
 				description: 'How expertise develops and what threatens it.'
 			},
 			{
-				slug: 'first-principles',
+				slug: 'first-principles-ci',
 				title: 'First Principles',
-				description: 'Core design principles for complementary AI.',
-				file: 'first-principles-ci'
+				description: 'Core design principles for complementary AI.'
+			},
+			{
+				slug: 'cognitive-effects',
+				title: 'Cognitive Effects',
+				description: 'How AI reshapes thinking and metacognition.'
+			},
+			{
+				slug: 'collaboration-design',
+				title: 'Collaboration Design',
+				description: 'What makes human-AI collaboration work.'
+			},
+			{
+				slug: 'diversity-conformity',
+				title: 'Diversity & Conformity',
+				description: 'The homogenization problem and why diversity matters.'
+			},
+			{
+				slug: 'productivity',
+				title: 'Productivity',
+				description: 'The productivity paradox in AI-assisted development.'
+			},
+			{
+				slug: 'hype-questioning',
+				title: 'Hype & Questioning',
+				description: 'Why critical evaluation of AI claims matters.'
 			}
 		]
 	},
