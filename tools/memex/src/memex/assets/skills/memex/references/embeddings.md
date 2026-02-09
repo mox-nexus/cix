@@ -4,46 +4,30 @@ Memex uses embedding models to enable semantic search — finding conceptually r
 
 ## Current Configuration
 
-| Setting | Value |
-|---------|-------|
-| Model | `all-MiniLM-L6-v2` |
-| Dimensions | 384 |
-| Backend | sentence-transformers |
-| Index | HNSW via DuckDB VSS |
+Configured per-store in `.memex/config.toml` or `~/.memex/config.toml`:
+
+```toml
+[embedding]
+model = "nomic"   # "nomic" (768-dim, recommended) or "minilm" (384-dim, legacy)
+```
 
 ## Model Selection
 
-| Model | Dims | Speed | Quality | Memory | macOS 14 |
-|-------|------|-------|---------|--------|----------|
-| `all-MiniLM-L6-v2` | 384 | Fast | Good | Low | ✅ Stable |
-| `nomic-ai/nomic-embed-text-v1.5` | 768 | Medium | Better | Medium | ⚠️ Flaky |
-| `BAAI/bge-large-en-v1.5` | 1024 | Slow | Best | High | ⚠️ Flaky |
+| Model | Dims | Speed | Quality | Backend |
+|-------|------|-------|---------|---------|
+| `nomic-embed-text-v1.5` | 768 | ~15 inputs/s | Better | GPT4All (Metal on macOS) |
+| `all-MiniLM-L6-v2` | 384 | ~90 inputs/s | Good | sentence-transformers |
+
+**Recommendation: Nomic for new stores.** Higher dimensions = better semantic discrimination. The 768-dim embeddings find conceptually relevant content that 384-dim misses.
+
+Benchmark on 45,674 fragments (same corpus, 10 queries):
+- Nomic avg similarity: 0.69, MiniLM avg: 0.54
+- Only 17% overlap in top-10 results — models find different documents
+- Nomic query latency: 107ms, MiniLM: 113ms (Nomic faster on Metal)
 
 **Tradeoffs:**
-- Higher dimensions = better semantic capture, more storage, slower search
-- MiniLM: best for quick local use, 384-dim is ~50% faster to search, **stable on macOS 14**
-- Nomic: good balance, open weights, but has MPS issues on macOS 14
-- BGE: academic benchmark leader, heavy
-
-## macOS 14 (Sonoma) Compatibility
-
-**Known Issue:** Nomic and larger models fail silently on macOS 14 with Apple Silicon.
-
-**Root cause:** PyTorch MPS backend limitation. Matrix operations exceeding 2³² entries fail with:
-```
-RuntimeError: Tiling of batch matmul for larger than 2**32 entries
-only available from MacOS15 onwards
-```
-
-**When it happens:**
-- Long text fragments (>10K characters) + high-dim embeddings (768+)
-- Batch processing amplifies the issue
-- Fails silently with no error message
-
-**Recommendation:**
-- **macOS 14:** Use MiniLM (384-dim) — stable
-- **macOS 15+:** Nomic (768-dim) should work
-- **Workaround:** `PYTORCH_ENABLE_MPS_FALLBACK=1` forces CPU (slow but works)
+- Nomic: better quality, ~2x storage, needs GPT4All backend
+- MiniLM: faster embedding generation (6x), lighter, sentence-transformers
 
 ## Dimension Mismatch
 
@@ -115,10 +99,11 @@ HNSW trades some accuracy for speed. Default `ef_search=64` balances well.
 
 ## Storage
 
+Embeddings are stored as a column on the fragments table:
+
 ```sql
--- Embeddings stored in separate table
-embeddings (
-    fragment_id VARCHAR PRIMARY KEY,
+fragments (
+    ...
     embedding FLOAT[768]  -- or FLOAT[384] for MiniLM
 )
 ```
@@ -126,7 +111,6 @@ embeddings (
 Storage per fragment:
 - 384-dim: ~1.5 KB
 - 768-dim: ~3 KB
-- 1024-dim: ~4 KB
 
 50K fragments at 768-dim ≈ 150 MB for embeddings alone.
 
@@ -184,9 +168,17 @@ memex backfill --batch-size 25  # Smaller batches
 
 ### "Wrong model loaded"
 
-Check `~/.memex/config.toml` or environment:
+Check active config (`memex status` shows which store) or environment:
 ```bash
-export MEMEX_EMBEDDING_MODEL="all-MiniLM-L6-v2"
+# Check which store is active
+memex status
+
+# Override via env var
+export MEMEX_EMBEDDING_MODEL="nomic"
 memex reset --backup
 memex ingest <exports>
+
+# Or edit the config directly
+# Local: .memex/config.toml
+# Global: ~/.memex/config.toml
 ```
