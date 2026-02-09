@@ -188,6 +188,48 @@ All six traps share a common root: **optimizing for immediate comfort over long-
 
 ---
 
+## Research-Connected Traps
+
+These traps have measured effect sizes:
+
+### Overconfidence → Confidence-Competence Inversion
+
+When AI projects high confidence (β = -0.69 effect on critical thinking, Lee et al. CHI 2025), it actively reduces the human's engagement. Overconfidence isn't just a calibration issue — it's a mechanism that degrades collaboration quality.
+
+**Connection:** The control lever (β = 0.507, Blaurock meta-analysis) is strongest when the human feels agency. Projecting false confidence removes that agency.
+
+### Skipping Gates → Control Erosion
+
+User agency is the strongest design lever (β = 0.507). Gates preserve agency by creating decision points. Skipping gates removes those decision points, shifting control from human to AI.
+
+**The paradox:** Gates feel like friction, but they're actually the mechanism through which control — the strongest positive lever — operates.
+
+### Vibe Coding
+
+Accepting AI-generated code without reading or understanding it.
+
+**Evidence:** 17% of junior developers accept AI code without editing (SO 2025). 45% of AI code contains critical vulnerabilities (Veracode 2025). Combined: significant chance of shipping vulnerable code you don't understand.
+
+**Counter:** Treat AI code as a first draft from a junior developer. Read it. Edit it. Own it.
+
+### Avoidance Crafting
+
+Using AI to avoid cognitively demanding tasks rather than to amplify cognitive capacity.
+
+**Evidence:** Freise et al. (HICSS 2025) — Avoidance Crafting correlates with skill atrophy; Approach Crafting (AI for routine, human for hard) correlates with upskilling.
+
+**Counter:** Reserve hard cognitive work for yourself. Architecture, debugging, design — these are the skills that matter most and atrophy fastest.
+
+### Productivity Illusion
+
+Believing AI makes you faster when it doesn't.
+
+**Evidence:** METR RCT (Becker et al. 2025) — experienced developers were 19% slower with AI but perceived 24% faster. The 43-percentage-point miscalibration gap means you literally cannot trust your own perception of AI-assisted productivity.
+
+**Counter:** Measure, don't feel. Track actual completion times. Compare with and without AI. Trust data over intuition.
+
+---
+
 ## Self-Check
 
 When you notice yourself doing any of these:

@@ -16,9 +16,9 @@
       "description": "Eval methodology for AI systems. Use when: writing evals for agents, skills, MCP servers, prompts, or measuring AI behavior."
     },
     {
-      "name": "core-ci",
-      "source": "./core-ci",
-      "description": "Core collaborative intelligence patterns. Use when: making decisions, verifying claims, avoiding self-deception, applying first principles, building with transparency and control."
+      "name": "collab-scaffolds",
+      "source": "./collab-scaffolds",
+      "description": "Research-grounded scaffolds for effective human-AI collaboration. Use when: making decisions, verifying claims, calibrating trust, metacognitive reflection, building with transparency and control."
     },
     {
       "name": "data-store",

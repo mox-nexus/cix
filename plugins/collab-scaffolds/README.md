@@ -1,27 +1,29 @@
-# core-ci
+# collab-scaffolds
 
-Engineering excellence methodology for builders.
+Research-grounded scaffolds for effective human-AI collaboration.
 
 ## What This Is
 
-Software craftsmanship principles and practices for disciplined, evidence-based engineering. Not tutorials — standards, decision frameworks, and the reasoning behind them.
+Scaffolding for collaborative building — temporary support designed to be outgrown. Every scaffold is backed by research evidence from 50+ studies (CHI, PNAS, Lancet, NeurIPS, HICSS). Not tutorials — decision frameworks, metacognitive techniques, trust calibration, and the reasoning behind them.
 
 ## When It Activates
 
 - Writing code or making technical decisions
 - Refactoring and code reviews
 - Debugging (especially when stuck)
-- Implementation work requiring quality standards
+- Verifying claims or calibrating trust
+- Any context where quality matters
 
 ## What You Get
 
-### The Skill (build-core)
+### The Skill (collab-craft)
 
-Engineering methodology grounded in:
+Collaborative building methodology grounded in:
 - Software Craftsmanship Manifesto principles
-- Evidence-based decision making
-- First principles reasoning
-- Scientific method for verification
+- Metacognitive scaffolding (Cognitive Mirror, PME friction)
+- Trust calibration (evidence levels, contrastive explanations)
+- Skill preservation (approach crafting, recovery protocols)
+- Evidence-based decision making and verification
 
 ### The Agent (Mr. Wolf)
 
@@ -52,10 +54,21 @@ SKIP_MRWOLF_HOOKS=1 claude
 ## Structure
 
 ```
-core-ci/
-├── skills/build-core/
-│   ├── SKILL.md              # Engineering methodology
-│   └── references/           # Deep dives (verification, reasoning, etc.)
+collab-scaffolds/
+├── skills/collab-craft/
+│   ├── SKILL.md              # Building methodology (< 500 lines)
+│   └── references/           # Deep dives (11 files)
+│       ├── metacognitive-scaffolding.md  # Cognitive Mirror, PME, HypoCompass
+│       ├── trust-calibration.md          # Evidence levels, contrastive explanations
+│       ├── skill-preservation.md         # Atrophy, recovery, job crafting
+│       ├── productivity-reality.md       # METR RCT, code quality signals
+│       ├── reasoning-scaffolds.md        # Wolf, OODA, hypothesis testing
+│       ├── reasoning-verification.md     # CoVe, Pythea
+│       ├── behavioral-awareness.md       # Collaboration traps
+│       ├── verification-patterns.md      # Code hygiene checklists
+│       ├── kaizen-crystallization.md     # Compound learning
+│       ├── writing-antipatterns.md       # Writing quality
+│       └── principles-and-patterns-examples.md  # Concrete examples
 ├── agents/
 │   └── mrwolf.md             # Structured problem solver
 ├── hooks/
@@ -63,6 +76,10 @@ core-ci/
 │   ├── detect-debugging-loop.sh
 │   ├── detect-frustration.sh
 │   └── session-start.sh      # Session transparency
+├── docs/
+│   └── explanation/          # Human-optimized (WHY)
+│       ├── methodology.md    # Research base & design rationale
+│       └── sources.md        # Full bibliography (50+ studies)
 └── scripts/                  # Installation helpers
 ```
 
@@ -70,4 +87,4 @@ core-ci/
 
 **You're not done when it works. You're done when it's right.**
 
-Everything you create becomes part of a system others depend on. Your work is inherited. Your standards are inherited. Do the right thing because it's right.
+Everything you create becomes part of a system others depend on. Scaffolding, not crutches — temporary support designed to make humans more capable, not dependent.

@@ -233,3 +233,21 @@ When scaffolds aren't working:
 3. **Acknowledge the limit:** "I don't know" is better than spinning
 
 The Wolf Standard: Not "it works" — **"this is actually solved."** (See: `mrwolf` agent)
+
+---
+
+## Note on Chain-of-Thought
+
+Meincke et al. (2025) found that CoT adds negligible value for reasoning models — advanced models reason internally. However, CoT-style scaffolds still serve an essential purpose in collaborative contexts:
+
+| Purpose | Value |
+|---------|-------|
+| **For AI accuracy** | Negligible with reasoning models |
+| **For human transparency** | Essential — humans can't verify opaque reasoning |
+| **For human learning** | Essential — visible reasoning teaches frameworks |
+
+The scaffolds in this file serve transparency and learning, not AI accuracy. When Claude uses Wolf Protocol or OODA, the value is in making the reasoning *visible to the human*, not in improving Claude's reasoning quality.
+
+This distinction matters: don't add scaffolds to improve AI output. Add them to maintain human understanding and engagement.
+
+See [metacognitive-scaffolding.md](metacognitive-scaffolding.md) for techniques that specifically target human metacognition.

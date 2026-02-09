@@ -1,5 +1,5 @@
 {
-  "description": "Core-1337 hooks: session transparency + Mr. Wolf detection",
+  "description": "collab-scaffolds hooks: session transparency + Mr. Wolf detection",
   "hooks": {
     "SessionStart": [
       {

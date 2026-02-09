@@ -12,7 +12,7 @@ CLAUDE_DIR="$HOME/.claude"
 
 # Available plugins
 PLUGINS=(
-  "core-ci:Engineering excellence - reasoning verification, design principles"
+  "collab-scaffolds:Research-grounded scaffolds for collaborative building"
   "terminal-1337:Modern terminal tools - ripgrep, fd, bat, eza, fzf"
   "rust-1337:Rust production patterns - async, crates, domains"
   "kotlin-1337:Kotlin patterns - coroutines, Flow, Spring, Android"
@@ -35,7 +35,7 @@ usage() {
   echo ""
   echo "Examples:"
   echo "  $0 --all                    # Install all plugins"
-  echo "  $0 core-ci rust-1337      # Install specific plugins"
+  echo "  $0 collab-scaffolds rust-1337      # Install specific plugins"
   echo "  $0 --list                   # Show available plugins"
 }
 
