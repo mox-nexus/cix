@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Eval harness for eval-1337 skill.
+Eval harness for build-eval skill.
 
 Uses Claude Agent SDK to test actual skill activation.
 
@@ -188,7 +188,7 @@ async def run_methodology_eval(rubric: dict, n_trials: int = 1, dry_run: bool = 
     """
     Run Level 2 (methodology adherence) evaluation.
 
-    Tests whether responses follow eval-1337 methodology when activated.
+    Tests whether responses follow build-eval methodology when activated.
     Uses LLM-as-judge to score against rubric.
     """
     if not HAS_ANTHROPIC and not dry_run:

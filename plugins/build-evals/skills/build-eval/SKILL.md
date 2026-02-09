@@ -3,7 +3,7 @@ name: build-eval
 description: "Write rigorous evals for LLM agents, multi-agent systems, skills, MCP servers, and prompts. Use when: building test suites, measuring agent effectiveness, evaluating coordination, or choosing eval frameworks. Covers: DeepEval, Braintrust, RAGAS, precision/recall, F1, task completion, pass@k, iterative metrics, multi-agent coordination."
 ---
 
-# Eval-1337
+# build-eval
 
 Write evals that measure what matters. Not vanity metrics.
 
@@ -114,6 +114,8 @@ Step 6: Monitor saturation (100% → only tracks regressions)
 Step 7: Maintain as living artifact (dedicated ownership)
 ```
 
+Steps 0-4 expanded in [agents.md](references/agents.md), [datasets.md](references/datasets.md). Step 5: [observability.md](references/observability.md).
+
 ## Common Pitfalls
 
 | Trap | Fix |
@@ -127,6 +129,11 @@ Step 7: Maintain as living artifact (dedicated ownership)
 | Shared state between runs | **Isolate environments** - leftover files cause correlation |
 | Bypass vulnerabilities | **Design to require solving** - agents exploit loopholes |
 | Eval saturation | **Expand difficulty** - high pass rates mask improvements |
+
+## Cost Awareness
+
+Model-based graders consume tokens per eval. Track cost per run — see [cost.md](references/cost.md).
+For high-volume evals, prefer code-based graders (free, fast, deterministic).
 
 ## Classification Metrics (F1)
 
