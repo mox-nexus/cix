@@ -1,3 +1,9 @@
+---
+name: data-store
+description: "Data storage and retrieval patterns. Use when: choosing databases, implementing search, designing hybrid retrieval, selecting embedding models, building RAG systems."
+version: 0.1.0
+---
+
 # Data Store
 
 > Production patterns for storage and retrieval: backends, search, embeddings, RAG

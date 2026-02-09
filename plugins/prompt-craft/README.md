@@ -1,4 +1,4 @@
-# promptfu
+# prompt-craft
 
 Prompt engineering grounded in research. Different model architectures need different techniques.
 
