@@ -156,6 +156,62 @@ When `audit_trace_budget` shows budget exceeded:
 
 ---
 
+## Contrastive Explanations
+
+**Source:** Ma et al. (2025), Taylor & Francis
+
+"X instead of Y because Z" triggers analytic processing. "Use X" triggers heuristic acceptance.
+
+### Why This Matters for Verification
+
+Contrastive framing isn't just a communication preference — it's a verification technique. When you present alternatives and tradeoffs, you:
+
+1. Force yourself to consider alternatives (reduces tunnel vision)
+2. Give the human a basis for evaluation (not just accept/reject)
+3. Make hidden assumptions visible (the "because" reveals what you're assuming)
+
+### Application
+
+When making recommendations after verification:
+
+```
+✅ "Redis instead of Memcached because you need sorted sets.
+    If you only need simple KV, Memcached is simpler and sufficient."
+
+❌ "Use Redis for caching."
+```
+
+---
+
+## Verification for Learning vs Accuracy
+
+Two distinct purposes require different designs:
+
+| Purpose | Who Verifies | Method | Outcome |
+|---------|-------------|--------|---------|
+| **For accuracy** | AI or automated check | Independent verification | Error caught |
+| **For learning** | Human (AI assists) | Human walks through verification | Understanding built |
+
+### The Critical Distinction
+
+When the goal is accuracy, verify efficiently (CoVe, Pythea, automated tests).
+
+When the goal is learning, have the *human* do the verification with AI support:
+
+```
+For accuracy: "I verified this is correct. Here's my check..."
+For learning: "Let's verify this together. What do you think
+              the expected output should be?"
+```
+
+### Overreliance Warning
+
+Bansal et al. (CHI 2021) found that explanations can *increase* overreliance. When AI explains its reasoning, humans sometimes trust the explanation rather than evaluating it independently.
+
+Counter: Explanations should invite evaluation, not substitute for it. "Here's my reasoning — does this match your understanding?" rather than "Here's why this is correct."
+
+---
+
 ## Anti-Patterns
 
 | Anti-Pattern | Why It Fails |
@@ -164,6 +220,7 @@ When `audit_trace_budget` shows budget exceeded:
 | CoVe theater | Going through motions without honest questioning |
 | Over-verification | Verifying trivia, missing important claims |
 | Assuming RAG = correct | Retrieved doesn't mean used |
+| Explanations as proof | Explanations can increase overreliance (Bansal 2021) |
 
 ---
 

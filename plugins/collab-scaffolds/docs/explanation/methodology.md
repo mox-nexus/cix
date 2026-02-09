@@ -1,6 +1,27 @@
-# Engineering Excellence: Methodology
+# Collaborative Building Scaffolds: Methodology
 
-Why these principles exist and the evidence behind them.
+Why these scaffolds exist and the research behind them.
+
+---
+
+## Contents
+
+- [The Foundation Problem](#the-foundation-problem)
+- [Compound Value vs Technical Debt](#compound-value-vs-technical-debt)
+- [Pit of Success](#pit-of-success)
+- [Evidence Over Opinion](#evidence-over-opinion)
+- [Collaboration Design](#collaboration-design)
+- [Verification Patterns](#verification-patterns)
+- [Why Mastery Orientation Matters](#why-mastery-orientation-matters)
+- [The Feynman Principle](#the-feynman-principle)
+- [Crystallization vs Accumulation](#crystallization-vs-accumulation)
+- [Why These Principles Persist](#why-these-principles-persist)
+- [Metacognition Research (2025-2026)](#metacognition-research-2025-2026)
+- [Trust Calibration Research (2025-2026)](#trust-calibration-research-2025-2026)
+- [Skill Preservation Research (2025-2026)](#skill-preservation-research-2025-2026)
+- [Productivity Reality (2025-2026)](#productivity-reality-2025-2026)
+- [Study Limitations](#study-limitations)
+- [The Deeper Why](#the-deeper-why)
 
 ---
 
@@ -390,13 +411,233 @@ Decisions that fail these questions create future problems.
 
 ---
 
+## Metacognition Research (2025-2026)
+
+The 2025-2026 research wave revealed that metacognition — thinking about thinking — is the critical variable in AI collaboration outcomes.
+
+### Cognitive Mirror (Tomisu et al., Frontiers in Education 2025)
+
+AI reflects the human's own thinking back with structured questions rather than providing answers directly. This preserves the generative step — the human does the thinking — while AI provides scaffolding.
+
+**Key mechanism:** When humans must articulate their reasoning, they engage metacognitive monitoring (detecting gaps, contradictions, assumptions). When they receive answers, monitoring is bypassed.
+
+### PME Friction (Lee et al., CHI 2025)
+
+Three-component metacognitive friction:
+- **Planning:** "What's your approach before I assist?"
+- **Monitoring:** "Does this match what you expected?"
+- **Evaluation:** "What would you change next time?"
+
+**Finding:** All three components are needed. Single-point friction (e.g., just planning) was insufficient to restore metacognitive engagement.
+
+**Effect:** β = -0.69 between AI confidence and critical thinking enacted. Higher trust in AI → less thinking. This friction counteracts the mechanism.
+
+### The Inversion Scenario (Lee, D. et al., PNAS Nexus 2025)
+
+The most counterintuitive finding: a skeptical user with a mediocre AI outperforms a credulous user with a state-of-the-art AI. Human metacognitive sensitivity matters more than model accuracy.
+
+**Implication:** Optimizing for model accuracy has diminishing returns. Optimizing for human metacognitive sensitivity has compounding returns.
+
+### "Smarter But None the Wiser" (Fernandes et al., CHI 2025)
+
+Performance goes up, metacognition stays flat. AI makes humans more productive without making them more thoughtful. This is the deskilling mechanism: the system gets better, the human doesn't.
+
+### Confidence-Competence Inversion (Lee et al., CHI 2025)
+
+Two confidence signals with opposite effects:
+
+| Confidence Type | Effect on Critical Thinking |
+|----------------|----------------------------|
+| AI-confidence (trust in AI) | β = -0.69 (decreases) |
+| Self-confidence (trust in self) | β = +0.35 (increases) |
+
+**Design implication:** Reduce AI authority signals. Boost human self-efficacy signals.
+
+### Collaborative AI Metacognition Scale (CAIM)
+
+Four dimensions of metacognitive competence in AI collaboration:
+1. **Understanding** — knowing what AI can/can't do
+2. **Use** — choosing when to engage AI
+3. **Evaluation** — assessing AI output quality
+4. **Ethics** — recognizing implications
+
+Most current tool design supports only Use. The scaffolds in collab-scaffolds target all four.
+
+### HypoCompass (Stanford SCALE, 2025)
+
+Reverse interaction: human debugs AI-generated hypotheses instead of AI debugging human code. 12% improvement in debugging performance.
+
+**Why it works:** Activates critical evaluation by placing the human in the judge role rather than the recipient role.
+
+---
+
+## Trust Calibration Research (2025-2026)
+
+### The Trust Paradox (Stack Overflow Developer Survey, 2025)
+
+84% of developers use AI tools. Only 29% trust the output. 46% actively distrust.
+
+This creates anxious reliance — developers depend on tools they don't trust, leading to either over-reliance (accepting despite distrust) or underuse (rejecting useful output).
+
+### The "Almost Right" Problem (SO 2025, GitClear 2025)
+
+AI-generated code is often plausible but subtly wrong. Developers report:
+- 66% longer to fix AI code than to write from scratch
+- 8x increase in code duplication since AI adoption
+- Refactoring activity declined significantly
+
+**The mechanism:** AI generates code without awareness of the broader codebase, producing fresh solutions that duplicate existing patterns. The human who would have searched for existing solutions instead gets a plausible new one.
+
+### Senior-Junior Gap
+
+| Behavior | Senior Developers | Junior Developers |
+|----------|------------------|-------------------|
+| Trust AI output | 2.5% fully trust | 17% fully trust |
+| Ship AI code directly | 32% ship with review | 13% ship with review |
+| Edit AI suggestions | Substantial edits | Minor or no edits |
+
+Seniors treat AI output as a first draft from a junior developer. Juniors treat it as authoritative. The skill preservation implications are significant.
+
+### Contrastive Explanations (Ma et al., Taylor & Francis 2025)
+
+"X instead of Y because Z" triggers analytic processing. "Use X" triggers heuristic acceptance. This is not a communication preference — it's a cognitive mechanism. Contrastive framing activates evaluation circuits that flat recommendations bypass.
+
+### Overreliance Warning (Bansal et al., CHI 2021)
+
+Explanations can *increase* overreliance. When AI explains its reasoning, humans sometimes trust the explanation rather than evaluating it independently. Explanations should invite evaluation, not substitute for it.
+
+---
+
+## Skill Preservation Research (2025-2026)
+
+### Atrophy Mechanisms
+
+Three mechanisms drive skill degradation:
+
+1. **Cognitive Offloading:** Delegating thinking to AI bypasses neural pathways that maintain capability (r = -0.75, Gerlich 2025). Neural connectivity "systematically scaled down" with AI use (MIT Media Lab EEG study, Kosmyna et al. 2025).
+
+2. **Desirable Difficulties Bypass:** Learning requires productive struggle. AI removes the friction that builds understanding. Bastani et al. (PNAS 2025): students with direct AI answers scored 17% worse; hint-only AI showed no degradation. Same technology, different design, opposite outcomes.
+
+3. **Automation Complacency:** Repeated experience of AI being correct → reduced vigilance → missed errors. Aviation research: 77% of pilots report degraded manual skills from automation.
+
+### The Bifurcation Theory
+
+Not all skills atrophy equally:
+
+| Skill Type | Atrophy Rate | Examples |
+|------------|-------------|---------|
+| Cognitive (reasoning, analysis) | Fast | Architecture, debugging, design |
+| Perceptual (pattern recognition) | Fast | Code smell detection, system intuition |
+| Motor/Procedural (tool use) | Slow | Typing, IDE shortcuts, git commands |
+
+The most valuable software development skills (reasoning, analysis, design) are the most vulnerable.
+
+### The 3-Month Cliff (Budzyn et al., Lancet 2025)
+
+Significant skill degradation measurable in as little as 3 months of AI-assisted practice. 22% reduction in unassisted task performance.
+
+**The saving grace:** Relearning takes < 50% of original training time (the Savings Effect). Skills are dormant, not permanently lost. But reactivation requires intentional effort.
+
+### Job Crafting (Freise et al., HICSS 2025)
+
+How developers use AI determines outcome:
+
+**Approach Crafting** (AI for mundane, brain for hard): Developer practices hard skills more, not less. AI frees cognitive budget for harder problems. Skills compound.
+
+**Avoidance Crafting** (AI for hard, brain for routine): Developer stops practicing skills that matter most. Capability erodes. Dependency increases.
+
+The key variable isn't AI usage frequency — it's what the human reserves for themselves.
+
+### Recovery Protocols
+
+Three evidence-based approaches:
+1. **Switch-Off:** Periodically work without AI assistance on cognitively demanding tasks
+2. **Simulator:** Targeted deliberate practice on skills at risk (attempt-first protocol: 15-30 minutes before AI consultation)
+3. **Hybrid/Flipped:** Human generates → AI critiques (reverses the substitutive pattern)
+
+### Novice Protection
+
+Novices must build foundational schema *before* AI collaboration. A developer who learns to program with AI may never develop:
+- Mental models of program execution
+- Debugging intuition
+- Design reasoning
+- Error recognition patterns
+
+These are built through struggle, not through receiving solutions.
+
+---
+
+## Productivity Reality (2025-2026)
+
+### The METR RCT (Becker et al., arXiv 2025)
+
+The most rigorous measurement of AI-assisted productivity:
+
+| Metric | Measured | Perceived |
+|--------|----------|-----------|
+| Task completion time | **19% slower** with AI | 24% faster (believed) |
+| Miscalibration gap | — | **43 percentage points** |
+
+Experienced open-source developers on their own repos. The finding isn't "AI never helps" — it's "don't assume it does without measuring."
+
+### Code Quality Signals
+
+**GitClear (2025):** 211 million LOC analyzed. 8x increase in code duplication. Significant decline in refactoring activity.
+
+**DORA (2024):** -7.2% deployment stability, -1.5% throughput. The most rigorous industry engineering effectiveness measurement shows AI adoption correlating with slight degradation.
+
+### Security Degradation
+
+**Veracode (2025):** 45% of AI-generated code contains critical vulnerabilities. Larger models are NOT more secure. Model size doesn't correlate with security.
+
+**Shukla et al. (2025):** Security degrades with iteration: 2.1 vulnerabilities per 1K LOC in first generation → 6.2 after refinement. Each iteration adds code without removing vulnerabilities from previous iterations.
+
+**Perry et al. (2025):** Analysis of 7,703 files confirms AI-generated code inherits vulnerability patterns from training data.
+
+### The Explainability Gap
+
+As AI generates more code, a gap opens between code complexity and developer understanding:
+- Sprint 1: Developer writes 500 LOC, understands all of it
+- Sprint 2: AI generates 2000 LOC, developer understands ~60%
+- Sprint N: "Cathedral to Prefabs" — codebase is assembled, not designed
+
+The abstraction skill itself is being outsourced — not just implementation, but the understanding of implementation.
+
+---
+
+## Study Limitations
+
+For collaborators enhancing these scaffolds: the research provides directional guidance, not universal laws. Each study has specific limitations.
+
+| Study | Limitation | What It Means |
+|-------|-----------|---------------|
+| Budzyn (Lancet, 2025) | Medical domain (colonoscopy) | Skill atrophy rate (-22%) may not transfer directly to software |
+| Gerlich (2025) | Cross-sectional, self-reported | Correlations (r = -0.68, -0.75) show association, not causation |
+| Lee et al. (CHI, 2025) | Self-reported critical thinking | Perceptions may differ from actual cognitive performance |
+| Blaurock (106 studies) | Service contexts (not all software) | Effect sizes (β = 0.507, 0.415) are directional for scaffold design |
+| Bastani (PNAS, 2025) | Education domain (Turkish math) | -17% learning harm may vary across skill types |
+| Mastery OR = 35.7 | Single study | Large effect size needs replication |
+| Sharma (Anthropic, 2026) | Claude.ai conversations only | Perception paradox may differ across AI systems |
+| METR RCT (2025) | Open-source developers on own repos | May not generalize to unfamiliar codebases or greenfield work |
+| Veracode (2025) | Vulnerability detection methodology varies | 45% rate depends on security scanner coverage |
+| Fernandes (CHI, 2025) | Laboratory setting | "Smarter but none the wiser" may attenuate in real-world conditions |
+| Freise (HICSS, 2025) | Self-reported job crafting | Actual behavior may differ from reported behavior |
+
+### What This Means
+
+The direction is consistent across studies: transparency and control help, cognitive offloading harms learning, observable processes support better collaboration. But the specific magnitudes should be treated as approximate, not precise.
+
+Use these findings to inform design decisions — but don't treat them as engineering constants. The research tells us WHAT to optimize for (control, transparency, mastery orientation, metacognitive friction). The numbers tell us roughly HOW MUCH each lever matters relative to others.
+
+---
+
 ## The Deeper Why
 
 Software is built by humans, for humans, maintained by humans.
 
 Every choice that ignores the human—the reader, the modifier, the debugger—creates friction that compounds over the system's lifetime.
 
-The principles in core-ci aren't about perfection. They're about **respect**—for the person who comes next, including your future self.
+The principles in collab-scaffolds aren't about perfection. They're about **respect**—for the person who comes next, including your future self.
 
 That respect, practiced consistently, is what transforms a codebase from a liability into an asset.
 

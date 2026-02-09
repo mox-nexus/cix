@@ -1,7 +1,7 @@
 {
-  "name": "core-ci",
-  "description": "Core collaborative intelligence patterns. Use when: making decisions, verifying claims, avoiding self-deception, applying first principles, building with transparency and control.",
-  "version": "0.2.1",
+  "name": "collab-scaffolds",
+  "description": "Research-grounded scaffolds for effective human-AI collaboration. Use when: making decisions, verifying claims, calibrating trust, metacognitive reflection, building with transparency and control.",
+  "version": "0.3.0",
   "author": {
     "name": "yzavyas",
     "email": "yza.vyas@gmail.com"

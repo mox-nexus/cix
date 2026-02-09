@@ -9,10 +9,10 @@ if [ -f "$MARKETPLACES_FILE" ]; then
   INSTALL_LOC=$(grep -A5 '"cix"' "$MARKETPLACES_FILE" 2>/dev/null | grep 'installLocation' | sed 's/.*: *"\([^"]*\)".*/\1/')
 fi
 
-# Always output core-ci instruction
+# Always output collab-scaffolds instruction
 echo "## cix"
 echo ""
-echo "**Load now:** \`$INSTALL_LOC/plugins/core-ci/SKILL.md\`"
+echo "**Load now:** \`$INSTALL_LOC/plugins/collab-scaffolds/SKILL.md\`"
 
 # If we have the marketplace, show the trigger table
 if [ -n "$INSTALL_LOC" ] && [ -f "$INSTALL_LOC/.claude-plugin/marketplace.json" ]; then
@@ -26,7 +26,7 @@ if [ -n "$INSTALL_LOC" ] && [ -f "$INSTALL_LOC/.claude-plugin/marketplace.json" 
       desc = $4
       sub(/.*Use when: /, "", desc)
       sub(/\..*/, "", desc)
-      if (name != "core-ci" && name != "") {
+      if (name != "collab-scaffolds" && name != "") {
         print "- **" name "** → " desc " → `" loc "/plugins/" name "/SKILL.md`"
       }
     }

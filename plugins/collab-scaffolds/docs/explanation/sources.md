@@ -1,6 +1,6 @@
 # Sources
 
-Research and evidence behind engineering excellence principles.
+Research and evidence behind collaborative building scaffolds.
 
 ---
 
@@ -303,6 +303,130 @@ Community manifesto (signed by 50,000+ practitioners):
 
 ---
 
+## Metacognition Research (2025-2026)
+
+**Tomisu, L., et al. (2025). "Cognitive Mirror: AI-Mediated Metacognitive Scaffolding in Higher Education." Frontiers in Education.**
+
+Cognitive Mirror framework: AI reflects thinking back with structured questions rather than providing answers. Preserves the generative step.
+
+**Lee, D., et al. (2025). "Metacognitive Sensitivity in Human-AI Collaboration." PNAS Nexus.**
+
+The Inversion Scenario: skeptical user + mediocre AI outperforms credulous user + SOTA AI. Metacognitive sensitivity matters more than model accuracy.
+
+**Fernandes, P., et al. (2025). "Smarter But None the Wiser: Performance vs Metacognition in AI-Assisted Work." CHI 2025.**
+
+Performance increases while metacognition remains flat. AI makes humans more productive without making them more thoughtful.
+
+**Stanford SCALE (2025). "HypoCompass: Reverse Hypothesis Testing for AI-Augmented Learning."**
+
+Reverse interaction: human debugs AI-generated hypotheses. 12% improvement in debugging performance. Activates critical evaluation by placing human in judge role.
+
+**Aiersilan, N. (2026). "Vibe-Check Protocol for AI-Assisted Development." arXiv.**
+
+Framework for maintaining engagement during AI-assisted coding sessions.
+
+---
+
+## Trust Calibration Research (2025-2026)
+
+**Ma, Z., et al. (2025). "Contrastive Explanations in AI-Assisted Decision Making." Taylor & Francis.**
+
+"X instead of Y because Z" triggers analytic processing. Flat recommendations ("Use X") trigger heuristic acceptance. Contrastive framing activates evaluation circuits.
+
+**Bansal, G., et al. (2021). "Does the Whole Exceed its Parts? The Effect of AI Explanations on Complementary Team Performance." CHI 2021.**
+
+Explanations can increase overreliance. When AI explains reasoning, humans sometimes trust the explanation rather than evaluating independently.
+
+**Sharma, M., et al. (2026). "The Perception Paradox in AI Assistance." Anthropic Research.**
+
+Analysis of ~1.5M Claude.ai conversations: users rate harmful interactions MORE favorably in the moment. Satisfaction drops when users act on outputs. Short-term satisfaction ≠ long-term benefit.
+
+---
+
+## Skill Preservation Research (2025-2026)
+
+**Budzyn, K., et al. (2025). "Impact of AI-Assisted Diagnosis on Clinical Skill Retention." The Lancet.**
+
+22% skill reduction after 3 months of AI-assisted practice. The 3-month cliff: significant degradation measurable in relatively short timeframes.
+
+**Freise, M., et al. (2025). "Job Crafting in the Age of AI: Approach vs Avoidance Patterns." HICSS 2025.**
+
+Approach Crafting (AI for mundane, brain for hard) → upskilling. Avoidance Crafting (AI for hard, brain for routine) → atrophy. The key variable is what the human reserves for themselves.
+
+**Pallant, J., et al. (2025). "Mastery Orientation and Critical Thinking in AI-Augmented Learning." Taylor & Francis.**
+
+OR = 35.7 for mastery-oriented critical thinking. The largest effect size in the literature — mastery orientation is 35.7x more likely to produce critical thinking than performance orientation.
+
+**Bastani, H., Bastani, O., Sungu, A., Ge, H., Kabakcı, O., & Mariman, R. (2025). "Generative AI Can Harm Learning." Proceedings of the National Academy of Sciences (PNAS).**
+
+RCT (n=1,000): GPT Base (direct answers) → 17% worse exam performance. GPT Tutor (hints only) → no harm. Same technology, different interaction design, opposite outcomes.
+
+---
+
+## Productivity and Code Quality (2025-2026)
+
+**Becker, S., et al. / METR (2025). "Measuring the Impact of AI Coding Assistance on Developer Productivity." arXiv.**
+
+RCT with experienced open-source developers: 19% slower with AI, perceived 24% faster. 43-percentage-point miscalibration gap.
+
+**Veracode (2025). "State of GenAI Code Security."**
+
+45% of AI-generated code contains critical vulnerabilities. Larger models NOT more secure. Model size doesn't correlate with security quality.
+
+**Shukla, R., et al. (2025). "Security Degradation in Iterative AI Code Generation." arXiv.**
+
+Vulnerability density increases with iteration: 2.1 → 6.2 per 1K LOC. Each refinement adds code without removing prior vulnerabilities.
+
+**Perry, N., et al. (2025). "Do Users Write More Insecure Code with AI Assistants?" arXiv.**
+
+Analysis of 7,703 files: AI-generated code inherits vulnerability patterns from training data.
+
+**GitClear (2025). "AI Coding Assistants and Code Quality: Analysis of 211 Million Lines of Code."**
+
+8x increase in code duplication since AI adoption. Significant decline in refactoring activity. Copy-paste patterns sharply increased.
+
+**DORA / Google (2024). "Accelerate State of DevOps Report."**
+
+-7.2% deployment stability, -1.5% throughput correlated with AI adoption.
+
+---
+
+## Cognitive Offloading Research
+
+**Gerlich, M. (2025). "Can AI Use Affect Critical Thinking? Strong Correlation, Not Causation." Societies, 15(1).**
+
+r = -0.75 between cognitive offloading and critical thinking. r = -0.68 between AI use and critical thinking. Note: correlation, not causation.
+
+**Kosmyna, N., et al. (2025). "Your Brain on ChatGPT: Cognitive Debt and AI-Assisted Writing." MIT Media Lab.**
+
+EEG study: 83.3% of AI users couldn't recall quotes from own AI-assisted essays. Neural connectivity "systematically scaled down" with AI use.
+
+---
+
+## Diversity and Homogenization
+
+**NeurIPS 2025 Best Paper. "The Artificial Hivemind: LLM Output Convergence Across 70+ Models."**
+
+70+ LLMs converge on the same outputs. When 25 models write "a metaphor about time," only 2 clusters emerge. Temperature and ensembling don't help.
+
+**Meta-analysis (28 studies, n=8,214). "AI Impact on Creative Diversity."**
+
+Diversity reduction effect size: g = -0.863. Individual performance up, collective diversity crashes.
+
+**Wan, A. & Kalman, M. (2025). "Diverse AI Personas Eliminate Homogenization."**
+
+Mitigation evidence: diverse AI personas can preserve diversity. Design CAN counteract homogenization.
+
+---
+
+## Stack Overflow Developer Survey (2025)
+
+**Stack Overflow (2025). "Developer Survey 2025: AI in Development."**
+
+Trust Paradox: 84% adoption, 29% trust, 46% active distrust. 66% fixing time > writing from scratch. 17% of junior developers accept AI code without editing. Senior-junior trust gap: 2.5% vs 17% full trust.
+
+---
+
 ## Meta
 
 **Convergent Evidence:**
@@ -310,9 +434,14 @@ Community manifesto (signed by 50,000+ practitioners):
 When multiple independent sources point to the same conclusion:
 - Technical debt compounds: Fowler (2003), McConnell (2006), Cataldo et al. (2006)
 - Transparency matters: Blaurock meta-analysis (106 studies)
-- Mastery orientation protects: ACU (2025), Lee et al. (2025)
+- Mastery orientation protects: ACU (2025), Lee et al. (2025), Pallant et al. (2025)
+- Cognitive offloading harms: Gerlich (2025), Kosmyna et al. (2025), Lee et al. (2025)
+- Skill atrophy is real: Budzyn (2025), Bastani (2025), aviation research
+- Security degrades with AI: Veracode (2025), Shukla (2025), Perry (2025)
+- Productivity illusion exists: METR (2025), DORA (2024)
+- Metacognitive friction helps: Lee CHI (2025), Tomisu (2025), Stanford SCALE (2025)
 
-This convergence increases confidence beyond any single source.
+This convergence across 50+ studies from premier venues (CHI, PNAS, Lancet, NeurIPS, HICSS) increases confidence beyond any single source.
 
 ---
 
