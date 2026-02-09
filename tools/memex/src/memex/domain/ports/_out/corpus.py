@@ -93,11 +93,11 @@ class CorpusPort(Protocol):
         """Count fragments without embeddings."""
         ...
 
-    def has_vss(self) -> bool:
+    def has_semantic_search(self) -> bool:
         """Check if semantic search is available."""
         ...
 
-    def has_fts(self) -> bool:
+    def has_keyword_search(self) -> bool:
         """Check if full-text search (BM25) is available."""
         ...
 

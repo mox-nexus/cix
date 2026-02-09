@@ -1,30 +1,25 @@
-"""Nomic embedding adapter using sentence-transformers.
+"""Nomic embedding adapter using GPT4All local inference.
 
 Higher quality embeddings with 768 dimensions.
+Runs locally on CPU/GPU via GPT4All backend (Metal on macOS).
+Install with: uv add nomic[local]
 """
-
-from functools import cached_property
-
-from sentence_transformers import SentenceTransformer
 
 from memex.domain.models import EmbeddingConfig
 
 
 class NomicEmbedder:
-    """Nomic embedding using nomic-embed-text-v1.5.
+    """Nomic embedding using nomic-embed-text-v1.5 with local inference.
 
-    - 768 dimensions
-    - 8192 token context window
+    - 768 dimensions (full Matryoshka)
+    - 2048 token context window (local mode)
     - Strong retrieval performance (MTEB ~69)
-    - Matryoshka embeddings (can truncate if needed)
-    - Runs locally, no API costs
+    - Runs locally via GPT4All (Metal on macOS, CUDA on Linux)
+    - No API costs, no network required after model download
     """
 
-    MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
+    MODEL_NAME = "nomic-embed-text-v1.5"
     EMBEDDING_DIM = 768
-
-    def __init__(self):
-        self._model: SentenceTransformer | None = None
 
     @property
     def model_name(self) -> str:
@@ -38,19 +33,29 @@ class NomicEmbedder:
     def config(self) -> EmbeddingConfig:
         return EmbeddingConfig(model_name=self.model_name, dimensions=self.dimensions)
 
-    @cached_property
-    def model(self) -> SentenceTransformer:
-        """Lazy load model on first use."""
-        return SentenceTransformer(self.MODEL_NAME, trust_remote_code=True)
-
     def embed(self, text: str) -> list[float]:
         """Embed a single text. Returns 768-dim vector."""
-        embedding = self.model.encode(text, convert_to_numpy=True)
-        return embedding.tolist()
+        from nomic import embed
+
+        output = embed.text(
+            texts=[text],
+            model=self.MODEL_NAME,
+            task_type="search_document",
+            inference_mode="local",
+        )
+        return output["embeddings"][0]
 
     def embed_batch(self, texts: list[str]) -> list[list[float]]:
-        """Embed multiple texts. More efficient than single calls."""
+        """Embed multiple texts in batch."""
         if not texts:
             return []
-        embeddings = self.model.encode(texts, convert_to_numpy=True)
-        return embeddings.tolist()
+
+        from nomic import embed
+
+        output = embed.text(
+            texts=texts,
+            model=self.MODEL_NAME,
+            task_type="search_document",
+            inference_mode="local",
+        )
+        return output["embeddings"]

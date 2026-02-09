@@ -35,7 +35,6 @@ class CrossEncoderReranker:
             model_name: HuggingFace model ID for cross-encoder
         """
         self._model_name = model_name
-        self._model = None
 
     @cached_property
     def model(self):

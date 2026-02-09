@@ -34,37 +34,28 @@ class ExcavationService:
         self.embedder = embedder
         self.reranker = reranker
 
-    def ingest(
-        self,
-        path: Path,
-        on_progress: Callable[[int], None] | None = None,
-    ) -> int:
+    def ingest(self, path: Path) -> tuple[int, int]:
         """Ingest a file into the corpus.
 
-        Returns count of fragments stored.
+        Returns:
+            (parsed, stored) — count of fragments parsed and newly stored.
         """
         adapter = self._find_adapter(path)
         if not adapter:
             raise ValueError(f"No adapter found for {path}")
 
-        # Count fragments for progress reporting
-        fragment_count = 0
+        parsed = 0
 
         def counting_generator():
-            nonlocal fragment_count
+            nonlocal parsed
             for fragment in adapter.ingest(path):
-                fragment_count += 1
+                parsed += 1
                 yield fragment
 
-        # Store fragments (adapter yields Iterator[Fragment])
         stored = self.corpus.store(counting_generator())
+        return (parsed, stored)
 
-        if on_progress:
-            on_progress(fragment_count)
-
-        return stored
-
-    def search(
+    def keyword_search(
         self,
         query: str,
         limit: int = 20,
@@ -225,7 +216,7 @@ class ExcavationService:
 
     def has_semantic_search(self) -> bool:
         """Check if semantic search is available."""
-        return self.embedder is not None and self.corpus.has_vss()
+        return self.embedder is not None and self.corpus.has_semantic_search()
 
     def has_reranker(self) -> bool:
         """Check if cross-encoder reranking is available."""
@@ -236,6 +227,14 @@ class ExcavationService:
         if self.reranker:
             return self.reranker.model_name
         return None
+
+    def rebuild_search_index(self) -> None:
+        """Rebuild search indexes after data changes."""
+        self.corpus.rebuild_fts_index()
+
+    def close(self) -> None:
+        """Release resources."""
+        self.corpus.close()
 
     def _find_adapter(self, path: Path) -> SourceAdapterPort | None:
         for adapter in self.source_adapters:

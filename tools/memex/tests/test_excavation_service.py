@@ -115,7 +115,7 @@ class TestExcavationServiceKeywordSearch:
 
     def test_keyword_search_finds_matches(self, service):
         """Keyword search finds fragments containing query terms."""
-        results = service.search("authentication")
+        results = service.keyword_search("authentication")
 
         assert len(results) > 0
         for frag in results:
@@ -123,17 +123,17 @@ class TestExcavationServiceKeywordSearch:
 
     def test_keyword_search_no_matches(self, service):
         """Keyword search returns empty for no matches."""
-        results = service.search("xyznonexistentterm")
+        results = service.keyword_search("xyznonexistentterm")
         assert results == []
 
     def test_keyword_search_respects_limit(self, service):
         """Keyword search respects limit parameter."""
-        results = service.search("the", limit=2)
+        results = service.keyword_search("the", limit=2)
         assert len(results) <= 2
 
     def test_keyword_search_source_filter(self, service):
         """Keyword search filters by source_kind."""
-        results = service.search("API", source_kind="openai")
+        results = service.keyword_search("API", source_kind="openai")
 
         for frag in results:
             assert frag.source_kind == "openai"

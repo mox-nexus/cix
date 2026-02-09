@@ -23,9 +23,6 @@ class LocalEmbedder:
     MODEL_NAME = "all-MiniLM-L6-v2"
     EMBEDDING_DIM = 384
 
-    def __init__(self):
-        self._model: SentenceTransformer | None = None
-
     @property
     def model_name(self) -> str:
         return self.MODEL_NAME

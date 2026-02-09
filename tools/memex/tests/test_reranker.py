@@ -61,10 +61,9 @@ class TestCrossEncoderReranker:
         """Model should not load until first rerank call."""
         reranker = CrossEncoderReranker()
 
-        # Model should be None before use
-        assert reranker._model is None
+        # Before use, cached_property hasn't populated __dict__
+        assert "model" not in reranker.__dict__
 
-        # After rerank, model is loaded (via cached_property)
-        # We can check by accessing the property
+        # After access, cached_property stores in __dict__
         _ = reranker.model
-        assert "model" in reranker.__dict__  # cached_property stores in __dict__
+        assert "model" in reranker.__dict__
