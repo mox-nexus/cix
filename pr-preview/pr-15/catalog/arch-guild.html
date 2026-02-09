@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		
+		<link href="../_app/immutable/assets/0.BJicj5Zp.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/CrossLinks.C4T6atsV.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/5.C4hqQtKK.css" rel="stylesheet">
+		<link rel="modulepreload" href="../_app/immutable/entry/start.B9JAY-ug.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/Cr7kXcYc.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/DXXdKfFK.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/DQIWNrPk.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/D0iwhpLH.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/D4v2vU6B.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/CzKX1IyC.js">
+		<link rel="modulepreload" href="../_app/immutable/entry/app.3Z1GRygV.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/PPVm8Dsz.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/i-IdDckD.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/BPxar_6W.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/Ey95jBeI.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/DcJ2xzpH.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/CpnKfs42.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/DYueXv1s.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/EUq6mvGu.js">
+		<link rel="modulepreload" href="../_app/immutable/nodes/0.M7JUnjLu.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/Dl8jxmRm.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/C1v7wgkm.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/Dvbz5Exl.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/CV11oyJS.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/Czc6TY_5.js">
+		<link rel="modulepreload" href="../_app/immutable/nodes/5.BJDSH_mS.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/BclcEiuq.js"><!--12qhfyh--><meta name="description" content="Extensions that enhance human capability, not replace it."/><!----><!--wzm642--><meta name="description" content="Architectural reasoning with The Guild. Use when: reviewing architecture, evaluating design, checking production readiness, scaffolding services, making boundary decisions."/><!----><title>arch-guild — cix</title>
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents"><!--[--><!--[--><!----><a href="#main" class="skip-link">Skip to content</a> <!--[--><nav class="site-nav svelte-qgym72" aria-label="Site navigation"><a href="../" class="nav-wordmark svelte-qgym72">cix</a> <div class="nav-links svelte-qgym72"><!--[--><a href="../ethos" class="nav-link svelte-qgym72">ethos</a><a href="../catalog" class="nav-link svelte-qgym72">catalog</a><a href="../library" class="nav-link svelte-qgym72">library</a><!--]--></div></nav><!--]--> <div class="page svelte-12qhfyh has-nav"><!--[!--><!----><main id="main" class="detail-page svelte-wzm642" style="--variant-color: var(--spark-core)"><nav class="detail-back svelte-wzm642"><a href="../catalog" class="svelte-wzm642">← catalog</a></nav> <header class="detail-header svelte-wzm642"><div class="header-top svelte-wzm642"><h1 class="svelte-wzm642">arch-guild</h1> <span class="detail-kind svelte-wzm642">plugin</span> <span class="detail-version svelte-wzm642">0.1.0</span></div> <p class="detail-description svelte-wzm642">Architectural reasoning with The Guild. Use when: reviewing architecture, evaluating design, checking production readiness, scaffolding services, making boundary decisions.</p> <!--[--><div class="detail-inventory svelte-wzm642"><!--[--><span class="inv-item svelte-wzm642">13 agents</span><span class="inv-item svelte-wzm642">3 skills</span><!--]--></div><!--]--> <!--[--><div class="detail-tags svelte-wzm642"><!--[--><span class="tag svelte-wzm642">architecture</span><span class="tag svelte-wzm642">design</span><span class="tag svelte-wzm642">operations</span><span class="tag svelte-wzm642">council</span><span class="tag svelte-wzm642">hexagonal</span><!--]--></div><!--]--></header> <article class="detail-content prose svelte-wzm642"><!----><h1>arch-guild</h1>
+<p>Architectural reasoning through 13 specialized agents with orthogonal perspectives — each locked to their domain, forcing genuine perspective diversity.</p>
+<h2>What Problem This Solves</h2>
+<p>Architecture decisions need multiple perspectives. A caching decision involves economics (cost), consistency (distributed systems), security (DoS vectors), and capacity (memory bounds). Most reviews miss something because they come from one viewpoint.</p>
+<p>The Guild provides structured multi-perspective evaluation. Each agent has a defined domain and <strong>orthogonality lock</strong> — they can only discuss their area. This prevents homogenization and forces genuine perspective diversity.</p>
+<h2>When to Use</h2>
+<p>The Guild activates when you:</p>
+<ul>
+<li>Review architecture for a service or system</li>
+<li>Evaluate design decisions (caching, API protocol, boundaries)</li>
+<li>Check production readiness</li>
+<li>Make tradeoff decisions between competing concerns</li>
+<li>Need to understand why legacy code exists before changing it</li>
+</ul>
+<p><strong>Example prompts:</strong></p>
+<ul>
+<li>&quot;Review this architecture for a payment system&quot;</li>
+<li>&quot;Should I use Redis or in-memory HashMap for caching?&quot;</li>
+<li>&quot;Is this service ready for production?&quot;</li>
+<li>&quot;Convene the full guild on this proposal&quot;</li>
+</ul>
+<h2>The 13 Agents</h2>
+<p>Agents are named after thought leaders whose work defines their domain (Lamport for distributed systems, Dijkstra for correctness, Taleb for resilience). See <code>docs/explanation/bibliography.md</code> for the full lineage.</p>
+<h3>7 Masters (Always Active)</h3>
+<p>These agents review every architectural decision.</p>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Domain</th>
+<th>Core Question</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>K</strong></td>
+<td>Strategic</td>
+<td>What forces are at play? What move creates options?</td>
+</tr>
+<tr>
+<td><strong>Karman</strong></td>
+<td>Ontological/Naming</td>
+<td>Does code model match business reality?</td>
+</tr>
+<tr>
+<td><strong>Burner</strong></td>
+<td>Structural/Boundaries</td>
+<td>Are dependencies clean? Do they point inward?</td>
+</tr>
+<tr>
+<td><strong>Lamport</strong></td>
+<td>Temporal/Distributed</td>
+<td>What happens with latency, partitions, eventual consistency?</td>
+</tr>
+<tr>
+<td><strong>Erlang</strong></td>
+<td>Hydraulic/Capacity</td>
+<td>If inflow exceeds outflow, where is the valve?</td>
+</tr>
+<tr>
+<td><strong>Vector</strong></td>
+<td>Adversarial/Security</td>
+<td>If I control the input, how do I break this?</td>
+</tr>
+<tr>
+<td><strong>Ace</strong></td>
+<td>Psychocentric/DX</td>
+<td>Can the next developer figure this out in 15 minutes?</td>
+</tr>
+</tbody></table>
+<h3>6 Specialists (Context-Triggered)</h3>
+<p>These agents activate when specific conditions appear.</p>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Domain</th>
+<th>Trigger</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Ixian</strong></td>
+<td>Empirical/Validation</td>
+<td>Always — mandatory post-consensus</td>
+</tr>
+<tr>
+<td><strong>Dijkstra</strong></td>
+<td>Deductive/Correctness</td>
+<td>Critical paths: auth, payments, state machines</td>
+</tr>
+<tr>
+<td><strong>Knuth</strong></td>
+<td>Complexity/Performance</td>
+<td>Loops, aggregations, high-cardinality data</td>
+</tr>
+<tr>
+<td><strong>Lotfi</strong></td>
+<td>Fuzzy/Tradeoffs</td>
+<td>Agent deadlocks (K says yes, Dijkstra says no)</td>
+</tr>
+<tr>
+<td><strong>Taleb</strong></td>
+<td>Antifragile/Resilience</td>
+<td>Production readiness, failure modes</td>
+</tr>
+<tr>
+<td><strong>Chesterton</strong></td>
+<td>Diachronic/Legacy</td>
+<td>Removing old code, refactoring legacy systems</td>
+</tr>
+</tbody></table>
+<h2>Guild Modes</h2>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Agents</th>
+<th>Use When</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Methodology</strong></td>
+<td>Relevant subset</td>
+<td>Default — let context determine</td>
+</tr>
+<tr>
+<td><strong>Quick</strong></td>
+<td>7 Masters</td>
+<td>Fast review, broad coverage</td>
+</tr>
+<tr>
+<td><strong>Focus</strong></td>
+<td>3-4 targeted</td>
+<td>Specific concern (security, performance)</td>
+</tr>
+<tr>
+<td><strong>Full</strong></td>
+<td>All 13</td>
+<td>Major decisions, comprehensive review</td>
+</tr>
+</tbody></table>
+<h2>Verdicts</h2>
+<table>
+<thead>
+<tr>
+<th>Verdict</th>
+<th>Meaning</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>APPROVE</strong></td>
+<td>No concerns from this perspective</td>
+<td>Proceed</td>
+</tr>
+<tr>
+<td><strong>CONCERN</strong></td>
+<td>Minor issues, acceptable short-term</td>
+<td>Proceed with awareness</td>
+</tr>
+<tr>
+<td><strong>OBJECTION</strong></td>
+<td>Significant issues</td>
+<td>Address before proceeding</td>
+</tr>
+<tr>
+<td><strong>BLOCK</strong></td>
+<td>Fundamental problem</td>
+<td>Cannot proceed</td>
+</tr>
+</tbody></table>
+<h2>The Ratchet</h2>
+<p>The Guild learns across sessions. After significant decisions, capture learnings to <code>.claude/guild-ratchet.md</code> in your project:</p>
+<pre><code class="language-markdown">## 2026-01-15: Redis vs HashMap Decision
+
+### Blocking Agents
+- Lamport: Per-instance HashMap breaks cache consistency with 4 replicas
+
+### Principle Extracted
+&gt; &quot;In-memory caching requires single-writer architecture or accepting stale reads.&quot;
+
+### Future Trigger
+Multi-instance deployments with shared state
+</code></pre>
+<p>The SessionStart hook loads this automatically. Disable with <code>SKIP_GUILD_RATCHET=1</code>.</p>
+<h2>Structure</h2>
+<pre><code>arch-guild/
+├── skills/
+│   ├── architecture/    # Guild methodology, hexagonal, event-driven
+│   ├── design/          # SOLID, API protocols, component design
+│   └── operations/      # Production readiness, chaos engineering
+├── agents/              # 13 agent definitions
+├── references/          # Shared methodology
+├── hooks/               # SessionStart ratchet loader
+└── evals/               # Activation tests
+</code></pre>
+<h2>Sources</h2>
+<p>The agents draw from foundational work in computer science:</p>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dijkstra</td>
+<td>&quot;The Humble Programmer&quot; (1972) — correctness through proof</td>
+</tr>
+<tr>
+<td>Lamport</td>
+<td>&quot;Time, Clocks, and the Ordering of Events&quot; (1978) — distributed systems</td>
+</tr>
+<tr>
+<td>Taleb</td>
+<td><em>Antifragile</em> (2012) — resilience under stress</td>
+</tr>
+<tr>
+<td>Knuth</td>
+<td>&quot;Structured Programming with go to Statements&quot; (1974) — complexity analysis</td>
+</tr>
+</tbody></table>
+<p>Full bibliography with 24 verified sources: <code>docs/explanation/bibliography.md</code></p>
+<h2>License</h2>
+<p>MIT</p>
+<!----></article></main><!----><!--]--><!----></div> <div class="experimental-tag svelte-12qhfyh" aria-hidden="true">experimental</div><!----><!--]--> <!--[!--><!--]--><!--]-->
+			
+			<script>
+				{
+					__sveltekit_39lsyk = {
+						base: new URL("..", location).pathname.slice(0, -1),
+						assets: "/cix/pr-preview/pr-15"
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("../_app/immutable/entry/start.B9JAY-ug.js"),
+						import("../_app/immutable/entry/app.3Z1GRygV.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element, {
+							node_ids: [0, 5],
+							data: [null,(function(a){a[0]="architecture";a[1]="design";a[2]="operations";a[3]="council";a[4]="hexagonal";return {type:"data",data:{extension:{slug:"arch-guild",kind:"plugin",manifest:{name:"arch-guild",version:"0.1.0",description:"Architectural reasoning with The Guild. Use when: reviewing architecture, evaluating design, checking production readiness, scaffolding services, making boundary decisions.",author:{name:"Yash Vyas"},license:"MIT",keywords:a},tagline:"Architectural reasoning through 13 specialized agents with orthogonal perspectives — each locked to their domain, forcing genuine perspective diversity.",readme:"# arch-guild\n\nArchitectural reasoning through 13 specialized agents with orthogonal perspectives — each locked to their domain, forcing genuine perspective diversity.\n\n## What Problem This Solves\n\nArchitecture decisions need multiple perspectives. A caching decision involves economics (cost), consistency (distributed systems), security (DoS vectors), and capacity (memory bounds). Most reviews miss something because they come from one viewpoint.\n\nThe Guild provides structured multi-perspective evaluation. Each agent has a defined domain and **orthogonality lock** — they can only discuss their area. This prevents homogenization and forces genuine perspective diversity.\n\n## When to Use\n\nThe Guild activates when you:\n\n- Review architecture for a service or system\n- Evaluate design decisions (caching, API protocol, boundaries)\n- Check production readiness\n- Make tradeoff decisions between competing concerns\n- Need to understand why legacy code exists before changing it\n\n**Example prompts:**\n- \"Review this architecture for a payment system\"\n- \"Should I use Redis or in-memory HashMap for caching?\"\n- \"Is this service ready for production?\"\n- \"Convene the full guild on this proposal\"\n\n## The 13 Agents\n\nAgents are named after thought leaders whose work defines their domain (Lamport for distributed systems, Dijkstra for correctness, Taleb for resilience). See `docs/explanation/bibliography.md` for the full lineage.\n\n### 7 Masters (Always Active)\n\nThese agents review every architectural decision.\n\n| Agent | Domain | Core Question |\n|-------|--------|---------------|\n| **K** | Strategic | What forces are at play? What move creates options? |\n| **Karman** | Ontological/Naming | Does code model match business reality? |\n| **Burner** | Structural/Boundaries | Are dependencies clean? Do they point inward? |\n| **Lamport** | Temporal/Distributed | What happens with latency, partitions, eventual consistency? |\n| **Erlang** | Hydraulic/Capacity | If inflow exceeds outflow, where is the valve? |\n| **Vector** | Adversarial/Security | If I control the input, how do I break this? |\n| **Ace** | Psychocentric/DX | Can the next developer figure this out in 15 minutes? |\n\n### 6 Specialists (Context-Triggered)\n\nThese agents activate when specific conditions appear.\n\n| Agent | Domain | Trigger |\n|-------|--------|---------|\n| **Ixian** | Empirical/Validation | Always — mandatory post-consensus |\n| **Dijkstra** | Deductive/Correctness | Critical paths: auth, payments, state machines |\n| **Knuth** | Complexity/Performance | Loops, aggregations, high-cardinality data |\n| **Lotfi** | Fuzzy/Tradeoffs | Agent deadlocks (K says yes, Dijkstra says no) |\n| **Taleb** | Antifragile/Resilience | Production readiness, failure modes |\n| **Chesterton** | Diachronic/Legacy | Removing old code, refactoring legacy systems |\n\n## Guild Modes\n\n| Mode | Agents | Use When |\n|------|--------|----------|\n| **Methodology** | Relevant subset | Default — let context determine |\n| **Quick** | 7 Masters | Fast review, broad coverage |\n| **Focus** | 3-4 targeted | Specific concern (security, performance) |\n| **Full** | All 13 | Major decisions, comprehensive review |\n\n## Verdicts\n\n| Verdict | Meaning | Action |\n|---------|---------|--------|\n| **APPROVE** | No concerns from this perspective | Proceed |\n| **CONCERN** | Minor issues, acceptable short-term | Proceed with awareness |\n| **OBJECTION** | Significant issues | Address before proceeding |\n| **BLOCK** | Fundamental problem | Cannot proceed |\n\n## The Ratchet\n\nThe Guild learns across sessions. After significant decisions, capture learnings to `.claude/guild-ratchet.md` in your project:\n\n```markdown\n## 2026-01-15: Redis vs HashMap Decision\n\n### Blocking Agents\n- Lamport: Per-instance HashMap breaks cache consistency with 4 replicas\n\n### Principle Extracted\n> \"In-memory caching requires single-writer architecture or accepting stale reads.\"\n\n### Future Trigger\nMulti-instance deployments with shared state\n```\n\nThe SessionStart hook loads this automatically. Disable with `SKIP_GUILD_RATCHET=1`.\n\n## Structure\n\n```\narch-guild/\n├── skills/\n│   ├── architecture/    # Guild methodology, hexagonal, event-driven\n│   ├── design/          # SOLID, API protocols, component design\n│   └── operations/      # Production readiness, chaos engineering\n├── agents/              # 13 agent definitions\n├── references/          # Shared methodology\n├── hooks/               # SessionStart ratchet loader\n└── evals/               # Activation tests\n```\n\n## Sources\n\nThe agents draw from foundational work in computer science:\n\n| Agent | Source |\n|-------|--------|\n| Dijkstra | \"The Humble Programmer\" (1972) — correctness through proof |\n| Lamport | \"Time, Clocks, and the Ordering of Events\" (1978) — distributed systems |\n| Taleb | *Antifragile* (2012) — resilience under stress |\n| Knuth | \"Structured Programming with go to Statements\" (1974) — complexity analysis |\n\nFull bibliography with 24 verified sources: `docs/explanation/bibliography.md`\n\n## License\n\nMIT\n",components:{agents:13,skills:3,hooks:0,commands:0},variant:"spark",tags:a}},uses:{params:["slug"]}}}(Array(5)))],
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+	</body>
+</html>
