@@ -7,17 +7,16 @@
 # Research: CodeScene — 63% of AI refactoring breaks code
 # Research: GitClear — refactoring down 60% in AI-assisted codebases
 
-# Check for opt-out
 if [[ "${SKIP_REFACTOR_HOOKS:-}" == "1" ]]; then
     echo '{"decision": "allow"}'
     exit 0
 fi
 
-# Get tool result from stdin
-TOOL_OUTPUT=$(cat)
+INPUT=$(cat)
+TOOL_RESULT=$(echo "$INPUT" | jq -r '.tool_result // empty')
 
 # Only trigger after a successful git commit
-if ! echo "$TOOL_OUTPUT" | grep -qE '(^\[|commit [0-9a-f])'; then
+if ! echo "$TOOL_RESULT" | grep -qE '(^\[|commit [0-9a-f])'; then
     echo '{"decision": "allow"}'
     exit 0
 fi
@@ -26,7 +25,6 @@ fi
 RENAMES=$(git diff HEAD~1..HEAD --diff-filter=R --name-only 2>/dev/null || true)
 
 if [[ -z "$RENAMES" ]]; then
-    # No renames in this commit — nothing to check
     echo '{"decision": "allow"}'
     exit 0
 fi
@@ -34,7 +32,6 @@ fi
 # Extract old basenames from renamed files
 STALE_REFS=""
 while IFS= read -r old_file; do
-    # Get just the basename without extension
     old_base=$(basename "$old_file" | sed 's/\.[^.]*$//')
 
     # Skip very short names (too many false positives)
@@ -55,7 +52,7 @@ if [[ -n "$STALE_REFS" ]]; then
     cat << EOF
 {
   "decision": "allow",
-  "message": "🔍 INCOMPLETE REFACTORING DETECTED. Old names still found in codebase:${REFS_ESCAPED}\n\nThe refactoring isn't done until grep returns zero hits. Search for each old name, update all references, and commit the cleanup."
+  "message": "INCOMPLETE REFACTORING DETECTED. Old names still found in codebase:${REFS_ESCAPED}\n\nThe refactoring isn't done until grep returns zero hits. Search for each old name, update all references, and commit the cleanup."
 }
 EOF
 else
