@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "description": "Data storage and retrieval patterns. Use when: choosing databases, implementing search, designing hybrid retrieval, selecting embedding models, building RAG systems.",
   "author": {
-    "name": "Yash Vyas"
+    "name": "Mox Labs",
+    "email": "mox.rnd@gmail.com"
   },
   "license": "MIT",
   "keywords": [

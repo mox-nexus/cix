@@ -1,6 +1,6 @@
 # Sources
 
-Full bibliography for promptfu techniques.
+Full bibliography for prompt-craft techniques.
 
 ---
 
