@@ -18,10 +18,16 @@ const config = {
 			highlight: {
 				highlighter: (code, lang) => {
 					if (!lang) lang = 'text';
+					// Escape characters that Svelte would interpret as expressions or tags.
+					// Without this, {curlies} in code blocks become Svelte expressions
+					// and <angle brackets> become component tags — breaking the build.
+					const escapeSvelte = (html) =>
+						html.replace(/\{/g, '&#123;').replace(/\}/g, '&#125;');
 					try {
-						return highlighter.codeToHtml(code, { lang, theme: 'github-dark' });
+						return escapeSvelte(highlighter.codeToHtml(code, { lang, theme: 'github-dark' }));
 					} catch {
-						return `<pre><code>${code}</code></pre>`;
+						const escaped = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+						return escapeSvelte(`<pre><code>${escaped}</code></pre>`);
 					}
 				}
 			}
