@@ -12,6 +12,7 @@ Extended memory for you and your agents. Query AI conversations from Claude.ai, 
 | "How many conversations?" | `memex query "SELECT COUNT(*) FROM fragments"` |
 | "Is memex set up correctly?" | `memex status` |
 | "I imported but search is slow" | `memex backfill` (generate embeddings) |
+| "Set up memex for this project" | `memex init --local` |
 
 ## Search Strategy
 
@@ -61,7 +62,8 @@ memex dig "query" --no-rerank            # Disable reranking (faster)
 | `memex corpus` | Corpus statistics |
 | `memex sources` | Available source adapters |
 | `memex schema` | Database schema |
-| `memex init` | First-time setup |
+| `memex init` | First-time global setup |
+| `memex init --local` | Project-local store in CWD |
 
 ### Power User
 
@@ -81,6 +83,49 @@ memex dig "query" --no-rerank            # Disable reranking (faster)
 - Pending actions (e.g., "run backfill")
 
 Run this first when troubleshooting.
+
+## Multi-Store (Convention over Config)
+
+Memex uses `.memex/` directories like `.git/` — walk up from CWD to find the active store.
+
+### Precedence (highest wins)
+
+| Layer | Source |
+|-------|--------|
+| 1 | `MEMEX_*` env vars |
+| 2 | Local `.memex/` (walk up from CWD) |
+| 3 | Global `~/.memex/config.toml` |
+| 4 | Defaults (`~/.memex/corpus.duckdb`) |
+
+### Setup
+
+```bash
+memex init              # Global store at ~/.memex/ (user-level, default)
+memex init --local      # Project-local store at ./.memex/ (directory-level)
+```
+
+### How It Works
+
+```bash
+cd myproject/           # Has .memex/
+memex dig "auth"        # Uses myproject/.memex/corpus.duckdb
+
+cd myproject/src/       # Walk-up finds ../myproject/.memex/
+memex dig "auth"        # Still uses myproject's store
+
+cd ~                    # No local .memex/ found
+memex dig "auth"        # Falls back to ~/.memex/corpus.duckdb
+```
+
+### Local `.memex/` Structure
+
+```
+.memex/                 # Add to .gitignore
+├── config.toml         # Optional local config overrides
+└── corpus.duckdb       # Project-local corpus
+```
+
+Local config can override embedding model, semantic weight, etc. per project.
 
 ## Schema
 
