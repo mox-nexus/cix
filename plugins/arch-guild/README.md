@@ -97,9 +97,10 @@ The SessionStart hook loads this automatically. Disable with `SKIP_GUILD_RATCHET
 ```
 arch-guild/
 ├── skills/
-│   ├── architecture/    # Guild methodology, hexagonal, event-driven
-│   ├── design/          # SOLID, API protocols, component design
-│   └── operations/      # Production readiness, chaos engineering
+│   ├── architecture/    # Guild methodology, deliberation protocol
+│   ├── design/          # Multi-perspective design evaluation
+│   ├── operations/      # Failure-first production readiness
+│   └── scaffold/        # Workflow-driven project scaffolding
 ├── agents/              # 13 agent definitions
 ├── references/          # Shared methodology
 ├── hooks/               # SessionStart ratchet loader

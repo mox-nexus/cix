@@ -1,94 +1,150 @@
 ---
 name: operations
-description: This skill should be used when the user asks to "review for production", "check production readiness", "evaluate resilience", "assess observability", "review ops", "run chaos experiments", or discusses deployment, monitoring, incident response, failure modes, or chaos engineering.
+description: This skill should be used when the user asks to "review for production", "check production readiness", "evaluate resilience", "assess observability", "review ops", "design chaos experiments", or discusses deployment, monitoring, incident response, failure modes, or chaos engineering.
 ---
 
 # Operations
 
-Production readiness evaluation focused on resilience, observability, and incident response.
+Production readiness evaluation through Guild failure-first reasoning.
 
-## Resilience
+## What This Adds
 
-### Failure Modes
+Claude already knows circuit breakers, RED metrics, structured logging, retry patterns, and production checklists. This skill doesn't reteach those — it adds **failure-first architectural perspectives** that find the gaps between knowing the patterns and surviving production.
 
-- What can fail? List all external dependencies
-- Blast radius: If X fails, what else breaks?
-- Graceful degradation: Partial failure ≠ total failure?
+## The Three Operations Lenses
 
-### Patterns
+### Taleb (Antifragile) — Does the system benefit from disorder?
 
-| Pattern | Purpose | Check |
-|---------|---------|-------|
-| **Timeouts** | Prevent hung connections | Every external call has one? |
-| **Circuit Breaker** | Stop cascading failures | On critical paths? |
-| **Bulkhead** | Isolate failures | Separate thread pools? |
-| **Retry** | Handle transient failures | With backoff? Bounded? |
+Not "can it survive failure?" — but "does failure make it stronger?"
 
-## Observability
+**Taleb's Tests:**
+- Have you actually pulled the plug? Or just drawn diagrams?
+- What's the difference between your redundancy plan and your reality?
+- Name three failures that would surprise you — those are the ones that will happen
+- Is your monitoring monitoring itself?
 
-### The RED Method
+**Taleb's Hierarchy:**
+1. **Fragile** — Breaks under stress (no fallbacks, single points of failure)
+2. **Robust** — Survives stress (redundancy, circuit breakers)
+3. **Antifragile** — Improves from stress (chaos experiments → automated fixes, incidents → runbooks)
 
-| Metric | What | Why |
-|--------|------|-----|
-| **R**ate | Requests per second | Traffic understanding |
-| **E**rrors | Failed requests | Problem detection |
-| **D**uration | Latency distribution | Performance tracking |
+**What Taleb catches:**
+- Fragility Theater ("we have redundancy" without ever testing it)
+- Untested recovery procedures
+- Monitoring that goes blind during the failures you most need to observe
+- Single points of failure hiding behind "high availability" labels
 
-### Logging
+### Erlang (Hydraulic) — Where is the valve?
 
-- Structured (JSON, not free text)
-- Correlation IDs across services
-- Appropriate levels (not everything is ERROR)
-- PII redaction
+Not "what's the capacity?" — but "what happens when capacity is exceeded?"
 
-### Tracing
+**Erlang's Core Law:** If λ (arrival rate) > μ (service rate), the queue grows unbounded. Always.
 
-- Distributed tracing enabled?
-- Spans for all external calls?
-- Context propagation working?
+**Erlang's Tests:**
+- At 2x expected load, what degrades first?
+- At 10x, what breaks?
+- Is every queue bounded? What happens when it's full?
+- Can the system shed load gracefully, or does it accept-until-death?
 
-## Capacity
+**What Erlang catches:**
+- Unbounded queues (memory exhaustion under sustained load)
+- Missing backpressure (system accepts work it can't complete)
+- Cascading saturation (one slow service pools up all upstream connections)
+- The "works fine at demo scale, dies at production scale" trap
 
-- **Scaling**: Horizontal preferred, auto-scaling configured?
-- **Limits**: Memory, CPU, connections all bounded?
-- **Backpressure**: What happens at 2x load? 10x?
-- **Rate Limiting**: Per-tenant/client quotas?
+### Vector (Adversarial Ops) — How do failures become attack vectors?
 
-## Security Posture
+Not "is the system secure?" — but "how do operational failures create exploitable windows?"
 
-- **Secrets**: In vault, not env vars or code
-- **Network**: Least privilege, mTLS where possible
-- **Dependencies**: Vulnerability scanning in CI
-- **Access**: Audit logging for sensitive operations
+**Vector's Tests:**
+- During failover, are auth checks still enforced?
+- Do error messages leak internal state?
+- Does graceful degradation degrade security too?
+- Can an attacker trigger the failure mode deliberately?
 
-## Incident Readiness
+**What Vector catches:**
+- Error pages revealing stack traces, versions, internal paths
+- Failover modes that bypass authentication
+- Rate limit implementations that can be circumvented
+- DoS vectors in legitimate endpoints (expensive queries, unbounded uploads)
 
-- **Runbooks**: Documented recovery procedures
-- **On-call**: Rotation defined, escalation clear
-- **Rollback**: One-click, tested regularly
-- **Communication**: Status page, stakeholder notification
+## Production Readiness Routing
 
-## Checklist
+| Concern | Primary | Secondary | Why |
+|---------|---------|-----------|-----|
+| Failure modes | Taleb | Erlang | Antifragility + capacity |
+| Load behavior | Erlang | Knuth | Flow dynamics + complexity |
+| Security posture | Vector | Dijkstra | Attack surface + correctness |
+| Distributed failure | Lamport | Taleb | Consistency + resilience |
+| Validation criteria | Ixian | Taleb | Measurement + antifragility |
+
+## Chaos Experiment Design
+
+The Guild's approach to chaos — not as a checklist, but as Ixian-informed experimentation:
+
+### 1. Steady State Hypothesis (Ixian)
+
+Before breaking anything, define "normal" with falsifiable metrics:
 
 ```
-□ All external calls have timeouts
-□ Circuit breakers on critical paths
-□ Structured logging with correlation IDs
-□ RED metrics exposed
-□ Alerts are actionable (not noisy)
-□ Auto-scaling configured with limits
-□ Graceful shutdown implemented
-□ Health checks (liveness + readiness)
-□ Secrets in vault
-□ Runbook exists
-□ Rollback tested
+Hypothesis: System maintains <1% error rate under [failure]
+Null (H0): Failure causes >1% error rate
+Noise floor: Baseline error rate = [measure first]
 ```
 
-## Guild Members for Operations
+### 2. Failure Selection (Taleb)
 
-Primary: **Taleb** (resilience), **Erlang** (capacity), **Vector** (security)
-Secondary: **Lamport** (distributed failure), **Ixian** (metrics/validation)
+Pick failures that would **surprise** you, not ones you've already mitigated:
+- What failure have you never tested?
+- What would happen if your monitoring failed during an incident?
+- What's your longest untested recovery procedure?
+
+### 3. Blast Radius Containment
+
+```
+Level 1: Single instance, non-critical path → Start here
+Level 2: Single instance, critical path
+Level 3: Multiple instances, single AZ
+Level 4: Entire AZ
+Level 5: Cross-region (extreme caution)
+```
+
+### 4. Abort Conditions
+
+Automatic termination if:
+- Error rate exceeds threshold
+- Customer impact detected
+- On-call paged
+- Monitoring itself fails (Taleb's meta-failure)
+
+## Output Format
+
+```
+## Production Readiness: {Service}
+
+### Taleb (Antifragility)
+- {Finding — fragile, robust, or antifragile?}
+
+### Erlang (Hydraulics)
+- {Finding — where does the queue grow unbounded?}
+
+### Vector (Attack Surface)
+- {Finding — how do failures become exploitable?}
+
+### Specialists Invoked
+- {Agent}: {finding} (if applicable)
+
+### Untested Assumptions
+{What has been designed but never verified in production?}
+
+### Recommended Experiment
+{A specific chaos experiment to close the biggest open loop}
+
+### Validation Criteria (Ixian)
+- {Falsifiable metric 1}
+- {Falsifiable metric 2}
+```
 
 ## Additional Resources
 
-- **`references/chaos-patterns.md`** — Chaos engineering patterns and failure injection
+- **`references/chaos-patterns.md`** — GameDay planning template and experiment scaffolds

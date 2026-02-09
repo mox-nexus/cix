@@ -30,18 +30,20 @@ System-level architectural reasoning using The Guild methodology.
 | **Ixian** | Post-consensus (always) | How do we validate this worked? |
 | **Dijkstra** | Critical logic, auth, payments | Is this provably correct? |
 | **Knuth** | Loops, aggregations, scale | O(n) or O(n²)? What at 10x? |
-| **Lotfi** | Trade-off deadlocks | Rate dimensions 0.0-1.0 |
+| **Lotfi** | Auto-triggers on conflicting verdicts | Rate dimensions 0.0-1.0 |
 | **Taleb** | Resilience review | What's the Black Swan? |
 | **Chesterton** | Legacy code, refactoring | Why is this fence here? |
 
 ## Guild Modes
 
-| Mode | Agents | Trigger |
-|------|--------|---------|
-| **Methodology** | None (default) | Skill activates, reason inline |
-| **Quick** | 7 Masters | "quick guild review" |
-| **Focus** | 3-4 relevant | "focus guild on [domain]" |
-| **Full** | All 13 | "convene full guild" |
+| Mode | Agents | When |
+|------|--------|------|
+| **Methodology** | None | Skill activates, reason inline (default) |
+| **Focus** | 3-4 relevant | Most deliberations — pick the relevant lenses |
+| **Quick** | 7 Masters | Broad review when domain unclear |
+| **Full** | All 13 | Explicit escalation only ("convene full guild") |
+
+**Default to Focus.** Research shows 3-4 diverse perspectives outperform 13 similar ones (DMAD, ICLR 2025). Full guild is the nuclear option, not the daily tool.
 
 ### Focus Domains
 
@@ -61,22 +63,51 @@ Before deliberating, check the project's CLAUDE.md for a `## Guild Vocabulary` s
 
 This lets the Guild reason about any domain with precision — the project teaches the Guild its vocabulary, the Guild brings orthogonal reasoning.
 
-## Review Process
+## Deliberation Protocol
 
-1. Check for domain vocabulary overlay (CLAUDE.md)
-2. Present the architectural decision or proposal
-3. Masters evaluate from orthogonal perspectives
-4. Specialists trigger based on context
-5. Surface consensus/dissent explicitly
-6. Ixian closes with validation criteria (mandatory)
+Research-backed process (MAV COLM 2025, DMAD ICLR 2025, Free-MAD 2025).
 
-## Verdicts
+### Phase 1: Independent Verdicts
+
+Each agent evaluates **independently** — no agent sees another's verdict before producing their own. This prevents conformity, the strongest failure mode for same-model agents.
 
 Each agent produces one of:
 - **APPROVE** — No concerns from this perspective
 - **CONCERN** — Minor issues, acceptable short-term
 - **OBJECTION** — Significant issues, needs addressing
 - **BLOCK** — Cannot proceed, fundamental problem
+
+### Phase 2: Tally and Route
+
+Count verdicts. Most decisions end here.
+
+| Result | Action |
+|--------|--------|
+| Any **BLOCK** | Stop. Surface blocking concern. |
+| Mixed verdicts (APPROVE + OBJECTION) | → Phase 3 (deliberation) |
+| **Lotfi auto-triggers** on conflicting verdicts | Fuzzy scoring 0.0-1.0 per dimension |
+| All **APPROVE** | → Anti-rubber-stamp check |
+
+### Phase 3: Deliberation (only on disagreement)
+
+Only when verdicts conflict. The dissenting agents explain their reasoning, others respond. This is expensive — reserve for genuine disagreement, not routine reviews.
+
+### Anti-Rubber-Stamp Rule
+
+If all agents APPROVE unanimously: challenge. "You all agree — name one concern you considered and dismissed, with reasoning." Unanimous agreement on non-trivial decisions is a conformity signal, not a quality signal.
+
+### Phase 4: Ixian Closes (mandatory)
+
+Every deliberation ends with falsifiable validation criteria. No exceptions.
+
+### Full Process
+
+1. Check for domain vocabulary mapping (CLAUDE.md)
+2. Present the architectural decision or proposal
+3. **Phase 1**: Agents evaluate independently (no cross-contamination)
+4. **Phase 2**: Tally verdicts, route by result
+5. **Phase 3**: Deliberate only on disagreement
+6. **Phase 4**: Ixian closes with validation criteria
 
 ## Output Format
 
@@ -122,10 +153,12 @@ After significant decisions, capture learnings to `.claude/guild-ratchet.md`:
 {When to apply this learning}
 ```
 
+## Related Skills
+
+- **`scaffold`** — Workflow-driven project scaffolding with Guild review at creation time
+
 ## Additional Resources
 
 - **`references/guild-protocol.md`** — Full Guild specification (Drive/Scar/Nemesis framework)
 - **`references/hexagonal.md`** — Ports & Adapters pattern (Protocol > ABC for Python)
 - **`references/stat-rigor.md`** — Statistical rigor for validation (Bayesian, clustered SE, pass@k)
-- **`references/event-driven.md`** — CQRS, sagas, outbox patterns
-- **`references/agent-patterns.md`** — Multi-agent coordination workflows
