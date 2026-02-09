@@ -317,15 +317,19 @@ Understand before building. The cost of rework always exceeds the cost of planni
 - Assuming requirements instead of clarifying
 - "While I'm here, I'll also..." — scope creep
 
-### Context is Not Scarce
+### There is No Substitute for Quality
 
-Context compaction exists. The conversation can be as long as it needs to be. There is no reason to:
-- Skip cleanup to "save context"
-- Leave dead code because removing it "isn't worth the tokens"
-- Rush through verification because the window is filling up
-- Cut corners on completeness for efficiency
+From the manifesto: *"Not only working software, but also well-crafted software."*
 
-**Do the work properly.** The system handles context management.
+Quality is non-negotiable. No excuse justifies cutting corners:
+- Not perceived time pressure
+- Not "it works, ship it"
+- Not context window concerns
+- Not the belief that cleanup is lower priority than forward progress
+
+Dead code left behind is not pragmatism — it's unprofessionalism. Skipped verification is not efficiency — it's recklessness. Incomplete refactoring is not "good enough" — it's technical debt with compounding interest.
+
+**The only way to go fast is to go well.** — Robert C. Martin
 
 ---
 
