@@ -13,7 +13,7 @@ Structured thinking for when it matters.
 
 - [The Wolf Protocol](#the-wolf-protocol)
 - [Metacognitive Scaffolds](#metacognitive-scaffolds)
-- [Reasoning Frameworks](#reasoning-frameworks)
+- [Problem → Technique Routing](#problem--technique-routing)
 - [Verification](#verification)
 - [Uncertainty & Calibration](#uncertainty--calibration)
 - [Anti-Patterns](#anti-patterns)
@@ -46,19 +46,13 @@ If this can't be filled out clearly, that's the first problem.
 | **Too many options** | Decision paralysis | Identify constraints, eliminate options |
 | **Going in circles** | Same things tried repeatedly | Step back — solving the wrong problem |
 
-### Step 3: Break It Down
+### Step 3: Route to the Right Technique
 
-**Debugging:** Smallest reproducing input → where does behavior diverge? → one hypothesis to test now.
-
-**Don't know how to start:** End state → one thing that must be true before that → smallest step toward it.
-
-**Too many options:** Non-negotiable constraints → eliminate violators → simplest of what remains.
-
-**Going in circles:** Write down what you've tried → what assumption is common to all attempts? → what if it's wrong?
+Use the [Problem → Technique Routing](#problem--technique-routing) table. Classify → route → apply. Don't prescribe yourself verbose steps — activate the right reasoning mode.
 
 ### Step 4: One Thing at a Time
 
-Pick the smallest verifiable piece. Do that. Confirm it works. Then the next piece. No grand plans.
+Pick the smallest verifiable piece. Do that. Confirm it works. Then the next piece.
 
 ### Step 5: Verify Before Declaring Solved
 
@@ -138,63 +132,21 @@ See [metacognitive-scaffolding.md](references/metacognitive-scaffolding.md) for 
 
 ---
 
-## Reasoning Frameworks
+## Problem → Technique Routing
 
-Match the framework to the problem type.
+You already know these techniques. This table tells you **when** to reach for each one and **what to watch for**. Frame the WHY, not the HOW — explicit procedures on frontier models degrade performance (arXiv 2510.22251).
 
-### Hypothesis Testing
+| Problem Type | Why This Technique | Caution | Verify |
+|---|---|---|---|
+| **Something's broken** | Hypothesize from evidence. Smallest reproducing input. Test one variable. | Don't fix before understanding — speculative fixes take 66% longer (SO 2025) | Does the fix address root cause or just symptoms? |
+| **Complex structure** | DAC: Decompose into independent parts, Abstract the pattern across parts, Compose the solution. Abstraction is the highest-value step (RLAD 2025: +27%). | Premature abstraction before decomposition is complete | Can each part be verified independently? |
+| **Root cause unknown** | Five Whys: Ask "why?" recursively until you hit the systemic cause, not the symptom | Stopping at the first plausible cause — keep asking | Would fixing this prevent recurrence, not just this instance? |
+| **Decision with tradeoffs** | Frame constraints first, eliminate violators, compare what remains. Show what you chose, rejected, and why. | Anchoring on first option considered | What would change your mind about this choice? |
+| **Evolving situation** | Observe-Orient-Decide-Act. Don't wait for perfect information. | Analysis paralysis — act on good-enough information, reorient | Did the action produce the expected observation? |
+| **Exploration needed** | Diverge (quantity, no judgment) then Converge (against constraints, pick simplest) | Converging too early; judging during divergence | Did you explore at least 3 genuinely different approaches? |
+| **Going in circles** | You're solving the wrong problem. What assumption is common to all attempts? | Sunk cost of previous attempts anchoring you | If you started fresh, would you approach it the same way? |
 
-For debugging and analysis:
-
-```
-Observation → Hypothesis → Prediction → Test → Refine
-```
-
-**Falsification questions** before committing:
-- What would need to be true for this to be correct?
-- What evidence would prove this wrong?
-- What's an alternative explanation?
-
-**Key:** Test one variable at a time.
-
-### OODA Loop
-
-For complex, evolving situations:
-
-```
-Observe → Orient → Decide → Act → (repeat)
-```
-
-Don't wait for perfect information. Act, observe the result, reorient, decide again.
-
-### Decision Framework
-
-For choices with tradeoffs:
-
-| Option | Tradeoff | Choose if |
-|--------|----------|-----------|
-| A | [pro/con] | [context where A wins] |
-| B | [pro/con] | [context where B wins] |
-
-**My lean:** [preference + reasoning]
-**Your call:** [what context would change this]
-
-### Diverge-Converge
-
-For exploring solution spaces:
-1. **Diverge** — generate options without judgment (quantity over quality)
-2. **Converge** — evaluate against constraints, pick simplest
-
-### Thinking Depth
-
-| Signal | Depth |
-|--------|-------|
-| Simple, familiar | Direct — just do it |
-| Needs some thought | Brief internal reasoning |
-| Complex or uncertain | Explicit step-by-step |
-| Novel, high-stakes, stuck | Deep exploration, multiple angles |
-
-**Escalation triggers:** Going in circles → escalate. High confidence but wrong → step back.
+**The principle:** Activate the right reasoning mode for the problem type. Don't prescribe steps — your internalized patterns are better than explicit procedures (TMK: WHY framing 31.5% → 97.3% on reasoning tasks).
 
 See [reasoning-scaffolds.md](references/reasoning-scaffolds.md) for extended patterns.
 
@@ -267,6 +219,33 @@ See [reasoning-verification.md](references/reasoning-verification.md) for CoVe a
 
 ---
 
+## Iteration Awareness
+
+After 3 failed attempts at the same problem, stop and self-assess.
+
+**Research:** Shukla et al. found a 37.6% increase in security vulnerabilities after 5 conversational iterations. Each iteration without convergence increases the chance of introducing new problems.
+
+### The 3-Iteration Check
+
+After 3 attempts that haven't converged:
+
+1. **Am I solving the right problem?** — Restate the actual goal
+2. **Am I repeating the same approach?** — If yes, the approach is wrong, not the execution
+3. **Is my context still fresh?** — After many iterations, assumptions accumulate silently
+
+### Context Health
+
+| Signal | Meaning | Action |
+|--------|---------|--------|
+| Referencing things from 50+ messages ago | Context may be stale | Re-read the relevant files |
+| Making contradictory suggestions | Context degraded | Suggest `/clear` or subagent |
+| Trying the same approach differently | Not learning from failures | Wolf Protocol |
+| Solution complexity growing each attempt | Solving symptoms, not cause | Step back, reframe |
+
+See [iteration-limits.md](references/iteration-limits.md) for the research and counter-patterns.
+
+---
+
 ## Anti-Patterns
 
 | Trap | What's Happening | Counter |
@@ -295,3 +274,4 @@ If structured approaches aren't converging:
 | Metacognitive techniques (full framework) | [metacognitive-scaffolding.md](references/metacognitive-scaffolding.md) |
 | Reasoning scaffolds (extended patterns) | [reasoning-scaffolds.md](references/reasoning-scaffolds.md) |
 | Reasoning verification (CoVe, Pythea) | [reasoning-verification.md](references/reasoning-verification.md) |
+| Iteration limits and context health | [iteration-limits.md](references/iteration-limits.md) |

@@ -1,5 +1,5 @@
 {
-  "description": "collab-scaffolds hooks: session transparency + Mr. Wolf detection",
+  "description": "collab-scaffolds hooks: Wolf trigger, craft enforcement, session context",
   "hooks": {
     "SessionStart": [
       {
@@ -11,14 +11,31 @@
         ]
       }
     ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scaffolding-cleanup-gate.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/detect-debugging-loop.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/detect-stuck.sh",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/incomplete-refactoring-guard.sh",
+            "timeout": 10
           }
         ]
       }
@@ -28,7 +45,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/detect-frustration.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/detect-stuck.sh",
             "timeout": 5
           }
         ]
