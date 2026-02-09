@@ -17,16 +17,15 @@ dependencies = [
     "pandas>=2.0",
     "sentence-transformers>=3.0",
     "ijson>=3.2",
-    "einops>=0.7",  # Required by Nomic embedding model
     "pytz>=2024.1",  # Required by DuckDB for timezone handling
 ]
 
 [project.optional-dependencies]
 # Reranking is available with base install (sentence-transformers includes CrossEncoder)
 # These extras are for future advanced features:
-nomic = ["nomic>=1.0"]  # Better embedding model (768-dim)
+nomic = ["nomic[local]>=3.0"]  # Nomic Embed v1.5 with GPT4All backend
 full = ["memex[nomic]"]  # All optional features
-dev = ["pytest>=8.0", "pytest-cov>=4.0", "pytz>=2024.1"]
+dev = ["pytest>=8.0", "pytest-cov>=4.0"]
 
 [project.scripts]
 memex = "memex.adapters._in.cli:main"

@@ -72,28 +72,51 @@ def main(ctx: click.Context, verbose: bool, skill: bool, reference: str | None):
 
 
 @main.command()
-def init():
+@click.option("--local", is_flag=True, help="Create project-local .memex/ in current directory")
+def init(local: bool):
     """Initialize memex for first use.
 
-    Creates config file and corpus directory. Run this once to get started.
+    Creates config file and corpus directory.
+
+    Global (default): Creates ~/.memex/ for system-wide use.
+    Local (--local): Creates .memex/ in the current directory for project-specific memory.
 
     Example:
-        memex init
+        memex init            # Global store
+        memex init --local    # Project-local store
     """
     from memex.config.settings import (
         config_exists,
         create_default_config,
-        get_config_path,
-        get_memex_dir,
+        get_global_config_path,
+        get_global_memex_dir,
     )
 
+    if local:
+        _init_local()
+    else:
+        _init_global(
+            config_exists,
+            create_default_config,
+            get_global_config_path,
+            get_global_memex_dir,
+        )
+
+
+def _init_global(
+    config_exists,
+    create_default_config,
+    get_global_config_path,
+    get_global_memex_dir,
+):
+    """Initialize global ~/.memex/ store."""
     obs.console.print("\n[bold]Welcome to Memex[/bold]\n")
     obs.console.print("Extended memory for you and your agents.\n")
     obs.console.print("Your AI conversations hold decisions, context, and trails of thought.")
     obs.console.print("Memex makes them findable - by you, and by the agents you work with.\n")
 
-    memex_dir = get_memex_dir()
-    config_path = get_config_path()
+    memex_dir = get_global_memex_dir()
+    config_path = get_global_config_path()
 
     # Create directory
     if not memex_dir.exists():
@@ -108,14 +131,15 @@ def init():
         obs.console.print(f"[dim]Created config at {config_path}[/dim]")
 
     # Initialize corpus (just create empty if not exists)
-    from memex.config.settings import settings
+    corpus_path = memex_dir / "corpus.duckdb"
+    if not corpus_path.exists():
+        from memex.adapters._out.corpus import DuckDBCorpus
 
-    if not settings.corpus_path.exists():
-        corpus = create_corpus()
+        corpus = DuckDBCorpus(corpus_path)
         corpus.close()
-        obs.console.print(f"[dim]Created corpus at {settings.corpus_path}[/dim]")
+        obs.console.print(f"[dim]Created corpus at {corpus_path}[/dim]")
     else:
-        obs.console.print(f"[dim]Corpus exists at {settings.corpus_path}[/dim]")
+        obs.console.print(f"[dim]Corpus exists at {corpus_path}[/dim]")
 
     obs.console.print("\n[bold]Next steps:[/bold]")
     obs.console.print("  1. Export your data:")
@@ -129,6 +153,43 @@ def init():
     obs.console.print("Run [cyan]memex status[/cyan] anytime to see what's indexed.\n")
 
 
+def _init_local():
+    """Initialize project-local .memex/ store in CWD."""
+    from memex.config.settings import create_default_config
+
+    local_dir = Path.cwd() / ".memex"
+
+    if local_dir.exists():
+        obs.warning(f"Local .memex/ already exists at {local_dir}")
+        obs.info("This directory is already a memex workspace.")
+        return
+
+    obs.console.print("\n[bold]Initializing local memex store[/bold]\n")
+
+    # Create directory
+    local_dir.mkdir(parents=True)
+    obs.console.print(f"[dim]Created {local_dir}[/dim]")
+
+    # Create local config
+    corpus_path = local_dir / "corpus.duckdb"
+    config_path = local_dir / "config.toml"
+    config_path.write_text(create_default_config(corpus_path))
+    obs.console.print(f"[dim]Created config at {config_path}[/dim]")
+
+    # Initialize empty corpus
+    from memex.adapters._out.corpus import DuckDBCorpus
+
+    corpus = DuckDBCorpus(corpus_path)
+    corpus.close()
+    obs.console.print(f"[dim]Created corpus at {corpus_path}[/dim]")
+
+    obs.console.print()
+    obs.success("Local memex workspace ready")
+    obs.info("All memex commands in this directory (and subdirectories) will use this store.")
+    obs.info("Tip: Add .memex/ to your .gitignore")
+    obs.console.print()
+
+
 # --- Search Commands ---
 
 
@@ -136,14 +197,14 @@ def init():
 @click.argument("query")
 @click.option("--limit", "-n", default=20, help="Max results")
 @click.option("--source", "-s", help="Filter by source kind")
-@click.option("--semantic-weight", "-w", default=0.6, help="Weight for semantic (0-1)")
+@click.option("--semantic-weight", "-w", default=None, type=float, help="Weight for semantic (0-1)")
 @click.option("--no-rerank", is_flag=True, help="Disable reranking (faster, less precise)")
 @click.option("--format", "-f", "fmt", type=click.Choice(["panel", "json", "ids"]), default="panel")
 def dig(
     query: str,
     limit: int,
     source: str | None,
-    semantic_weight: float,
+    semantic_weight: float | None,
     no_rerank: bool,
     fmt: str,
 ):
@@ -157,8 +218,12 @@ def dig(
         memex dig "authentication decisions" --semantic-weight 0.8
         memex dig "OAuth" --no-rerank
     """
-    # Auto-enable reranker if available and not disabled
-    use_reranker = reranker_available() and not no_rerank
+    from memex.config.settings import settings
+
+    # Resolve defaults from settings
+    if semantic_weight is None:
+        semantic_weight = settings.semantic_weight
+    use_reranker = reranker_available() and settings.rerank_by_default and not no_rerank
 
     with obs.status("Loading..."):
         service = create_service(with_embedder=True, with_reranker=use_reranker)
@@ -201,7 +266,7 @@ def keyword(query: str, limit: int, source: str | None, fmt: str):
         memex keyword "OAuth" --limit 50
     """
     service = create_service()
-    results = service.search(query, limit, source_kind=source)
+    results = service.keyword_search(query, limit, source_kind=source)
 
     if not results:
         _handle_no_results(query, service)
@@ -275,36 +340,14 @@ def ingest(path: Path, no_embed: bool):
         service = create_service()
 
     try:
-        adapter = None
-        for a in service.source_adapters:
-            if a.can_handle(path):
-                adapter = a
-                break
-
-        if adapter is None:
-            obs.error(f"No adapter found for {path}")
-            obs.info("Supported formats: Claude export (.json, .zip), OpenAI export")
-            obs.info("Run 'memex sources' for all adapters")
-            return
-
-        obs.step("Adapter", adapter.__class__.__name__)
-
-        # Phase 1: Parse and store (streaming, memory-efficient)
-        fragment_count = 0
-
-        def counting_generator():
-            nonlocal fragment_count
-            for fragment in adapter.ingest(path):
-                fragment_count += 1
-                yield fragment
-
+        # Phase 1: Parse and store (delegated to service)
         with obs.status("Parsing..."):
-            total = service.corpus.store(counting_generator())
+            parsed, stored = service.ingest(path)
 
-        obs.console.print(f"[dim]Parsed {fragment_count:,} fragments, stored {total:,} new[/dim]")
+        obs.console.print(f"[dim]Parsed {parsed:,} fragments, stored {stored:,} new[/dim]")
 
         # Phase 2: Embed if requested (batch, efficient)
-        if should_embed and total > 0 and service.embedder:
+        if should_embed and stored > 0 and service.embedder:
 
             def embed_progress(processed: int, batch_total: int):
                 pct = processed / batch_total * 100 if batch_total > 0 else 100
@@ -315,24 +358,27 @@ def ingest(path: Path, no_embed: bool):
             embedded = service.backfill_embeddings(settings.batch_size, embed_progress)
             obs.console.print()  # newline after progress
 
-            if embedded < total:
-                failed = total - embedded
+            if embedded < stored:
+                failed = stored - embedded
                 obs.warning(f"{failed:,} fragments failed embedding")
                 obs.info("Run 'memex backfill' to retry")
 
         # Rebuild FTS index (DuckDB FTS doesn't auto-update)
-        if hasattr(service.corpus, "rebuild_fts_index"):
-            with obs.status("Building search index..."):
-                service.corpus.rebuild_fts_index()
+        with obs.status("Building search index..."):
+            service.rebuild_search_index()
 
         # Final status
         if should_embed:
-            obs.success(f"Ingested {total:,} fragments (ready for semantic search)")
+            obs.success(f"Ingested {stored:,} fragments (ready for semantic search)")
         else:
-            obs.success(f"Ingested {total:,} fragments (keyword search only)")
+            obs.success(f"Ingested {stored:,} fragments (keyword search only)")
             obs.info("Run 'memex backfill' for semantic search")
+    except ValueError as e:
+        obs.error(str(e))
+        obs.info("Supported formats: Claude export (.json, .zip), OpenAI export")
+        obs.info("Run 'memex sources' for all adapters")
     finally:
-        service.corpus.close()
+        service.close()
 
 
 @main.command()
@@ -344,17 +390,13 @@ def rebuild():
     Example:
         memex rebuild
     """
-    corpus = create_corpus()
-
-    # Rebuild FTS index
-    if hasattr(corpus, "rebuild_fts_index") and corpus.has_fts():
+    service = create_service()
+    try:
         with obs.status("Rebuilding FTS (BM25) index..."):
-            corpus.rebuild_fts_index()
+            service.rebuild_search_index()
         obs.success("FTS index rebuilt")
-    else:
-        obs.warning("FTS not available")
-
-    corpus.close()
+    finally:
+        service.close()
     obs.info("VSS (embedding) index is managed automatically")
 
 
@@ -405,7 +447,7 @@ def backfill(batch_size: int):
 
         obs.success(f"Generated embeddings for {updated:,} fragments")
     finally:
-        service.corpus.close()
+        service.close()
 
 
 @main.command()
@@ -495,6 +537,7 @@ def status():
         corpus.close()
 
     from memex import __status__, __version__
+    from memex.config.settings import is_local_store
 
     status_color = {
         "experimental": "yellow",
@@ -506,6 +549,12 @@ def status():
 
     obs.console.print(f"\n[bold]Memex[/bold] v{__version__} [{color}]{__status__}[/{color}]")
     obs.console.print("─" * 40)
+
+    # Store type indicator
+    if is_local_store():
+        obs.console.print("[cyan]Store:[/cyan]      [green].memex/ (local)[/green]")
+    else:
+        obs.console.print("[cyan]Store:[/cyan]      ~/.memex/ (global)")
 
     # Corpus info
     obs.console.print(f"[cyan]Corpus:[/cyan]     {settings.corpus_path}")

@@ -148,47 +148,79 @@ class DuckDBCorpus:
         self._ensure_fts_index()
 
     def store(self, fragments: Iterable[Fragment]) -> int:
-        """Store fragments. Returns count of new fragments."""
-        inserted = 0
+        """Store fragments in batches. Returns count of new fragments."""
+        batch_size = 1000
+        count_before = self._fragment_count()
+
+        batch: list[tuple] = []
         for frag in fragments:
-            try:
-                self.con.execute(
-                    """
-                    INSERT INTO fragments
-                        (id, conversation_id, role, content, timestamp, source_kind, source_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                    ON CONFLICT (id) DO NOTHING
-                    """,
-                    [
-                        frag.id,
-                        frag.conversation_id,
-                        frag.role,
-                        frag.content,
-                        frag.timestamp,
-                        frag.provenance.source_kind,
-                        frag.provenance.source_id,
-                    ],
+            batch.append(
+                (
+                    frag.id,
+                    frag.conversation_id,
+                    frag.role,
+                    frag.content,
+                    frag.timestamp,
+                    frag.provenance.source_kind,
+                    frag.provenance.source_id,
                 )
-                inserted += 1
-            except duckdb.ConstraintException:
-                pass
-        return inserted
+            )
+            if len(batch) >= batch_size:
+                self._insert_batch(batch)
+                batch = []
+
+        if batch:
+            self._insert_batch(batch)
+
+        return self._fragment_count() - count_before
+
+    def _insert_batch(self, batch: list[tuple]) -> None:
+        """Insert a batch of fragment tuples using executemany."""
+        self.con.executemany(
+            """
+            INSERT INTO fragments
+                (id, conversation_id, role, content, timestamp, source_kind, source_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT (id) DO NOTHING
+            """,
+            batch,
+        )
+
+    def _fragment_count(self) -> int:
+        """Get total fragment count."""
+        result = self.con.execute("SELECT COUNT(*) FROM fragments").fetchone()
+        return result[0] if result else 0
 
     def store_with_embeddings(
         self,
         fragments: Iterable[Fragment],
         embedder: Callable[[str], list[float]],
     ) -> int:
-        """Store fragments with embeddings. Returns count of new fragments."""
+        """Store fragments with embeddings in batches. Returns count of new fragments."""
         if not self._embedding_dim:
             msg = "Corpus created without embedding support. Pass embedding_dim."
             raise ValueError(msg)
 
-        inserted = 0
+        batch_size = 100  # Smaller batches — embedding generation is the bottleneck
+        count_before = self._fragment_count()
+
+        batch: list[tuple] = []
         for frag in fragments:
-            try:
-                embedding = embedder(frag.content)
-                self.con.execute(
+            embedding = embedder(frag.content)
+            batch.append(
+                (
+                    frag.id,
+                    frag.conversation_id,
+                    frag.role,
+                    frag.content,
+                    frag.timestamp,
+                    frag.provenance.source_kind,
+                    frag.provenance.source_id,
+                    embedding,
+                )
+            )
+            if len(batch) >= batch_size:
+                self.con.executemany(
                     f"""
                     INSERT INTO fragments (
                         id, conversation_id, role, content,
@@ -197,21 +229,24 @@ class DuckDBCorpus:
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?::FLOAT[{self._embedding_dim}])
                     ON CONFLICT (id) DO NOTHING
                     """,
-                    [
-                        frag.id,
-                        frag.conversation_id,
-                        frag.role,
-                        frag.content,
-                        frag.timestamp,
-                        frag.provenance.source_kind,
-                        frag.provenance.source_id,
-                        embedding,
-                    ],
+                    batch,
                 )
-                inserted += 1
-            except duckdb.ConstraintException:
-                pass
-        return inserted
+                batch = []
+
+        if batch:
+            self.con.executemany(
+                f"""
+                INSERT INTO fragments (
+                    id, conversation_id, role, content,
+                    timestamp, source_kind, source_id, embedding
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?::FLOAT[{self._embedding_dim}])
+                ON CONFLICT (id) DO NOTHING
+                """,
+                batch,
+            )
+
+        return self._fragment_count() - count_before
 
     def _escape_ilike(self, s: str) -> str:
         """Escape ILIKE wildcards in user input."""
@@ -309,7 +344,7 @@ class DuckDBCorpus:
         ).fetchall()
         return [self._row_to_fragment(row) for row in rows]
 
-    def has_fts(self) -> bool:
+    def has_keyword_search(self) -> bool:
         """Check if FTS (BM25) is available."""
         return self._fts_available
 
@@ -333,7 +368,12 @@ class DuckDBCorpus:
         source_kind: str | None = None,
         min_score: float = 0.0,
     ) -> list[tuple[Fragment, float]]:
-        """Search fragments by semantic similarity.
+        """Search fragments by semantic similarity using HNSW index.
+
+        Uses array_cosine_distance() to activate the HNSW ANN index.
+        When source_kind filter is provided, uses CTE to fetch candidates
+        via index first, then filters — because WHERE clauses prevent
+        HNSW index activation.
 
         Args:
             query_embedding: Query vector (same dimensions as stored embeddings)
@@ -347,35 +387,58 @@ class DuckDBCorpus:
         if not self._vss_available or not self._embedding_dim:
             return []
 
-        conditions = ["embedding IS NOT NULL"]
-        params: list = [query_embedding]
+        # Convert min_score (similarity) to max_distance for filtering
+        max_distance = 1.0 - min_score
 
         if source_kind:
-            conditions.append("source_kind = ?")
-            params.append(source_kind)
+            # CTE pattern: HNSW index scan first, then filter
+            # Over-fetch to account for filtering reducing results
+            candidate_limit = limit * 5
+            rows = self.con.execute(
+                f"""
+                WITH candidates AS (
+                    SELECT
+                        id, conversation_id, role, content, timestamp,
+                        source_kind, source_id,
+                        array_cosine_distance(
+                            embedding, ?::FLOAT[{self._embedding_dim}]
+                        ) as distance
+                    FROM fragments
+                    ORDER BY distance ASC
+                    LIMIT ?
+                )
+                SELECT id, conversation_id, role, content, timestamp,
+                       source_kind, source_id, distance
+                FROM candidates
+                WHERE source_kind = ? AND distance <= ?
+                ORDER BY distance ASC
+                LIMIT ?
+                """,
+                [query_embedding, candidate_limit, source_kind, max_distance, limit],
+            ).fetchall()
+        else:
+            # Direct HNSW index scan (no filter needed)
+            rows = self.con.execute(
+                f"""
+                SELECT
+                    id, conversation_id, role, content, timestamp,
+                    source_kind, source_id,
+                    array_cosine_distance(embedding, ?::FLOAT[{self._embedding_dim}]) as distance
+                FROM fragments
+                ORDER BY distance ASC
+                LIMIT ?
+                """,
+                [query_embedding, limit],
+            ).fetchall()
 
-        where_clause = " AND ".join(conditions)
-        params.append(limit)
-
-        rows = self.con.execute(
-            f"""
-            SELECT
-                id, conversation_id, role, content, timestamp, source_kind, source_id,
-                array_cosine_similarity(embedding, ?::FLOAT[{self._embedding_dim}]) as score
-            FROM fragments
-            WHERE {where_clause}
-            ORDER BY score DESC
-            LIMIT ?
-            """,
-            params,
-        ).fetchall()
-
+        # Convert distance back to similarity for the port contract
         results = []
         for row in rows:
-            score = row[7]
-            if score >= min_score:
+            distance = row[7]
+            similarity = 1.0 - distance
+            if similarity >= min_score:
                 fragment = self._row_to_fragment(row[:7])
-                results.append((fragment, score))
+                results.append((fragment, similarity))
         return results
 
     def count_without_embeddings(self) -> int:
@@ -431,16 +494,16 @@ class DuckDBCorpus:
             # Generate embeddings in batch (10x faster than one-by-one)
             embeddings = embedder_batch(contents)
 
-            # Update all in batch
-            for frag_id, embedding in zip(ids, embeddings):
-                self.con.execute(
-                    f"""
-                    UPDATE fragments
-                    SET embedding = ?::FLOAT[{self._embedding_dim}]
-                    WHERE id = ?
-                    """,
-                    [embedding, frag_id],
-                )
+            # Batch UPDATE using executemany
+            update_params = [(embedding, frag_id) for frag_id, embedding in zip(ids, embeddings)]
+            self.con.executemany(
+                f"""
+                UPDATE fragments
+                SET embedding = ?::FLOAT[{self._embedding_dim}]
+                WHERE id = ?
+                """,
+                update_params,
+            )
 
             updated += len(rows)
 
@@ -449,7 +512,7 @@ class DuckDBCorpus:
 
         return updated
 
-    def has_vss(self) -> bool:
+    def has_semantic_search(self) -> bool:
         """Check if VSS extension is available."""
         return self._vss_available and self._embedding_dim is not None
 

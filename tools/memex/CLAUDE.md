@@ -20,7 +20,6 @@ Best-in-class, modern tooling only. No legacy.
 ```bash
 # YES
 uv run pytest
-uv run python -m py_compile src/memex/cli.py
 uv add rich
 
 # NO
@@ -34,10 +33,9 @@ pip install rich
 
 **Excavating**, not observing. Historical artifacts, not live streams.
 
-- Query conversations from Claude, Gemini, OpenAI, agent logs
-- Intent-driven (80%): "where did I decide on auth?"
+- Query conversations from Claude, OpenAI
+- Hybrid search: BM25 keyword + semantic (embeddings) + cross-encoder reranking
 - Power-user SQL (20%): escape hatch for complex queries
-- Trail discovery: connections across sources and time
 
 ## What Memex Is NOT
 
@@ -49,86 +47,85 @@ pip install rich
 
 Follows cix Design Principles (see root CLAUDE.md):
 
-- **Defaults for Most (80%)**: `memex dig "..."` — intent-driven, just works
+- **Defaults for Most (80%)**: `memex dig "..."` — hybrid search, just works
 - **Complexity for Few (20%)**: `memex query "SELECT..."` — SQL escape hatch
-- **Pit of Success**: Natural language is primary, SQL is explicit opt-out
+- **Pit of Success**: `dig` is primary, SQL is explicit opt-out
 - **Transparent Abstractions**: Show what was found, why, from where
+- **Convention over Config**: Local `.memex/` overrides global — no flags needed
 
 ---
 
-## Guild Decisions
+## Configuration Resolution
 
-Architecture reviewed by arch-guild (2026-02-01). Key decisions:
+Memex uses convention-over-config (like `.git/`). A local `.memex/` directory in or above the CWD becomes the active workspace.
 
-### From K (Strategic)
-- Trails belong in **Future**, not MVP — prove usage first
-- Scope boundary: excavation and linking only, no live observation
+### Precedence (highest wins)
 
-### From Karman (Ontology)
-- **Fragment** not Message — right granularity for excavation
-- **Provenance** not source-specific fields — source-agnostic origin
-- Messages have **parent_id** — they're trees, not flat lists
-- **TrailLink** with typed refs — avoid polymorphic FK antipattern
+| Layer | Source | Example |
+|-------|--------|---------|
+| 1 | `MEMEX_*` env vars | `MEMEX_CORPUS_PATH=/custom/path` |
+| 2 | Local `.memex/` (walk up from CWD) | `./project/.memex/corpus.duckdb` |
+| 3 | Global `~/.memex/config.toml` | `~/.memex/corpus.duckdb` |
+| 4 | Defaults | `~/.memex/corpus.duckdb` |
 
-### From Burner (Boundaries)
-- SQL stays in adapters — domain uses predicates
-- **IntentInterpreterPort** — separate concern for NL parsing
-- Multiple source adapters behind single port
+### Multi-Store Pattern
 
-### From Ace (DX)
-- Discovery commands: `corpus`, `sources`, `trails`
-- Output contracts: `--format json`, `--format ids` for piping
-- Error messages with suggestions, not just "not found"
+```bash
+memex init            # Global store at ~/.memex/
+memex init --local    # Project-local store at ./.memex/
 
-### From Lamport (Consistency)
-- **Two-layer schema**: raw (immutable) + interpreted (rebuildable)
-- Watermarks: size + head-hash, not mtime
-- **Idempotent writes**: `(source_kind, source_id)` composite key
-- Timestamps for display only — clocks lie
-- Trail positions are **human assertions**, not inferred
+# In a project with .memex/:
+cd myproject/
+memex dig "auth"      # Searches local .memex/corpus.duckdb
+cd myproject/src/     # Walk-up finds ../myproject/.memex/
+memex dig "auth"      # Still uses myproject's local store
 
-### From Ixian (Validation)
-- MVP success: ingest Claude.ai, search works, < 1s latency
-- Kill criteria: zero queries in 2-week period
+# Outside any .memex/:
+cd ~
+memex dig "auth"      # Falls back to ~/.memex/corpus.duckdb
+```
+
+### Local `.memex/` Structure
+
+```
+.memex/                    # Project-local workspace (add to .gitignore)
+├── config.toml            # Optional local config overrides
+└── corpus.duckdb          # Project-local corpus
+```
+
+Resolution happens in `config/settings.py`. The rest of the stack receives a `Path` and is workspace-agnostic.
 
 ---
 
 ## Domain Ontology
 
-### Core Entities
+### Implemented Entities
 
 | Entity | What It Is |
 |--------|------------|
-| **Excavation** | The act of retrieval — user intent → fragments |
-| **Intent** | Parsed user request (NL → structured) |
-| **Fragment** | Recovered unit of CI (right granularity) |
-| **Provenance** | Source-agnostic origin |
-| **Trail** | Connected fragments (discovered, not declared) |
-| **Corpus** | All ingested sources, unified |
+| **Fragment** | Recovered unit of CI (right granularity) — THE canonical entity |
+| **Provenance** | Source-agnostic origin (source_kind, source_id, timestamp) |
+| **EmbeddingConfig** | Embedding contract (model_name, dimensions) — domain invariant |
 
 ### Source Kinds
 
-```python
-class SourceKind(Enum):
-    CLAUDE_CONVERSATIONS = "claude_conversations"
-    CLAUDE_CODE_LOGS = "claude_code_logs"
-    GEMINI = "gemini"
-    OPENAI = "openai"
-    AGENT_LOG = "agent_log"
-    CUSTOM = "custom"
-```
-
-### Goals (What Users Want)
+Extensible strings (not enum). Common values:
 
 ```python
-class Goal(Enum):
-    FIND_CODE = "find_code"
-    RECALL_DECISION = "recall_decision"
-    TRACE_EVOLUTION = "trace_evolution"
-    RECOVER_CONTEXT = "recover_context"
-    FIND_PATTERN = "find_pattern"
-    EXPORT_ARTIFACTS = "export_artifacts"
+SOURCE_CLAUDE_CONVERSATIONS = "claude_conversations"
+SOURCE_OPENAI = "openai"
+SOURCE_GEMINI = "gemini"  # adapter not yet implemented
+SOURCE_CUSTOM = "custom"
 ```
+
+### Future (Not Yet Implemented)
+
+These entities appeared in the original guild deliberation but are deferred:
+
+- **Intent** — Parsed user request (NL → structured). Requires IntentInterpreterPort.
+- **Trail** — Connected fragments (discovered, not declared). Deferred per K's recommendation.
+- **Goal** — User intent classification. Depends on Intent.
+- **ExcavationScope** — Domain predicate for search scoping. Currently handled by CLI options.
 
 ---
 
@@ -136,35 +133,46 @@ class Goal(Enum):
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│ DRIVING (User-Facing)                               │
-│ ├── CLI: memex dig, memex query, memex ingest      │
-│ └── Future: Agent SDK app, MCP server              │
+│ DRIVING (_in)                                       │
+│ └── CLI: memex dig, memex keyword, memex ingest     │
 └─────────────────────────────────────────────────────┘
                         ↓
 ┌─────────────────────────────────────────────────────┐
 │ DOMAIN (Pure, No Dependencies)                      │
-│ ├── Excavation, Intent, Fragment, Provenance       │
-│ ├── Trail, Corpus                                  │
-│ └── Goal, TemporalConstraint                       │
+│ ├── Fragment, Provenance, EmbeddingConfig           │
+│ └── ExcavationService (use case orchestration)      │
 └─────────────────────────────────────────────────────┘
                         ↓
 ┌─────────────────────────────────────────────────────┐
-│ DRIVEN (Infrastructure)                             │
-│ ├── IntentInterpreterPort → Claude, Gemini, Local  │
-│ ├── SemanticSearchPort → Embeddings                │
-│ ├── SourceAdapterPort → Claude, Gemini, OpenAI...  │
-│ └── CorpusPort → DuckDB                            │
+│ DRIVEN (_out)                                       │
+│ ├── CorpusPort → DuckDB (FTS + VSS)                │
+│ ├── EmbeddingPort → MiniLM (local)                  │
+│ ├── RerankerPort → MS MARCO cross-encoder           │
+│ └── SourceAdapterPort → Claude, OpenAI              │
 └─────────────────────────────────────────────────────┘
 ```
 
 ### Key Ports
 
-**IntentInterpreterPort** — Swappable LLM backend:
+**CorpusPort** — Persistence + search:
 ```python
-class IntentInterpreterPort(Protocol):
-    def interpret(self, raw: str, context: ExcavationContext) -> Intent: ...
-    def clarify(self, intent: Intent, question: str) -> Intent: ...
-    def synthesize_trail(self, fragments: list[Fragment]) -> str: ...
+class CorpusPort(Protocol):
+    def store(self, fragments: Iterable[Fragment]) -> int: ...
+    def search(self, query: str, limit: int, source_kind: str | None) -> list[Fragment]: ...
+    def semantic_search(self, query_embedding: list[float], ...) -> list[tuple[Fragment, float]]: ...
+    def has_semantic_search(self) -> bool: ...
+    def has_keyword_search(self) -> bool: ...
+    def rebuild_fts_index(self) -> None: ...
+    def backfill_embeddings(self, embedder_batch, batch_size, on_progress) -> int: ...
+```
+
+**EmbeddingPort** — Vector generation:
+```python
+class EmbeddingPort(Protocol):
+    def embed(self, text: str) -> list[float]: ...
+    def embed_batch(self, texts: list[str]) -> list[list[float]]: ...
+    model_name: str
+    dimensions: int
 ```
 
 **SourceAdapterPort** — Ingest different formats:
@@ -172,70 +180,53 @@ class IntentInterpreterPort(Protocol):
 class SourceAdapterPort(Protocol):
     def can_handle(self, path: Path) -> bool: ...
     def ingest(self, path: Path) -> Iterator[Fragment]: ...
-    def source_kind(self) -> SourceKind: ...
-```
-
-**CorpusPort** — Persistence:
-```python
-class CorpusPort(Protocol):
-    def store(self, fragment: Fragment) -> None: ...
-    def query(self, sql: str) -> list[Fragment]: ...  # Power-user escape hatch
-    def find_in_scope(self, scope: ExcavationScope) -> list[Fragment]: ...
+    def source_kind(self) -> str: ...
 ```
 
 ---
 
 ## CLI Design
 
-### 80% Intent-Driven
+### Hybrid Search (default)
 ```bash
 memex dig "where did I decide on auth?"
-memex dig "code related to rate limiting"
-memex dig "what was I working on last Tuesday?"
+memex dig "authentication" --semantic-weight 0.8
+memex dig "OAuth" --no-rerank
+```
+
+### Keyword / Semantic
+```bash
+memex keyword "OAuth" --limit 50
+memex semantic "authentication decisions" --min-score 0.5
+```
+
+### Setup
+```bash
+memex init                     # Global store (~/.memex/)
+memex init --local             # Project-local store (./.memex/)
 ```
 
 ### Discovery
 ```bash
-memex corpus                    # What's ingested
-memex sources                   # Available source kinds
-memex trails                    # Discovered trails
+memex status                   # Store, config, capabilities, coverage
+memex corpus                   # What's ingested
+memex sources                  # Available source kinds
 ```
 
 ### Ingestion
 ```bash
-memex ingest ~/Downloads/claude-export.json
-memex ingest ~/.claude/projects/
-memex sync                      # Update from known sources
+memex ingest ~/Downloads/conversations.json
+memex ingest export.zip --no-embed
+memex backfill                 # Generate embeddings for existing fragments
+memex rebuild                  # Rebuild FTS index
+memex reset                    # Delete corpus, start fresh
 ```
 
-### 20% Power-User
+### SQL Escape Hatch
 ```bash
 memex query "SELECT * FROM fragments WHERE ..."
-memex sql                       # Interactive shell
+memex sql                      # Interactive shell
 ```
-
----
-
-## Consistency Model
-
-### Two-Layer Schema
-```sql
--- Raw layer (append-only, never reinterpreted)
-raw_fragments (id, source_kind, source_id, raw_json, ingested_at)
-
--- Interpreted layer (rebuildable from raw)
-fragments (id, content, provenance, context, schema_version)
-```
-
-### Watermarks
-- Size + head-hash checkpoints (not mtime)
-- Idempotent writes: `(source_kind, source_id)` composite key
-- Re-ingestion is safe, just wasteful
-
-### Ordering
-- Timestamps for display only (clocks lie)
-- Trail positions are explicit human assertions
-- No inferred causality
 
 ---
 
@@ -244,35 +235,48 @@ fragments (id, content, provenance, context, schema_version)
 ```
 tools/memex/
 ├── pyproject.toml
-├── CLAUDE.md                   # This file
+├── CLAUDE.md                              # This file
+├── tests/
+│   ├── conftest.py                        # Shared fixtures (sample_fragments)
+│   ├── test_excavation_service.py         # Service integration tests
+│   ├── test_reranker.py                   # Cross-encoder tests
+│   └── test_source_*.py                   # Source adapter tests
 └── src/memex/
+    ├── __init__.py                        # Version, status
+    ├── skill.py                           # Skill documentation loader
+    ├── config/
+    │   └── settings.py                    # Pydantic settings (TOML + env vars + local walk-up)
+    ├── composition/
+    │   └── __init__.py                    # Dependency injection root
     ├── domain/
-    │   ├── models.py           # Excavation, Intent, Fragment, etc.
-    │   ├── goals.py            # Goal enum, temporal types
-    │   └── connections.py      # Trail discovery (pure)
-    ├── ports/
-    │   ├── driving/
-    │   │   └── excavation.py
-    │   └── driven/
-    │       ├── interpreter.py  # IntentInterpreterPort
-    │       ├── search.py       # SemanticSearchPort
-    │       ├── corpus.py       # CorpusPort
-    │       └── source.py       # SourceAdapterPort
-    ├── adapters/
-    │   ├── interpreters/
-    │   │   ├── claude.py
-    │   │   ├── gemini.py
-    │   │   └── local.py
-    │   ├── sources/
-    │   │   ├── claude_conversations.py
-    │   │   ├── claude_code_logs.py
-    │   │   ├── gemini.py
-    │   │   └── openai.py
-    │   └── corpus/
-    │       ├── duckdb.py
-    │       └── memory.py
-    └── application/
-        └── excavate.py
+    │   ├── models.py                      # Fragment, Provenance, EmbeddingConfig
+    │   ├── services/
+    │   │   └── excavate.py                # ExcavationService (use case orchestration)
+    │   └── ports/
+    │       └── _out/
+    │           ├── corpus.py              # CorpusPort
+    │           ├── embedding.py           # EmbeddingPort
+    │           ├── reranker.py            # RerankerPort
+    │           └── source.py              # SourceAdapterPort
+    └── adapters/
+        ├── _in/
+        │   └── cli/
+        │       ├── main.py                # Rich Click CLI (driving adapter)
+        │       ├── formatters.py          # Output formatting
+        │       └── observability.py       # Console output helpers
+        └── _out/
+            ├── corpus/
+            │   └── duckdb/
+            │       ├── adapter.py         # DuckDB + FTS + VSS
+            │       └── skill.md           # Corpus skill doc
+            ├── embedding/
+            │   ├── local.py               # MiniLM-L6-v2 (384-dim, default)
+            │   └── nomic.py               # Nomic v1.5 (768-dim, GPT4All/Metal)
+            ├── reranking/
+            │   └── cross_encoder.py       # MS MARCO MiniLM cross-encoder
+            └── sources/
+                ├── claude_conversations/  # Claude.ai export adapter
+                └── openai_conversations/  # ChatGPT export adapter
 ```
 
 ---
@@ -280,20 +284,24 @@ tools/memex/
 ## Working Conventions
 
 ### SQL Stays in Adapters
-Domain uses predicates (`ExcavationScope`, `TemporalConstraint`).
-Adapters translate to SQL.
+Domain uses ports and protocols. DuckDB SQL is implementation detail in `adapters/_out/corpus/duckdb/`.
 
 ### Fragment Is the Atom
 Not too small (message), not too large (conversation).
 A meaningful, self-contained unit of collaborative work.
 
-### Trails Are Discovered
-Don't ask users to declare connections.
-Find them: temporal proximity, semantic similarity, shared artifacts.
+### CLI Delegates to Service
+The CLI is a thin driving adapter. It calls `ExcavationService` methods, never reaches through to infrastructure directly. Power-user commands (`query`, `sql`) use `create_corpus()` for direct access.
 
 ### Source-Agnostic Domain
-`SourceKind` is metadata, not architecture.
-Adding Gemini should be one adapter, not domain changes.
+`source_kind` is an extensible string, not an enum. Adding a new source means one adapter, zero domain changes.
+
+---
+
+## Known Tech Debt
+
+- **Config format**: TOML works for single-tool config. When cix+memex share infrastructure, consider YAML with full layered scoping (packaged → project → user → global).
+- **Nomic embedder**: Functional via `nomic` client with `inference_mode='local'` (GPT4All/Metal). Not yet exercised in production — needs real-world validation with large corpora.
 
 ---
 
@@ -301,5 +309,4 @@ Adding Gemini should be one adapter, not domain changes.
 
 - Vision: `/scratch/memex-vision.md`
 - Guild Deliberation: `/scratch/memex-guild-deliberation.md`
-- Ontology Details: `/scratch/memex-ontology.md`
 - Vannevar Bush, "As We May Think" (1945)

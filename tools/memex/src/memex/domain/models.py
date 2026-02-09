@@ -31,7 +31,6 @@ class EmbeddingConfig(BaseModel):
 
 # Common source kinds (not exhaustive)
 SOURCE_CLAUDE_CONVERSATIONS = "claude_conversations"
-SOURCE_CLAUDE_CODE_LOGS = "claude_code_logs"
 SOURCE_OPENAI = "openai"
 SOURCE_GEMINI = "gemini"
 SOURCE_CUSTOM = "custom"
