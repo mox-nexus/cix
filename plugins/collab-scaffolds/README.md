@@ -4,7 +4,7 @@ Research-grounded scaffolds for effective human-AI collaboration.
 
 ## What This Is
 
-Scaffolding for collaborative building — temporary support designed to be outgrown. Every scaffold is backed by research evidence from 50+ studies (CHI, PNAS, Lancet, NeurIPS, HICSS). Three skills, three agents, four hooks, aligned with the Software Craftsmanship Manifesto.
+Scaffolding for collaborative building — temporary support designed to be outgrown. Every scaffold is backed by research evidence from 50+ studies (CHI, PNAS, Lancet, NeurIPS, HICSS). Three skills, two agents, four hooks, aligned with the Software Craftsmanship Manifesto.
 
 ## When It Activates
 
@@ -43,13 +43,11 @@ Scaffolding for collaborative building — temporary support designed to be outg
 
 **Duck** — Rubber duck debugging through Socratic dialogue. Helps you think through problems by asking questions, not giving answers. Loads `problem-solving` skill.
 
-**Advocate** — Devil's advocate for verification. Challenges solutions, falsifies claims, runs CoVe on citations. Models can't self-correct without external feedback — Advocate is that feedback. Loads `problem-solving` skill.
-
-| | Duck | Wolf | Advocate |
-|---|------|------|----------|
-| **Trigger** | "I need to think this through" | "I'm stuck, nothing's working" | "Is this actually right?" |
-| **Mode** | Socratic — asks questions | Directive — routes to technique | Adversarial — tries to prove it wrong |
-| **Goal** | You articulate → you discover | Problem classified → solved | Solution survives challenge → ship |
+| | Duck | Wolf |
+|---|------|------|
+| **Trigger** | "I need to think this through" | "I'm stuck, nothing's working" |
+| **Mode** | Socratic — asks questions | Directive — routes to technique |
+| **Goal** | You articulate → you discover | Problem classified → solved |
 
 ### Hooks
 
@@ -93,8 +91,7 @@ collab-scaffolds/
 │           └── iteration-limits.md
 ├── agents/
 │   ├── mrwolf.md                 # Structured problem solver
-│   ├── duck.md                   # Rubber duck (Socratic dialogue)
-│   └── advocate.md               # Devil's advocate (verification)
+│   └── duck.md                   # Rubber duck (Socratic dialogue)
 ├── hooks/
 │   ├── hooks.json
 │   ├── detect-stuck.sh                  # Wolf trigger (failures + frustration)
