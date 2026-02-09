@@ -7,14 +7,14 @@
 		<link href="../_app/immutable/assets/0.BJicj5Zp.css" rel="stylesheet">
 		<link href="../_app/immutable/assets/CrossLinks.C4T6atsV.css" rel="stylesheet">
 		<link href="../_app/immutable/assets/5.C4hqQtKK.css" rel="stylesheet">
-		<link rel="modulepreload" href="../_app/immutable/entry/start.DSZul9D5.js">
-		<link rel="modulepreload" href="../_app/immutable/chunks/DRPQsd4_.js">
+		<link rel="modulepreload" href="../_app/immutable/entry/start.V0PuEWmV.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/C7OrOj0d.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/DXXdKfFK.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/DQIWNrPk.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/D0iwhpLH.js">
-		<link rel="modulepreload" href="../_app/immutable/chunks/C2s0p4dk.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/zzLZGFa4.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/CzKX1IyC.js">
-		<link rel="modulepreload" href="../_app/immutable/entry/app.CFgZceJe.js">
+		<link rel="modulepreload" href="../_app/immutable/entry/app.c3V2R-zL.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/PPVm8Dsz.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/i-IdDckD.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/BPxar_6W.js">
@@ -23,13 +23,13 @@
 		<link rel="modulepreload" href="../_app/immutable/chunks/CpnKfs42.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/DYueXv1s.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/EUq6mvGu.js">
-		<link rel="modulepreload" href="../_app/immutable/nodes/0.Dkp9E42v.js">
+		<link rel="modulepreload" href="../_app/immutable/nodes/0.fCMDJgqN.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/Dl8jxmRm.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/C1v7wgkm.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/Dvbz5Exl.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/CV11oyJS.js">
-		<link rel="modulepreload" href="../_app/immutable/chunks/CXLzLgJI.js">
-		<link rel="modulepreload" href="../_app/immutable/nodes/5.CKfmBrj3.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/BcSI96HU.js">
+		<link rel="modulepreload" href="../_app/immutable/nodes/5.gQk3CPzw.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/BclcEiuq.js"><!--12qhfyh--><meta name="description" content="Extensions that enhance human capability, not replace it."/><!----><!--wzm642--><meta name="description" content="Build extensions that enable effective human-AI collaboration. Use when: creating skills, agents, hooks, commands, MCPs, or tools/APIs. Patterns for transparency, control, observability, diversity."/><!----><title>extension-dev — cix</title>
 	</head>
 	<body data-sveltekit-preload-data="hover">
@@ -125,18 +125,23 @@ plugin-dev (templates &amp; structure)
 <pre><code>extension-dev/
 ├── .claude-plugin/plugin.json
 ├── docs/
-│   └── explanation/           # Human-optimized (Diataxis)
-│       ├── methodology.md
-│       ├── sources.md
-│       ├── evaluator.md
-│       └── optimizer.md
+│   └── explanation/              # Human-optimized (WHY)
+│       ├── methodology.md        # Research base &amp; design rationale
+│       ├── sources.md            # Full bibliography
+│       ├── observability.md      # Why observability matters
+│       ├── eval-first-design.md  # Eval-first philosophy
+│       ├── evaluator.md          # Evaluator design rationale
+│       └── optimizer.md          # Optimizer design rationale
 ├── agents/
-│   ├── evaluator.md
-│   └── optimizer.md
+│   ├── evaluator.md              # Quality validation (7 gates)
+│   └── optimizer.md              # Targeted fix patterns
 ├── skills/
-│   ├── build-plugin/          # Claude Code extensions
-│   │   └── SKILL.md
-│   └── build-capability/      # General capability authoring
+│   ├── build-plugin/             # Claude Code extensions
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── observability.md  # OTel instrumentation
+│   │       └── evidence-workflow.md  # Research methodology
+│   └── build-capability/         # General capability authoring
 │       ├── SKILL.md
 │       └── references/
 └── README.md
@@ -147,7 +152,7 @@ plugin-dev (templates &amp; structure)
 			
 			<script>
 				{
-					__sveltekit_5suxdl = {
+					__sveltekit_1m9lzna = {
 						base: new URL("..", location).pathname.slice(0, -1),
 						assets: "/cix"
 					};
@@ -155,12 +160,12 @@ plugin-dev (templates &amp; structure)
 					const element = document.currentScript.parentElement;
 
 					Promise.all([
-						import("../_app/immutable/entry/start.DSZul9D5.js"),
-						import("../_app/immutable/entry/app.CFgZceJe.js")
+						import("../_app/immutable/entry/start.V0PuEWmV.js"),
+						import("../_app/immutable/entry/app.c3V2R-zL.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element, {
 							node_ids: [0, 5],
-							data: [null,(function(a){a[0]="extensions";a[1]="skills";a[2]="agents";a[3]="hooks";a[4]="commands";a[5]="mcp";a[6]="transparency";a[7]="control";a[8]="observability";a[9]="collaborative-intelligence";return {type:"data",data:{extension:{slug:"extension-dev",kind:"plugin",manifest:{name:"extension-dev",version:"0.1.0",description:"Build extensions that enable effective human-AI collaboration. Use when: creating skills, agents, hooks, commands, MCPs, or tools/APIs. Patterns for transparency, control, observability, diversity.",author:{name:"Mox Labs",email:"mox.rnd@gmail.com"},license:"MIT",keywords:a},tagline:"Build extensions that enable effective human-AI collaboration.",readme:"# extension-dev\n\nBuild extensions that enable effective human-AI collaboration.\n\n## Skills\n\n| Skill | Purpose | Use When |\n|-------|---------|----------|\n| **build-plugin** | Claude Code extensions (skills, commands, agents, hooks, MCP) | Creating any Claude Code component |\n| **build-capability** | General capability authoring patterns | Creating skills, CLIs, APIs, any tool |\n\n## Relationship\n\n```\nbuild-capability (general patterns)\n       ↓\nbuild-plugin (Claude Code specifics)\n       ↓\nplugin-dev (templates & structure)\n```\n\n- **build-capability:** Universal patterns (progressive disclosure, degrees of freedom, feedback loops)\n- **build-plugin:** Claude Code specific (skills, agents, hooks, commands, MCP, composition)\n- **plugin-dev:** Templates and directory structure (referenced, not duplicated)\n\n## When to Use\n\n| Need | Use |\n|------|-----|\n| Creating a Claude Code skill | build-plugin |\n| Creating a Claude Code agent | build-plugin |\n| Creating a hook or command | build-plugin |\n| Building an MCP server | build-plugin |\n| Authoring any capability (skill, CLI, API) | build-capability |\n| Understanding progressive disclosure | build-capability |\n| Plugin directory structure | plugin-dev |\n\n## Agents\n\n| Agent | Purpose |\n|-------|---------|\n| evaluator | Quality validation for extensions |\n| optimizer | Fix identified issues |\n\n## Structure\n\n```\nextension-dev/\n├── .claude-plugin/plugin.json\n├── docs/\n│   └── explanation/           # Human-optimized (Diataxis)\n│       ├── methodology.md\n│       ├── sources.md\n│       ├── evaluator.md\n│       └── optimizer.md\n├── agents/\n│   ├── evaluator.md\n│   └── optimizer.md\n├── skills/\n│   ├── build-plugin/          # Claude Code extensions\n│   │   └── SKILL.md\n│   └── build-capability/      # General capability authoring\n│       ├── SKILL.md\n│       └── references/\n└── README.md\n```\n\n## License\n\nMIT\n",components:{agents:2,skills:2,hooks:0,commands:0},variant:"emergence",tags:a}},uses:{params:["slug"]}}}(Array(10)))],
+							data: [null,(function(a){a[0]="extensions";a[1]="skills";a[2]="agents";a[3]="hooks";a[4]="commands";a[5]="mcp";a[6]="transparency";a[7]="control";a[8]="observability";a[9]="collaborative-intelligence";return {type:"data",data:{extension:{slug:"extension-dev",kind:"plugin",manifest:{name:"extension-dev",version:"0.1.0",description:"Build extensions that enable effective human-AI collaboration. Use when: creating skills, agents, hooks, commands, MCPs, or tools/APIs. Patterns for transparency, control, observability, diversity.",author:{name:"Mox Labs",email:"mox.rnd@gmail.com"},license:"MIT",keywords:a},tagline:"Build extensions that enable effective human-AI collaboration.",readme:"# extension-dev\n\nBuild extensions that enable effective human-AI collaboration.\n\n## Skills\n\n| Skill | Purpose | Use When |\n|-------|---------|----------|\n| **build-plugin** | Claude Code extensions (skills, commands, agents, hooks, MCP) | Creating any Claude Code component |\n| **build-capability** | General capability authoring patterns | Creating skills, CLIs, APIs, any tool |\n\n## Relationship\n\n```\nbuild-capability (general patterns)\n       ↓\nbuild-plugin (Claude Code specifics)\n       ↓\nplugin-dev (templates & structure)\n```\n\n- **build-capability:** Universal patterns (progressive disclosure, degrees of freedom, feedback loops)\n- **build-plugin:** Claude Code specific (skills, agents, hooks, commands, MCP, composition)\n- **plugin-dev:** Templates and directory structure (referenced, not duplicated)\n\n## When to Use\n\n| Need | Use |\n|------|-----|\n| Creating a Claude Code skill | build-plugin |\n| Creating a Claude Code agent | build-plugin |\n| Creating a hook or command | build-plugin |\n| Building an MCP server | build-plugin |\n| Authoring any capability (skill, CLI, API) | build-capability |\n| Understanding progressive disclosure | build-capability |\n| Plugin directory structure | plugin-dev |\n\n## Agents\n\n| Agent | Purpose |\n|-------|---------|\n| evaluator | Quality validation for extensions |\n| optimizer | Fix identified issues |\n\n## Structure\n\n```\nextension-dev/\n├── .claude-plugin/plugin.json\n├── docs/\n│   └── explanation/              # Human-optimized (WHY)\n│       ├── methodology.md        # Research base & design rationale\n│       ├── sources.md            # Full bibliography\n│       ├── observability.md      # Why observability matters\n│       ├── eval-first-design.md  # Eval-first philosophy\n│       ├── evaluator.md          # Evaluator design rationale\n│       └── optimizer.md          # Optimizer design rationale\n├── agents/\n│   ├── evaluator.md              # Quality validation (7 gates)\n│   └── optimizer.md              # Targeted fix patterns\n├── skills/\n│   ├── build-plugin/             # Claude Code extensions\n│   │   ├── SKILL.md\n│   │   └── references/\n│   │       ├── observability.md  # OTel instrumentation\n│   │       └── evidence-workflow.md  # Research methodology\n│   └── build-capability/         # General capability authoring\n│       ├── SKILL.md\n│       └── references/\n└── README.md\n```\n\n## License\n\nMIT\n",components:{agents:2,skills:2,hooks:0,commands:0},variant:"emergence",tags:a}},uses:{params:["slug"]}}}(Array(10)))],
 							form: null,
 							error: null
 						});
