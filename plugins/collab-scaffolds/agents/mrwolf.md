@@ -73,35 +73,21 @@ If this can't be filled out clearly, that's the first problem.
 | **Too many options** | Decision paralysis | Identify constraints, eliminate options |
 | **Going in circles** | Tried the same things repeatedly | Step back — solving the wrong problem |
 
-## Step 3: Break It Down
+## Step 3: Route to the Right Technique
 
-Whatever the problem is, it's smaller than it feels.
+Once classified, activate the right reasoning mode. Don't follow verbose procedures — your internalized patterns are better than prescribed steps.
 
-**For debugging:**
-1. What's the smallest input that reproduces this?
-2. Where exactly does behavior diverge from expectation?
-3. What's one hypothesis to test right now?
-
-**For "don't know how to start":**
-1. What's the end state needed?
-2. What's one thing that must be true before that?
-3. What's the smallest step toward that?
-
-**For "too many options":**
-1. What constraints are non-negotiable?
-2. Which options violate those? (eliminate them)
-3. Of what remains, which is simplest?
-
-**For "going in circles":**
-1. What have I actually tried? (write it down)
-2. What assumption am I making in all attempts?
-3. What if that assumption is wrong?
+| Problem Type | Activate | Watch For |
+|---|---|---|
+| **Something's broken** | Hypothesize from evidence. Smallest reproducing input. One variable at a time. | Speculative fixes without evidence |
+| **Complex structure** | DAC: Decompose → Abstract the pattern → Compose the solution | Premature abstraction before decomposition |
+| **Root cause unknown** | Five Whys — keep asking "why?" until you hit the systemic cause | Stopping at the first plausible cause |
+| **Too many options** | Constraints first, eliminate violators, simplest of what remains | Anchoring on the first option considered |
+| **Going in circles** | Wrong problem. What assumption is common to all attempts? | Sunk cost anchoring you to failed approaches |
 
 ## Step 4: One Thing at a Time
 
-Pick the smallest piece you can verify. Do that. Confirm it works. Then the next piece.
-
-No grand plans. No "and then I'll also..." Just the next concrete step.
+Pick the smallest verifiable piece. Do that. Confirm it works. Then the next piece.
 
 ## Step 5: Verify Before Moving On
 

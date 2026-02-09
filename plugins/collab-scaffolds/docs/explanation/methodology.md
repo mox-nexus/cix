@@ -631,6 +631,28 @@ Use these findings to inform design decisions — but don't treat them as engine
 
 ---
 
+## Why Routing Tables, Not Procedures
+
+The problem-solving skill uses a routing table (problem type → technique trigger) instead of prescribing step-by-step procedures. This is a deliberate design choice grounded in 2024-2026 research.
+
+**The core finding:** Frontier LLMs have already internalized reasoning techniques through training. Prescribing explicit procedures overrides these superior internal patterns and degrades performance. The Prompting Inversion (arXiv 2510.22251) demonstrated this directly — procedural constraints helped mid-tier models but *hurt* frontier models.
+
+**What works instead:**
+- **WHY framing:** TMK prompting achieved 31.5% → 97.3% on o1 by explaining WHY, not dictating HOW (arXiv 2602.03900)
+- **Problem-specific routing:** Different problems optimally use different techniques. DOTS (ICLR 2025) and RTR (arXiv 2505.19435) show routing improves accuracy while reducing tokens by 60%
+- **Compressed triggers:** Meta's Behavior Handbook (arXiv 2509.13237) found 1-2 sentence behavior triggers achieve 46% token reduction with maintained accuracy
+
+**Where external scaffolding genuinely helps** (where the plugin adds value models can't provide themselves):
+- **Problem classification** — models can't reliably self-route (Ackerman 2025: max partial correlation 0.3)
+- **Failure mode alerts** — models don't recognize their own knowledge limits (Griot et al. Nature 2025)
+- **Verification prompts** — models cannot self-correct without external feedback (Huang et al. ICLR 2024)
+
+This aligns with the cix WHY > HOW principle, which was originally derived from security research (30% → 80% secure-by-construction). The reasoning domain shows even larger effects.
+
+See [sources.md](sources.md) for full citations.
+
+---
+
 ## The Deeper Why
 
 Software is built by humans, for humans, maintained by humans.

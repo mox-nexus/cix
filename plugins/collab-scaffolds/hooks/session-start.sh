@@ -12,7 +12,8 @@ fi
 # Always output collab-scaffolds instruction
 echo "## cix"
 echo ""
-echo "**Load now:** \`$INSTALL_LOC/plugins/collab-scaffolds/skills/collab-craft/SKILL.md\`"
+echo "**Load now:** \`$INSTALL_LOC/plugins/collab-scaffolds/skills/building/SKILL.md\`"
+echo "**Collaboration:** \`$INSTALL_LOC/plugins/collab-scaffolds/skills/collaboration/SKILL.md\`"
 echo "**Problem solving:** \`$INSTALL_LOC/plugins/collab-scaffolds/skills/problem-solving/SKILL.md\`"
 
 # If we have the marketplace, show the trigger table

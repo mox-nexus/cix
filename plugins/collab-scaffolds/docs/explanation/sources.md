@@ -427,6 +427,64 @@ Trust Paradox: 84% adoption, 29% trust, 46% active distrust. 66% fixing time > w
 
 ---
 
+## WHY > HOW: Reasoning Strategy Design (2024-2026)
+
+The problem-solving skill uses WHY-framed routing tables instead of HOW-prescribed procedures. This is grounded in converging evidence that explicit procedural constraints degrade frontier model performance.
+
+**Zhong, Snell, Klein, & Zhong (2025). "The Prompting Inversion: When Sculpting LLMs Becomes a Handcuff." arXiv 2510.22251.**
+
+On frontier models, constrained "Sculpting" prompts that prescribe reasoning steps achieved only 94% vs 96.36% for unconstrained CoT. The same constraints helped mid-tier models (97% vs 93%). Thesis: "more capable models have internalized superior reasoning patterns through training, and explicit procedural constraints override these superior internal mechanisms."
+
+**Implication:** Don't teach Claude techniques it already knows. Activate the right reasoning mode instead.
+
+**Aréchiga, Jiang, & Raghothaman (2026). "TMK: Task-Method-Knowledge Prompting for Reasoning Models." arXiv 2602.03900.**
+
+Task-Method-Knowledge prompting (WHY framing) achieved o1 on Random Blocksworld: 31.5% → 97.3% (+65.8pp). TMK provides structured representations of WHY actions are taken, not step-by-step procedures.
+
+**Implication:** WHY framing dramatically outperforms HOW prescriptions. This aligns with the cix WHY > HOW principle (security domain: 30% → 80%).
+
+**Sel et al. (2025). "DOTS: Learning to Reason Dynamically." ICLR 2025.**
+
+Defines atomic reasoning actions (query rewriting, decomposition, CoT, Program-of-Thought, self-verification) that compose into trajectories. Different problems optimally use different trajectories. Static application of any single technique is suboptimal.
+
+**Implication:** Problem type → technique routing is the correct design. No single technique works best for all problems.
+
+**Ren, Zhu, Hu, & Peng (2025). "Route to Reason: Joint Reasoning Strategy Selection." arXiv 2505.19435.**
+
+Dual-prediction routing system: 82.5% accuracy with 1,091 tokens vs 80.0% at 2,745 tokens for best single strategy. 60%+ token reduction while improving accuracy.
+
+**Implication:** Routing saves tokens AND improves results over prescribing a single approach.
+
+**Zhao et al. (2024). "Self-Explain: Teaching LLMs to Reason via Self-Explanation." EMNLP 2024 Findings.**
+
+LLMs generate better rationales from their own latent knowledge than from externally crafted templates. A 7B model teaching GPT-3.5 via Teach-Back surpassed human teachers by ~5%.
+
+**Implication:** The model's own reasoning patterns are better than imposed procedures.
+
+**Jain et al. (2025). "Metacognitive Behavior Handbook." Meta AI, arXiv 2509.13237.**
+
+Converts recurring reasoning fragments into concise "behaviors" (name + 1-2 sentence instruction). Result: 46% token reduction while maintaining accuracy. Effective unit of reuse is a compressed activation trigger, not verbose methodology.
+
+**Implication:** Compressed triggers > verbose methods. Our routing table follows this pattern.
+
+### LLM Self-Correction Limits
+
+**Huang et al. (2024). "Large Language Models Cannot Self-Correct Reasoning Yet." ICLR 2024.**
+
+LLMs cannot self-correct reasoning without external feedback. Performance sometimes degrades after self-correction attempts.
+
+**Kamoi et al. (2024). "Can LLMs Generate Novel Research Ideas?" TACL 2024.**
+
+No prior work demonstrates successful self-correction with prompted LLM feedback alone. Only reliable external feedback enables it.
+
+**Griot et al. (2025). "LLM Metacognition." Nature Communications.**
+
+All 12 models tested failed to recognize knowledge limitations, providing confident answers even when correct options were absent.
+
+**Implication:** External verification prompts (CoVe, hooks) add genuine value because models cannot reliably self-monitor. This is where the plugin's enforcement layer (hooks) earns its keep.
+
+---
+
 ## Meta
 
 **Convergent Evidence:**
@@ -440,8 +498,10 @@ When multiple independent sources point to the same conclusion:
 - Security degrades with AI: Veracode (2025), Shukla (2025), Perry (2025)
 - Productivity illusion exists: METR (2025), DORA (2024)
 - Metacognitive friction helps: Lee CHI (2025), Tomisu (2025), Stanford SCALE (2025)
+- WHY > HOW for frontier models: TMK (2026), Prompting Inversion (2025), DOTS (2025), RTR (2025)
+- External verification needed: Huang ICLR (2024), Kamoi TACL (2024), Griot Nature (2025)
 
-This convergence across 50+ studies from premier venues (CHI, PNAS, Lancet, NeurIPS, HICSS) increases confidence beyond any single source.
+This convergence across 60+ studies from premier venues (CHI, PNAS, Lancet, NeurIPS, HICSS, ICLR, EMNLP, Nature) increases confidence beyond any single source.
 
 ---
 
