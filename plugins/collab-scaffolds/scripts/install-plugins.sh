@@ -13,14 +13,10 @@ CLAUDE_DIR="$HOME/.claude"
 # Available plugins
 PLUGINS=(
   "collab-scaffolds:Research-grounded scaffolds for collaborative building"
-  "terminal-1337:Modern terminal tools - ripgrep, fd, bat, eza, fzf"
-  "rust-1337:Rust production patterns - async, crates, domains"
-  "kotlin-1337:Kotlin patterns - coroutines, Flow, Spring, Android"
-  "jvm-analysis-1337:JVM analysis - profiling, dead code, memory"
-  "sensei-1337:Documentation methodology - Feynman, Diataxis"
-  "eval-1337:LLM evaluation - DeepEval, Braintrust, RAGAS"
-  "experience-1337:Frontend experience - animation, 3D, design systems"
-  "1337-extension-builder:Build extensions with quality methodology"
+  "arch-guild:Architectural reasoning with The Guild"
+  "build-evals:Eval methodology for AI systems"
+  "data-store:Data storage and retrieval patterns"
+  "extension-dev:Build extensions for human-AI collaboration"
 )
 
 usage() {
@@ -60,16 +56,14 @@ install_plugin() {
 
   echo "  === $plugin_name ==="
 
-  # Install skills
-  # Each plugin has one skill - use plugin name directly for cleaner naming
+  # Install skills (plugins may have multiple skills)
   if [ -d "$plugin_dir/skills" ]; then
     for skill_dir in "$plugin_dir/skills"/*/; do
       if [ -d "$skill_dir" ]; then
         skill_name=$(basename "$skill_dir")
-        target_name="$plugin_name"  # Use plugin name, not plugin--skill
-        target_dir="$CLAUDE_DIR/skills/$target_name"
+        target_dir="$CLAUDE_DIR/skills/$skill_name"
 
-        echo "    skill: $skill_name → $target_name"
+        echo "    skill: $skill_name"
         rm -rf "$target_dir"
         cp -r "$skill_dir" "$target_dir"
       fi

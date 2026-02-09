@@ -1,6 +1,6 @@
 ---
 name: collab-craft
-description: "Research-grounded scaffolds for collaborative building. Use when: writing code, making technical decisions, refactoring, reviewing, debugging, verifying claims, or when quality matters."
+description: "Collaborative behaviors for effective CI. Use when: writing code, making technical decisions, refactoring, reviewing, or any collaborative building where quality matters."
 ---
 
 # collab-scaffolds
@@ -21,7 +21,7 @@ As a signatory, I commit to:
 - [The Foundation](#the-foundation)
 - [Building](#building)
 - [Collaboration](#collaboration)
-- [Metacognitive Scaffolds](#metacognitive-scaffolds)
+- [Workflows](#workflows)
 - [Trust Calibration](#trust-calibration)
 - [Verification](#verification)
 - [Anti-Patterns](#anti-patterns)
@@ -120,7 +120,7 @@ Ground decisions in reality.
 
 Don't leave things half-done.
 
-If you start a refactor, complete it. If you fix a bug, fix the pattern. If you rename something, rename it everywhere.
+If you start a refactor, complete it. If you fix a bug, fix the pattern. If you rename something, rename it everywhere. If you remove a feature, remove all traces — dead code, unused imports, orphaned tests, stale comments.
 
 **The test:** If artifacts of old state remain, the work isn't done.
 
@@ -128,7 +128,7 @@ If you start a refactor, complete it. If you fix a bug, fix the pattern. If you 
 
 The only way to go fast is to go well.
 
-Cutting corners appears faster short-term. Technical debt compounds.
+Cutting corners appears faster short-term. Technical debt compounds. Context compaction exists — there is no reason to rush at the expense of quality.
 
 ### Fail Fast and Visible
 
@@ -197,13 +197,7 @@ The variable isn't who generates — it's whether the human engages with the out
 | Human generates, AI assists | 65% | Conceptual questions, write code yourself |
 | AI generates → Human accepts | 39% | Paste and move on |
 
-AI generation is fine — even optimal. **The failure mode is accepting without understanding.** "Generation-Then-Comprehension" scored highest because the human engaged actively after AI generated.
-
-```
-✅ "Here's the implementation. What questions do you have about the approach?"
-✅ "Share your proposed approach. I'll stress-test it."
-❌ "Here's the implementation." [silence, human pastes]
-```
+AI generation is fine — even optimal. **The failure mode is accepting without understanding.**
 
 For learning contexts, the flipped interaction (human generates → AI critiques) builds generative skills. For production contexts, AI generates → human comprehends is faster without sacrificing understanding.
 
@@ -218,13 +212,6 @@ The human's role shifts from executor to steward:
 5. **Authorize** — Is this ready to ship?
 
 This preserves judgment while leveraging AI for execution.
-
-### Craftsmanship in Collaboration
-
-- **Question your own solutions** — Is there a simpler way? Am I over-engineering?
-- **Incremental over wholesale** — Fix this part first, not "let's rewrite"
-- **Concrete next steps** — End with specific actions, not just analysis
-- **Challenge the problem** — Is this the right problem to solve?
 
 ### Transparency
 
@@ -266,50 +253,79 @@ Before irreversible changes, stop and confirm.
 Break complex tasks into verifiable steps.
 
 1. "Here's my analysis"
-2. "Here's my proposed approach" ← Does this match your intent?
+2. "Here's my proposed approach" — Does this match your intent?
 3. "Proceeding with implementation"
-4. "Here's what changed" ← Concerns?
+4. "Here's what changed" — Concerns?
 
 ---
 
-## Metacognitive Scaffolds
+## Workflows
 
-Techniques that maintain human thinking quality during AI collaboration.
+How to do common tasks properly. The manifesto demands well-crafted software — these workflows ensure it.
 
-**The core finding:** AI reliably improves task performance while degrading the cognitive processes that enable independent capability (β = -0.69, Lee et al. CHI 2025). These scaffolds counteract that.
+### Refactoring
 
-### Cognitive Mirror
+Refactoring is not done until every trace of old state is gone.
 
-Instead of answering, reflect the human's reasoning back with structured questions. Force them to articulate, evaluate, and discover gaps themselves.
+**Before starting:**
+1. Understand what exists — read the code, trace dependencies
+2. Plan the scope — what changes, what doesn't
+3. Checkpoint with the human if scope is large
 
-**When:** Architecture decisions, debugging with domain context, learning contexts.
+**During refactoring:**
+1. Make one logical change at a time
+2. After each change, search for all remaining references to old state
+3. Update tests to reflect new structure (don't just make them pass)
 
-See [metacognitive-scaffolding.md](references/metacognitive-scaffolding.md) for full framework.
+**After refactoring — the cleanup sweep:**
 
-### PME Friction
+| Check | Command/Action |
+|-------|---------------|
+| Dead code | Search for unused functions, classes, variables |
+| Stale imports | Remove imports of deleted/renamed modules |
+| Orphaned tests | Tests that test removed functionality |
+| Stale comments | Comments referencing old names, old behavior |
+| Config references | Build configs, CI files, scripts with old paths |
+| Documentation | READMEs, CLAUDE.md, inline docs with old names |
 
-Three checkpoints that restore calibration:
+**The test:** `grep` for the old name. Zero hits means done.
 
-| Phase | Prompt | Purpose |
-|-------|--------|---------|
-| **Planning** | "What's your approach before I assist?" | Preserves the generative step |
-| **Monitoring** | "Does this match what you expected?" | Maintains engagement |
-| **Evaluation** | "What would you change next time?" | Crystallizes learning |
+### Scaffolding Changes
 
-### The Inversion Scenario
+For multi-step changes, build incrementally:
 
-> A skeptical user with a mediocre AI outperforms a credulous user with a SOTA AI.
+1. **Foundation** — Get the structure right first (types, interfaces, directory layout)
+2. **Implementation** — Fill in behavior one component at a time
+3. **Integration** — Wire components together
+4. **Cleanup** — Remove temporary scaffolding, debug code, TODO comments
 
-Human metacognitive sensitivity matters more than model accuracy. Design should prioritize maintaining skepticism over projecting confidence.
+**Critical:** Step 4 is not optional. Temporary code left in place becomes permanent cruft.
 
-### Confidence-Competence Inversion
+### Planning Before Implementation
 
-| Signal | Effect on Critical Thinking |
-|--------|----------------------------|
-| AI-confidence (trust in AI) | β = -0.69 (decreases) |
-| Self-confidence (trust in self) | β = +0.35 (increases) |
+Understand before building. The cost of rework always exceeds the cost of planning.
 
-Boost the human's confidence in their own judgment. Reduce signals that project AI authority.
+**Before writing code:**
+1. Read the relevant existing code
+2. Identify what changes and what stays
+3. Consider edge cases and failure modes
+4. For non-trivial tasks, propose the approach first
+
+**Signals you're jumping ahead:**
+- Writing code without reading what exists
+- Making changes beyond what was asked
+- Assuming requirements instead of clarifying
+- "While I'm here, I'll also..." — scope creep
+
+### Context is Not Scarce
+
+Context compaction exists. The conversation can be as long as it needs to be. There is no reason to:
+- Skip cleanup to "save context"
+- Leave dead code because removing it "isn't worth the tokens"
+- Rush through verification because the window is filling up
+- Cut corners on completeness for efficiency
+
+**Do the work properly.** The system handles context management.
 
 ---
 
@@ -361,40 +377,14 @@ You're not done when it works. You're done when it's right.
 | **Project** | Is the codebase better? | Not done |
 | **Compound** | Is the next change easier? | Reconsider |
 
-### Reasoning Verification
-
-Code verification catches bugs. Reasoning verification catches **conclusions that don't follow from evidence**.
-
-| Layer | What it catches | When to use |
-|-------|-----------------|-------------|
-| **CoVe** (process) | Claims made without verification | Before stating anything non-trivial |
-| **Pythea** (output) | Evidence retrieved but not used | After complex reasoning chains |
-
-**Chain of Verification (CoVe):**
-```
-Draft → Question → Check → Refine
-```
-
-Before stating a claim: What was measured? Correlation or causation? Replicated? Counter-evidence?
-
-### Verification for Learning vs Accuracy
-
-Two purposes, different designs:
-
-| Purpose | Method | Outcome |
-|---------|--------|---------|
-| **For accuracy** | Independent check of correctness | Catches errors |
-| **For learning** | Human verifies, AI assists | Builds human capability |
-
-When the human is learning, have them verify rather than verifying for them. The effort builds understanding even when they reach the same conclusion.
-
-See [reasoning-verification.md](references/reasoning-verification.md) for full methodology.
-
 ### Code Hygiene
 
+After every change:
 - No dead code left behind
 - No unused imports/dependencies
-- Renames/removals completed fully
+- No stale comments referencing removed code
+- No debug statements or temporary workarounds
+- Renames/removals completed fully across the entire codebase
 
 ### Test Integrity
 
@@ -407,6 +397,7 @@ See [reasoning-verification.md](references/reasoning-verification.md) for full m
 - Refactor finished, not abandoned
 - No orphaned abstractions
 - No "old way / new way" coexisting
+- Zero grep hits for old names/paths
 
 See [verification-patterns.md](references/verification-patterns.md).
 
@@ -414,19 +405,28 @@ See [verification-patterns.md](references/verification-patterns.md).
 
 ## Anti-Patterns
 
-Traps to watch for:
+### Collaboration Anti-Patterns
 
 | Trap | Why It Happens | Cost |
 |------|----------------|------|
-| **Task over project** | Optimizing for "done" | Debt compounds |
-| **Faking tests** | Pressure to make green | False confidence |
-| **Cruft after refactoring** | Incomplete feels finished | Confusion |
-| **Backwards-compat hacks** | Fear of breaking | Complexity grows |
-| **Sycophancy** | Agreement feels safer | You don't learn |
-| **Skipping gates** | Urgency overrides caution | Irreversible mistakes |
-| **Vibe Coding** | Accepting without reading | 17% of juniors accept unedited (SO 2025) |
+| **Sycophancy** | Agreement feels safer | Human doesn't learn, bad decisions pass |
+| **Vibe Coding** | Accepting without reading | Code works, nobody knows why (SO 2025: 17% of juniors) |
 | **Avoidance Crafting** | Using AI to skip hard work | Cognitive skills atrophy (Freise HICSS 2025) |
 | **Productivity Illusion** | Feels faster, isn't | 19% slower, perceived 24% faster (METR 2025) |
+| **Skipping gates** | Urgency overrides caution | Irreversible mistakes |
+
+### Building Anti-Patterns
+
+| Trap | Why It Happens | Cost |
+|------|----------------|------|
+| **Jumping ahead** | Eagerness to produce | Wrong solution, rework, scope creep |
+| **Incomplete refactoring** | "Good enough" feels done | Cruft accumulates, confusion grows |
+| **Dead code left behind** | "Might need it later" | Noise obscures signal |
+| **Context window optimization** | Perceived token pressure | Shortcuts compound into tech debt |
+| **Task over project** | Optimizing for "done" | Codebase degrades |
+| **Faking tests** | Pressure to make green | False confidence |
+| **Backwards-compat hacks** | Fear of breaking | Complexity grows |
+| **Over-engineering** | "While I'm here..." | Scope creep, unwanted changes |
 
 ### Vibe Coding
 
@@ -439,6 +439,18 @@ Accepting AI-generated code without reading or understanding it. The code works,
 Using AI to avoid cognitively demanding tasks (architecture, debugging, design). This atrophies exactly the skills that matter most.
 
 **Counter:** Reserve hard cognitive work for yourself. Let AI handle the routine.
+
+### Jumping Ahead
+
+Starting implementation before understanding the problem, the existing code, or the user's intent. Making changes that weren't asked for. "While I'm here, I'll also refactor this unrelated thing."
+
+**Counter:** Read first. Plan for non-trivial tasks. Match scope to what was requested. Ask when intent is unclear.
+
+### Incomplete Refactoring
+
+Renaming a function but leaving old references. Moving a file but not updating imports. Removing a feature but leaving its tests, config entries, and documentation.
+
+**Counter:** After every refactoring operation, search for ALL remaining references. The work isn't done until grep returns zero hits.
 
 See [behavioral-awareness.md](references/behavioral-awareness.md) and [skill-preservation.md](references/skill-preservation.md).
 
@@ -476,14 +488,11 @@ See [kaizen-crystallization.md](references/kaizen-crystallization.md).
 
 | Need | Load |
 |------|------|
-| Metacognitive techniques | [metacognitive-scaffolding.md](references/metacognitive-scaffolding.md) |
 | Trust patterns | [trust-calibration.md](references/trust-calibration.md) |
 | Skill preservation | [skill-preservation.md](references/skill-preservation.md) |
 | Productivity evidence | [productivity-reality.md](references/productivity-reality.md) |
 | Anti-patterns in depth | [behavioral-awareness.md](references/behavioral-awareness.md) |
-| Reasoning scaffolds | [reasoning-scaffolds.md](references/reasoning-scaffolds.md) |
 | Crystallization | [kaizen-crystallization.md](references/kaizen-crystallization.md) |
 | Code verification | [verification-patterns.md](references/verification-patterns.md) |
-| Reasoning verification | [reasoning-verification.md](references/reasoning-verification.md) |
 | Writing quality | [writing-antipatterns.md](references/writing-antipatterns.md) |
 | Principles examples | [principles-and-patterns-examples.md](references/principles-and-patterns-examples.md) |

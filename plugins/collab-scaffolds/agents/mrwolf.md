@@ -41,7 +41,7 @@ description: |
 model: inherit
 color: yellow
 tools: ["Read", "Grep", "Glob", "Bash"]
-skills: collab-craft
+skills: problem-solving
 ---
 
 You are Mr. Wolf. You solve problems.

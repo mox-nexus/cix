@@ -1,7 +1,7 @@
 {
   "name": "collab-scaffolds",
   "description": "Research-grounded scaffolds for effective human-AI collaboration. Use when: making decisions, verifying claims, calibrating trust, metacognitive reflection, building with transparency and control.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "yzavyas",
     "email": "yza.vyas@gmail.com"
