@@ -7,7 +7,17 @@ description: "Builds Claude Code extensions (skills, commands, agents, hooks, MC
 
 Claude Code extensions for effective human-AI collaboration.
 
-**Structure/templates:** See `plugin-dev` skill.
+> **Composes with official skills.** This skill adds quality methodology. For authoritative templates and schemas:
+>
+> | Building... | Use skill |
+> |-------------|-----------|
+> | Plugin structure | `plugin-dev:plugin-structure` |
+> | Skill format | `plugin-dev:skill-development` |
+> | Hook events | `plugin-dev:hook-development` |
+> | Agent schema | `plugin-dev:agent-development` |
+> | Command template | `plugin-dev:command-development` |
+> | MCP server | `plugin-dev:mcp-integration` |
+> | SDK app | `agent-sdk-dev:new-sdk-app` |
 
 ---
 
@@ -18,6 +28,7 @@ Claude Code extensions for effective human-AI collaboration.
 - [Component Reference](#component-reference)
 - [Composition Patterns](#composition-patterns)
 - [Validation Checklist](#validation-checklist)
+- [Quality Assurance](#quality-assurance)
 
 ---
 
@@ -80,6 +91,20 @@ description: "Sophisticated statistical analysis system."
 # Bad - wrong voice
 description: "I can help you analyze your data."
 ```
+
+### Intent-Driven Activation
+
+Trigger on **user goals**, not tool names.
+
+| Wrong | Right |
+|-------|-------|
+| "Use when: Midjourney prompting" | "Use when: creating artwork, images, visual assets" |
+| "Use when: using pytest" | "Use when: writing tests, test-driven development" |
+| "Use when: running kubectl" | "Use when: deploying to Kubernetes, managing clusters" |
+
+**The pattern:** `[Domain/activity] + [user goals/outcomes]`, NOT `[Tool name] + [tool-specific actions]`.
+
+Users think in goals ("I need an image"), not tools ("I need Midjourney"). Intent-driven activation catches synonyms and related tasks that tool-specific descriptions miss.
 
 ### Naming Conventions
 
@@ -381,6 +406,51 @@ Without cross-references, users discover complementary skills by accident or not
 
 ---
 
+## Quality Assurance
+
+After building, validate through the eval → optimize cycle.
+
+### Quick Evaluation
+
+```
+"Evaluate plugins/my-extension"
+```
+
+The evaluator agent checks all 7 quality gates and returns a verdict:
+- **PASS**: ≥ 17/21, no gate below 2 → ready to ship
+- **NEEDS WORK**: ≥ 12/21, fixable issues → run optimizer
+- **NOT READY**: < 12/21 or fundamental problems → rethink approach
+
+### Optimization
+
+If evaluator returns NEEDS WORK:
+
+```
+"Optimize plugins/my-extension based on the evaluation"
+```
+
+The optimizer applies minimal, targeted fixes in priority order (critical → major → minor) and escalates domain decisions to you.
+
+### Full Quality Loop
+
+For iterative tuning:
+
+```
+"Run quality loop on plugins/my-extension until it passes"
+```
+
+Runs eval → optimize → re-eval cycles (max 3 iterations) until passing or escalation.
+
+| Situation | Action |
+|-----------|--------|
+| Just built new extension | Run evaluator |
+| Evaluator says NEEDS WORK | Run optimizer |
+| After optimizer fixes | Re-run evaluator |
+| Want full automated tuning | Run quality loop |
+| Auditing existing plugins | Run evaluator on each |
+
+---
+
 ## References
 
 | Need | Load |
@@ -389,3 +459,5 @@ Without cross-references, users discover complementary skills by accident or not
 | Checklists and feedback loops | [checklists-and-loops.md](references/checklists-and-loops.md) |
 | Degrees of freedom guidance | [degrees-of-freedom.md](references/degrees-of-freedom.md) |
 | Anti-patterns in depth | [anti-patterns.md](references/anti-patterns.md) |
+| OTel instrumentation for extensions | [observability.md](references/observability.md) |
+| Evidence-based skill research | [evidence-workflow.md](references/evidence-workflow.md) |

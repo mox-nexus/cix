@@ -48,18 +48,23 @@ plugin-dev (templates & structure)
 extension-dev/
 ├── .claude-plugin/plugin.json
 ├── docs/
-│   └── explanation/           # Human-optimized (Diataxis)
-│       ├── methodology.md
-│       ├── sources.md
-│       ├── evaluator.md
-│       └── optimizer.md
+│   └── explanation/              # Human-optimized (WHY)
+│       ├── methodology.md        # Research base & design rationale
+│       ├── sources.md            # Full bibliography
+│       ├── observability.md      # Why observability matters
+│       ├── eval-first-design.md  # Eval-first philosophy
+│       ├── evaluator.md          # Evaluator design rationale
+│       └── optimizer.md          # Optimizer design rationale
 ├── agents/
-│   ├── evaluator.md
-│   └── optimizer.md
+│   ├── evaluator.md              # Quality validation (7 gates)
+│   └── optimizer.md              # Targeted fix patterns
 ├── skills/
-│   ├── build-plugin/          # Claude Code extensions
-│   │   └── SKILL.md
-│   └── build-capability/      # General capability authoring
+│   ├── build-plugin/             # Claude Code extensions
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── observability.md  # OTel instrumentation
+│   │       └── evidence-workflow.md  # Research methodology
+│   └── build-capability/         # General capability authoring
 │       ├── SKILL.md
 │       └── references/
 └── README.md
