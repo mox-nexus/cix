@@ -1,8 +1,8 @@
 {
-  "name": "eval-1337-activation",
+  "name": "build-eval-activation",
   "version": "1.0.0",
   "skill": "build-eval",
-  "description": "Test cases for eval-1337 skill activation",
+  "description": "Test cases for build-eval skill activation",
   "cases": [
     {
       "id": "must-001",

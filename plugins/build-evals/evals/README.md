@@ -1,6 +1,6 @@
-# Evaluating and Tuning eval-1337
+# Evaluating and Tuning build-eval
 
-This directory contains evals for the eval-1337 skill itself.
+This directory contains evals for the build-eval skill itself.
 
 ## Two-Level Evaluation
 
