@@ -10,8 +10,8 @@ Research synthesis, reference materials, and guides.
 |---------|---------|------------|
 | [Tutorials](tutorials/) | Learning by doing | *Coming soon* |
 | [How-To](how-to/) | Task recipes | *Coming soon* |
-| [Explanation](explanation/) | Understanding why | [What is CI](explanation/what-is-ci.md) |
-| [Reference](reference/) | Technical lookup | [Bibliography](reference/bibliography.md) |
+| [Explanation](explanation/) | Understanding why | [What is CI](explanation/what-is-ci) |
+| [Reference](reference/) | Technical lookup | [Bibliography](reference/bibliography) |
 
 ---
 
@@ -19,15 +19,15 @@ Research synthesis, reference materials, and guides.
 
 If you're new to collaborative intelligence:
 
-1. **[What is CI](explanation/what-is-ci.md)** — the thesis
-2. **[The Risks](explanation/the-risks.md)** — what goes wrong
-3. **[The Path Forward](explanation/the-path-forward.md)** — what works
-4. **[First Principles](explanation/first-principles-ci.md)** — foundational thinking
+1. **[What is CI](explanation/what-is-ci)** — the thesis
+2. **[The Risks](explanation/the-risks)** — what goes wrong
+3. **[The Path Forward](explanation/the-path-forward)** — what works
+4. **[First Principles](explanation/first-principles-ci)** — foundational thinking
 
 For deeper research synthesis:
 
-- [Cognitive Effects](explanation/cognitive-effects.md) — hollowing research
-- [Collaboration Design](explanation/collaboration-design.md) — what makes collaboration work
-- [Diversity & Conformity](explanation/diversity-conformity.md) — homogenization research
-- [Productivity](explanation/productivity.md) — the productivity paradox
-- [Hype & Questioning](explanation/hype-questioning.md) — why critical thinking erodes
+- [Cognitive Effects](explanation/cognitive-effects) — hollowing research
+- [Collaboration Design](explanation/collaboration-design) — what makes collaboration work
+- [Diversity & Conformity](explanation/diversity-conformity) — homogenization research
+- [Productivity](explanation/productivity) — the productivity paradox
+- [Hype & Questioning](explanation/hype-questioning) — why critical thinking erodes
