@@ -4,6 +4,21 @@ Why these patterns exist and the research behind them.
 
 ---
 
+## Contents
+
+- [The Core Problem](#the-core-problem)
+- [Mastery vs Performance Orientation](#mastery-vs-performance-orientation)
+- [The Review Pattern](#the-review-pattern)
+- [Why These Principles](#why-these-principles)
+- [Collaborative Intelligence Design Patterns: The Why](#collaborative-intelligence-design-patterns-the-why)
+- [Effect Sizes](#effect-sizes)
+- [The Test](#the-test)
+- [The Three Modes](#the-three-modes-complementary-constitutive-substitutive)
+- [Study Limitations](#study-limitations)
+- [The Deeper Why](#the-deeper-why)
+
+---
+
 ## The Core Problem
 
 AI creates a dissociation: **system performance goes up while human competence goes down**.
@@ -259,6 +274,28 @@ An AI tool that makes humans dependent has failed, regardless of how much immedi
 The goal isn't to build better tools. The goal is to build tools that make better humans—more capable, more knowledgeable, more autonomous.
 
 That's what Collaborative Intelligence means.
+
+---
+
+## Study Limitations
+
+For collaborators enhancing these extensions: the research provides directional guidance, not universal laws. Each study has specific limitations that matter when applying findings.
+
+| Study | Limitation | What It Means |
+|-------|-----------|---------------|
+| Budzyn (Lancet, 2025) | Medical domain (colonoscopy) | Skill atrophy rate (-22%) may not transfer directly to software |
+| Gerlich (2025) | Cross-sectional, self-reported | Correlations (r = -0.68, -0.75) show association, not causation |
+| Lee et al. (CHI, 2025) | Self-reported critical thinking | Perceptions may differ from actual cognitive performance |
+| Blaurock (106 studies) | Service contexts (not all software) | Effect sizes (beta = 0.507, 0.415) are directional for extension design |
+| Bastani (PNAS, 2025) | Education domain (Turkish math) | -17% learning harm may vary across skill types and populations |
+| Mastery OR = 35.7 | Single study | Large effect size from one study needs replication |
+| Sharma (Anthropic, 2026) | Claude.ai conversations only | Perception paradox may differ across AI systems |
+
+### What This Means
+
+The direction is consistent across studies: transparency and control help, cognitive offloading harms learning, observable processes support better collaboration. But the specific magnitudes (beta = 0.507, r = -0.75, g = -0.863) should be treated as approximate, not precise.
+
+When enhancing extensions, use these findings to inform design decisions — but don't treat them as engineering constants. The research tells us WHAT to optimize for (control, transparency, mastery orientation). The exact numbers tell us roughly HOW MUCH each lever matters relative to others.
 
 ---
 
