@@ -51,7 +51,7 @@ System-level architectural reasoning using The Guild methodology.
 - `scale` → Knuth, Erlang
 - `resilience` → Taleb, Erlang, Vector
 
-## Domain Context Overlay
+## Domain Vocabulary Mapping
 
 Before deliberating, check the project's CLAUDE.md for a `## Guild Vocabulary` section. If present:
 

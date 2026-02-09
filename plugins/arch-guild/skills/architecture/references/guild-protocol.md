@@ -10,7 +10,7 @@ Each agent has a Drive, Scar, and Nemesis that shapes their reasoning:
 - **Scar** — Past experience that informs judgment
 - **Nemesis** — The anti-pattern they're most vigilant against
 
-## The 6 Core Drives
+## The 10 Core Drives
 
 | Drive | Focus | Agents |
 |-------|-------|--------|
@@ -19,7 +19,11 @@ Each agent has a Drive, Scar, and Nemesis that shapes their reasoning:
 | **Adversarial** | Attack surface, exploitation | Vector |
 | **Principled** | Truth, correctness | Karman, Dijkstra |
 | **Traumatic** | Past failures, experience | Lamport, Chesterton, Taleb |
-| **Empirical** | Measurement, validation | Ixian |
+| **Empirical** | Falsifiability, measurement | Ixian |
+| **Physical** | Systems have limits, flow dynamics | Erlang |
+| **Mathematical** | Resource physics, complexity | Knuth |
+| **Nuanced** | Degrees of truth, fuzzy scoring | Lotfi |
+| **Humanistic** | Developer advocacy, cognitive load | Ace |
 
 ## Agent Specifications
 
