@@ -1,6 +1,7 @@
 import adapter from '@sveltejs/adapter-static';
 import { mdsvex } from 'mdsvex';
 import { createHighlighter } from 'shiki';
+import rehypeSlug from 'rehype-slug';
 
 // Initialize Shiki highlighter
 const highlighter = await createHighlighter({
@@ -15,6 +16,7 @@ const config = {
 	preprocess: [
 		mdsvex({
 			extensions: ['.md'],
+			rehypePlugins: [rehypeSlug],
 			highlight: {
 				highlighter: (code, lang) => {
 					if (!lang) lang = 'text';

@@ -143,12 +143,34 @@
   --color-info: var(--ci-blue);
   --color-focus: var(--ci-blue);
   --color-accent: var(--ci-blue);
+  --dao-blue: var(--spark-core);
 
   /* --- Interactive States --- */
   --color-interactive: var(--ci-blue);
   --color-interactive-hover: var(--spark-core);
   --color-interactive-active: oklch(68% 0.16 240);
   --color-interactive-disabled: var(--dao-muted);
+
+  /* -----------------------------------------
+     EVIDENCE LEVEL PALETTE
+     Dedicated colors for research evidence marks.
+     Separate from the triad to avoid semantic collision.
+     Brightness maps to epistemic confidence.
+     ----------------------------------------- */
+  --ev-strong: oklch(72% 0.16 145);
+  --ev-strong-bg: oklch(72% 0.16 145 / 0.08);
+  --ev-moderate: oklch(68% 0.12 230);
+  --ev-moderate-bg: oklch(68% 0.12 230 / 0.08);
+  --ev-weak: oklch(72% 0.14 85);            /* Amber — caution, not alarm */
+  --ev-weak-bg: oklch(72% 0.14 85 / 0.08);
+  --ev-speculative: oklch(55% 0.02 240);
+  --ev-speculative-bg: oklch(55% 0.02 240 / 0.06);
+
+  /* --- Quadrant Colors (Diataxis) --- */
+  --quadrant-explanation: var(--spark-core);
+  --quadrant-how-to: var(--emergence-core);
+  --quadrant-tutorials: oklch(68% 0.15 190);
+  --quadrant-reference: var(--dao-text-secondary);
 }
 
 

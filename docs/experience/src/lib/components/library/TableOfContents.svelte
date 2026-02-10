@@ -87,6 +87,6 @@
 	}
 
 	.toc-link.active {
-		color: var(--dao-blue);
+		color: var(--spark-core);
 	}
 </style>
