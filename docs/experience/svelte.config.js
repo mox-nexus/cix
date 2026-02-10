@@ -1,6 +1,22 @@
 import adapter from '@sveltejs/adapter-static';
 import { mdsvex } from 'mdsvex';
 import { createHighlighter } from 'shiki';
+import { visit } from 'unist-util-visit';
+
+// Remark plugin: escape Svelte syntax in markdown prose.
+// mdsvex compiles .md → Svelte components, so bare {curlies} become
+// expressions and bare <angles> become tags. This escapes them in text
+// nodes so authors never have to think about it.
+function remarkEscapeSvelte() {
+	return (tree) => {
+		visit(tree, 'text', (node) => {
+			node.value = node.value
+				.replace(/\{/g, '&#123;')
+				.replace(/\}/g, '&#125;')
+				.replace(/</g, '&lt;');
+		});
+	};
+}
 
 // Initialize Shiki highlighter
 const highlighter = await createHighlighter({
@@ -15,12 +31,11 @@ const config = {
 	preprocess: [
 		mdsvex({
 			extensions: ['.md'],
+			remarkPlugins: [remarkEscapeSvelte],
 			highlight: {
 				highlighter: (code, lang) => {
 					if (!lang) lang = 'text';
-					// Escape characters that Svelte would interpret as expressions or tags.
-					// Without this, {curlies} in code blocks become Svelte expressions
-					// and <angle brackets> become component tags — breaking the build.
+					// Escape curlies so Svelte doesn't interpret them as expressions.
 					const escapeSvelte = (html) =>
 						html.replace(/\{/g, '&#123;').replace(/\}/g, '&#125;');
 					try {

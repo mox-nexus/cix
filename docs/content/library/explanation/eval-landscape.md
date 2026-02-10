@@ -242,8 +242,8 @@ sem_clustered = np.std(cluster_means) / np.sqrt(len(cluster_means))
 
 From Anthropic's infrastructure noise research (Feb 2026):
 
-- Changing from 1x to 3x resource headroom shifts scores by **3.7 percentage points** (p &lt; 0.001)
-- Changing Docker config shifts scores by **6 percentage points** (p &lt; 0.01)
+- Changing from 1x to 3x resource headroom shifts scores by **3.7 percentage points** (p < 0.001)
+- Changing Docker config shifts scores by **6 percentage points** (p < 0.01)
 
 **Recommendation**: "Leaderboard differences below 3 percentage points deserve skepticism without documented matching configurations."
 
@@ -272,7 +272,7 @@ Why? Models correlate on questions (r=0.3-0.7 on frontier measurements). Paired 
 
 The **Central Limit Theorem** says sample means are normally distributed for large N. Most statistics textbooks teach this.
 
-For LLM measurements with N &lt; 100, **the CLT underestimates uncertainty**. A 2025 ICML Spotlight paper ("Don't Use the CLT") proves this empirically across 12 benchmarks.
+For LLM measurements with N < 100, **the CLT underestimates uncertainty**. A 2025 ICML Spotlight paper ("Don't Use the CLT") proves this empirically across 12 benchmarks.
 
 **The fix**: Use Bayesian methods. The `bayes_evals` library provides drop-in replacements for CLT-based confidence intervals.
 
@@ -1032,7 +1032,7 @@ These aren't just citations — they fundamentally shift how you design experime
 
 **Paper**: [arXiv:2503.01747](https://arxiv.org/abs/2503.01747)
 
-**Key contribution**: Central Limit Theorem underestimates uncertainty for N &lt; 100. Bayesian methods correct this.
+**Key contribution**: Central Limit Theorem underestimates uncertainty for N < 100. Bayesian methods correct this.
 
 **Actionable**: Use `bayes_evals` library for all confidence intervals in small-N settings (which is most experiments).
 
@@ -1045,7 +1045,7 @@ These aren't just citations — they fundamentally shift how you design experime
 
 **Paper**: [arXiv:2508.13144](https://arxiv.org/abs/2508.13144)
 
-**Key contribution**: Signal-to-noise ratio as a meta-metric for benchmark quality. If SNR &lt; 2, the benchmark doesn't reliably measure what you think.
+**Key contribution**: Signal-to-noise ratio as a meta-metric for benchmark quality. If SNR < 2, the benchmark doesn't reliably measure what you think.
 
 **Actionable**: Before investing effort in a benchmark, compute its SNR:
 
