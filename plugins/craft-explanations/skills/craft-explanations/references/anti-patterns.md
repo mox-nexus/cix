@@ -6,7 +6,7 @@ Patterns that degrade explanation quality. Three categories: encoding failures, 
 
 ### Modal Lock
 
-The most common failure. You default to principle + pattern (clean taxonomies, headers, structure). When it doesn't land, you amplify the same mode instead of shifting.
+The most common failure. You default to Door 1 — Abstraction | Universal (clean taxonomies, headers, structure). When it doesn't land, you amplify the same door instead of shifting to the next.
 
 **How it manifests**:
 - Explanation feels "organized but empty" — lots of structure, no grounding
@@ -15,11 +15,11 @@ The most common failure. You default to principle + pattern (clean taxonomies, h
 
 **The fix**: Shift, don't add.
 
-| Current mode | Reader signal | Shift to |
+| Current lock | Reader signal | Shift to |
 |--------------|--------------|----------|
-| Principle-heavy | "What do I actually do?" | Practice — concrete example |
-| Pattern-heavy | "Why does this matter?" | Principle — connect to what they care about |
-| Practice-heavy | "How does this fit with X?" | Pattern — show relationships |
+| Stuck in Door 1 (Principle) | "What do I actually do?" | Door 2: concretize for a constituency |
+| Stuck in Door 2 (Concretions) | "Why does this matter?" | Door 3: enable self-execution |
+| Stuck in Door 3 (Ground) | "How does this fit with X?" | Door 1: connect to the universal |
 
 ### Sequential Traversal
 
