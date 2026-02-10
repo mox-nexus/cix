@@ -746,6 +746,38 @@ When evidence is limited:
 
 ---
 
+## arch-guild Ontology (Karman-Approved)
+
+The arch-guild plugin provides 13 orthogonal reasoning agents across 10 Core Drives, 3 Skills, and a Domain Vocabulary Mapping mechanism.
+
+### Domain Vocabulary Mapping
+
+The guild speaks in agent metaphors (Erlang's "Valve", Lamport's "Time", Burner's "Boundary"). When reasoning about a specific domain, agents check the project's CLAUDE.md for a `## Guild Vocabulary` section that maps these metaphors to domain-specific terms. This lets the guild reason precisely about any domain without ix-specific knowledge baked into the plugin.
+
+### 10 Core Drives
+
+| Drive | Agent | Focus |
+|-------|-------|-------|
+| Strategic | K | Forces, constraints, optionality |
+| Protective | Burner | Integrity, boundaries |
+| Adversarial | Vector | Attack surface, exploitation |
+| Principled | Karman, Dijkstra | Truth, correctness |
+| Traumatic | Lamport, Chesterton, Taleb | Past failures, experience |
+| Empirical | Ixian | Falsifiability, measurement |
+| Physical | Erlang | Flow dynamics, system limits |
+| Mathematical | Knuth | Resource physics, complexity |
+| Nuanced | Lotfi | Degrees of truth, fuzzy scoring |
+| Humanistic | Ace | Developer advocacy, cognitive load |
+
+### Key Decisions
+
+- **Ixian** = Principal Experimentation Architect (Falsifiability drive, designs experiments, not just metrics)
+- **Protocol > ABC** for Python hexagonal ports (`typing.Protocol` with `@runtime_checkable`)
+- **stat-rigor.md** reference: Bayesian methods, CLT rejection, clustered SEs, pass@k, row vs aggregate scoring
+- **Domain Vocabulary Mapping** (not "Overlay") as the mechanism name (Karman: precision over metaphor)
+
+---
+
 ## References
 
 Core research informing this project:

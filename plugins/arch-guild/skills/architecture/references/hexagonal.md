@@ -148,27 +148,35 @@ This order ensures domain stays pure and testable.
 
 ```python
 # domain/ports/user_repository.py
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 from domain.models import User, UserId
 
-class UserRepository(ABC):
-    @abstractmethod
+@runtime_checkable
+class UserRepository(Protocol):
+    """Structural subtyping — adapters satisfy this without inheriting it."""
     async def find_by_id(self, id: UserId) -> User | None: ...
-
-    @abstractmethod
     async def save(self, user: User) -> None: ...
 
 # adapters/driven/sqlalchemy_user_repository.py
-from domain.ports.user_repository import UserRepository
+# NOTE: No import of UserRepository needed — structural typing.
+# The adapter satisfies the Protocol by having matching methods.
 from sqlalchemy.ext.asyncio import AsyncSession
 
-class SqlAlchemyUserRepository(UserRepository):
+class SqlAlchemyUserRepository:
     def __init__(self, session: AsyncSession):
         self._session = session
 
     async def find_by_id(self, id: UserId) -> User | None:
         # implementation
+
+    async def save(self, user: User) -> None:
+        # implementation
+
+# config/container.py — type-check at wiring time
+repo: UserRepository = SqlAlchemyUserRepository(session)  # mypy verifies structural match
 ```
+
+**Why Protocol over ABC**: `abc.ABC` forces nominal subtyping — the adapter must `import` and `inherit` from the domain. This creates an inward dependency leak. `typing.Protocol` uses structural subtyping — the adapter just needs matching method signatures. The domain stays pure. Use `@runtime_checkable` if you need `isinstance` checks at the wiring boundary.
 
 ### Go
 

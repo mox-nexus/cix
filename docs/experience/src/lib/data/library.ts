@@ -87,6 +87,11 @@ export const LIBRARY: QuadrantMeta[] = [
 				slug: 'hype-questioning',
 				title: 'Hype & Questioning',
 				description: 'Why critical evaluation of AI claims matters.'
+			},
+			{
+				slug: 'eval-landscape',
+				title: 'Eval Landscape',
+				description: 'The LLM evaluation ecosystem as of February 2026.'
 			}
 		]
 	},
