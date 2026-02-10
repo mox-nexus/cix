@@ -194,6 +194,11 @@ export const LIBRARY: QuadrantMeta[] = [
 				difficulty: 'foundational',
 				readMinutes: 5,
 				related: ['productivity', 'the-evidence']
+			},
+			{
+				slug: 'eval-landscape',
+				title: 'Eval Landscape',
+				description: 'The LLM evaluation ecosystem as of February 2026.'
 			}
 		]
 	},

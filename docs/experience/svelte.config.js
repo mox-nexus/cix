@@ -2,6 +2,22 @@ import adapter from '@sveltejs/adapter-static';
 import { mdsvex } from 'mdsvex';
 import { createHighlighter } from 'shiki';
 import rehypeSlug from 'rehype-slug';
+import { visit } from 'unist-util-visit';
+
+// Remark plugin: escape Svelte syntax in markdown prose.
+// mdsvex compiles .md → Svelte components, so bare {curlies} become
+// expressions and bare <angles> become tags. This escapes them in text
+// nodes so authors never have to think about it.
+function remarkEscapeSvelte() {
+	return (tree) => {
+		visit(tree, 'text', (node) => {
+			node.value = node.value
+				.replace(/\{/g, '&#123;')
+				.replace(/\}/g, '&#125;')
+				.replace(/</g, '&lt;');
+		});
+	};
+}
 
 // Initialize Shiki highlighter
 const highlighter = await createHighlighter({
@@ -17,13 +33,18 @@ const config = {
 		mdsvex({
 			extensions: ['.md'],
 			rehypePlugins: [rehypeSlug],
+			remarkPlugins: [remarkEscapeSvelte],
 			highlight: {
 				highlighter: (code, lang) => {
 					if (!lang) lang = 'text';
+					// Escape curlies so Svelte doesn't interpret them as expressions.
+					const escapeSvelte = (html) =>
+						html.replace(/\{/g, '&#123;').replace(/\}/g, '&#125;');
 					try {
-						return highlighter.codeToHtml(code, { lang, theme: 'github-dark' });
+						return escapeSvelte(highlighter.codeToHtml(code, { lang, theme: 'github-dark' }));
 					} catch {
-						return `<pre><code>${code}</code></pre>`;
+						const escaped = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+						return escapeSvelte(`<pre><code>${escaped}</code></pre>`);
 					}
 				}
 			}

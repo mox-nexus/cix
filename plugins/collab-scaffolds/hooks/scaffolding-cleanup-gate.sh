@@ -6,17 +6,16 @@
 # Detects: console.log, TODO, FIXME, debugger, breakpoint(), pdb, etc.
 # Research: Cotroneo ISSRE 2025 — AI code has more unused constructs
 
-# Check for opt-out
 if [[ "${SKIP_CLEANUP_HOOKS:-}" == "1" ]]; then
     echo '{"decision": "allow"}'
     exit 0
 fi
 
-# Get tool input from stdin (JSON with tool_input containing the command)
-TOOL_INPUT=$(cat)
+INPUT=$(cat)
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 
 # Only trigger on git commit commands
-if ! echo "$TOOL_INPUT" | grep -qE 'git commit'; then
+if ! echo "$COMMAND" | grep -qE 'git commit'; then
     echo '{"decision": "allow"}'
     exit 0
 fi
@@ -66,12 +65,11 @@ if echo "$ADDED_LINES" | grep -qiE '(password|secret|api_key|token)\s*=\s*["\x27
 fi
 
 if [[ -n "$ISSUES" ]]; then
-    # Escape for JSON
     ISSUES_ESCAPED=$(echo -e "$ISSUES" | sed 's/"/\\"/g' | tr '\n' ' ')
     cat << EOF
 {
   "decision": "allow",
-  "message": "🧹 SCAFFOLDING DETECTED in staged files. Clean up before committing:${ISSUES_ESCAPED}\n\nRun \`git diff --cached\` to find exact locations. Remove debug artifacts, then re-stage and commit."
+  "message": "SCAFFOLDING DETECTED in staged files. Clean up before committing:${ISSUES_ESCAPED}\n\nRun \`git diff --cached\` to find exact locations. Remove debug artifacts, then re-stage and commit."
 }
 EOF
 else

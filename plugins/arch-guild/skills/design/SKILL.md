@@ -1,133 +1,105 @@
 ---
 name: design
-description: This skill should be used when the user asks to "review code design", "check API design", "evaluate abstractions", "review naming", "check SOLID compliance", "design an API", "choose between REST and GraphQL", or discusses code quality, interface design, API contracts, or developer experience.
+description: This skill should be used when the user asks to "review code design", "check API design", "evaluate abstractions", "review naming", "design an API", or discusses code quality, interface design, API contracts, or developer experience.
 ---
 
 # Design
 
-Code, component, and API design evaluation.
+Multi-perspective design evaluation through Guild reasoning.
 
-## Abstraction Quality
+## What This Adds
 
-### Naming
+Claude already knows SOLID, REST, GraphQL, gRPC, naming conventions, and design patterns. This skill doesn't reteach those — it adds **orthogonal architectural perspectives** that catch issues no single viewpoint reveals.
 
-- Does `processData()` actually process data?
-- Do names reveal intent?
-- Consistent vocabulary (don't mix "user" and "account" for same concept)?
+## The Three Design Lenses
 
-**Red flags:**
-- `Manager`, `Handler`, `Processor`, `Utils` — often god classes
-- Single-letter names outside tight loops
-- Abbreviations that aren't universally known
+### Karman (Ontological) — Does the model match reality?
 
-### Single Responsibility
+The question isn't "is this clean code?" — it's "does this model the actual domain?"
 
-- One reason to change?
-- Can you describe the class without using "and"?
+**Karman's Tests:**
+- Can you explain each entity without referencing implementation?
+- Would a domain expert recognize these names?
+- If the business changes, which abstractions break?
+- Are you modeling the domain or modeling the database?
 
-**Test:** "The {ClassName} is responsible for..." — if you need "and", split it.
+**What Karman catches that Claude alone misses:**
+- Anemic domain models (data bags without behavior)
+- Abstraction drift (code says "Order" but means "ShoppingCartSnapshot")
+- Naming that satisfies developers but confuses domain experts
+- God classes that merge distinct bounded contexts
 
-### Leaky Abstractions
+### Ace (Psychocentric) — Can the next developer understand this?
 
-- Does implementation leak through interface?
-- Are internal data structures exposed?
+Not "is this well-documented?" — but "is the door handle visible?"
 
-**Example leak:**
-```typescript
-// Leaky — exposes internal Map structure
-class Cache {
-  getAll(): Map<string, Value> { return this.internal; }
-}
+**Ace's Tests:**
+- Can a new team member understand this in 15 minutes?
+- Are the errors actionable or cryptic?
+- Does the API surface guide correct usage?
+- How many files must you read to understand one behavior?
 
-// Clean — hides implementation
-class Cache {
-  entries(): Array<[string, Value]> { return [...this.internal]; }
-}
-```
+**The ACES Check:**
+- **A**daptable — Can behavior be changed without rewriting?
+- **C**omposable — Can pieces combine in new ways?
+- **E**xtensible — Can new cases be added without modifying existing code?
+- **S**eparable — Can components be understood in isolation?
 
-### Tell, Don't Ask
+### Burner (Structural) — Are the boundaries clean?
 
-- Behavior on objects vs external orchestration?
-- Objects should do things, not just hold data
+Not "does this follow patterns?" — but "where does logic bleed?"
 
-**Ask (bad):**
-```typescript
-if (order.status === 'pending' && order.items.length > 0) {
-  order.status = 'confirmed';
-}
-```
+**Burner's Tests:**
+- Do dependencies point inward? (domain never imports infrastructure)
+- Can you swap the database without touching business logic?
+- Is there a clear boundary between "what" and "how"?
+- Are internal data structures leaking through interfaces?
 
-**Tell (good):**
-```typescript
-order.confirm(); // Object owns its state transitions
-```
+**What Burner catches:**
+- Circular dependencies (A → B → A)
+- Logic bleeding across layers (controller doing domain work)
+- Port violations (domain importing infrastructure types)
+- Coupling disguised as "convenience"
 
-## SOLID Compliance
+## Design Decision Routing
 
-| Principle | Question | Violation Signal |
-|-----------|----------|------------------|
-| **S**ingle Responsibility | One reason to change? | Class has multiple "and"s |
-| **O**pen/Closed | Extend without modifying? | Switch statements on types |
-| **L**iskov Substitution | Subtypes substitutable? | Instanceof checks |
-| **I**nterface Segregation | Clients use what they depend on? | Empty method implementations |
-| **D**ependency Inversion | Depend on abstractions? | `new ConcreteClass()` in domain |
+| Decision | Primary | Secondary | Why |
+|----------|---------|-----------|-----|
+| Entity naming | Karman | Ace | Domain truth + comprehension |
+| API surface | Ace | Vector | DX + attack surface |
+| Abstraction boundaries | Burner | Karman | Coupling + domain alignment |
+| State management | Dijkstra | Lamport | Correctness + distribution |
+| Auth/permissions design | Vector | Dijkstra | Security + correctness |
+| Performance-sensitive paths | Knuth | Erlang | Complexity + flow |
 
-## API Design
+## Review Methodology
 
-### Protocol Selection
-
-| Protocol | Best For | Avoid When |
-|----------|----------|------------|
-| **REST** | CRUD, public APIs, caching | Real-time, complex queries |
-| **GraphQL** | Flexible queries, multi-client | Simple CRUD, N+1 risk |
-| **gRPC** | Internal services, performance | Browser clients |
-| **WebSocket/SSE** | Real-time updates | Request-response |
-
-### Universal Principles
-
-1. **Contract-First**: Define API before implementation
-2. **Consistency**: Same patterns everywhere
-3. **Evolvability**: Version from day one
-4. **DX**: Clear errors, good docs
-
-## DX (Developer Experience)
-
-- **Onboarding**: Can a new dev understand in 15 minutes?
-- **Error Messages**: Actionable or cryptic?
-- **Documentation**: Matches reality?
-- **Conventions**: Consistent with ecosystem?
-
-## Guild Members for Design
-
-Primary: **Karman** (naming/abstractions), **Ace** (DX), **Burner** (coupling)
-Secondary: **Dijkstra** (correctness), **Vector** (auth for APIs)
+1. **Karman first** — Does the model match reality?
+2. **Burner second** — Are boundaries clean? Dependencies inverted?
+3. **Ace third** — Would a new developer understand this?
+4. **Route to specialists** if context triggers (auth → Vector, critical logic → Dijkstra)
+5. **Synthesize** — Where do the lenses agree? Where do they conflict?
 
 ## Output Format
 
 ```
 ## Design Review: {Component}
 
-### Abstraction Quality
-- {Finding 1}
-- {Finding 2}
+### Karman (Domain Alignment)
+- {Finding — does the model match reality?}
 
-### SOLID Violations
-- {Principle}: {violation}
+### Burner (Boundaries)
+- {Finding — are boundaries clean?}
 
-### API Assessment (if applicable)
-- {Finding}
+### Ace (Developer Experience)
+- {Finding — is the door handle visible?}
 
-### DX Friction Points
-- {Point 1}
+### Specialists Invoked
+- {Agent}: {finding} (if applicable)
+
+### Conflicts
+{Where lenses disagree — e.g., Karman wants richer model but Ace says it's too complex}
 
 ### Recommendations
-1. {Action}
-2. {Action}
+1. {Action with perspective attribution}
 ```
-
-## Additional Resources
-
-- **`references/solid-gotchas.md`** — Common SOLID violations with fixes
-- **`references/api-rest.md`** — REST production gotchas
-- **`references/api-graphql.md`** — GraphQL N+1, complexity, caching traps
-- **`references/api-grpc.md`** — gRPC streaming, versioning gotchas
