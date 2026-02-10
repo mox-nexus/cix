@@ -4,191 +4,120 @@ AI tools make developers feel faster while measurably slowing them down.
 
 ---
 
-## Sources
+You're shipping features faster than ever. Code appears on your screen at the speed of thought. Pull requests stack up. The backlog shrinks. Your manager is impressed. You're convinced AI has made you 20-30% more productive.
 
-- [Becker et al. (2025). Measuring the Impact of AI on Software Development. METR.](https://arxiv.org/abs/2507.09089)
-- [GitClear (2025). Coding on Copilot: 2023 Data Reveals Insights. Analysis of 211M LOC.](https://www.gitclear.com/coding_on_copilot_data_shows_ais_downward_pressure_on_code_quality)
-- [Veracode (2025). State of Software Security: AI-Generated Code Report.](https://www.veracode.com/state-of-software-security-report)
-- [Shukla et al. (2025). Security Implications of AI-Generated Code. arXiv.](https://arxiv.org/abs/2501.03205)
-- [Perry et al. (2025). Do Users Write More Insecure Code with AI Assistants? arXiv.](https://arxiv.org/abs/2211.03622)
-- [DORA (2024). Accelerate State of DevOps Report.](https://cloud.google.com/devops/state-of-devops)
+Then someone measures it.
+
+You're 19% slower. <span class="ev ev-moderate" title="METR RCT, n=16, within-subject design">◐</span>
+
+This isn't a measurement error. It's not about you being bad at using AI. This is what happens when experienced developers work with AI in their own codebases — the repositories they know best, doing work they've done hundreds of times before.
+
+The gap between what you feel and what measurement shows isn't small. It's 43 percentage points. You predicted you'd be 24% faster. You were actually 19% slower. That's not miscalibration. That's systematic perceptual blindness.
+
+## The Invisible Work
+
+Here's what happens in practice.
+
+**Without AI:**
+- You think about the problem for 15 minutes
+- You write 50 lines of code in 20 minutes
+- You test it locally for 10 minutes
+- Total: 45 minutes, 50 LOC
+
+**With AI:**
+- You craft a prompt for 5 minutes
+- AI generates 200 lines in 10 seconds
+- You read through it for 8 minutes
+- You realize it doesn't integrate with your existing auth system
+- You adjust the prompt for 3 minutes
+- AI generates another 180 lines in 10 seconds
+- You read through it for 10 minutes
+- You manually fix integration issues for 12 minutes
+- You test locally for 15 minutes (more code to test)
+- You discover a subtle bug from the generated code
+- You debug for 8 minutes
+- Total: 61 minutes, 180 LOC
+
+You *feel* productive because code appeared fast. You *are* slower because verification, integration, and debugging expanded to fill the time saved in generation.
+
+The work didn't disappear. It shifted from visible creation to invisible validation. Your brain counts the 10 seconds of generation. It undercounts the 53 minutes of everything else.
+
+## The Quality Signal
+
+This would just be a time-tracking curiosity if the code quality stayed constant. It doesn't.
+
+Analysis of 211 million lines of code before and after AI adoption found an 8x increase in code duplication. <span class="ev ev-strong" title="GitClear longitudinal analysis, 211M LOC">●</span> Refactoring activity — the commits where developers consolidate patterns and improve abstractions — plummeted.
+
+Why? Because AI generates code without awareness of existing implementations. Every time you ask for a solution, you get a fresh implementation. The human instinct would be to search the codebase for similar logic and reuse it. The AI instinct is to generate plausible new code.
+
+And here's the trap: accepting that new code is faster than searching for, understanding, and integrating the existing solution. The individual decision is rational. The cumulative effect is a codebase that shifts from *designed architecture* to *assembled components*.
+
+You notice this six months later when you're debugging and discover four different implementations of "validate email address," each with slightly different behavior, none of them extracted to a shared utility.
+
+## The Security Compounding
+
+The duplication story is bad. The security story is worse.
+
+Forty-five percent of AI-generated code contains critical vulnerabilities. <span class="ev ev-moderate" title="Veracode static analysis">◐</span> Not sophisticated zero-days. Basic mistakes: hardcoded credentials, SQL injection from string concatenation, missing input validation.
+
+Your instinct says: "I'll just iterate until it's secure." The data says that makes it worse.
+
+Initial AI-generated code averages 2.1 vulnerabilities per 1,000 lines. After iterative refinement — you know, the thing we're told makes AI safer — that number becomes 6.2. Each round adds code without removing vulnerabilities from previous rounds. The human reviewing iteration 3 has more surface area to check and less understanding of what changed.
+
+This isn't AI being malicious. It's AI inheriting patterns from training data that includes vulnerable code, and humans losing comprehension as the generated codebase grows beyond what they can reason about.
+
+## The Comprehension Gap
+
+Here's the long-term problem.
+
+When you write code yourself, you understand 100% of it. That understanding compounds. Each function you write makes the next function easier because you grasp how the pieces fit together.
+
+When AI writes code and you review it, you understand maybe 60% on first read — enough to ship it, not enough to maintain it. The next feature builds on that 60%-understood code, and your comprehension drops to 30%. By sprint 4, you're debugging a codebase you don't fully understand, built on abstractions you didn't design, with patterns you can't predict.
+
+This shows up in DORA metrics — the industry-wide measures of software delivery performance. Teams adopting AI show a 7.2% decline in deployment stability and a 1.5% reduction in throughput. Not massive. Not catastrophic. But the opposite direction of what we expected.
+
+The productivity gain in generation becomes a productivity loss in maintenance. The code still has to be maintained. The developer who didn't deeply understand it during generation won't magically understand it six months later when the bug report comes in.
+
+## Why You Can't Trust Your Perception
+
+Here's the hardest part: you cannot trust your own feeling of productivity.
+
+The METR study didn't just measure time. It asked developers to predict how much faster they'd be with AI. The predictions were consistently wrong. These weren't junior developers on toy problems. These were experienced maintainers working in their own repositories.
+
+The miscalibration isn't stupidity. It's how expertise works. You accurately perceive the reduction in *effort during generation*. You systematically undercount the expansion in *effort during verification*. Your brain notices the endorphin hit of code appearing on screen. It doesn't track the cumulative cost of prompting, reading, integrating, testing, and debugging.
+
+This creates a self-sustaining illusion. If you believe you're faster, you won't measure. If you don't measure, you won't discover the gap. The feeling substitutes for the fact.
+
+Stack Overflow's survey data captures this at scale: AI adoption rose from 76% to 84% while trust in AI accuracy fell from 43% to 33%. Adoption increases. Trust decreases. People use tools they don't trust because the perception of productivity overrides the measurement of performance.
+
+## What Actually Works
+
+This isn't a "never use AI" argument. Specific tasks show genuine gains. Boilerplate generation saves real time. Code translation between languages works. API exploration and prototyping accelerate onboarding.
+
+The pattern: AI helps when the task is generation-heavy, verification-light, and maintenance burden is low. One-off scripts, throwaway prototypes, repetitive boilerplate — these benefit from AI.
+
+AI struggles when the task requires long-term maintenance, deep integration with existing systems, or security-critical correctness. Complex systems with multi-year lifespans pay the comprehension tax every time someone has to debug, extend, or secure the AI-generated code.
+
+The catch: you can't know which category you're in without measurement. Your perception will tell you it's working. The data might disagree.
+
+## The Design Implication
+
+If you're building tools for developers, this paradox shapes everything.
+
+**Don't optimize for speed.** Optimize for comprehension. The bottleneck isn't how fast code appears. It's whether the human understands what appeared.
+
+**Make the invisible visible.** Track time spent prompting, reviewing, and fixing — not just time spent generating. Developers can't calibrate without seeing total effort.
+
+**Verify independently.** The human reviewing AI output needs separation from the generation process. Bundling them compounds the illusion.
+
+**Surface quality, not quantity.** Lines of code generated is a vanity metric. Duplication, security vulnerabilities, and maintainability matter.
+
+The goal isn't to make developers write more code faster. The goal is to help them build systems they can understand, maintain, and evolve without accumulating technical debt at the speed of AI.
 
 ---
 
-## Abstract
+The productivity paradox isn't that AI doesn't help. It's that the help creates costs that perception can't see and measurement reveals too late. By the time you discover the code quality degradation, the security vulnerabilities, and the comprehension gap, they're already compounding.
 
-Experienced developers predicted AI would make them 24% faster. Measurement showed they were 19% slower — a 43-percentage-point miscalibration gap. <span class="ev ev-moderate" title="METR RCT, n=16, within-subject design on own repos">◐</span> This wasn't a study of novices on toy problems. It was 16 open-source maintainers working in their own codebases.
+The question isn't whether AI makes you feel productive. The question is whether it makes you *actually* productive — and whether you'd know the difference.
 
-Code quality metrics show why. Analysis of 211 million lines revealed 8x increase in code duplication and plummeting refactoring activity after AI adoption. <span class="ev ev-strong" title="GitClear longitudinal analysis, 211M LOC across orgs">●</span> Security degradation compounds the problem: 45% of AI-generated code contains critical vulnerabilities, <span class="ev ev-moderate" title="Veracode static analysis report">◐</span> and iterative refinement makes code less secure, not more — 2.1 vulnerabilities per 1000 LOC rising to 6.2 after refinement. <span class="ev ev-moderate" title="Shukla et al. arXiv, systematic analysis">◐</span>
-
-Industry-wide DORA metrics confirm the pattern: 7.2% stability decline and 1.5% throughput reduction correlate with AI adoption. <span class="ev ev-strong" title="DORA State of DevOps 2024, industry survey">●</span> Developers feel productive while shipping duplicated, vulnerable code more slowly.
-
----
-
-## Explanation
-
-The paradox isn't a measurement error. It's the gap between perceived effort and actual throughput.
-
-### The METR Study
-
-The most rigorous productivity measurement to date controlled for what prior studies missed. No toy problems, no unfamiliar domains, no confounding variables. Sixteen experienced open-source developers worked on their own repositories — the codebases they knew best.
-
-**The design:**
-- Within-subject (each developer worked with and without AI)
-- Own repositories (maximum familiarity)
-- Real tasks (features and bugs from their backlogs)
-- Measured time to completion and code quality
-
-**The results:**
-
-| Metric | Without AI | With AI | Gap |
-|--------|-----------|---------|-----|
-| Actual completion time | Baseline | **+19% slower** | -19% |
-| Predicted completion time | Baseline | -24% faster | **+43 points** |
-| Developer confidence | — | "AI made me faster" | Illusion |
-
-The miscalibration is structural. Time spent prompting, reviewing suggestions, fixing integration issues, and context-switching doesn't register as "work." Code appearing on screen feels like productivity. The invisible effort of verification and correction disappears from perception.
-
-This wasn't about AI being unhelpful. It was about productivity being misattributed. <span class="ev ev-moderate" title="Same METR study, interpretation">◐</span>
-
-### Code Quality Signals
-
-GitClear analyzed 211 million lines across organizations before and after AI adoption. The patterns are measurable.
-
-**Duplication:**
-
-| Metric | Before AI | After AI |
-|--------|-----------|----------|
-| Code duplication rate | Baseline | **8x increase** |
-| Refactoring commits | Baseline | **Sharp decline** |
-| "Moved" and "Copy/paste" code | Baseline | **Significant increase** |
-
-AI generates code without awareness of existing implementations. Each generation produces a fresh solution. The human who would have searched for reusable components instead gets plausible new code — faster to accept than to find and integrate existing solutions.
-
-The refactoring decline signals loss of abstraction skill. Developers stop consolidating patterns because AI regenerates them on demand. The codebase shifts from cathedral (designed) to prefab (assembled).
-
-**DORA metrics:**
-
-The industry-wide measure of engineering effectiveness shows correlated degradation:
-
-| Metric | Change with AI adoption |
-|--------|-------------------------|
-| Deployment stability | **-7.2%** |
-| Throughput | **-1.5%** |
-
-This isn't one company or one team. This is the aggregate signal across the industry. AI adoption correlates with slight degradation in the metrics that matter for software delivery performance.
-
-### Security Degradation
-
-The security story is worse than the productivity story.
-
-**Baseline vulnerability rate:**
-
-Veracode's static analysis of AI-generated code found 45% contained critical vulnerabilities. <span class="ev ev-moderate" title="Veracode 2025 report, static analysis">◐</span> This isn't about sophisticated attacks. These are basic patterns:
-- Hardcoded credentials
-- SQL injection via string concatenation
-- Missing input validation
-- Insecure deserialization
-
-AI training data includes vulnerable code. Models reproduce those patterns without understanding the security implications.
-
-**The iteration trap:**
-
-Intuition suggests iterative refinement improves code. Measurement shows the opposite.
-
-Shukla et al. analyzed security across iterations: <span class="ev ev-moderate" title="Shukla et al. arXiv 2025">◐</span>
-
-| Iteration | Vulnerabilities per 1000 LOC |
-|-----------|------------------------------|
-| Initial generation | 2.1 |
-| After refinement | **6.2** |
-
-Security degrades with iteration. Each round adds code without removing vulnerabilities from previous rounds. The human reviewing iteration N has more to verify and less understanding of cumulative risk.
-
-Perry et al. confirmed the mechanism across 7,703 files: AI inherits vulnerabilities from training data and compounds them through generation. <span class="ev ev-moderate" title="Perry et al. arXiv 2025, 7,703 file analysis">◐</span>
-
-### The Explainability Gap
-
-Code complexity increases while developer understanding decreases. This is the gap that compounds over time.
-
-**The pattern:**
-
-```
-Sprint 1: Developer writes 500 LOC, understands all of it
-Sprint 2: AI generates 2000 LOC, developer understands ~60%
-Sprint 3: AI generates atop Sprint 2, developer understands ~30%
-Sprint N: Codebase assembled, not designed — comprehension lost
-```
-
-This isn't hypothetical. GitClear's "Cathedral to Prefabs" observation captures the shift: <span class="ev ev-strong" title="Same GitClear analysis, 211M LOC">●</span> developers transition from architects who design to assemblers who connect generated components.
-
-**Why it matters:**
-
-- **Debugging:** Can't debug what you don't understand
-- **Maintenance:** Can't maintain what you can't reason about
-- **Security:** Can't secure code you haven't comprehended
-- **Evolution:** Can't evolve architecture you didn't design
-
-The productivity gain in generation becomes productivity loss in maintenance. The code still has to be maintained. The developer who didn't understand it during generation won't understand it six months later during debugging.
-
-### The Perception Trap
-
-You cannot trust your own perception of AI-assisted productivity.
-
-The METR gap (43 percentage points between perception and measurement) isn't ignorance. It's how expertise works. Developers accurately perceive reduced effort in generation. They undercount effort in verification. The work shifts from visible creation to invisible validation.
-
-This prevents correction. If you believe you're faster, you won't measure. If you don't measure, you won't discover the gap. The illusion is self-sustaining.
-
-Stack Overflow's survey data confirms the trap at scale: <span class="ev ev-moderate" title="Stack Overflow Developer Survey 2024-2025, observational">◐</span>
-
-| Metric | 2024 | 2025 | Direction |
-|--------|------|------|-----------|
-| AI adoption | 76% | 84% | Rising |
-| Trust in AI accuracy | 43% | 33% | Falling |
-
-Adoption rises while trust falls. People use tools they don't trust because perceived productivity overrides measured performance. The feeling of speed substitutes for actual throughput.
-
-### What Actually Improves
-
-The productivity picture isn't uniformly negative. Specific tasks show genuine gains:
-
-| Task Type | Evidence | Magnitude |
-|-----------|----------|-----------|
-| Boilerplate generation | Multiple studies | Significant time savings |
-| Code translation | GitHub research | Meaningful improvement |
-| API exploration | Microsoft research | Faster onboarding |
-| Prototyping | Surveys + anecdotal | Widely reported |
-
-The gains are real. They coexist with the harms. The question isn't whether AI helps — it's whether the help outweighs the cost.
-
-For generation-heavy tasks with low maintenance burden (one-off scripts, prototypes, boilerplate), AI likely helps. For complex systems requiring long-term maintenance, the explainability gap and quality degradation may dominate.
-
-The catch: you can't know which category you're in without measurement.
-
-### Implications for Design
-
-The productivity paradox shapes extension design:
-
-**Never assume productivity gains.** Feeling faster is not being faster. Extensions should enable measurement (time tracking, quality metrics) not just generation acceleration.
-
-**Optimize for comprehension, not speed.** The bottleneck isn't code appearance — it's understanding. Extensions that explain why code works beat extensions that generate code faster.
-
-**Treat quality as primary metric.** Duplication, security, maintainability matter more than completion time. Extensions should surface quality signals before accepting AI output.
-
-**Preserve verification independence.** Generating and reviewing must be separate. Extensions that bundle them compound automation bias.
-
-**Make the invisible visible.** Time spent prompting, reviewing, and fixing should be tracked and surfaced. Developers can't calibrate without seeing total effort.
-
-The goal isn't faster code generation. The goal is sustainable development where today's productivity doesn't create tomorrow's maintenance crisis.
-
----
-
-## The Core Finding
-
-AI tools create a productivity illusion: reduced perceived effort with increased actual time, degraded code quality, and compounding security risk.
-
-Experienced developers working in familiar codebases were 19% slower while believing they were 24% faster. Industry metrics show quality degradation. Security analysis shows vulnerability accumulation.
-
-The trap is perceptual. Developers feel productive while measurements show otherwise. This prevents correction and enables the illusion to persist.
-
-Extensions that succeed will make this gap visible, optimize for understanding over speed, and treat quality as the primary outcome.
+[Full productivity evidence →](../reference/productivity-evidence)

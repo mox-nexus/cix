@@ -30,6 +30,8 @@ export async function loadLibraryContent(quadrant: Quadrant, slug: string) {
 		content: post.default,
 		metadata: post.metadata ?? {},
 		quadrant,
+		slug,
+		entry,
 		...(nav ?? {})
 	};
 }

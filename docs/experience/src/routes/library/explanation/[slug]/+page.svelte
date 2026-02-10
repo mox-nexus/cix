@@ -7,6 +7,8 @@
 
 <ArticleShell
 	quadrant="explanation"
+	slug={data.slug}
+	entry={data.entry}
 	content={data.content}
 	metadata={data.metadata}
 	position={data.position}

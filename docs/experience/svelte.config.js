@@ -1,6 +1,7 @@
 import adapter from '@sveltejs/adapter-static';
 import { mdsvex } from 'mdsvex';
 import { createHighlighter } from 'shiki';
+import rehypeSlug from 'rehype-slug';
 import { visit } from 'unist-util-visit';
 
 // Remark plugin: escape Svelte syntax in markdown prose.
@@ -31,6 +32,7 @@ const config = {
 	preprocess: [
 		mdsvex({
 			extensions: ['.md'],
+			rehypePlugins: [rehypeSlug],
 			remarkPlugins: [remarkEscapeSvelte],
 			highlight: {
 				highlighter: (code, lang) => {
