@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { LIBRARY, CLUSTERS, getClusterEntries } from '$lib/data/library';
-	import type { Cluster } from '$lib/data/library';
+	import type { Cluster, QuadrantMeta } from '$lib/data/library';
 	import { readingProgress, readingOverview } from '$lib/stores/reading-progress';
 	import { base } from '$app/paths';
 	import { CrossLinks } from '$lib/components/nav';
@@ -16,6 +16,14 @@
 		visited: '◐',
 		completed: '●'
 	};
+
+	/** Full quadrant list in display order (data may not have all of them) */
+	const QUADRANT_ORDER: { id: string; label: string; tagline: string }[] = [
+		{ id: 'explanation', label: 'Explanation', tagline: 'The research and reasoning' },
+		{ id: 'how-to', label: 'How-To', tagline: 'Practical guides for building extensions' },
+		{ id: 'tutorials', label: 'Tutorials', tagline: 'Hands-on learning from first principles' },
+		{ id: 'reference', label: 'Reference', tagline: 'Evidence syntheses and citations' }
+	];
 
 	let overview = $derived($readingOverview);
 	let totalArticles = $derived(
@@ -34,14 +42,20 @@
 		return { completed, visited, total: entries.length };
 	}
 
-	let reference = $derived(LIBRARY.find((q) => q.id === 'reference'));
+	function quadrantData(id: string): QuadrantMeta | undefined {
+		return LIBRARY.find((q) => q.id === id);
+	}
+
+	function quadrantCount(id: string): number {
+		return quadrantData(id)?.entries.length ?? 0;
+	}
 </script>
 
 <svelte:head>
 	<title>Library — cix</title>
 	<meta
 		name="description"
-		content="Research and practice of collaborative intelligence. 13 articles organized by topic cluster."
+		content="Research and practice of collaborative intelligence. Explanation, reference, and guides organized by Diataxis quadrant."
 	/>
 </svelte:head>
 
@@ -49,7 +63,7 @@
 	<header class="library-header">
 		<h1>Library</h1>
 		<p class="intro">
-			The research behind collaborative intelligence — organized by topic,
+			The research behind collaborative intelligence — organized by purpose,
 			ordered for progressive understanding.
 		</p>
 	</header>
@@ -74,13 +88,13 @@
 		</span>
 	</div>
 
-	<!-- Cluster navigation strip -->
-	<nav class="cluster-strip" aria-label="Topic clusters">
-		{#each CLUSTERS as cluster}
-			{@const cp = clusterProgress(cluster.id)}
-			<a href="#{cluster.id}" class="cluster-chip">
-				<span class="chip-label">{cluster.label}</span>
-				<span class="chip-progress">{cp.completed}/{cp.total}</span>
+	<!-- Quadrant navigation strip -->
+	<nav class="quadrant-strip" aria-label="Content quadrants">
+		{#each QUADRANT_ORDER as q}
+			{@const count = quadrantCount(q.id)}
+			<a href="#{q.id}" class="quadrant-chip" data-variant={q.id}>
+				<span class="chip-label">{q.label}</span>
+				<span class="chip-count">{count}</span>
 			</a>
 		{/each}
 	</nav>
@@ -96,68 +110,95 @@
 		</div>
 	{/if}
 
-	<!-- Cluster sections -->
-	{#each CLUSTERS as cluster}
-		{@const entries = getClusterEntries(cluster.id)}
-		{@const cp = clusterProgress(cluster.id)}
-		<section id={cluster.id} class="cluster-section">
-			<div class="cluster-header">
-				<h2 class="cluster-label">{cluster.label}</h2>
-				<p class="cluster-description">{cluster.description}</p>
-				<span class="cluster-progress-text">{cp.completed}/{cp.total}</span>
-			</div>
+	<!-- Quadrant sections -->
+	{#each QUADRANT_ORDER as q}
+		{@const data = quadrantData(q.id)}
 
-			<nav class="cluster-entries" aria-label="{cluster.label} articles">
-				{#each entries as entry, i}
-					{@const state = entryState(entry.slug)}
-					<a
-						href="{base}/library/explanation/{entry.slug}"
-						class="cluster-entry"
-						class:is-completed={state === 'completed'}
-						class:is-visited={state === 'visited'}
-					>
-						<span class="entry-index">{i + 1}</span>
-						<div class="entry-body">
-							<div class="entry-top">
-								<span class="entry-title">{entry.title}</span>
-								<span class="entry-meta">
-									{#if entry.readMinutes}{entry.readMinutes} min{/if}
-									{#if entry.difficulty}
-										<span class="entry-difficulty" title={entry.difficulty}>
-											{DIFFICULTY_ICON[entry.difficulty]}
-										</span>
-									{/if}
-								</span>
-							</div>
-							<span class="entry-description">{entry.description}</span>
+		{#if q.id === 'explanation' && data}
+			<!-- Explanation quadrant: cluster sub-sections -->
+			<section id="explanation" class="quadrant-section" data-variant="explanation">
+				<div class="quadrant-header">
+					<h2 class="quadrant-label">{data.label}</h2>
+					<p class="quadrant-tagline">{data.tagline}</p>
+					<span class="quadrant-count">{data.entries.length} articles</span>
+				</div>
+
+				{#each CLUSTERS as cluster}
+					{@const entries = getClusterEntries(cluster.id)}
+					{@const cp = clusterProgress(cluster.id)}
+					<div id={cluster.id} class="cluster-group">
+						<div class="cluster-header">
+							<h3 class="cluster-label">{cluster.label}</h3>
+							<span class="cluster-description">{cluster.description}</span>
+							<span class="cluster-progress-text">{cp.completed}/{cp.total}</span>
 						</div>
-						<span class="entry-state" title={state}>
-							{STATE_ICON[state]}
-						</span>
-					</a>
-					{#if i < entries.length - 1}
-						<div class="entry-connector" aria-hidden="true"></div>
-					{/if}
-				{/each}
-			</nav>
-		</section>
-	{/each}
 
-	<!-- Reference section -->
-	{#if reference && reference.entries.length > 0}
-		<section id="reference" class="reference-section">
-			<div class="cluster-header">
-				<h2 class="cluster-label">Reference</h2>
-				<p class="cluster-description">{reference.tagline}</p>
-			</div>
-			{#each reference.entries as entry}
-				<a href="{base}/library/reference/{entry.slug}" class="ref-link">
-					<span class="ref-title">{entry.title}</span>
-					<span class="ref-description">{entry.description}</span>
-				</a>
-			{/each}
-		</section>
-	{/if}
+						<nav class="cluster-entries" aria-label="{cluster.label} articles">
+							{#each entries as entry, i}
+								{@const state = entryState(entry.slug)}
+								<a
+									href="{base}/library/explanation/{entry.slug}"
+									class="cluster-entry"
+									class:is-completed={state === 'completed'}
+									class:is-visited={state === 'visited'}
+								>
+									<span class="entry-index">{i + 1}</span>
+									<div class="entry-body">
+										<div class="entry-top">
+											<span class="entry-title">{entry.title}</span>
+											<span class="entry-meta">
+												{#if entry.readMinutes}{entry.readMinutes} min{/if}
+												{#if entry.difficulty}
+													<span class="entry-difficulty" title={entry.difficulty}>
+														{DIFFICULTY_ICON[entry.difficulty]}
+													</span>
+												{/if}
+											</span>
+										</div>
+										<span class="entry-description">{entry.description}</span>
+									</div>
+									<span class="entry-state" title={state}>
+										{STATE_ICON[state]}
+									</span>
+								</a>
+								{#if i < entries.length - 1}
+									<div class="entry-connector" aria-hidden="true"></div>
+								{/if}
+							{/each}
+						</nav>
+					</div>
+				{/each}
+			</section>
+
+		{:else if q.id === 'reference' && data && data.entries.length > 0}
+			<!-- Reference quadrant -->
+			<section id="reference" class="quadrant-section" data-variant="reference">
+				<div class="quadrant-header">
+					<h2 class="quadrant-label">{data.label}</h2>
+					<p class="quadrant-tagline">{data.tagline}</p>
+					<span class="quadrant-count">{data.entries.length} entries</span>
+				</div>
+				<div class="ref-grid">
+					{#each data.entries as entry}
+						<a href="{base}/library/reference/{entry.slug}" class="ref-link">
+							<span class="ref-title">{entry.title}</span>
+							<span class="ref-description">{entry.description}</span>
+						</a>
+					{/each}
+				</div>
+			</section>
+
+		{:else if !data || data.entries.length === 0}
+			<!-- Empty quadrant placeholder -->
+			<section id={q.id} class="quadrant-section quadrant-placeholder" data-variant={q.id}>
+				<div class="quadrant-header">
+					<h2 class="quadrant-label">{q.label}</h2>
+					<p class="quadrant-tagline">{q.tagline}</p>
+				</div>
+				<p class="placeholder-text">Coming soon.</p>
+			</section>
+		{/if}
+	{/each}
 
 	<CrossLinks />
 </div>
@@ -229,9 +270,9 @@
 		white-space: nowrap;
 	}
 
-	/* --- Cluster Strip --- */
+	/* --- Quadrant Strip --- */
 
-	.cluster-strip {
+	.quadrant-strip {
 		display: flex;
 		gap: var(--space-2);
 		padding-bottom: var(--space-2);
@@ -240,7 +281,7 @@
 		flex-wrap: wrap;
 	}
 
-	.cluster-chip {
+	.quadrant-chip {
 		font-family: var(--font-sans);
 		font-size: var(--type-xs);
 		text-transform: uppercase;
@@ -253,11 +294,16 @@
 		transition: color var(--duration-fast) var(--easing-linear);
 	}
 
-	.cluster-chip:hover {
+	.quadrant-chip:hover {
 		color: var(--dao-text);
 	}
 
-	.chip-progress {
+	.quadrant-chip[data-variant='explanation']:hover { color: var(--quadrant-explanation); }
+	.quadrant-chip[data-variant='how-to']:hover { color: var(--quadrant-how-to); }
+	.quadrant-chip[data-variant='tutorials']:hover { color: var(--quadrant-tutorials); }
+	.quadrant-chip[data-variant='reference']:hover { color: var(--quadrant-reference); }
+
+	.chip-count {
 		font-family: var(--font-mono);
 		font-size: var(--type-xs);
 		opacity: 0.5;
@@ -303,18 +349,71 @@
 		color: var(--dao-muted);
 	}
 
-	/* --- Cluster Sections --- */
+	/* --- Quadrant Sections --- */
 
-	.cluster-section {
-		margin-bottom: var(--space-4);
+	.quadrant-section {
+		margin-bottom: var(--space-5);
 	}
 
-	.reference-section {
-		margin-bottom: var(--space-4);
+	.quadrant-header {
+		margin-bottom: var(--space-2);
+		padding-bottom: var(--space-1);
+		display: flex;
+		align-items: baseline;
+		gap: var(--space-2);
+		flex-wrap: wrap;
+	}
+
+	.quadrant-section[data-variant='explanation'] .quadrant-header {
+		border-bottom: 2px solid var(--quadrant-explanation);
+	}
+	.quadrant-section[data-variant='how-to'] .quadrant-header {
+		border-bottom: 2px solid var(--quadrant-how-to);
+	}
+	.quadrant-section[data-variant='tutorials'] .quadrant-header {
+		border-bottom: 2px solid var(--quadrant-tutorials);
+	}
+	.quadrant-section[data-variant='reference'] .quadrant-header {
+		border-bottom: 2px solid var(--quadrant-reference);
+	}
+
+	.quadrant-label {
+		font-family: var(--font-sans);
+		font-size: var(--type-sm);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-widest);
+		margin: 0;
+		font-weight: 600;
+	}
+
+	.quadrant-section[data-variant='explanation'] .quadrant-label { color: var(--quadrant-explanation); }
+	.quadrant-section[data-variant='how-to'] .quadrant-label { color: var(--quadrant-how-to); }
+	.quadrant-section[data-variant='tutorials'] .quadrant-label { color: var(--quadrant-tutorials); }
+	.quadrant-section[data-variant='reference'] .quadrant-label { color: var(--quadrant-reference); }
+
+	.quadrant-tagline {
+		font-family: var(--font-mono);
+		font-size: var(--type-sm);
+		color: var(--dao-muted);
+		margin: 0;
+		flex: 1;
+	}
+
+	.quadrant-count {
+		font-family: var(--font-mono);
+		font-size: var(--type-xs);
+		color: var(--dao-muted);
+		opacity: 0.5;
+	}
+
+	/* --- Cluster Groups (inside Explanation) --- */
+
+	.cluster-group {
+		margin-bottom: var(--space-3);
 	}
 
 	.cluster-header {
-		margin-bottom: var(--space-2);
+		margin-bottom: var(--space-1);
 		padding-bottom: var(--space-1);
 		border-bottom: 1px solid var(--dao-border-subtle);
 		display: flex;
@@ -450,21 +549,27 @@
 		margin-left: calc(1ch + var(--space-1));
 	}
 
-	/* --- Reference Link --- */
+	/* --- Reference Grid --- */
+
+	.ref-grid {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+	}
 
 	.ref-link {
 		display: block;
 		padding: var(--space-2);
 		background: var(--dao-surface);
 		border: 1px solid var(--dao-border);
-		border-left: 3px solid var(--dao-text-secondary);
+		border-left: 3px solid var(--quadrant-reference);
 		border-radius: var(--radius-sm);
 		text-decoration: none;
 		transition: border-color var(--duration-fast) var(--easing-linear);
 	}
 
 	.ref-link:hover {
-		border-color: var(--dao-text-secondary);
+		border-color: var(--quadrant-reference);
 	}
 
 	.ref-title {
@@ -482,12 +587,22 @@
 		color: var(--dao-muted);
 	}
 
+	/* --- Placeholder --- */
+
+	.quadrant-placeholder .placeholder-text {
+		font-family: var(--font-mono);
+		font-size: var(--type-sm);
+		color: var(--dao-muted);
+		padding: var(--space-2) 0;
+		margin: 0;
+	}
+
 	/* --- Reduced Motion --- */
 
 	@media (prefers-reduced-motion: reduce) {
 		.cluster-entry,
 		.ref-link,
-		.cluster-chip,
+		.quadrant-chip,
 		.progress-fill,
 		.progress-visited {
 			transition: none;
