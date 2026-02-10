@@ -4,13 +4,22 @@ Explanation craft through simultaneous encoding. Part of the [cix](../../) marke
 
 ## What This Plugin Does
 
-Helps Claude write explanations that carry principle, pattern, and practice simultaneously — so the receiver pulls what they need rather than being forced through a prescribed sequence.
+Helps Claude write explanations that carry all three doors simultaneously — principle, concretions, and ground — so the receiver pulls what they need rather than being forced through a prescribed sequence.
+
+## The Three Doors
+
+| Door | Explanation | Engineering | Philosophy |
+|------|-------------|-------------|------------|
+| **1** | Principle | Abstraction | Universal |
+| **2** | Concretions | Planning | Constituency |
+| **3** | Ground | Execution | Self |
 
 ## Skills
 
 | Skill | Purpose |
 |-------|---------|
-| **craft-explanations** | Core encoding principle, audience calibration, explanation routing |
+| **craft-explanations** | Three Doors encoding, modal lock diagnosis, explanation routing |
+| **weaving** | Re-weave modal-locked content across all three doors |
 | **visual-communication** | Diagram type selection (Mermaid, D2, C4), visual explanation design |
 | **information-architecture** | Collection-level structure, single source of truth, layer model |
 
@@ -18,16 +27,17 @@ Helps Claude write explanations that carry principle, pattern, and practice simu
 
 | Agent | Entry Door | Best For |
 |-------|-----------|----------|
-| **feynman** | Practice (concrete, example-first) | Docs, tutorials, teaching |
-| **sagan** | Principle (wonder, abstraction) | Vision docs, concept overviews |
-| **tufte** | Pattern (visual, relational) | Diagram decisions, data explanation |
-| **socrates** | Dialectical (forces traversal) | Reviewing explanations, deepening understanding |
+| **feynman** | Door 3 (Ground · Execution · Self) | Docs, tutorials, teaching |
+| **sagan** | Door 1 (Principle · Abstraction · Universal) | Vision docs, concept overviews |
+| **tufte** | Door 2 (Concretions · Planning · Constituency) | Diagram decisions, data explanation |
+| **socrates** | Forces traversal across all doors | Reviewing explanations, deepening understanding |
 
 ## Design Philosophy
 
 See `docs/explanation/methodology.md` for the full rationale. Key points:
 
-- **Simultaneous encoding** over sequential disclosure
-- **Route, don't teach** — Claude already knows CLT, Diataxis, Feynman
-- **Shift, don't add** — when an explanation dimension is missing, re-encode rather than bolt on
-- **Modal lock** awareness — Claude's default failure mode is more structure when grounding is needed
+- **Three Doors** — principle, concretions, and ground as simultaneous dimensions, not sequential layers
+- **Directional modal lock** — shifts go through the next door (1→2→3), not a skip
+- **Wider, not louder** — encode all three doors so signal survives lossy compression
+- **Dimensional shift** — the most powerful moments happen when understanding crosses doors
+- **Constituency is the bridge** — you can't reach Self without passing through Constituency

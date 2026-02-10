@@ -72,8 +72,9 @@ Research informing the craft-explanations plugin design.
 
 ## Philosophy
 
-- Bhagavad Gita / Samkhya. Three gunas: Sattva, Rajas, Tamas.
-  - Not quality levels. Dimensions of perception. All present simultaneously.
+- "The Three Doors: A Framework for Resonant Transmission."
+  - Origin essay for the facet-set model (Principle|Abstraction|Universal → Concretions|Planning|Constituency → Ground|Execution|Self).
+  - Key concepts: directional modal lock, dimensional shift, wider-not-louder, instrumental boundaries, the missing ground.
 
 - Marr, D. (1982). *Vision*. Computational, algorithmic, implementational levels.
   - Parallel structure: principle (computational), pattern (algorithmic), practice (implementational).

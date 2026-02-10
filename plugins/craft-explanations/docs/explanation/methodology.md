@@ -2,58 +2,92 @@
 
 This document explains WHY the craft-explanations plugin is designed the way it is.
 
-## The Core Insight: Simultaneous Encoding
+## The Core Insight: The Three Doors
 
-Traditional explanation design treats teaching as sequential disclosure: first the principle, then the pattern, then the practice. This maps to pedagogical frameworks like Bloom's taxonomy (remember -> understand -> apply) or progressive disclosure (overview -> details -> depth).
+Explanations aren't sequential layers (principle → pattern → practice). They're fabric with three simultaneous dimensions — a coordinate system, not a ladder.
 
-The craft-explanations plugin is built on a different insight: **good explanations carry all three dimensions simultaneously**. The receiver pulls what they need based on their current orientation.
+Three dimensions of perception, not a hierarchy:
 
-This insight comes from the Hindu philosophical framework of the three gunas (Samkhya/Bhagavad Gita):
+- **Coherence** — the unifying principle, why this holds together
+- **Contrast** — the alternatives weighed, why this and not that
+- **Ground** — the weight that doesn't argue for itself, what is right now
 
-- **Sattvic** = principle, abstraction, impact over time
-- **Rajasic** = pattern, category, relational structure
-- **Tamasic** = practice, concrete action, implementation
+### The Facet-Set Model
 
-These aren't quality levels (good/neutral/bad). They're dimensions of perception. All three are present in every phenomenon. The observer's orientation determines which dimension they engage with.
+Each door isn't a single concept. It's a facet set — the same dimension viewed from different domains:
 
-Applied to explanations: the same paragraph can simultaneously convey:
-- What to do (practice)
-- How it connects to other things (pattern)
-- Why it matters (principle)
+| Door | Explanation | Engineering | Philosophy |
+|------|-------------|-------------|------------|
+| **1** | Principle | Abstraction | Universal |
+| **2** | Concretions | Planning | Constituency |
+| **3** | Ground | Execution | Self |
 
-The reader enters through whichever dimension matches their current need.
+The vertical alignment is the same dimension through different lenses. The horizontal flow narrows: Universal → Constituency → Self.
 
-## Why "Route, Don't Teach"
+- Door 1 is true everywhere, no context needed
+- Door 2 is true for these people, in this situation — it requires knowing who's in the room
+- Door 3 is true for me, right now, in my hands — it requires the body
 
-The skill files are deliberately lean routing tables rather than comprehensive methodology documents. This is based on two findings:
+**Constituency is the bridge.** The abstract becomes concrete *for someone*. Skip Door 2 and Door 3 becomes generic steps. You can't jump from Universal to Self without passing through Constituency.
 
-1. **Prompting Inversion** (arXiv 2510.22251): Explicit procedural constraints on frontier models can *reduce* performance. WHY framing improves from 31.5% to 97.3% vs HOW framing. Compressed behavior triggers achieve 46% token reduction with no quality loss.
+### Evolution from v0.1
 
-2. **Expertise Reversal Effect** (Tetzlaff 2025, n=5,924): What helps novices (high guidance, d=0.505) actively harms experts (d=-0.428). Claude already knows CLT, Diataxis, Feynman technique, etc. Teaching them again wastes tokens and can degrade performance.
+The original skill used Principle / Pattern / Practice as the three labels. This was replaced in v0.2 because:
 
-The skill tells Claude WHEN to use which technique and WHY — not HOW to apply them.
+- **"Pattern"** was the weakest name. It doesn't communicate that Door 2 is about *who this is for* — the constituency, the concretion for a specific audience. "Pattern" sounds like taxonomy. "Concretions" says the universal truth has been shaped for someone particular.
+- **"Practice"** was too generic. "Just add a practical example" can still be abstract — a hypothetical scenario, a generic code sample. That's Door 1 wearing Door 3's clothes. "Ground" conveys weight, embodiment, the thing that doesn't argue for itself because it doesn't need to.
+- **The facet sets** reveal that the three doors aren't explanation-specific. They map onto engineering (Abstraction → Planning → Execution), philosophy (Universal → Constituency → Self), and architecture (Domain model → Application layer → Infrastructure). The framework is a coordinate system that applies across domains.
+
+## Why Directional Modal Lock
+
+v0.1 diagnosed modal lock as "you're stuck in one dimension, shift to another." v0.2 adds directionality: shifts go through the next door (1→2→3), not a skip.
+
+This matters because:
+- Jumping from Door 1 (beautiful framework) directly to Door 3 (steps) without Door 2 (who is this for?) produces generic instructions that look practical but aren't grounded in anyone's reality
+- Door 2 is the bridge that gets skipped most often — especially by Claude, whose default lock is Abstraction | Universal
+- The directional diagnosis tells you *which* shift to make, not just that one is needed
+
+## Why Dimensional Shift
+
+The most powerful learning moments happen at intersections between doors — when understanding crosses from one dimension to another. "I understood it, then suddenly I *felt* it" (Door 1 → Door 3). "I iterated, then it settled into my hands" (Door 2 → Door 3).
+
+This goes beyond "all three doors should be present" to: **design the transitions between them**. The moment of crossing is where information becomes knowledge.
+
+## Why "Wider, Not Louder"
+
+When explanation fails, the instinct is to amplify: more docs, more slides, more energy. This deepens modal lock.
+
+The reframe: explanation failure is dimensional compression across instrumental boundaries. Each receiver — each organizational layer — compresses through whatever dimensions it can perceive. The fix isn't louder signal. It's wider encoding — all three doors woven so that enough survives in whatever dimension the receiver can pass.
+
+This connects to the interpretability insight: the meeting problem (human → human) and the interpretability problem (model → human) may be the same dimensional compression problem viewed from opposite directions.
 
 ## Why Four Agents with Different Entry Doors
 
-Initial design mapped agents 1:1 to dimensions: Feynman = practice, Tufte = pattern, Sagan = principle. This was rejected because it decomposes the simultaneous encoding back into sequential traversal.
+Initial design mapped agents 1:1 to dimensions. This was rejected because it decomposes simultaneous encoding back into sequential traversal.
 
-Instead, each agent enters through a different door but carries ALL three dimensions:
+Instead, each agent enters through a different door but carries ALL three:
 
-- **Feynman** enters through practice (example-first) but surfaces pattern and principle
-- **Sagan** enters through principle (wonder) but grounds in pattern and practice
-- **Tufte** enters through pattern (visual structure) but serves practice and principle
-- **Socrates** is meta — forces the receiver to traverse all dimensions through questioning
+- **Feynman** enters through Door 3 (Ground · Execution · Self) — example-first, surfaces why it works
+- **Sagan** enters through Door 1 (Principle · Abstraction · Universal) — wonder-first, grounds in the tangible
+- **Tufte** enters through Door 2 (Concretions · Planning · Constituency) — who needs to see this, what makes it concrete for them
+- **Socrates** is meta — forces traversal across all doors and checks for dimensional shift
 
-The difference between agents is the entry point, not the content of what they produce.
+The Tufte reframe was the most significant: from "pattern/visual structure" to "constituency/concretion." This changes the agent's first question from "what's the right diagram type?" to "who needs to see this?"
 
 ## Why "Modal Lock" Is the Key Anti-Pattern
 
-Modal lock is Claude's specific failure mode: defaulting to sattvic-rajasic encoding (clean taxonomies, headers, bullet structures) and amplifying the same mode when it doesn't land.
+Modal lock is Claude's specific failure mode: defaulting to Door 1 (clean taxonomies, headers, structure) and amplifying when it doesn't land.
 
-This matters because:
-- Most explanation failures aren't knowledge gaps — they're encoding mismatches
-- The fix is shifting to the missing dimension, not adding more of what's already there
-- "Shift, don't add" is the core correction principle
+With the facet-set model, the diagnosis is more precise:
+- What's over-represented: Abstraction | Universal
+- What's missing: Constituency — the question "who is standing at this door?"
+- What looks like a fix but isn't: generic examples (Door 1 in Door 3's clothes)
+
+## The Missing Ground
+
+Professional communication is almost entirely Door 1 + Door 2: docs, diagrams, logic, demos, energy. Door 3 — weight, inevitability, ground — is nearly absent from professional contexts.
+
+The closest analog: showing the thing already working. Not a prototype. The thing itself. This is an open question in the framework — ground-level transmission may require a fundamentally different instrument than the deck or the document.
 
 ## Research Base
 
@@ -77,4 +111,4 @@ Key findings informing the design:
 - arXiv:2510.22251. Prompting Inversion for frontier models.
 - Mayer, R. (2009). Multimedia Learning. Cambridge University Press.
 - Nielsen Norman Group. F-pattern, scanning, information architecture research.
-- Samkhya/Bhagavad Gita. Three gunas philosophical framework.
+- "The Three Doors: A Framework for Resonant Transmission" — origin essay for the facet-set model.
