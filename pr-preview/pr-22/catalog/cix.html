@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		
+		<link href="../_app/immutable/assets/0.CPJORcIU.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/CrossLinks.C4T6atsV.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/5.C4hqQtKK.css" rel="stylesheet">
+		<link rel="modulepreload" href="../_app/immutable/entry/start.CErVG62D.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/DI1hKYpC.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/CDDJmPzr.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/D5Xj3ZXT.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/D0iwhpLH.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/Cza-eoC2.js">
+		<link rel="modulepreload" href="../_app/immutable/entry/app.pJCGw2HY.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/BtC_y5ln.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/DzRGpBIR.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/Bb8tKOVS.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/B4_FGh31.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/lNHfcz3e.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/do-Ws7ci.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/Durb-G3s.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/CctXr6u4.js">
+		<link rel="modulepreload" href="../_app/immutable/nodes/0.B_unwFlx.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/BWK-fzAV.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/Bqd7FNqS.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/CEoIbbA0.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/DJEkUMKa.js">
+		<link rel="modulepreload" href="../_app/immutable/nodes/5.Cm32ORpG.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/Dp_ZLsHn.js"><!--12qhfyh--><meta name="description" content="Extensions that enhance human capability, not replace it."/><!----><!--wzm642--><meta name="description" content="Package manager for cognitive extensions. Discovers, installs, and manages Claude Code extensions from marketplace repositories."/><!----><title>cix — cix</title>
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents"><!--[--><!--[--><!----><a href="#main" class="skip-link">Skip to content</a> <!--[--><nav class="site-nav svelte-qgym72" aria-label="Site navigation"><a href="../" class="nav-wordmark svelte-qgym72">cix</a> <div class="nav-links svelte-qgym72"><!--[--><a href="../ethos" class="nav-link svelte-qgym72">ethos</a><a href="../catalog" class="nav-link svelte-qgym72">catalog</a><a href="../library" class="nav-link svelte-qgym72">library</a><!--]--></div></nav><!--]--> <div class="page svelte-12qhfyh has-nav"><!--[!--><!----><main id="main" class="detail-page svelte-wzm642" style="--variant-color: var(--spark-core)"><nav class="detail-back svelte-wzm642"><a href="../catalog" class="svelte-wzm642">← catalog</a></nav> <header class="detail-header svelte-wzm642"><div class="header-top svelte-wzm642"><h1 class="svelte-wzm642">cix</h1> <span class="detail-kind svelte-wzm642">tool</span> <span class="detail-version svelte-wzm642">0.1.0</span></div> <p class="detail-description svelte-wzm642">Package manager for cognitive extensions. Discovers, installs, and manages Claude Code extensions from marketplace repositories.</p> <!--[!--><!--]--> <!--[--><div class="detail-tags svelte-wzm642"><!--[--><span class="tag svelte-wzm642">tool</span><span class="tag svelte-wzm642">cli</span><!--]--></div><!--]--></header> <article class="detail-content prose svelte-wzm642"><!----><h1>cix - Collaborative Intelligence Extensions CLI</h1>
+<blockquote>
+<p>Discover, install, and manage cognitive extensions that enhance rather than replace human capability.</p>
+</blockquote>
+<h2>Philosophy</h2>
+<p>cix is built on the <strong>Collaborative Intelligence</strong> thesis: AI tools should amplify human capability, not substitute for it. Every extension in this ecosystem is designed to make you more capable, not dependent.</p>
+<h2>Installation</h2>
+<pre><code class="language-bash">uv tool install cix
+</code></pre>
+<h2>Quick Start</h2>
+<pre><code class="language-bash"># Add a source (marketplace of extensions)
+cix source add https://github.com/mox-nexus/cix-extensions
+
+# List available extensions
+cix list -a
+
+# Install an extension
+cix add reasoning-frameworks
+
+# See what&#39;s installed
+cix list
+</code></pre>
+<h2>Commands</h2>
+<h3>Sources (Extension Marketplaces)</h3>
+<pre><code class="language-bash">cix source add &lt;url&gt;        # Register a source
+cix source list             # Show registered sources
+cix source rm &lt;name&gt;        # Remove a source
+cix source refresh [name]   # Fetch latest from source(s)
+</code></pre>
+<h3>Extensions</h3>
+<pre><code class="language-bash">cix list [-a] [-v]          # List installed (or -a available) extensions
+cix add &lt;extension&gt;         # Install an extension
+cix rm &lt;extension&gt;          # Remove an extension
+cix update [extension]      # Update extension(s)
+cix show &lt;extension&gt;        # Show extension details
+</code></pre>
+<h3>System</h3>
+<pre><code class="language-bash">cix info                    # Show cix configuration and status
+</code></pre>
+<h2>Extension Types</h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Skill</strong></td>
+<td>Decision frameworks and methodology</td>
+<td>reasoning-patterns</td>
+</tr>
+<tr>
+<td><strong>Agent</strong></td>
+<td>Specialized subagents for delegation</td>
+<td>structured-problem-solver</td>
+</tr>
+<tr>
+<td><strong>Hook</strong></td>
+<td>Event-triggered behaviors</td>
+<td>metacognitive-check</td>
+</tr>
+<tr>
+<td><strong>MCP</strong></td>
+<td>External service integrations</td>
+<td>knowledge-base-connector</td>
+</tr>
+</tbody></table>
+<h2>Design Principles</h2>
+<ol>
+<li><strong>Complementary, not Substitutive</strong> - Extensions enhance your capability, they don&#39;t replace it</li>
+<li><strong>Transparent Reasoning</strong> - See why, not just what</li>
+<li><strong>Human-Initiated</strong> - You control when and how extensions engage</li>
+<li><strong>Evidence-Based</strong> - Claims are grounded in research and experience</li>
+</ol>
+<h2>License</h2>
+<p>MIT</p>
+<!----></article></main><!----><!--]--><!----></div> <div class="experimental-tag svelte-12qhfyh" aria-hidden="true">experimental</div><!----><!--]--> <!--[!--><!--]--><!--]-->
+			
+			<script>
+				{
+					__sveltekit_16atlio = {
+						base: new URL("..", location).pathname.slice(0, -1),
+						assets: "/cix/pr-preview/pr-22"
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("../_app/immutable/entry/start.CErVG62D.js"),
+						import("../_app/immutable/entry/app.pJCGw2HY.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element, {
+							node_ids: [0, 5],
+							data: [null,{type:"data",data:{extension:{slug:"cix",kind:"tool",manifest:{name:"cix",version:"0.1.0",description:"Package manager for cognitive extensions. Discovers, installs, and manages Claude Code extensions from marketplace repositories.",author:{name:"Mox Labs"}},tagline:"Discover, install, and manage cognitive extensions that enhance rather than replace human capability.",readme:"# cix - Collaborative Intelligence Extensions CLI\n\n> Discover, install, and manage cognitive extensions that enhance rather than replace human capability.\n\n## Philosophy\n\ncix is built on the **Collaborative Intelligence** thesis: AI tools should amplify human capability, not substitute for it. Every extension in this ecosystem is designed to make you more capable, not dependent.\n\n## Installation\n\n```bash\nuv tool install cix\n```\n\n## Quick Start\n\n```bash\n# Add a source (marketplace of extensions)\ncix source add https://github.com/mox-nexus/cix-extensions\n\n# List available extensions\ncix list -a\n\n# Install an extension\ncix add reasoning-frameworks\n\n# See what's installed\ncix list\n```\n\n## Commands\n\n### Sources (Extension Marketplaces)\n\n```bash\ncix source add \u003Curl>        # Register a source\ncix source list             # Show registered sources\ncix source rm \u003Cname>        # Remove a source\ncix source refresh [name]   # Fetch latest from source(s)\n```\n\n### Extensions\n\n```bash\ncix list [-a] [-v]          # List installed (or -a available) extensions\ncix add \u003Cextension>         # Install an extension\ncix rm \u003Cextension>          # Remove an extension\ncix update [extension]      # Update extension(s)\ncix show \u003Cextension>        # Show extension details\n```\n\n### System\n\n```bash\ncix info                    # Show cix configuration and status\n```\n\n## Extension Types\n\n| Type | Purpose | Example |\n|------|---------|---------|\n| **Skill** | Decision frameworks and methodology | reasoning-patterns |\n| **Agent** | Specialized subagents for delegation | structured-problem-solver |\n| **Hook** | Event-triggered behaviors | metacognitive-check |\n| **MCP** | External service integrations | knowledge-base-connector |\n\n## Design Principles\n\n1. **Complementary, not Substitutive** - Extensions enhance your capability, they don't replace it\n2. **Transparent Reasoning** - See why, not just what\n3. **Human-Initiated** - You control when and how extensions engage\n4. **Evidence-Based** - Claims are grounded in research and experience\n\n## License\n\nMIT\n",components:{agents:0,skills:0,hooks:0,commands:0},variant:"spark",tags:["tool","cli"]}},uses:{params:["slug"]}}],
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+	</body>
+</html>
