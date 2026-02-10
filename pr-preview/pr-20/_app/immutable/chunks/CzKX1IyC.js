@@ -1,0 +1,1 @@
+import{l as o,i as l,j as t,k as u,u as a}from"./DXXdKfFK.js";function s(n){t===null&&o(),u&&t.l!==null?c(t).m.push(n):l(()=>{const e=a(n);if(typeof e=="function")return e})}function c(n){var e=n.l;return e.u??={a:[],b:[],m:[]}}export{s as o};
