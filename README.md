@@ -156,7 +156,7 @@ cix is grounded in research synthesis from:
 - Bastani et al. (2025). "Generative AI without guardrails can harm learning." PNAS.
 - Lee et al. (2025). "The Impact of Generative AI on Critical Thinking." CHI.
 - Kosmyna et al. (2025). "Your Brain on ChatGPT: Cognitive Debt." MIT Media Lab.
-- Hemmer et al. (2024). "Complementarity in Human-AI Collaboration." EJIS.
+- Blaurock et al. (2024). "Designing Collaborative Intelligence Systems." Journal of Service Research.
 - Cui/Demirer et al. (2024). "Effects of Generative AI on High Skilled Work." Multiple RCTs.
 
 Full bibliography with 50+ sources: `docs/content/library/reference/bibliography.md`

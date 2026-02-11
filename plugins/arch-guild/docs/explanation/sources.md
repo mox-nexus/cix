@@ -422,11 +422,11 @@ The Guild's design is grounded in research on human-AI collaboration.
 
 ### Control and Transparency
 
-**Source**: Hemmer et al. (2024)
+**Source**: Blaurock et al. (2024)
 
-Hemmer, Patrick, et al. "Human-AI Collaboration: The Effect of AI Delegation on Performance." *European Journal of Information Systems* (2024).
+Blaurock, Matthias, et al. "Designing Collaborative Intelligence Systems for Employee-AI Service Co-Production." *Journal of Service Research* 28(4). DOI: 10.1177/10946705241253322.
 
-**Key Finding**: Control (β = 0.507) and Transparency (β = 0.415) are the strongest levers for effective human-AI collaboration.
+**Key Finding**: Process control (β = 0.507) and transparency (β = 0.415) are the strongest levers for effective human-AI collaboration. Engagement features backfire (b = -0.555). Meta-analysis: 106 studies, N = 654.
 
 **Application**: Orthogonality locks provide transparency (you know what perspective you're getting). Human synthesis preserves control (no agent can override another's domain).
 
@@ -478,7 +478,7 @@ The Guild references proven patterns:
 
 The collaborative intelligence research explains WHY the Guild works:
 
-- Control and transparency (Hemmer et al.)
+- Control and transparency (Blaurock et al.)
 - Diversity preservation (Lee et al.)
 - Learning through validation (Bastani et al.)
 
