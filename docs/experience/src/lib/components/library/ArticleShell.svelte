@@ -395,7 +395,7 @@
 		width: 100%;
 		border-collapse: collapse;
 		font-family: var(--font-mono);
-		font-size: var(--type-sm);
+		font-size: var(--type-base);
 		line-height: var(--leading-snug);
 		margin: var(--space-3) 0;
 	}
@@ -407,7 +407,7 @@
 		padding: var(--space-1) var(--space-2);
 		border-bottom: 2px solid var(--dao-border);
 		color: var(--dao-text-secondary);
-		font-size: var(--type-xs);
+		font-size: var(--type-sm);
 		text-transform: uppercase;
 		letter-spacing: var(--tracking-wider);
 	}
@@ -492,11 +492,6 @@
 
 	.library-prose :global(.ev-speculative) {
 		color: var(--ev-speculative);
-		opacity: 0.7;
-	}
-
-	.library-prose :global(.ev-speculative:hover) {
-		opacity: 0.9;
 	}
 
 	/* Keyboard focus ring for evidence badges */

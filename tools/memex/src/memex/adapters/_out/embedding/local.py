@@ -42,12 +42,20 @@ class LocalEmbedder:
 
     def embed(self, text: str) -> list[float]:
         """Embed a single text. Returns 384-dim vector."""
-        embedding = self.model.encode(text, convert_to_numpy=True)
+        embedding = self.model.encode(
+            text,
+            convert_to_numpy=True,
+            show_progress_bar=False,
+        )
         return embedding.tolist()
 
     def embed_batch(self, texts: list[str]) -> list[list[float]]:
         """Embed multiple texts. More efficient than single calls."""
         if not texts:
             return []
-        embeddings = self.model.encode(texts, convert_to_numpy=True)
+        embeddings = self.model.encode(
+            texts,
+            convert_to_numpy=True,
+            show_progress_bar=False,
+        )
         return embeddings.tolist()
