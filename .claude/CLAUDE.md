@@ -21,7 +21,8 @@ This project is grounded in rigorous research synthesis from premier venues (CHI
 |---------|--------|-------------|
 | 26% more tasks completed with AI | Cui/Demirer RCTs (n=4,867) | Productivity gains are real |
 | 17% worse exam performance without AI | Bastani et al. PNAS (n=1,000) | Learning harm is real |
-| 20% skill reduction after 3 months | Lancet colonoscopy study | Deskilling is measurable |
+| 86% vs 24% mastery from same AI access | Shen & Tamkin, Anthropic RCT (n=52) | Interaction pattern determines outcome |
+| 20% skill reduction after 3 months | Budzyń et al. Lancet 2025 | Deskilling is measurable |
 | β = -0.69 correlation | Lee et al. CHI 2025 | AI confidence → less critical thinking |
 
 ### Key Research Findings
@@ -29,16 +30,17 @@ This project is grounded in rigorous research synthesis from premier venues (CHI
 **On Cognitive Offloading:**
 - Higher confidence in AI significantly predicts less critical thinking enacted
 - Neural connectivity "systematically scaled down" with AI use (MIT Media Lab EEG study)
-- 83.3% of AI users couldn't recall quotes from their own AI-assisted essays
+- 83.3% of AI users couldn't recall quotes from their own AI-assisted essays (Kosmyna et al. 2025, preprint, n=54)
 
 **On Trust Calibration:**
-- Developers spend only 22.4% of coding time verifying AI suggestions
+- Developers spend only 22.4% of coding time verifying AI suggestions (Peng et al. 2023)
 - Explanations alone *increase* overreliance (Bansal et al. CHI 2021)
-- Senior developers trust AI least (2.5%) but use it most effectively
+- Senior developers trust AI least (2.5%) but use it most effectively (Stack Overflow 2025)
 
 **On Skill Atrophy:**
-- The critical study doesn't exist: no longitudinal measurement of developer capability without AI after extended AI use
-- Aviation research: 77% of pilots report degraded manual skills from automation
+- 20% decline in unaided detection after 3 months of AI-assisted work (Budzyń et al. Lancet 2025, crossover RCT)
+- Creativity drops on AI withdrawal, homogeneity persists months later (Zhou et al. 2025, n=61)
+- The critical developer study doesn't exist: no longitudinal measurement of developer capability without AI after extended AI use
 - Protective factor: high self-confidence correlates with maintained critical thinking
 
 **On Learning:**
@@ -94,7 +96,7 @@ The relationship is one of equals with different capabilities — human judgment
 - **Constitutive** — enables new capability through collaboration
 - **Transparent by default** — provenance, traceability, explanations, observability
 - **Compounding mastery** — each interaction makes both more capable
-- **Enabling control** — user agency is the strongest lever (β = 0.507)
+- **Enabling control** — user agency is the strongest lever (β = 0.507, Blaurock 2024)
 - **Non-conformity** — preserve intellectual diversity, resist homogenization
 
 ---
@@ -271,265 +273,25 @@ Catch errors where they originate.
 
 ---
 
-## Extension Types
+## Extension Components
 
-### Skills
-**Purpose:** Decision frameworks and methodology
-**Pattern:** Teaches HOW to think about a domain
-**Example:** Reasoning patterns for security analysis
+| Component | Purpose | Pattern |
+|-----------|---------|---------|
+| **Skill** | Decision frameworks, domain knowledge | Teaches HOW to think |
+| **Agent** | Specialized perspective, multi-step reasoning | Offers viewpoint, human synthesizes |
+| **Hook** | Event-triggered behavior | Enhances workflow, guardrails |
+| **Command** | User-initiated procedure | Human triggers, extension executes |
+| **MCP** | External service integration | Bridges systems, human orchestrates |
 
-### Agents
-**Purpose:** Specialized perspectives for delegation
-**Pattern:** Offers viewpoint, human synthesizes
-**Example:** Security architect perspective
+For component selection, file anatomy, and build guidance: load `extension-dev:build-plugin` skill.
 
-### Hooks
-**Purpose:** Event-triggered behaviors
-**Pattern:** Enhances existing workflow
-**Example:** Metacognitive check before accepting AI suggestions
+### Key Design Concepts
 
-### MCPs (Model Context Protocol)
-**Purpose:** External service integration
-**Pattern:** Bridges systems, human orchestrates
-**Example:** Knowledge base connector
+**Dual-Content Model**: Extensions serve two audiences — Claude needs token-efficient, actionable guidance; humans need explanatory, traceable content. Claude reads `SKILL.md`, `references/`, `templates/`, `scripts/`. **Never read `docs/` directories** — they contain human-optimized prose that wastes tokens and may confuse actionable guidance with learning material.
 
-### Commands
-**Purpose:** User-initiated workflow shortcuts
-**Pattern:** Human triggers, extension executes defined procedure
-**Example:** `/commit` for conventional commit workflow
+**Orthogonality Lock**: Agents provide one perspective, not comprehensive coverage. Forces human synthesis across multiple viewpoints.
 
----
-
-## Extension Anatomy
-
-### The Dual-Content Model
-
-Every extension serves two audiences with different needs:
-
-| Audience | Optimized For | Content Type | Location |
-|----------|--------------|--------------|----------|
-| **Claude** | Token efficiency, activation triggers | Decision frameworks, patterns | `SKILL.md` (< 500 lines) |
-| **Human** | Learning, traceability, deep understanding | Explanations, sources, examples | `references/` (unlimited) |
-
-**Why this matters:**
-- Claude needs concise, actionable guidance that fits in context
-- Humans need explanations, reasoning, and sources to learn and verify
-- Mixing them wastes tokens OR leaves humans without understanding
-
-### Skill Structure
-
-```
-skills/skill-name/
-├── SKILL.md           # Claude-optimized (< 500 lines)
-│                      # - Decision frameworks
-│                      # - When to use what
-│                      # - Non-obvious gotchas
-│                      # - Pointers to references
-│
-├── references/        # Claude-optimized (load on demand)
-│   ├── patterns.md    # Extended patterns Claude can reference
-│   ├── examples.md    # Code examples for Claude to draw from
-│   └── edge-cases.md  # Detailed edge case handling
-│
-├── templates/         # Claude-optimized (code/config templates)
-├── scripts/           # Claude-optimized (executable utilities)
-│
-└── docs/
-    └── explanation/   # Human-optimized
-        ├── methodology.md  # WHY designed this way
-        └── sources.md      # Citations for verification
-```
-
-**Why explanation only?**
-
-For cognitive extensions, Claude handles the HOW. Humans need to understand WHY:
-- To calibrate trust appropriately
-- To know when to override
-- To learn (not just consume)
-- To verify claims against sources
-- To enhance the extension effectively
-
-Traditional docs (tutorials, how-to, reference) are for software where humans interact directly. Extensions are mediated through Claude — the extension IS the how-to.
-
-### Agent Structure
-
-Agents are single markdown files, but still serve dual audiences:
-
-```markdown
----
-name: agent-name
-description: |
-  [Claude-optimized: When to trigger, what it does]
-
-  <example>
-  Context: [Situation]
-  user: "[Request]"
-  assistant: "[How to respond]"
-  <commentary>[Why this triggers the agent]</commentary>
-  </example>
-
-model: inherit
-color: blue
-tools: [Read, Grep, Glob]
----
-
-[Claude-optimized: System prompt - HOW the agent thinks and operates]
-
-## Orthogonality Lock
-
-**Cannot discuss**: [out-of-scope topics]
-**Must focus on**: [single domain]
-
-[Human-optimized: WHY the agent is designed this way,
-what perspective it brings, how it fits with other agents]
-```
-
-**The dual content in agents:**
-
-| Section | Optimized For | Purpose |
-|---------|--------------|---------|
-| `description` | Claude | Trigger conditions, activation examples |
-| System prompt body | Claude | Agent behavior, methodology, output format |
-| Orthogonality Lock | Claude | Behavioral constraint, scope enforcement |
-| `docs/` directory | Human | Design rationale, relationship to other agents (Diátaxis) |
-
-### Hook Structure
-
-Hooks have two distinct patterns based on purpose:
-
-**Validation Hooks** (PreToolUse, most PostToolUse):
-```json
-{
-  "decision": "allow",
-  "message": "Consider X instead of Y. Proceeding with Y."
-}
-```
-- Suggest alternatives, let user proceed
-- Preserve agency over individual actions
-
-**Action-Triggering Hooks** (pattern detection):
-```json
-{
-  "decision": "allow",
-  "message": "🐺 PATTERN DETECTED. You MUST now: 1) [action] 2) [action]"
-}
-```
-- Use directive language that causes action
-- Interrupt patterns where that's the whole point
-
-**Why the distinction:**
-- Validation hooks: user should retain choice
-- Action-triggering hooks: the pattern itself is the problem being solved
-
-### Command Structure
-
-Commands are user-initiated procedures:
-
-```markdown
----
-name: command-name
-description: What this command does
-arguments:
-  - name: arg1
-    description: What this argument is
-    required: false
----
-
-[Claude-optimized: Instructions for executing the command]
-
-[Human-optimized (in comments/README):
- Why this workflow exists, what it replaces]
-```
-
-### Plugin-Level Documentation
-
-```
-plugin-name/
-├── .claude-plugin/
-│   └── plugin.json        # Manifest
-│
-├── agents/                # Claude-optimized: agent definitions
-├── skills/                # Claude-optimized: skill definitions
-├── hooks/                 # Claude-optimized: event handlers
-├── commands/              # Claude-optimized: user procedures
-├── references/            # Claude-optimized: shared context (load on demand)
-├── templates/             # Claude-optimized: code/config templates
-├── scripts/               # Claude-optimized: executable utilities
-│
-├── README.md              # Quick overview (both audiences)
-└── docs/
-    └── explanation/       # Human-optimized
-        ├── methodology.md # Design philosophy, agent relationships
-        └── sources.md     # Citations, evidence, traceability
-```
-
-### Summary: Dual-Content Philosophy
-
-| For Claude | For Humans |
-|------------|------------|
-| SKILL.md (< 500 lines) | docs/explanation/methodology.md |
-| references/ (load on demand) | docs/explanation/sources.md |
-| templates/, scripts/ | README.md (overview) |
-| Agent system prompts | |
-| Hook configs | |
-
-**The principle:**
-- **Claude content**: Efficient, actionable, token-conscious. Decision frameworks, patterns, examples.
-- **Human content**: Explains WHY, provides sources for verification, enables learning and enhancement.
-
-**The goal:** Transparent extensions that humans can:
-1. **Learn from** — understand the reasoning, not just the output
-2. **Verify** — trace claims to sources
-3. **Enhance** — improve the extension with understanding of its design
-
-**Important:** Claude should **ignore `docs/`** directories. They contain human-optimized prose that:
-- Wastes tokens (explanatory content Claude doesn't need)
-- May confuse actionable guidance with learning material
-- Is structured for human cognition, not LLM consumption
-
-When building or using extensions, Claude reads from `SKILL.md`, `references/`, `templates/`, `scripts/`. Never from `docs/`.
-
-### Progressive Disclosure
-
-Treat tokens as a public good — context is shared across the conversation.
-
-| Level | Content | When Loaded |
-|-------|---------|-------------|
-| **Metadata** | ~100 words: triggers, "Use when:" | Always (skill selection) |
-| **SKILL.md** | < 500 lines: decisions, frameworks | When skill activates |
-| **References** | Unlimited: depth, sources, examples | On-demand when needed |
-
-### The Orthogonality Lock
-
-Agents should provide **one perspective**, not try to be comprehensive.
-
-```markdown
-## Orthogonality Lock
-
-**Cannot discuss**: [topics outside scope]
-**Must focus on**: [single domain of expertise]
-
-If asked about something outside your domain, say:
-"That's outside my orthogonality lock. {Agent} should assess that."
-```
-
-**Why this works:**
-- Forces human synthesis across multiple perspectives
-- Prevents single-agent tunnel vision
-- Each agent can be maximally expert in one thing
-- Human remains the integrator
-
-### Intent-Driven Activation
-
-Trigger on **user goals**, not tool names.
-
-| Wrong | Right |
-|-------|-------|
-| "Use when: Midjourney prompting" | "Use when: creating artwork, images, visual assets" |
-| "Use when: using pytest" | "Use when: writing tests, test-driven development" |
-| "Use when: kubectl" | "Use when: deploying to Kubernetes, managing clusters" |
-
-**Why:** Users think in goals ("I need an image"), not tools ("I need Midjourney").
+**Progressive Disclosure**: Metadata (always loaded) → SKILL.md (on activation) → References (on demand). Tokens are a public good.
 
 ---
 
@@ -537,17 +299,19 @@ Trigger on **user goals**, not tool names.
 
 These findings inform extension design:
 
-| Lever | Effect Size | Implication |
-|-------|------------|-------------|
-| **Control** | β = 0.507 | User agency is the strongest lever |
-| **Transparency** | β = 0.415 | Showing reasoning prevents blind trust |
-| **Mastery orientation** | OR = 35.7 | Users focused on learning maintain capability |
-| **Performance orientation** | Z = -6.295 | Users focused on output degrade |
+| Lever | Effect Size | Source | Implication |
+|-------|------------|--------|-------------|
+| **Control** | β = 0.507 | Blaurock et al. 2024, meta-analysis, 106 studies | User agency is the strongest lever |
+| **Transparency** | β = 0.415 | Blaurock et al. 2024 | Showing reasoning prevents blind trust |
+| **Mastery orientation** | OR = 35.7 | Pallant et al. 2025 | Users focused on learning maintain capability |
+| **AI confidence** | β = -0.69 | Lee et al. CHI 2025 | Higher AI confidence → less critical thinking |
+| **Engagement features** | b = -0.555 | Blaurock et al. 2024 | Each added feature *reduces* trust |
 
 **Design implications:**
 - Control > Transparency > everything else
 - Build extensions that encourage mastery, not just performance
 - Show reasoning; don't just give answers
+- Don't add engagement features for their own sake
 
 ---
 
@@ -786,7 +550,7 @@ Core research informing this project:
 - Lee et al. (2025). "The Impact of Generative AI on Critical Thinking." CHI.
 - Kosmyna et al. (2025). "Your Brain on ChatGPT: Cognitive Debt." MIT Media Lab.
 - Dhuliawala et al. (2024). "Chain-of-Verification Reduces Hallucination." ACL.
-- Hemmer et al. (2024). "Complementarity in Human-AI Collaboration." EJIS.
+- Blaurock et al. (2024). "Designing Collaborative Intelligence Systems." Journal of Service Research.
 - Cui/Demirer et al. (2024). "Effects of Generative AI on High Skilled Work." RCTs.
 
 Full bibliography in `docs/content/library/reference/bibliography.md`.

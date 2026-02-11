@@ -144,8 +144,12 @@ Teaching wrong things effectively is worse than not teaching at all. Verificatio
 - Label evidence levels: Strong / Moderate / Weak / Speculative
 - Separate findings from interpretation
 - Acknowledge contradictory evidence
+- Every cited number must trace to a specific paper — if unverifiable, don't cite it
 
-See: `references/accuracy-integrity.md`
+When writing or reviewing content with citations, run `scripts/verify-citations.py` on the article. Fix bibliography gaps first (missing DOIs are the #1 cause of unverifiable claims), then verify content.
+
+See: `references/accuracy-integrity.md` — Why accuracy is foundational, CoVe pattern, evidence labeling
+See: `references/evidence-verification.md` — Verification workflow, evidence spans, bibliography hygiene, common failures
 
 ## Anti-Patterns
 
@@ -184,8 +188,10 @@ See: `references/accuracy-integrity.md`
 Load for details:
 - `references/anti-patterns.md` — Modal lock, AI writing tells, explanation inflation
 - `references/accuracy-integrity.md` — Why accuracy precedes technique
+- `references/evidence-verification.md` — Verification workflow, evidence spans, bibliography hygiene
 
 See also:
 - `weaving` skill — Re-weave modal-locked content across doors (diagnose → anchor → thread → shift → verify)
 - `visual-communication` skill — Diagram type routing, Mermaid/D2/C4
 - `information-architecture` skill — Collection-level encoding, where content lives
+
