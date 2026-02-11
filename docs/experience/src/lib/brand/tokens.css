@@ -61,7 +61,7 @@
   --dao-border-subtle: oklch(20% 0.015 240);
   --dao-text: oklch(90% 0.01 240);
   --dao-text-secondary: oklch(75% 0.01 240);
-  --dao-muted: oklch(60% 0.02 240);
+  --dao-muted: oklch(68% 0.02 240);
 
 
   /* -----------------------------------------
@@ -163,8 +163,8 @@
   --ev-moderate-bg: oklch(68% 0.12 230 / 0.08);
   --ev-weak: oklch(72% 0.14 85);            /* Amber — caution, not alarm */
   --ev-weak-bg: oklch(72% 0.14 85 / 0.08);
-  --ev-speculative: oklch(55% 0.02 240);
-  --ev-speculative-bg: oklch(55% 0.02 240 / 0.06);
+  --ev-speculative: oklch(62% 0.02 240);
+  --ev-speculative-bg: oklch(62% 0.02 240 / 0.06);
 
   /* --- Quadrant Colors (Diataxis) --- */
   --quadrant-explanation: var(--spark-core);
@@ -420,7 +420,7 @@
   :root {
     --dao-border: oklch(40% 0.02 240);
     --dao-text: oklch(95% 0.01 240);
-    --dao-muted: oklch(70% 0.02 240);
+    --dao-muted: oklch(78% 0.02 240);
     --border-width: 2px;
   }
 }

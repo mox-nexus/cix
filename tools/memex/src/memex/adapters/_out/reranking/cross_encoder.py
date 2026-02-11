@@ -66,7 +66,7 @@ class CrossEncoderReranker:
         pairs = [(query, frag.content) for frag in candidates]
 
         # Score all pairs in batch
-        scores = self.model.predict(pairs)
+        scores = self.model.predict(pairs, show_progress_bar=False)
 
         # Combine with fragments and sort
         scored = list(zip(candidates, scores))
