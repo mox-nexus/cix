@@ -22,7 +22,7 @@ Primary sources organized by topic. Each links to the explanation document where
 
 ## Skill Degradation
 
-- <span class="ev ev-moderate" title="Lancet crossover RCT, medical domain">◐</span> Budzyń, B. et al. (2025). Effect of AI-Assisted Colonoscopy. Lancet Gastroenterology & Hepatology. → [problem](../explanation/the-problem), [evidence](../explanation/the-evidence)
+- <span class="ev ev-moderate" title="Budzyń et al. 2025, multicentre observational, 19 endoscopists">◐</span> Budzyń, B. et al. (2025). [Endoscopist deskilling risk after AI exposure in colonoscopy.](https://www.thelancet.com/journals/langas/article/PIIS2468-1253(25)00133-5/abstract) Lancet Gastroenterology & Hepatology. → [problem](../explanation/the-problem), [evidence](../explanation/the-evidence)
 - GitClear (2024). Coding on Copilot: 2024 Data.
 
 ## Productivity & Perception

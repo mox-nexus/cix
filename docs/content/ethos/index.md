@@ -29,7 +29,7 @@ Beyond productivity, there's capability.
 | Kosmyna MIT 2025 | 83% couldn't recall AI-assisted content | Immediate |
 | Bastani PNAS 2025 | Unrestricted AI → 17% worse exam performance | Single course |
 
-The Budzyń study is clearest. Endoscopists used AI-assisted polyp detection for 3 months. When removed, their detection rate had dropped from 28.4% to 22.4%. The skill atrophied measurably.
+The Budzyń study is clearest. After AI-assisted colonoscopy was introduced across four centres, endoscopists' unaided detection rate declined from 28.4% to 22.4% on their non-AI cases. The skill atrophied measurably.
 
 No equivalent study exists for developers — the technology is too new. But the cognitive mechanisms are the same. You don't maintain skills you stop exercising.
 

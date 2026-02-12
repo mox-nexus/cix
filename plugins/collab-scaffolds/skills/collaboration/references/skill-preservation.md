@@ -39,7 +39,7 @@ Learning requires struggle. AI removes the productive friction that builds under
 
 Repeated experience of AI being correct → reduced vigilance → missed errors.
 
-**Evidence:** Endoscopists showed 20% skill decline after 12 weeks of AI-assisted detection (Budzyń et al. Lancet 2025, crossover RCT).
+**Evidence:** Endoscopists' unaided detection rate declined 20% after AI-assisted colonoscopy was introduced (Budzyń et al. Lancet 2025, multicentre observational).
 
 ---
 
@@ -67,15 +67,15 @@ Procedural skills (IDE shortcuts, git commands, typing speed) are more resilient
 
 ## The 3-Month Cliff
 
-**Source:** Budzyn et al. (Lancet 2025)
+**Source:** Budzyń et al. (Lancet Gastroenterol. Hepatol. 2025), multicentre observational
 
-Significant skill degradation measurable in as little as 3 months of AI-assisted practice.
+After AI-assisted colonoscopy was introduced, unaided detection rate declined 20% (28.4% → 22.4%) on non-AI cases.
 
-| Timeline | Observed Effect |
-|----------|----------------|
-| Weeks 1-4 | Performance increases with AI assistance |
-| Weeks 4-8 | Independent performance begins declining |
-| Month 3+ | 22% skill reduction measurable in unassisted tasks |
+| Observation | Detail |
+|-------------|--------|
+| Pre-AI ADR (non-AI cases) | 28.4% (n=795) |
+| Post-AI ADR (non-AI cases) | 22.4% (n=648) |
+| Relative decline | 20% |
 
 ### Why 3 Months?
 
@@ -293,11 +293,11 @@ Periodic self-assessment:
 |---------|--------|
 | Cognitive offloading correlation | Gerlich (2025) |
 | 17% learning harm (direct answers) | Bastani et al. (PNAS 2025) |
-| 22% skill reduction at 3 months | Budzyn et al. (Lancet 2025) |
+| 20% unaided detection decline | Budzyń et al. (Lancet 2025) |
 | Job Crafting (approach vs avoidance) | Freise et al. (HICSS 2025) |
 | OR = 35.7 mastery orientation | Pallant et al. (2025) |
 | Neural scaling down | Kosmyna et al. (MIT Media Lab 2025) |
 | Savings Effect | Cognitive science, multiple studies |
-| Pilot skill degradation (77%) | Aviation automation research |
+| Savings Effect (relearning &lt;50%) | Cognitive science, multiple studies |
 
 See [sources.md](../../docs/explanation/sources.md) for full bibliography.

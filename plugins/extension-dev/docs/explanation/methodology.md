@@ -211,7 +211,7 @@ Implication: Users can't reliably self-correct. Short-term satisfaction ≠ long
 | AI ↔ critical thinking | r = -0.68 | Gerlich (2025) |
 | Offloading ↔ CT | r = -0.75 | Gerlich (2025) |
 | Learning harm (no guardrails) | -17% | Bastani PNAS (2025) |
-| Skill degradation | -22% | Lancet colonoscopy (2025) |
+| Skill degradation | -20% | Budzyń, Lancet (2025) |
 
 ---
 
@@ -283,7 +283,7 @@ For collaborators enhancing these extensions: the research provides directional 
 
 | Study | Limitation | What It Means |
 |-------|-----------|---------------|
-| Budzyn (Lancet, 2025) | Medical domain (colonoscopy) | Skill atrophy rate (-22%) may not transfer directly to software |
+| Budzyń (Lancet, 2025) | Medical domain (colonoscopy), observational | Skill atrophy rate (-20%) may not transfer directly to software |
 | Gerlich (2025) | Cross-sectional, self-reported | Correlations (r = -0.68, -0.75) show association, not causation |
 | Lee et al. (CHI, 2025) | Self-reported critical thinking | Perceptions may differ from actual cognitive performance |
 | Blaurock (106 studies) | Service contexts (not all software) | Effect sizes (beta = 0.507, 0.415) are directional for extension design |

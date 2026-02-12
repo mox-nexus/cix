@@ -53,7 +53,7 @@ When a vendor says "our tool improves productivity," ask: compared to what? How 
 
 ### 3. Check Domain Transfer
 
-A study on medical residents learning colonoscopy found 20% skill degradation after 12 weeks without practice. <span class="ev ev-moderate" title="Budzyń et al. Lancet 2025, RCT in medical domain">◐</span> Does that apply to developers using AI coding assistants? Maybe. Plausible mechanism (skill atrophy from automation). Uncertain magnitude (different domains, different task structures). [See skill formation evidence →](../reference/skill-formation-evidence)
+A multicentre observational study found endoscopists' unaided detection rate declined 20% after regular AI-assisted colonoscopy was introduced. <span class="ev ev-moderate" title="Budzyń et al. Lancet 2025, multicentre observational, 19 endoscopists">◐</span> Does that apply to developers using AI coding assistants? Maybe. Plausible mechanism (skill atrophy from automation). Uncertain magnitude (different domains, different task structures). [See skill formation evidence →](../reference/skill-formation-evidence)
 
 This library treats it as moderate evidence, not strong. The mechanism is credible. The transfer is uncertain. That matters.
 

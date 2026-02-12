@@ -345,9 +345,9 @@ Analysis of ~1.5M Claude.ai conversations: users rate harmful interactions MORE 
 
 ## Skill Preservation Research (2025-2026)
 
-**Budzyn, K., et al. (2025). "Impact of AI-Assisted Diagnosis on Clinical Skill Retention." The Lancet.**
+**Budzyń, B., et al. (2025). "Endoscopist deskilling risk after AI exposure in colonoscopy." Lancet Gastroenterol. Hepatol.** [Paper](https://www.thelancet.com/journals/langas/article/PIIS2468-1253(25)00133-5/abstract)
 
-22% skill reduction after 3 months of AI-assisted practice. The 3-month cliff: significant degradation measurable in relatively short timeframes.
+20% relative decline in unaided adenoma detection rate (28.4% → 22.4%) after AI-assisted colonoscopy introduced. Multicentre observational, 19 endoscopists, 4 centres.
 
 **Freise, M., et al. (2025). "Job Crafting in the Age of AI: Approach vs Avoidance Patterns." HICSS 2025.**
 
@@ -494,7 +494,7 @@ When multiple independent sources point to the same conclusion:
 - Transparency matters: Blaurock meta-analysis (106 studies)
 - Mastery orientation protects: ACU (2025), Lee et al. (2025), Pallant et al. (2025)
 - Cognitive offloading harms: Gerlich (2025), Kosmyna et al. (2025), Lee et al. (2025)
-- Skill atrophy is real: Budzyn (2025), Bastani (2025), aviation research
+- Skill atrophy is real: Budzyń (2025), Bastani (2025)
 - Security degrades with AI: Veracode (2025), Shukla (2025), Perry (2025)
 - Productivity illusion exists: METR (2025), DORA (2024)
 - Metacognitive friction helps: Lee CHI (2025), Tomisu (2025), Stanford SCALE (2025)

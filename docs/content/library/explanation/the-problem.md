@@ -46,7 +46,7 @@ Research on [cognitive offloading](../reference/cognitive-effects-evidence) show
 
 Skill atrophy is hard to detect from the inside.
 
-Medical research provides the clearest evidence: when AI-assisted colonoscopy was introduced, then removed, polyp detection rates declined 20% after three months. <span class="ev ev-moderate" title="Lancet crossover RCT">◐</span> The practitioners didn't notice. They felt equally competent. But measurable performance had degraded.
+Medical research provides the clearest evidence: after AI-assisted colonoscopy was introduced at four centres, endoscopists' unaided detection rate declined 20% on their non-AI cases. <span class="ev ev-moderate" title="Budzyń et al. Lancet 2025, multicentre observational, 19 endoscopists">◐</span> The practitioners didn't notice. They felt equally competent. But measurable performance had degraded.
 
 No equivalent study exists yet for software developers—the technology is too new. But the cognitive mechanisms are identical. Skills require practice. Remove the practice, lose the skill. The only question is how quickly.
 

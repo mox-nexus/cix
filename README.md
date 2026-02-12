@@ -12,7 +12,7 @@ Research from premier venues (CHI, PNAS, Nature, NeurIPS) shows the pattern cons
 |---------|--------|---------------|
 | 26% more tasks completed | Cui/Demirer RCTs (n=4,867) | Immediate productivity gains are real |
 | 17% worse performance without AI | Bastani et al. PNAS (n=1,000) | Learning degradation is measurable |
-| 20% skill reduction after 3 months | Lancet colonoscopy study | Expertise atrophies from disuse |
+| 20% skill decline after AI exposure | Budzyń et al. Lancet 2025 | Expertise atrophies from disuse |
 | 83% couldn't recall their own work | Lee et al. CHI 2025 | Cognitive offloading has memory costs |
 
 The problem isn't AI. The problem is **substitutive AI** — tools designed to do your thinking for you.
