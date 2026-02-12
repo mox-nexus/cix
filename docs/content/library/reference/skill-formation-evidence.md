@@ -85,7 +85,7 @@ Research synthesis on how AI assistance affects learning, mastery development, a
 
 ### Longitudinal Evidence
 
-**Aviation parallel:** 77% of pilots report degraded manual flying skills from automation reliance. <span class="ev ev-moderate" title="Aviation domain, survey data">◐</span> Software development involves more abstract reasoning than motor skills — whether cognitive skills atrophy faster or slower is unknown. <span class="ev ev-speculative" title="Cross-domain inference">◌</span>
+**Medical parallel:** Endoscopists using AI-assisted detection for 12 weeks showed 20% decline in unaided detection when AI was removed. <span class="ev ev-strong" title="Budzyń et al. Lancet 2025, crossover RCT">●</span> Software development involves more abstract reasoning than perceptual skills — whether cognitive skills atrophy faster or slower is unknown. <span class="ev ev-speculative" title="Cross-domain inference">◌</span>
 
 ---
 

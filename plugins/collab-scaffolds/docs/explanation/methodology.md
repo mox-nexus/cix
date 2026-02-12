@@ -518,7 +518,7 @@ Three mechanisms drive skill degradation:
 
 2. **Desirable Difficulties Bypass:** Learning requires productive struggle. AI removes the friction that builds understanding. Bastani et al. (PNAS 2025): students with direct AI answers scored 17% worse; hint-only AI showed no degradation. Same technology, different design, opposite outcomes.
 
-3. **Automation Complacency:** Repeated experience of AI being correct → reduced vigilance → missed errors. Aviation research: 77% of pilots report degraded manual skills from automation.
+3. **Automation Complacency:** Repeated experience of AI being correct → reduced vigilance → missed errors. Endoscopists showed 20% skill decline after 12 weeks of AI-assisted detection (Budzyń et al. Lancet 2025, crossover RCT).
 
 ### The Bifurcation Theory
 
