@@ -39,7 +39,7 @@ Learning requires struggle. AI removes the productive friction that builds under
 
 Repeated experience of AI being correct → reduced vigilance → missed errors.
 
-**Evidence:** Aviation research — 77% of pilots report degraded manual skills from automation reliance. Colonoscopy study — 22% skill reduction after 3 months of AI-assisted diagnosis (Budzyn, Lancet 2025).
+**Evidence:** Endoscopists showed 20% skill decline after 12 weeks of AI-assisted detection (Budzyń et al. Lancet 2025, crossover RCT).
 
 ---
 

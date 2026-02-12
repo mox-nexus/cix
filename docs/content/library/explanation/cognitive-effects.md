@@ -93,9 +93,9 @@ If you're building AI tools, the research implications are clear:
 
 No longitudinal study tracks developer capability over years of AI use. We have three-month medical studies showing 20% skill degradation. We have cross-sectional data on perception gaps. But the multi-year trajectory in software development remains unmeasured.
 
-Aviation offers the closest analog: 77% of pilots report degraded manual flying skills from autopilot reliance. Cognitive mechanisms are likely similar — procedural memory requires practice. Remove practice, lose proficiency.
+The closest measured analog: endoscopists using AI-assisted detection for 12 weeks showed 20% decline in unaided capability when AI was removed (Budzyń et al. Lancet 2025, crossover RCT). Cognitive mechanisms are likely similar — perceptual and reasoning skills both require practice. Remove practice, lose proficiency.
 
-But software development involves more abstract reasoning than motor control. Whether cognitive offloading produces faster or slower capability loss is still speculative.
+But software development involves more abstract reasoning than perceptual detection. Whether cognitive offloading produces faster or slower capability loss is still speculative.
 
 The research we need: cohort studies tracking unassisted capability over 2-5 years of varied AI use. Until that exists, we're inferring from adjacent domains and short-term experiments.
 
