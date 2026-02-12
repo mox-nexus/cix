@@ -48,8 +48,8 @@ Core guidance on writing effective Skills: progressive disclosure, conciseness, 
 
 ### Skill Degradation
 
-**Budzyń et al. (2025). "AI-Assisted Colonoscopy." The Lancet.**
-- 20% skill decline after 3 months of AI assistance removal
+**Budzyń, B. et al. (2025). ["Endoscopist deskilling risk after AI exposure in colonoscopy."](https://www.thelancet.com/journals/langas/article/PIIS2468-1253(25)00133-5/abstract) Lancet Gastroenterol. Hepatol.**
+- 20% relative decline in unaided ADR (28.4% → 22.4%) after AI-assisted colonoscopy introduced. Multicentre observational, 19 endoscopists.
 
 **Zhou et al. (2025). ["Creative Scar."](https://www.sciencedirect.com/science/article/abs/pii/S0160791X25002775) Technology in Society.**
 - 7-day lab experiment with 2-month follow-up (longitudinal!)

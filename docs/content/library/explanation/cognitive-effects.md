@@ -93,7 +93,7 @@ If you're building AI tools, the research implications are clear:
 
 No longitudinal study tracks developer capability over years of AI use. We have three-month medical studies showing 20% skill degradation. We have cross-sectional data on perception gaps. But the multi-year trajectory in software development remains unmeasured.
 
-The closest measured analog: endoscopists using AI-assisted detection for 12 weeks showed 20% decline in unaided capability when AI was removed (Budzyń et al. Lancet 2025, crossover RCT). Cognitive mechanisms are likely similar — perceptual and reasoning skills both require practice. Remove practice, lose proficiency.
+The closest measured analog: after AI-assisted colonoscopy was introduced, endoscopists' unaided detection rate declined 20% on their non-AI cases (Budzyń et al. Lancet 2025, multicentre observational, 19 endoscopists). Cognitive mechanisms are likely similar — perceptual and reasoning skills both require practice. Remove practice, lose proficiency.
 
 But software development involves more abstract reasoning than perceptual detection. Whether cognitive offloading produces faster or slower capability loss is still speculative.
 

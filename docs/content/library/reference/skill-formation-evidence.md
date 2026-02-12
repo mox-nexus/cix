@@ -8,7 +8,7 @@ Research synthesis on how AI assistance affects learning, mastery development, a
 
 - [Shen & Tamkin (2026). How AI Impacts Skill Formation. Anthropic.](https://arxiv.org/pdf/2601.20245)
 - [Bastani et al. (2025). Generative AI Can Harm Learning. PNAS.](https://www.pnas.org/doi/10.1073/pnas.2422633122)
-- [Budzyń et al. (2025). Effect of AI-Assisted Colonoscopy. Lancet.](https://www.thelancet.com/journals/langas/article/PIIS2468-1253(24)00301-2/fulltext)
+- [Budzyń et al. (2025). Endoscopist deskilling risk after AI exposure in colonoscopy. Lancet Gastroenterol. Hepatol.](https://www.thelancet.com/journals/langas/article/PIIS2468-1253(25)00133-5/abstract)
 - [Zhou et al. (2025). Creative Scar. Technology in Society.](https://www.sciencedirect.com/science/article/abs/pii/S0160791X25002775)
 - [Pallant et al. (2025). Mastery Orientation. ACU Research Bank.](https://doi.org/10.3316/informit.106046894747026)
 - [Freise et al. (2025). Job Crafting with AI. HICSS.](https://hdl.handle.net/10125/107542)
@@ -71,21 +71,21 @@ Research synthesis on how AI assistance affects learning, mastery development, a
 
 ## Skill Atrophy Over Time
 
-### Budzyń et al. (Lancet, 2025) <span class="ev ev-moderate" title="Lancet crossover RCT, medical domain">◐</span>
+### Budzyń et al. (Lancet Gastroenterol. Hepatol., 2025) <span class="ev ev-moderate" title="Budzyń et al. 2025, multicentre observational, n=19 endoscopists, 4 centres">◐</span>
 
-**Design:** Crossover randomized controlled trial. Endoscopists used AI-assisted polyp detection for 3 months, then worked without it.
+**Design:** Multicentre observational study (before/after). 19 experienced endoscopists across 4 centres in Poland. AI-assisted colonoscopy introduced end of 2021; non-AI colonoscopies compared before (n=795) vs after (n=648) regular AI exposure. Sept 2021 – March 2022.
 
-**Key finding:** Unaided detection rate dropped from 28.4% to 22.4% after AI removal — a **20% decline in 12 weeks**.
+**Key finding:** Adenoma detection rate on non-AI colonoscopies declined from 28.4% to 22.4% after AI exposure — a **20% relative decline** (6% absolute).
 
-**Mechanism:** Procedural skills require practice. AI-assisted work reduces practice of the underlying skill. Remove the AI, and the unpracticed skill has degraded.
+**Mechanism:** Perceptual skills require practice. Regular AI-assisted work reduces practice of unaided detection. The skill degraded without explicit AI removal — endoscopists simply performed worse on their non-AI cases.
 
 **The Savings Effect:** Relearning takes less than 50% of original training time (established cognitive science finding). Skills are dormant, not destroyed.
 
-**Limitations:** Medical domain — transfer to software development involves different skill types (cognitive vs perceptual). No equivalent study exists for developers.
+**Limitations:** Observational design (not RCT) — confounders possible. Medical/perceptual domain — transfer to software development (cognitive/reasoning skills) is uncertain. No equivalent study exists for developers.
 
 ### Longitudinal Evidence
 
-**Medical parallel:** Endoscopists using AI-assisted detection for 12 weeks showed 20% decline in unaided detection when AI was removed. <span class="ev ev-strong" title="Budzyń et al. Lancet 2025, crossover RCT">●</span> Software development involves more abstract reasoning than perceptual skills — whether cognitive skills atrophy faster or slower is unknown. <span class="ev ev-speculative" title="Cross-domain inference">◌</span>
+**Medical parallel:** After regular AI-assisted colonoscopy was introduced, endoscopists' unaided detection rate declined 20% on their non-AI cases. <span class="ev ev-moderate" title="Budzyń et al. Lancet 2025, multicentre observational, 19 endoscopists">◐</span> Software development involves more abstract reasoning than perceptual skills — whether cognitive skills atrophy faster or slower is unknown. <span class="ev ev-speculative" title="Cross-domain inference">◌</span>
 
 ---
 

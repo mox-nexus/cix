@@ -18,7 +18,7 @@ Start with confidence. When you trust AI output, you spend less time verifying i
 
 Less verification means fewer errors discovered. Fewer errors means the perception that AI is reliable. That perception increases confidence. Confidence reduces verification further. The cycle reinforces itself.
 
-Meanwhile, skills atrophy from disuse. The Lancet study tracked endoscopists using AI-assisted polyp detection for three months. When the AI was removed, their unaided detection rate dropped from 28.4% to 22.4% — a 20% decline in 12 weeks. <span class="ev ev-moderate" title="Lancet crossover RCT, medical domain">◐</span> The skills weren't practiced, so they degraded.
+Meanwhile, skills atrophy from disuse. After AI-assisted colonoscopy was introduced at four centres, endoscopists' unaided detection rate declined from 28.4% to 22.4% on their non-AI cases — a 20% relative decline. <span class="ev ev-moderate" title="Budzyń et al. Lancet 2025, multicentre observational, 19 endoscopists">◐</span> The skills weren't practiced, so they degraded.
 
 Degraded skills make AI feel more essential. If you struggle without the tool, you reach for it more often. More use means less practice. Less practice means further degradation. Another compounding cycle.
 

@@ -38,7 +38,7 @@ This project is grounded in rigorous research synthesis from premier venues (CHI
 - Senior developers trust AI least (2.5%) but use it most effectively (Stack Overflow 2025)
 
 **On Skill Atrophy:**
-- 20% decline in unaided detection after 3 months of AI-assisted work (Budzyń et al. Lancet 2025, crossover RCT)
+- 20% decline in unaided detection after AI exposure (Budzyń et al. Lancet 2025, multicentre observational, 19 endoscopists)
 - Creativity drops on AI withdrawal, homogeneity persists months later (Zhou et al. 2025, n=61)
 - The critical developer study doesn't exist: no longitudinal measurement of developer capability without AI after extended AI use
 - Protective factor: high self-confidence correlates with maintained critical thinking

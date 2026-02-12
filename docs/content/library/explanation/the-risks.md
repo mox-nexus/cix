@@ -16,7 +16,7 @@ The mechanism is cognitive offloading. When AI handles reasoning, humans stop pe
 
 Not all skills atrophy equally. The most vulnerable are exactly those most valuable: reasoning about systems, analyzing edge cases, designing abstractions, recognizing code smells. Meanwhile typing speed and IDE shortcuts—procedural skills—remain intact. We're losing capability where it matters most.
 
-The medical parallel is direct: endoscopists using AI-assisted detection for 12 weeks showed 20% decline in unaided capability when AI was removed (Budzyń et al. Lancet 2025, crossover RCT). Software development involves more abstract reasoning than perceptual detection. The cognitive skills developers depend on may be even more vulnerable.
+The medical parallel is direct: after AI-assisted colonoscopy was introduced, endoscopists' unaided detection rate declined 20% on their non-AI cases (Budzyń et al. Lancet 2025, multicentre observational, 19 endoscopists). Software development involves more abstract reasoning than perceptual detection. The cognitive skills developers depend on may be even more vulnerable.
 
 ## 2. Security Degradation
 

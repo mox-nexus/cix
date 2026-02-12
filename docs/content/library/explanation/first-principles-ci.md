@@ -88,7 +88,7 @@ Robust systems resist failure. Antifragile systems improve from stress. In AI co
 
 The evidence shows all three are possible. GPT Tutor (hints only, forces reasoning) caused no learning harm. GPT Base (direct answers) caused 17% worse exam performance <span class="ev ev-strong" title="Bastani et al. PNAS 2025, n=1,000 students, RCT">●</span>. Same underlying AI. Different interaction design. One fragile, one antifragile.
 
-The pattern: AI that makes you think becomes a whetstone—your capability sharpens through use. AI that thinks for you becomes a crutch—your capability atrophies. Endoscopists using AI-assisted detection for three months saw a 20% decline in unaided capability when the AI was removed <span class="ev ev-moderate" title="Budzyń et al. Lancet 2025, crossover RCT">●</span>. The automation made them fragile.
+The pattern: AI that makes you think becomes a whetstone—your capability sharpens through use. AI that thinks for you becomes a crutch—your capability atrophies. After AI-assisted colonoscopy was introduced, endoscopists' unaided detection rate declined 20% on their non-AI cases <span class="ev ev-moderate" title="Budzyń et al. Lancet 2025, multicentre observational, 19 endoscopists">◐</span>. The automation made them fragile.
 
 **What it looks like:** After using AI for a task, ask: am I better at this than before? If you used AI to explore testing strategies and now understand test design more deeply—antifragile. If you used AI to write tests and still have no idea why those assertions matter—fragile. The AI interaction should leave you more capable, not just with more output.
 

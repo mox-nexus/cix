@@ -149,7 +149,7 @@
 						</tr>
 						<tr>
 							<td>Junior developers show greatest dependency effects</td>
-							<td class="citation">Budzynski et al., 2024</td>
+							<td class="citation">Budzyń et al., 2025</td>
 						</tr>
 						<tr>
 							<td>Metacognitive monitoring impaired after extended AI assistance</td>

@@ -518,7 +518,7 @@ Three mechanisms drive skill degradation:
 
 2. **Desirable Difficulties Bypass:** Learning requires productive struggle. AI removes the friction that builds understanding. Bastani et al. (PNAS 2025): students with direct AI answers scored 17% worse; hint-only AI showed no degradation. Same technology, different design, opposite outcomes.
 
-3. **Automation Complacency:** Repeated experience of AI being correct → reduced vigilance → missed errors. Endoscopists showed 20% skill decline after 12 weeks of AI-assisted detection (Budzyń et al. Lancet 2025, crossover RCT).
+3. **Automation Complacency:** Repeated experience of AI being correct → reduced vigilance → missed errors. Endoscopists' unaided detection rate declined 20% after AI-assisted colonoscopy was introduced (Budzyń et al. Lancet 2025, multicentre observational).
 
 ### The Bifurcation Theory
 
@@ -532,9 +532,9 @@ Not all skills atrophy equally:
 
 The most valuable software development skills (reasoning, analysis, design) are the most vulnerable.
 
-### The 3-Month Cliff (Budzyn et al., Lancet 2025)
+### The 3-Month Cliff (Budzyń et al., Lancet 2025)
 
-Significant skill degradation measurable in as little as 3 months of AI-assisted practice. 22% reduction in unassisted task performance.
+Significant skill degradation measurable after introduction of AI-assisted practice. 20% relative decline in unassisted detection rate (multicentre observational study, 19 endoscopists).
 
 **The saving grace:** Relearning takes < 50% of original training time (the Savings Effect). Skills are dormant, not permanently lost. But reactivation requires intentional effort.
 
@@ -611,7 +611,7 @@ For collaborators enhancing these scaffolds: the research provides directional g
 
 | Study | Limitation | What It Means |
 |-------|-----------|---------------|
-| Budzyn (Lancet, 2025) | Medical domain (colonoscopy) | Skill atrophy rate (-22%) may not transfer directly to software |
+| Budzyń (Lancet, 2025) | Medical domain (colonoscopy), observational | Skill atrophy rate (-20%) may not transfer directly to software |
 | Gerlich (2025) | Cross-sectional, self-reported | Correlations (r = -0.68, -0.75) show association, not causation |
 | Lee et al. (CHI, 2025) | Self-reported critical thinking | Perceptions may differ from actual cognitive performance |
 | Blaurock (106 studies) | Service contexts (not all software) | Effect sizes (β = 0.507, 0.415) are directional for scaffold design |
