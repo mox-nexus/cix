@@ -20,6 +20,22 @@ The Guild solves this by encoding perspectives into separate agents with enforce
 
 Not arbitrary. The structure is 7 Masters + 6 Specialists.
 
+### A 3-Minute Deliberation
+
+What does the guild actually produce? Here's a proposal passing through three agents:
+
+**Proposal**: "Use in-memory HashMap for session cache"
+
+**K** (Strategic): APPROVE with conditions — simplest solution, no infrastructure cost. Creates option value: easy to swap later if needs grow.
+
+**Lamport** (Distributed Reality): BLOCK — HashMap is per-process. With 4 replicas behind a load balancer, user hits replica A, session cached there, next request hits replica B — cache miss. Stale reads under any horizontal scaling.
+
+**Ixian** (Empiricist): "Deploy to 1 replica first. Measure: P99 cache hit rate and stale read percentage over 48 hours. If hit rate > 95% and stale reads < 1%, the single-instance assumption holds for now. If not, the data tells you when to migrate to Redis."
+
+**Result**: The human now knows HashMap works for single-instance but fails distributed. The decision is bounded: ship it for single-instance, with a measured trigger for migration.
+
+Three perspectives, three minutes, one informed decision. The human synthesizes — the guild doesn't decide for you.
+
 ### 7 Masters (Always Active)
 
 These agents review every architectural decision for broad coverage:
@@ -270,6 +286,12 @@ The Guild is not a silver bullet. It fails when:
 **Validation is skipped.** Ixian provides criteria, but humans must measure. If validation criteria are ignored, the ratchet doesn't turn.
 
 **Trade-offs aren't made.** When K says APPROVE and Dijkstra says BLOCK, someone must decide. The Guild surfaces trade-offs, doesn't resolve them.
+
+## Who This Is For
+
+You're an engineering lead with 30 minutes before an architecture review. You need to stress-test a proposal from multiple angles. The guild gives you 13 expert perspectives in those 30 minutes — perspectives that would normally require scheduling meetings with your security team, your distributed systems engineer, and your DX advocate.
+
+You're not outsourcing judgment. You're expanding the surface area of your thinking.
 
 ## The Bigger Picture
 

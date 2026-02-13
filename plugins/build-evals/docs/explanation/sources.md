@@ -4,6 +4,12 @@ Research, frameworks, and production evidence behind eval patterns.
 
 ---
 
+## Research Synthesis
+
+The evaluation landscape in 2026 has converged on three principles: single metrics mislead (dimensional measurement required), deterministic graders alone miss nuance (layered grading needed), and saturation is the enemy of useful evals (60-80% target range). The sources below provide the evidence base, frameworks, and statistical methods that support these principles.
+
+---
+
 ## Primary Guidance
 
 **Anthropic (2026). "Demystifying Evals for AI Agents."**

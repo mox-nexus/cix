@@ -1,10 +1,11 @@
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import type { PageServerLoad } from './$types';
-import type { CatalogExtension, PluginManifest, PluginComponents } from '$lib/types/catalog';
+import type { CatalogExtension, PluginManifest, PluginComponents, DocCategory } from '$lib/types/catalog';
 
-const PLUGINS_DIR = resolve(process.cwd(), '../../plugins');
-const TOOLS_DIR = resolve(process.cwd(), '../../tools');
+const ROOT_DIR = resolve(process.cwd(), '../..');
+const PLUGINS_DIR = join(ROOT_DIR, 'plugins');
+const TOOLS_DIR = join(ROOT_DIR, 'tools');
 const VARIANTS = ['spark', 'emergence', 'constraint'] as const;
 
 function countFiles(dir: string, extension = '.md'): number {
@@ -44,8 +45,21 @@ function discoverComponents(dir: string): PluginComponents {
 	};
 }
 
+const DOC_CATEGORIES: DocCategory[] = ['explanation', 'how-to', 'tutorials'];
+
+function countDocs(dir: string): number {
+	const docsDir = join(dir, 'docs');
+	if (!existsSync(docsDir)) return 0;
+
+	let count = 0;
+	for (const category of DOC_CATEGORIES) {
+		count += countFiles(join(docsDir, category));
+	}
+	return count;
+}
+
 function loadPlugins(): CatalogExtension[] {
-	const marketplacePath = join(PLUGINS_DIR, '.claude-plugin', 'marketplace.json');
+	const marketplacePath = join(ROOT_DIR, '.claude-plugin', 'marketplace.json');
 	if (!existsSync(marketplacePath)) return [];
 
 	const marketplace = JSON.parse(readFileSync(marketplacePath, 'utf-8'));
@@ -76,7 +90,8 @@ function loadPlugins(): CatalogExtension[] {
 			readme,
 			components: discoverComponents(pluginDir),
 			variant: VARIANTS[extensions.length % VARIANTS.length],
-			tags: manifest.keywords ?? []
+			tags: manifest.keywords ?? [],
+			docCount: countDocs(pluginDir)
 		});
 	}
 
@@ -121,7 +136,8 @@ function loadTools(): CatalogExtension[] {
 			readme,
 			components: discoverComponents(toolDir),
 			variant: VARIANTS[extensions.length % VARIANTS.length],
-			tags: ['tool', 'cli']
+			tags: ['tool', 'cli'],
+			docCount: countDocs(toolDir)
 		});
 	}
 

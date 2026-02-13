@@ -16,6 +16,12 @@ This is why eval design centers on two questions:
 1. What can go wrong?
 2. How do we detect it before users do?
 
+## Who This Is For
+
+You're shipping an agent or skill and want to know if it actually works — not "seems good in testing" but measurably performs. If you've ever shipped an extension that silently failed for 80% of cases, or spent weeks optimizing something that was already at its ceiling, this methodology prevents that.
+
+If you already believe measurement matters, skip to the metrics. If you're not sure evals are worth the investment, start with [The Deeper Why](#the-deeper-why).
+
 ---
 
 ## Measurement Fundamentals
@@ -41,6 +47,20 @@ F1 = 2 × (Precision × Recall) / (Precision + Recall)
 ```
 
 You can't game it by optimizing one side.
+
+## Reading Your Metrics
+
+When you see these patterns, here's what they mean and what to do:
+
+| You See | It Means | Do This |
+|---------|----------|---------|
+| F1 = 0.95, pass rate = 100% | Eval is saturated — only catches regressions | Add harder test cases or new failure dimensions |
+| Recall = 0.95, Precision = 0.40 | Skill fires on everything (noise) | Tighten trigger description with explicit exclusions |
+| Precision = 0.95, Recall = 0.30 | Skill barely fires (invisible) | Broaden trigger with more intent variations |
+| pass@1 = 0.60, pass@5 = 0.90 | Agent can solve it but needs exploration | Deploy with retry logic, not better prompts |
+| pass@1 = 0.60, pass@5 = 0.63 | Agent is at capability ceiling | Need better model or different approach |
+
+These patterns are your diagnostic toolkit. Every eval run should end with: "Which row am I in?"
 
 ### Why pass@k Exists
 
@@ -284,6 +304,14 @@ Evals that fail these questions waste time or create false confidence.
 ## The Deeper Why
 
 Evaluation isn't about proving the agent works. It's about understanding where it doesn't—before users find out.
+
+### When Measurement Was Missing
+
+A skill activated on 95% of relevant prompts (high recall) — looked great. But it also activated on 60% of irrelevant prompts (low precision). Users saw noise, learned to ignore it, and eventually disabled the plugin entirely. Accuracy was 70% — a "passing grade" that hid a fatal flaw. F1 would have caught it: 0.58, clearly below threshold.
+
+Single metrics lie. Dimensional measurement tells the truth.
+
+---
 
 The goal is compounding insight: each test reveals a failure mode, each failure mode becomes a test, the suite becomes a map of how the system can go wrong.
 
