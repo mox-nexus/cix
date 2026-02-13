@@ -1,6 +1,5 @@
 """Embedding adapters."""
 
-from memex.adapters._out.embedding.local import LocalEmbedder
-from memex.adapters._out.embedding.nomic import NomicEmbedder
+from memex.adapters._out.embedding.fastembed_embedder import FastEmbedEmbedder
 
-__all__ = ["LocalEmbedder", "NomicEmbedder"]
+__all__ = ["FastEmbedEmbedder"]

@@ -17,7 +17,18 @@ from rich.table import Table
 
 from memex import skill as skill_module
 from memex.adapters._in.cli import observability as obs
-from memex.adapters._in.cli.formatters import format_fragments
+from memex.adapters._in.cli.formatters import (
+    format_fragments,
+    format_thread,
+    format_timeline,
+    format_trail,
+    format_trail_list,
+)
+from memex.adapters._in.cli.last_results import (
+    resolve_conversation_ref,
+    resolve_fragment_ref,
+    save_results,
+)
 from memex.composition import (
     EmbeddingDimensionMismatchError,
     create_corpus,
@@ -34,16 +45,24 @@ click.rich_click.COMMAND_GROUPS = {
             "commands": ["dig", "keyword", "semantic"],
         },
         {
+            "name": "View",
+            "commands": ["thread", "timeline", "similar"],
+        },
+        {
             "name": "Ingest",
             "commands": ["ingest", "backfill", "rebuild", "reset"],
         },
         {
             "name": "Discovery",
-            "commands": ["status", "corpus", "sources", "schema", "init"],
+            "commands": ["status", "init"],
+        },
+        {
+            "name": "Graph",
+            "commands": ["trail"],
         },
         {
             "name": "Power User",
-            "commands": ["query", "sql"],
+            "commands": ["query", "sql", "corpus", "sources", "schema"],
         },
     ]
 }
@@ -133,10 +152,9 @@ def _init_global(
     # Initialize corpus (just create empty if not exists)
     corpus_path = memex_dir / "corpus.duckdb"
     if not corpus_path.exists():
-        from memex.adapters._out.corpus import DuckDBCorpus
+        from memex.composition import initialize_corpus
 
-        corpus = DuckDBCorpus(corpus_path)
-        corpus.close()
+        initialize_corpus(corpus_path)
         obs.console.print(f"[dim]Created corpus at {corpus_path}[/dim]")
     else:
         obs.console.print(f"[dim]Corpus exists at {corpus_path}[/dim]")
@@ -177,10 +195,9 @@ def _init_local():
     obs.console.print(f"[dim]Created config at {config_path}[/dim]")
 
     # Initialize empty corpus
-    from memex.adapters._out.corpus import DuckDBCorpus
+    from memex.composition import initialize_corpus
 
-    corpus = DuckDBCorpus(corpus_path)
-    corpus.close()
+    initialize_corpus(corpus_path)
     obs.console.print(f"[dim]Created corpus at {corpus_path}[/dim]")
 
     obs.console.print()
@@ -309,6 +326,110 @@ def semantic(query: str, limit: int, source: str | None, min_score: float, fmt: 
 
     obs.success(f"Found {len(results)} semantic matches")
     format_fragments(results, fmt, obs.console)
+
+
+# --- View Commands ---
+
+
+@main.command()
+@click.argument("conversation_id")
+def thread(conversation_id: str):
+    """View a full conversation thread.
+
+    Shows all messages in chronological order.
+    Accepts full IDs, short prefixes, or @N references from search results.
+
+    Example:
+        memex thread 66e1524a                # Short ID prefix
+        memex thread @3                      # 3rd result from last search
+        memex thread 66e1524a-1234-5678...   # Full UUID
+    """
+    # Resolve @N references
+    resolved_id = resolve_conversation_ref(conversation_id)
+    if resolved_id is None:
+        obs.error(f"Could not resolve '{conversation_id}'")
+        obs.info("Run a search first, then use @N to reference results")
+        return
+
+    service = create_service()
+    try:
+        fragments = service.find_conversation(resolved_id)
+        if not fragments:
+            obs.warning(f"No conversation found for '{conversation_id}'")
+            obs.info("Tip: Use a longer ID prefix for exact matching")
+            return
+        format_thread(fragments, obs.console)
+    finally:
+        service.close()
+
+
+@main.command()
+@click.option("--limit", "-n", default=30, help="Max conversations to show")
+@click.option("--offset", "-o", default=0, help="Skip first N conversations")
+@click.option("--source", "-s", help="Filter by source kind")
+def timeline(limit: int, offset: int, source: str | None):
+    """Browse recent conversations.
+
+    Shows a table of conversations sorted by most recent activity.
+    Use @N with 'memex thread' to view any conversation.
+
+    Example:
+        memex timeline
+        memex timeline --limit 50
+        memex timeline --source openai
+    """
+    service = create_service()
+    try:
+        conversations = service.list_conversations(limit, offset, source)
+        if not conversations:
+            obs.warning("No conversations found")
+            if source:
+                obs.info(f"No conversations from source '{source}'")
+            return
+
+        # Save to register for @N references
+        register_entries = [
+            {"id": c["conversation_id"], "conversation_id": c["conversation_id"]}
+            for c in conversations
+        ]
+        save_results(register_entries)
+
+        format_timeline(conversations, obs.console, offset)
+    finally:
+        service.close()
+
+
+@main.command()
+@click.argument("fragment_ref")
+@click.option("--limit", "-n", default=10, help="Max similar fragments")
+@click.option("--format", "-f", "fmt", type=click.Choice(["panel", "json", "ids"]), default="panel")
+def similar(fragment_ref: str, limit: int, fmt: str):
+    """Find fragments similar to a given one.
+
+    Uses SIMILAR_TO edges from the knowledge graph.
+    Accepts fragment IDs or @N references from search results.
+
+    Example:
+        memex similar @1                # Similar to result #1
+        memex similar abc123            # Similar to fragment abc123
+    """
+    # Resolve @N → fragment ID
+    fragment_id = resolve_fragment_ref(fragment_ref)
+    if fragment_id is None:
+        obs.error(f"Could not resolve '{fragment_ref}'")
+        return
+
+    service = create_service()
+    try:
+        similar_frags = service.find_similar(fragment_id, limit)
+        if not similar_frags:
+            obs.warning(f"No similar fragments found for '{fragment_ref}'")
+            obs.info("Run 'memex backfill' to enable similarity search")
+            return
+        obs.success(f"Found {len(similar_frags)} similar fragments")
+        format_fragments(similar_frags, fmt, obs.console)
+    finally:
+        service.close()
 
 
 # --- Ingestion Commands ---
@@ -588,7 +709,8 @@ def status():
             obs.console.print("  Reranking:       [dim]Available (after reset)[/dim]")
         else:
             obs.console.print(
-                "  Reranking:       [yellow]Not installed[/yellow] (uv add sentence-transformers)"
+                "  Reranking:       [yellow]Not available[/yellow]"
+                " (fastembed cross-encoder missing)"
             )
     elif service and service.has_reranker():
         model_name = service.reranker_model_name() or "cross-encoder"
@@ -597,10 +719,20 @@ def status():
         obs.console.print("  Reranking:       [dim]Available (auto-enabled in dig)[/dim]")
     else:
         obs.console.print(
-            "  Reranking:       [yellow]Not installed[/yellow] (uv add sentence-transformers)"
+            "  Reranking:       [yellow]Not available[/yellow] (fastembed cross-encoder missing)"
         )
 
-    obs.console.print()
+    # Graph
+    if not dimension_mismatch and service:
+        edge_data = service.edge_stats()
+        trail_data = service.list_trails()
+        if edge_data or trail_data:
+            obs.console.print("[bold]Knowledge Graph[/bold]")
+            for etype, info in edge_data.items():
+                obs.console.print(f"  {etype}: [green]{info['count']:,}[/green] edges")
+            if trail_data:
+                obs.console.print(f"  Trails:  [green]{len(trail_data)}[/green]")
+            obs.console.print()
 
     # Pending actions / issues
     pending = []
@@ -755,6 +887,133 @@ def sql():
         corpus.close()
 
     obs.console.print("\n[dim]Goodbye.[/]")
+
+
+# --- Trail Commands ---
+
+
+@main.group()
+def trail():
+    """Manage associative trails through your knowledge.
+
+    Trails are named paths through fragments — Vannevar Bush's core vision.
+    """
+    pass
+
+
+@trail.command(name="create")
+@click.argument("name")
+@click.option("--description", "-d", default="", help="Trail description")
+def trail_create(name: str, description: str):
+    """Create a new trail.
+
+    Example:
+        memex trail create "auth decisions"
+        memex trail create "onboarding" -d "How I learned this codebase"
+    """
+    service = create_service()
+    try:
+        service.create_trail(name, description)
+        obs.success(f"Created trail '{name}'")
+        obs.info(f'Add fragments: memex trail add "{name}" @N')
+    except Exception as e:
+        if "UNIQUE" in str(e):
+            obs.error(f"Trail '{name}' already exists")
+        else:
+            raise
+    finally:
+        service.close()
+
+
+@trail.command(name="add")
+@click.argument("trail_name")
+@click.argument("fragment_ref")
+@click.option("--note", "-n", default="", help="Annotation for this entry")
+def trail_add(trail_name: str, fragment_ref: str, note: str):
+    """Add a fragment to a trail.
+
+    Accepts fragment IDs or @N references from search results.
+
+    Example:
+        memex trail add "auth decisions" @3
+        memex trail add "auth decisions" @1 -n "The key insight"
+    """
+    # Resolve @N → fragment ID
+    fragment_id = resolve_fragment_ref(fragment_ref)
+    if fragment_id is None:
+        obs.error(f"Could not resolve '{fragment_ref}'")
+        obs.info("Run a search first, then use @N to reference results")
+        return
+
+    service = create_service()
+    try:
+        position = service.add_to_trail(trail_name, fragment_id, note)
+        obs.success(f"Added to '{trail_name}' at position #{position + 1}")
+    except ValueError as e:
+        obs.error(str(e))
+    finally:
+        service.close()
+
+
+@trail.command(name="follow")
+@click.argument("trail_name")
+def trail_follow(trail_name: str):
+    """Walk a trail — view all entries in order.
+
+    Example:
+        memex trail follow "auth decisions"
+    """
+    service = create_service()
+    try:
+        entries = service.get_trail(trail_name)
+        if not entries:
+            obs.warning(f"Trail '{trail_name}' not found or empty")
+            return
+        format_trail(trail_name, entries, obs.console)
+    finally:
+        service.close()
+
+
+@trail.command(name="list")
+def trail_list():
+    """List all trails.
+
+    Example:
+        memex trail list
+    """
+    service = create_service()
+    try:
+        trails = service.list_trails()
+        format_trail_list(trails, obs.console)
+    finally:
+        service.close()
+
+
+@trail.command(name="delete")
+@click.argument("trail_name")
+@click.option("--yes", "-y", is_flag=True, help="Skip confirmation")
+def trail_delete(trail_name: str, yes: bool):
+    """Delete a trail.
+
+    Example:
+        memex trail delete "old trail"
+        memex trail delete "old trail" --yes
+    """
+    if not yes:
+        obs.console.print(f"[yellow]Delete trail '{trail_name}'?[/yellow]")
+        confirm = obs.console.input("Type 'yes' to confirm: ")
+        if confirm.strip().lower() != "yes":
+            obs.info("Aborted.")
+            return
+
+    service = create_service()
+    try:
+        if service.delete_trail(trail_name):
+            obs.success(f"Deleted trail '{trail_name}'")
+        else:
+            obs.warning(f"Trail '{trail_name}' not found")
+    finally:
+        service.close()
 
 
 # --- Helpers ---
