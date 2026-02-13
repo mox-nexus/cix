@@ -185,7 +185,7 @@ Academic research has 50-70% failure to replicate in some fields (Open Science C
 
 ### Transparency (β = 0.415)
 
-**Source:** Blaurock et al. (2024), meta-analysis of 106 studies on AI collaboration.
+**Source:** Blaurock et al. (2025), experiments with 654 professionals on AI collaboration.
 
 **Finding:** Showing reasoning has a strong positive effect on collaboration outcomes.
 
@@ -387,7 +387,7 @@ Session context is lost when the conversation ends. Learning can be preserved.
 **Evidence:** Stack Overflow developer survey (2024) — production-proven tools have 2-3x higher satisfaction than trendy alternatives.
 
 ### Transparency & Control
-**Evidence:** Blaurock meta-analysis (106 studies) — strongest predictors of positive collaboration outcomes.
+**Evidence:** Blaurock et al. (2025, n=654) — strongest predictors of positive collaboration outcomes.
 
 ### Verification
 **Evidence:** Chain-of-Verification reduces hallucination 50-70% (Dhuliawala et al., ACL 2024).
@@ -614,7 +614,7 @@ For collaborators enhancing these scaffolds: the research provides directional g
 | Budzyń (Lancet, 2025) | Medical domain (colonoscopy), observational | Skill atrophy rate (-20%) may not transfer directly to software |
 | Gerlich (2025) | Cross-sectional, self-reported | Correlations (r = -0.68, -0.75) show association, not causation |
 | Lee et al. (CHI, 2025) | Self-reported critical thinking | Perceptions may differ from actual cognitive performance |
-| Blaurock (106 studies) | Service contexts (not all software) | Effect sizes (β = 0.507, 0.415) are directional for scaffold design |
+| Blaurock (n=654) | Service contexts (not all software), scenario experiments | Effect sizes (β = 0.507, 0.415) are directional for scaffold design |
 | Bastani (PNAS, 2025) | Education domain (Turkish math) | -17% learning harm may vary across skill types |
 | Mastery OR = 35.7 | Single study | Large effect size needs replication |
 | Sharma (Anthropic, 2026) | Claude.ai conversations only | Perception paradox may differ across AI systems |

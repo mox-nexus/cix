@@ -13,11 +13,13 @@ Core guidance on writing effective Skills: progressive disclosure, conciseness, 
 
 ### Transparency and Control
 
-**Blaurock et al. (2024). "AI-Based Service Experience: A Meta-Analysis of 106 Studies." Journal of Service Research.**
+**Blaurock, M., Büttgen, M., & Schepers, J. (2025). ["Designing Collaborative Intelligence Systems for Employee-AI Service Co-Production."](https://journals.sagepub.com/doi/10.1177/10946705241238751) Journal of Service Research, 28(4), 544-562.**
 
-- Transparency: β = 0.415 (significant positive effect)
+Two scenario-based experiments (n=654: 309 financial services + 345 HR professionals). Not a meta-analysis.
+- Transparency: β = 0.415 (from full text; not independently verified from public sources)
 - Process Control: β = 0.507 (strongest predictor)
 - Engagement features: b = -0.555 (negative for frequent users)
+- Directional findings confirmed: control and transparency dominate, engagement backfires
 
 ### Cognitive Effects
 

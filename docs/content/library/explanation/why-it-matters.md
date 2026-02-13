@@ -68,7 +68,7 @@ The stakes compound across scales. Individual dependency feeds organizational de
 
 This is happening in 2025-2026, as AI becomes standard in software development. The junior engineers learning today will be the seniors teaching in five years. The interaction patterns becoming habitual now will propagate to the next cohort. The defaults being accepted will become institutional norms.
 
-If those patterns are substitutive — accept output, skip understanding, optimize for speed — the capability erosion compounds across career arcs and across organizations. The perception gap means individuals won't notice. Kosmyna et al. measured brain activity during AI-assisted writing. Neural connectivity scaled down. Memory encoding regions showed reduced activation. 83.3% of participants couldn't recall quotes from their own AI-assisted essays. The work was done, but the learning never occurred. The participants didn't perceive the gap.
+If those patterns are substitutive — accept output, skip understanding, optimize for speed — the capability erosion compounds across career arcs and across organizations. The perception gap means individuals won't notice. Kosmyna et al. measured brain activity during AI-assisted writing (arXiv preprint, n=54). Neural connectivity scaled down. Memory encoding regions showed reduced activation. 83% of participants couldn't recall quotes from their own AI-assisted essays. The work was done, but the learning never occurred. The participants didn't perceive the gap.
 
 If the patterns are complementary — generate then comprehend, verify reasoning, reserve hard problems for practice — capability compounds in the opposite direction. Each interaction builds judgment. Judgment enables better verification. Verification catches errors that inform future decisions. The engineer in five years is more capable than the engineer today. The baseline rises.
 
@@ -76,7 +76,7 @@ The critical period is now because the foundations scale. Small differences in i
 
 ## What Determines the Direction
 
-Control is the strongest lever. β = 0.507 from meta-analysis of 106 studies. When users shape AI direction rather than accepting outputs passively, capability is preserved. [Collaboration design evidence →](../reference/collaboration-design-evidence)
+Control is the strongest lever. β = 0.507 from experiments with 654 professionals. When users shape AI direction rather than accepting outputs passively, capability is preserved. [Collaboration design evidence →](../reference/collaboration-design-evidence) <span class="ev ev-moderate" title="Blaurock et al. 2025, scenario experiments, n=654">◐</span>
 
 Transparency is second. β = 0.415. When reasoning is visible, users can evaluate it. Evaluation maintains engagement. Engagement prevents cognitive offloading.
 

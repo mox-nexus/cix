@@ -11,7 +11,7 @@ These principles emerged from asking: what does it take to work with AI without 
 
 When you see AI output that looks right, your brain wants to move on. The work appears done. This is where the trap closes.
 
-Research shows developers spend only 22.4% of their coding time verifying AI suggestions <span class="ev ev-strong" title="Peng et al. 2023, n=24 developers, behavioral coding study">●</span>. The rest is accepting, integrating, moving forward. Meanwhile, 40-50% of AI-generated code contains security vulnerabilities <span class="ev ev-strong" title="Perry et al. 2023, Pearce et al. 2022 — controlled generation studies">●</span>. The mismatch isn't the AI's fault—it's verification effort dropping below the error rate.
+Research shows developers spend only 22.4% of their coding time verifying AI suggestions <span class="ev ev-moderate" title="Mozannar et al. CHI 2024, n=21 programmers, behavioral coding study">◐</span>. The rest is accepting, integrating, moving forward. Meanwhile, 40-50% of AI-generated code contains security vulnerabilities <span class="ev ev-strong" title="Perry et al. 2023, Pearce et al. 2022 — controlled generation studies">●</span>. The mismatch isn't the AI's fault—it's verification effort dropping below the error rate.
 
 You know you should check the output. You don't, because it *looks* convincing. That's self-deception in action. The countermeasure: make verification a separate step from generation. Chain-of-Verification (CoVe) does this by answering fact-check questions independently, without access to the original response. Result: 50-70% reduction in hallucination <span class="ev ev-strong" title="Dhuliawala et al. ACL 2024, averaged across 4 benchmarks">●</span>. Same model, different process, opposite outcome.
 
@@ -26,7 +26,7 @@ You know you should check the output. You don't, because it *looks* convincing. 
 
 Your working memory holds about 4-7 chunks of information <span class="ev ev-strong" title="Sweller et al. 2011, Cognitive Load Theory synthesis">●</span>. Complex systems exceed this by orders of magnitude. AI doesn't change the size of your skull—it changes what you can keep outside it.
 
-This is why transparency (β = 0.415) matters almost as much as control (β = 0.507) for collaboration success <span class="ev ev-strong" title="Blaurock et al. 2024, Journal of Service Research, 106 studies">●</span>. When AI shows its reasoning, you offload verification to external structure instead of holding the entire decision tree in working memory. When it doesn't, you're left trusting or rejecting based on vibes—both failures of collaboration.
+This is why transparency (β = 0.415) matters almost as much as control (β = 0.507) for collaboration success <span class="ev ev-moderate" title="Blaurock et al. 2025, scenario experiments, n=654">◐</span>. When AI shows its reasoning, you offload verification to external structure instead of holding the entire decision tree in working memory. When it doesn't, you're left trusting or rejecting based on vibes—both failures of collaboration.
 
 The mistake is thinking AI removes cognitive load. It shifts it. From execution to evaluation. From remembering syntax to assessing correctness. The load doesn't disappear; it changes shape. If you can't see the AI's reasoning, the evaluation load exceeds your skull's capacity, and you fall back to blind acceptance.
 
@@ -101,9 +101,9 @@ The pattern: AI that makes you think becomes a whetstone—your capability sharp
 
 LLMs produce confident outputs for uncertain problems. They format responses with precision (markdown tables, numbered lists, confident language) while the underlying reasoning may be speculative. This is false precision—the appearance of certainty without its substance.
 
-The mitigation: explicit uncertainty. Research shows that expressing confidence levels prevents overreliance <span class="ev ev-moderate" title="Blaurock et al. 2024, transparency β=0.415, Journal of Service Research">●</span>. Not by making AI less useful, but by calibrating trust appropriately. When AI says "this is speculative, no direct evidence exists", you know to verify. When it projects false certainty, you don't.
+The mitigation: explicit uncertainty. Research shows that expressing confidence levels prevents overreliance <span class="ev ev-moderate" title="Blaurock et al. 2025, transparency β=0.415, n=654">◐</span>. Not by making AI less useful, but by calibrating trust appropriately. When AI says "this is speculative, no direct evidence exists", you know to verify. When it projects false certainty, you don't.
 
-Neural evidence: EEG studies show AI use causes "systematically scaled down" connectivity in brain regions responsible for critical thinking <span class="ev ev-strong" title="Kosmyna et al. MIT Media Lab 2024, n=40 participants">●</span>. One mechanism: AI's confident tone suppresses the uncertainty signals that normally trigger deeper evaluation.
+Neural evidence: EEG studies show AI use causes "systematically scaled down" connectivity in brain regions responsible for critical thinking <span class="ev ev-weak" title="Kosmyna et al. 2025, arXiv preprint, n=54">○</span>. One mechanism: AI's confident tone suppresses the uncertainty signals that normally trigger deeper evaluation.
 
 **What it looks like:** Compare two AI responses. First: "Use Redis for caching." Second: "Redis is common for caching (strong evidence from production use), though evaluation depends on access patterns (speculative without profiling your workload)." The second respects Zadeh's principle. It sacrifices false precision for meaningful guidance. The first hides uncertainty behind confident prescription.
 
@@ -113,7 +113,7 @@ Neural evidence: EEG studies show AI use causes "systematically scaled down" con
 
 These principles converge on a single idea: **collaboration requires seeing clearly**. Don't fool yourself about whether you've verified. Respect the limits of your cognition. Recognize that human+AI creates emergent properties. Match your internal complexity to the problems you're solving. Understand systems before changing them. Design interactions that strengthen rather than weaken. Embrace uncertainty over false confidence.
 
-The research base shows: control (β = 0.507) and transparency (β = 0.415) are the strongest levers for collaboration success <span class="ev ev-strong" title="Blaurock et al. 2024, Journal of Service Research, N=654">●</span>. These principles operationalize that finding. They're not about using AI less—they're about using it in ways that compound your capability rather than erode it.
+The research base shows: control (β = 0.507) and transparency (β = 0.415) are the strongest levers for collaboration success <span class="ev ev-moderate" title="Blaurock et al. 2025, scenario experiments, n=654">◐</span>. These principles operationalize that finding. They're not about using AI less—they're about using it in ways that compound your capability rather than erode it.
 
 Every AI interaction is a choice: fragile or antifragile, dependency or amplification, performance or mastery. The principles won't make that choice for you. They'll help you see it clearly.
 

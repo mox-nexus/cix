@@ -2,12 +2,14 @@
 # requires-python = ">=3.12"
 # dependencies = ["httpx>=0.27", "rich-click>=1.8"]
 # ///
-"""Citation verification for CIX library articles.
+"""Citation verification with triangulated LLM grounding.
 
-Pipeline: extract claims -> bibliography DOI -> OpenAlex -> LLM grounding.
+Pipeline: extract claims -> paper lookup (Scholar + OpenAlex) -> dual-model verification.
 
-    uv run scripts/verify-citations.py article.md --no-llm
-    uv run scripts/verify-citations.py article.md -m google/gemini-2.0-flash-001
+    uv run verify-citations.py article.md
+    uv run verify-citations.py article.md --no-llm
+    uv run verify-citations.py article.md -m google/gemma-3-27b-it:free
+    uv run verify-citations.py article.md -o report.md
 """
 
 from __future__ import annotations
@@ -16,7 +18,7 @@ import json
 import os
 import re
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import httpx
@@ -28,6 +30,11 @@ from rich.table import Table
 SCHOLAR = "https://api.semanticscholar.org/graph/v1"
 SCHOLAR_FIELDS = "title,authors,year,abstract,citationCount,paperId"
 OPENALEX = "https://api.openalex.org"
+
+DEFAULT_MODELS = [
+    "arcee-ai/trinity-large-preview:free",
+    "deepseek/deepseek-r1-0528:free",
+]
 
 
 # -- Models -------------------------------------------------------
@@ -49,23 +56,42 @@ class Paper:
     year: int | None
     abstract: str | None
     citations: int
-    source: str  # "doi", "title", "openalex"
+    source: str  # "doi", "scholar", "openalex"
+
+
+@dataclass
+class ModelVerdict:
+    model: str
+    supported: bool | None
+    confidence: str
+    reasoning: str
 
 
 @dataclass
 class Verdict:
     claim: Claim
     paper: Paper | None
-    supported: bool | None  # True/False/None
-    reasoning: str
+    model_verdicts: list[ModelVerdict] = field(default_factory=list)
 
+    @property
+    def consensus(self) -> bool | None:
+        """True if all models agree supported, False if all agree not, else None."""
+        verdicts = [v.supported for v in self.model_verdicts if v.supported is not None]
+        if not verdicts:
+            return None
+        if all(v is True for v in verdicts):
+            return True
+        if all(v is False for v in verdicts):
+            return False
+        return None
 
-@dataclass
-class BiblioEntry:
-    author: str
-    year: str
-    title: str
-    url: str
+    @property
+    def divergent(self) -> bool:
+        """True if models disagree."""
+        verdicts = [v.supported for v in self.model_verdicts if v.supported is not None]
+        if len(verdicts) < 2:
+            return False
+        return len(set(verdicts)) > 1
 
 
 # -- Extraction ----------------------------------------------------
@@ -99,18 +125,64 @@ def extract_claims(markdown: str) -> list[Claim]:
     return claims
 
 
-# -- Bibliography --------------------------------------------------
+# -- Bibliography (format-agnostic) --------------------------------
 
-_BIB_RE = re.compile(r"([A-Z][a-z]+).*?\((\d{4})\).*?\[([^\]]+)\]\(([^)]+)\)")
+
+@dataclass
+class BiblioEntry:
+    author: str
+    year: str
+    title: str
+    url: str
+
+
+# Multiple patterns to match common bibliography formats
+_BIB_PATTERNS = [
+    # Standard: Author (Year). [Title](URL)
+    re.compile(r"([A-Z][a-z]+).*?\((\d{4})\).*?\[([^\]]+)\]\(([^)]+)\)"),
+    # Paragraph: Author, X. et al. (Year). "Title." ... DOI/URL
+    re.compile(
+        r"([A-Z][a-z]+),?\s+\w.*?\((\d{4})\)\.\s*"
+        r'["""]([^"""\n]{10,})["""].*?(https?://\S+|10\.\d{4,}/\S+)'
+    ),
+    # Simple: Author (Year). Title. URL
+    re.compile(
+        r"([A-Z][a-z]+).*?\((\d{4})\)\.\s*"
+        r"([^.\n]{10,})\.\s*(?:.*?)(https?://\S+)"
+    ),
+]
 
 
 def load_bibliography(path: Path) -> list[BiblioEntry]:
+    """Extract bibliography entries using multiple format patterns."""
     if not path.exists():
         return []
-    return [
-        BiblioEntry(m.group(1), m.group(2), m.group(3), m.group(4))
-        for m in _BIB_RE.finditer(path.read_text())
-    ]
+    text = path.read_text()
+    entries: dict[tuple[str, str], BiblioEntry] = {}
+
+    for pattern in _BIB_PATTERNS:
+        for m in pattern.finditer(text):
+            author, year = m.group(1), m.group(2)
+            title = m.group(3).strip().rstrip(".")
+            url = m.group(4).strip().rstrip(".")
+            key = (author.lower(), year)
+            if key not in entries:
+                entries[key] = BiblioEntry(author, year, title, url)
+
+    # Also extract standalone DOIs from the entire file
+    for doi_m in re.finditer(r"(10\.\d{4,}/[^\s)\"'>]+)", text):
+        doi = doi_m.group(1).rstrip(".")
+        # Find nearest author/year context
+        context = text[max(0, doi_m.start() - 200) : doi_m.start()]
+        a = re.search(r"([A-Z][a-z]+)", context)
+        y = re.search(r"\((\d{4})\)", context)
+        if a and y:
+            key = (a.group(1).lower(), y.group(1))
+            if key not in entries:
+                url = f"https://doi.org/{doi}"
+                entries[key] = BiblioEntry(a.group(1), y.group(1), "", url)
+
+    return list(entries.values())
 
 
 def _bib_match(claim: Claim, entries: list[BiblioEntry]) -> BiblioEntry | None:
@@ -124,7 +196,7 @@ def _bib_match(claim: Claim, entries: list[BiblioEntry]) -> BiblioEntry | None:
 
 
 def _doi_from_url(url: str) -> str | None:
-    m = re.search(r"(10\.\d{4,}/[^\s)]+)", url)
+    m = re.search(r"(10\.\d{4,}/[^\s)\"'>]+)", url)
     return m.group(1).rstrip(".") if m else None
 
 
@@ -154,23 +226,22 @@ def _scholar_doi(doi: str, client: httpx.Client) -> Paper | None:
         return None
 
 
-def _scholar_search(title: str, client: httpx.Client) -> Paper | None:
-    params = {
-        "query": title,
-        "limit": 3,
-        "fields": SCHOLAR_FIELDS,
-    }
+def _scholar_search(query: str, client: httpx.Client) -> Paper | None:
     try:
         r = client.get(
             f"{SCHOLAR}/paper/search",
-            params=params,
+            params={"query": query, "limit": 3, "fields": SCHOLAR_FIELDS},
             timeout=10,
         )
         if r.status_code == 429:
             time.sleep(3)
             r = client.get(
                 f"{SCHOLAR}/paper/search",
-                params=params,
+                params={
+                    "query": query,
+                    "limit": 3,
+                    "fields": SCHOLAR_FIELDS,
+                },
                 timeout=10,
             )
         if r.status_code != 200:
@@ -178,7 +249,7 @@ def _scholar_search(title: str, client: httpx.Client) -> Paper | None:
         data = r.json().get("data", [])
         if not data:
             return None
-        return _parse_scholar(data[0], "title")
+        return _parse_scholar(data[0], "scholar")
     except httpx.HTTPError:
         return None
 
@@ -196,17 +267,20 @@ def _openalex(
     title_hint: str | None,
     client: httpx.Client,
 ) -> Paper | None:
-    """Search OpenAlex with title hint or topic keywords."""
+    """Search OpenAlex with title hint or keywords from citation."""
     if title_hint:
         query = title_hint
     else:
+        # Extract searchable keywords from citation text
         q = re.sub(
             r"[A-Z][a-z]+\s+et al\.?|et al\.?"
-            r"|\d{4}|n=[\d,]+|[—,().●]",
+            r"|\d{4}|n=[\d,]+|[—,().●◐○◌]",
             " ",
             claim.citation,
         )
         query = " ".join(w for w in q.split() if len(w) > 2)
+    if not query.strip():
+        return None
     year_filter = f"publication_year:{claim.year}" if claim.year else ""
 
     try:
@@ -217,9 +291,7 @@ def _openalex(
                 "filter": year_filter,
                 "per_page": 5,
             },
-            headers={
-                "User-Agent": "verify-citations/0.1 (cix)",
-            },
+            headers={"User-Agent": "verify-citations/0.2 (cix)"},
             timeout=10,
         )
         if r.status_code != 200:
@@ -247,12 +319,36 @@ def _openalex(
         return None
 
 
+def _build_search_query(claim: Claim) -> str:
+    """Build a search query from citation metadata."""
+    # Extract venue and topic keywords from citation
+    parts = re.split(r"[,;—]", claim.citation)
+    keywords = []
+    for part in parts:
+        part = part.strip()
+        # Skip author/year/sample-size fragments
+        if re.match(r"^[A-Z][a-z]+ et al", part):
+            continue
+        if re.match(r"^\d{4}$", part):
+            continue
+        if re.match(r"^n[=≈]", part):
+            continue
+        cleaned = re.sub(r"[()]", "", part).strip()
+        if cleaned and len(cleaned) > 2:
+            keywords.append(cleaned)
+    query = f"{claim.author} {' '.join(keywords)}"
+    if claim.year:
+        query += f" {claim.year}"
+    return query
+
+
 def find_paper(
     claim: Claim,
     biblio: list[BiblioEntry],
     client: httpx.Client,
 ) -> Paper | None:
-    """Bibliography DOI -> Semantic Scholar title -> OpenAlex."""
+    """Find paper: bibliography DOI -> Scholar search -> OpenAlex."""
+    # 1. Try bibliography DOI
     bib = _bib_match(claim, biblio)
     if bib:
         doi = _doi_from_url(bib.url)
@@ -260,43 +356,68 @@ def find_paper(
             p = _scholar_doi(doi, client)
             if p:
                 return p
-        p = _scholar_search(bib.title, client)
-        if p:
-            return p
+        if bib.title:
+            p = _scholar_search(bib.title, client)
+            if p:
+                return p
 
+    # 2. Search Scholar directly from citation metadata
+    query = _build_search_query(claim)
+    p = _scholar_search(query, client)
+    if p:
+        return p
+
+    # 3. OpenAlex fallback
     return _openalex(claim, bib.title if bib else None, client)
 
 
-# -- LLM Verification ---------------------------------------------
+# -- LLM Verification (Triangulated) ------------------------------
 
 _VERIFY_PROMPT = """\
-You verify citations. Given a CLAIM and the cited paper's \
-ABSTRACT, does the abstract support the claim?
+You are a citation fact-checker. Verify whether this academic claim is \
+accurate based on your knowledge of the cited paper.
 
 CLAIM: {claim}
 CITATION: {citation}
-ABSTRACT: {abstract}
+PAPER: {paper_info}
 
-JSON only: {{"supported": true/false/null, \
-"confidence": "high"/"medium"/"low", \
+Respond with JSON only, no other text:
+{{"supported": true/false/null, "confidence": "high"/"medium"/"low", \
 "reasoning": "1-2 sentences"}}
-- true = abstract supports direction and approximate magnitude
-- false = abstract contradicts the claim
-- null = not enough info to verify"""
+
+Rules:
+- true = the claim accurately represents findings from this paper
+- false = the claim misrepresents the paper (wrong numbers, wrong conclusion, wrong attribution)
+- null = you don't have enough knowledge of this specific paper to verify
+- Check specific numbers: if the claim says β=0.507 or 17% or n=654, verify those
+- Check attribution: is this finding actually from this author/paper?
+- If you're unsure, say null — don't guess"""
 
 
 def _ask_llm(
     claim: Claim,
-    abstract: str,
+    paper: Paper | None,
     client: httpx.Client,
     base_url: str,
     api_key: str,
     model: str,
-) -> tuple[bool | None, str]:
+) -> tuple[bool | None, str, str]:
+    """Returns (supported, reasoning, confidence)."""
+    paper_info = ""
+    if paper:
+        paper_info = f"Title: {paper.title}\n"
+        paper_info += f"Authors: {', '.join(paper.authors[:5])}\n"
+        paper_info += f"Year: {paper.year}\n"
+        paper_info += f"Citations: {paper.citations}\n"
+        if paper.abstract:
+            paper_info += f"Abstract: {paper.abstract}\n"
+    else:
+        paper_info = "(Paper not found in databases — verify from your knowledge)"
+
     prompt = _VERIFY_PROMPT.format(
         claim=claim.text,
         citation=claim.citation,
-        abstract=abstract,
+        paper_info=paper_info,
     )
     try:
         r = client.post(
@@ -314,20 +435,54 @@ def _ask_llm(
             timeout=60,
         )
         if r.status_code != 200:
-            return None, f"API error {r.status_code}"
+            return None, f"API error {r.status_code}", "low"
         content = r.json()["choices"][0]["message"]["content"]
+        # Strip reasoning model think tags (DeepSeek R1, etc.)
+        content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL)
+        # Extract JSON from markdown code blocks if present
         if "```" in content:
             m = re.search(
-                r"```(?:json)?\s*({.*?})\s*```",
+                r"```(?:json)?\s*(\{.*?\})\s*```",
                 content,
                 re.DOTALL,
             )
             if m:
                 content = m.group(1)
+        # Try to find JSON object in response
+        json_m = re.search(r"\{[^{}]*\}", content, re.DOTALL)
+        if json_m:
+            content = json_m.group(0)
         result = json.loads(content)
-        return result.get("supported"), result.get("reasoning", "")
+        return (
+            result.get("supported"),
+            result.get("reasoning", ""),
+            result.get("confidence", "medium"),
+        )
     except (httpx.HTTPError, json.JSONDecodeError, KeyError) as e:
-        return None, str(e)
+        return None, str(e), "low"
+
+
+def _triangulate(
+    claim: Claim,
+    paper: Paper | None,
+    models: list[str],
+    client: httpx.Client,
+    base_url: str,
+    api_key: str,
+    console: Console,
+) -> list[ModelVerdict]:
+    """Run claim against multiple models, return all verdicts."""
+    verdicts: list[ModelVerdict] = []
+
+    for model in models:
+        short = model.split("/")[-1].split(":")[0][:12]
+        supported, reasoning, confidence = _ask_llm(claim, paper, client, base_url, api_key, model)
+        verdicts.append(ModelVerdict(model, supported, confidence, reasoning))
+        style = _verdict_style(supported)
+        console.print(f"[dim]{short}[/]={style}", end=" ")
+        time.sleep(0.5)  # rate limit courtesy
+
+    return verdicts
 
 
 # -- Orchestration -------------------------------------------------
@@ -335,16 +490,16 @@ def _ask_llm(
 
 def _verdict_style(supported: bool | None) -> str:
     if supported is True:
-        return "[green]supported[/]"
+        return "[green]yes[/]"
     if supported is False:
-        return "[red]contradicted[/]"
-    return "[yellow]inconclusive[/]"
+        return "[red]no[/]"
+    return "[yellow]?[/]"
 
 
 def verify_all(
     claims: list[Claim],
     biblio: list[BiblioEntry],
-    model: str,
+    models: list[str],
     skip_llm: bool,
     console: Console,
 ) -> list[Verdict]:
@@ -361,91 +516,44 @@ def verify_all(
             time.sleep(0.3)
 
             paper = find_paper(claim, biblio, client)
-            if not paper:
-                _handle_not_found(claim, biblio, verdicts, console)
-                continue
+            if paper:
+                cit = f"{paper.citations} cit."
+                console.print(
+                    f"[green]found[/] via {paper.source} ({cit})",
+                    end=" ",
+                )
+            else:
+                console.print("[yellow]db miss[/]", end=" ")
 
-            cit = f"{paper.citations} cit."
-            console.print(
-                f"[green]found[/] via {paper.source} ({cit})",
-                end=" ",
-            )
-
-            supported, reasoning = _verify_paper(
-                claim,
-                paper,
-                has_llm,
-                client,
-                base_url,
-                api_key,
-                model,
-                console,
-            )
-            verdicts.append(Verdict(claim, paper, supported, reasoning))
+            if has_llm:
+                model_verdicts = _triangulate(
+                    claim, paper, models, client, base_url, api_key, console
+                )
+                console.print()
+                verdicts.append(Verdict(claim, paper, model_verdicts))
+            else:
+                console.print("[dim]skipped[/]")
+                verdicts.append(Verdict(claim, paper))
 
     return verdicts
-
-
-def _handle_not_found(
-    claim: Claim,
-    biblio: list[BiblioEntry],
-    verdicts: list[Verdict],
-    console: Console,
-) -> None:
-    same_year = [
-        e.author
-        for e in biblio
-        if e.year == claim.year and e.author.lower() != claim.author.lower()
-    ]
-    if same_year:
-        names = ", ".join(same_year[:5])
-        hint = f"Not found. Bib has {claim.year}: {names} — misattribution?"
-        console.print(f"[red]not found[/] [dim]({claim.year} bib: {names})[/]")
-    else:
-        hint = "Not found"
-        console.print("[red]not found[/]")
-    verdicts.append(Verdict(claim, None, None, hint))
-
-
-def _verify_paper(
-    claim: Claim,
-    paper: Paper,
-    has_llm: bool,
-    client: httpx.Client,
-    base_url: str,
-    api_key: str,
-    model: str,
-    console: Console,
-) -> tuple[bool | None, str]:
-    if has_llm and paper.abstract:
-        supported, reasoning = _ask_llm(
-            claim,
-            paper.abstract,
-            client,
-            base_url,
-            api_key,
-            model,
-        )
-        console.print(_verdict_style(supported))
-        return supported, reasoning
-    if paper.abstract:
-        console.print("[dim]skipped[/]")
-        return None, "LLM skipped"
-    console.print("[yellow]no abstract[/]")
-    return None, "No abstract"
 
 
 # -- Report --------------------------------------------------------
 
 
-def _label(v: Verdict) -> str:
-    if v.supported is True:
-        return "[green]VERIFIED[/]"
-    if v.supported is False:
-        return "[red]CONTRADICTED[/]"
-    if v.paper:
+def _consensus_label(v: Verdict) -> str:
+    if not v.paper:
+        return "[red]NOT FOUND[/]"
+    if not v.model_verdicts:
         return "[yellow]PARTIAL[/]"
-    return "[red]NOT FOUND[/]"
+    if v.divergent:
+        return "[yellow]DIVERGENT[/]"
+    c = v.consensus
+    if c is True:
+        return "[green]VERIFIED[/]"
+    if c is False:
+        return "[red]CONTRADICTED[/]"
+    return "[yellow]INCONCLUSIVE[/]"
 
 
 def render_report(
@@ -454,41 +562,49 @@ def render_report(
     console: Console,
 ) -> None:
     found = sum(1 for v in verdicts if v.paper)
-    ok = sum(1 for v in verdicts if v.supported is True)
-    bad = sum(1 for v in verdicts if v.supported is False)
+    verified = sum(1 for v in verdicts if v.consensus is True)
+    contradicted = sum(1 for v in verdicts if v.consensus is False)
+    divergent = sum(1 for v in verdicts if v.divergent)
 
     summary = (
         f"[bold]{Path(filepath).name}[/]\n"
         f"{len(verdicts)} claims  ·  {found} found  ·  "
-        f"[green]{ok} supported[/]  ·  "
-        f"[red]{bad} contradicted[/]"
+        f"[green]{verified} verified[/]  ·  "
+        f"[red]{contradicted} contradicted[/]"
     )
+    if divergent:
+        summary += f"  ·  [yellow]{divergent} divergent[/]"
+
     console.print()
-    console.print(
-        Panel(
-            summary,
-            title="Citation Verification",
-            border_style="blue",
-        )
-    )
+    console.print(Panel(summary, title="Citation Verification", border_style="blue"))
 
     table = Table(show_lines=True, expand=True)
     table.add_column("#", width=3, justify="right")
-    table.add_column("Citation", width=24)
-    table.add_column("Paper", width=40)
-    table.add_column("Verdict", width=13)
-    table.add_column("Reasoning", ratio=1)
+    table.add_column("Citation", width=22)
+    table.add_column("Paper", width=36)
+    table.add_column("Verdict", width=14)
+    table.add_column("Models", ratio=1)
 
     for i, v in enumerate(verdicts, 1):
         cite = f"[bold]{v.claim.author}[/] {v.claim.year or ''}\n[dim]{v.claim.level}[/]"
         if v.paper:
             title = v.paper.title
-            if len(title) > 65:
-                title = title[:65] + "..."
-            paper = f"{title}\n[dim]{v.paper.citations} cit · {v.paper.source}[/]"
+            if len(title) > 55:
+                title = title[:55] + "..."
+            paper_col = f"{title}\n[dim]{v.paper.citations} cit · {v.paper.source}[/]"
         else:
-            paper = "[red]Not found[/]"
-        table.add_row(str(i), cite, paper, _label(v), v.reasoning)
+            paper_col = "[red]Not found[/]"
+
+        model_col = ""
+        for mv in v.model_verdicts:
+            short = mv.model.split("/")[-1].split(":")[0][:12]
+            style = _verdict_style(mv.supported)
+            model_col += f"[dim]{short}[/]: {style}\n"
+            if mv.reasoning:
+                reason = mv.reasoning[:80]
+                model_col += f"[dim]{reason}[/]\n"
+
+        table.add_row(str(i), cite, paper_col, _consensus_label(v), model_col)
 
     console.print(table)
 
@@ -498,23 +614,34 @@ def save_report(
     filepath: str,
     output: Path,
 ) -> None:
-    header = f"# Citation Verification: {Path(filepath).name}\n"
-    cols = "| # | Citation | Found | Verdict | Reasoning |"
-    sep = "|---|----------|-------|---------|-----------|"
-    lines = [header, cols, sep]
+    lines = [
+        f"# Citation Verification: {Path(filepath).name}\n",
+        "| # | Citation | Found | Consensus | Models |",
+        "|---|----------|-------|-----------|--------|",
+    ]
     for i, v in enumerate(verdicts, 1):
-        if v.supported is True:
+        if v.divergent:
+            label = "DIVERGENT"
+        elif v.consensus is True:
             label = "VERIFIED"
-        elif v.supported is False:
+        elif v.consensus is False:
             label = "CONTRADICTED"
         elif v.paper:
             label = "PARTIAL"
         else:
             label = "NOT FOUND"
         found = "Yes" if v.paper else "No"
-        reason = v.reasoning.replace("|", "/")
         year = v.claim.year or ""
-        lines.append(f"| {i} | {v.claim.author} {year} | {found} | {label} | {reason} |")
+
+        model_notes = []
+        for mv in v.model_verdicts:
+            short = mv.model.split("/")[-1].split(":")[0]
+            sup = {True: "yes", False: "no", None: "?"}[mv.supported]
+            reason = mv.reasoning.replace("|", "/")[:60]
+            model_notes.append(f"{short}={sup}: {reason}")
+        models = "; ".join(model_notes) if model_notes else "-"
+
+        lines.append(f"| {i} | {v.claim.author} {year} | {found} | {label} | {models} |")
     output.write_text("\n".join(lines) + "\n")
 
 
@@ -526,46 +653,46 @@ def save_report(
 @click.option(
     "-m",
     "--model",
-    default="moonshotai/kimi-k2.5",
-    show_default=True,
-    help="LLM model (OpenRouter or OpenAI-compatible)",
+    multiple=True,
+    help="LLM model(s) for verification. Repeat for triangulation.",
 )
-@click.option(
-    "--no-llm",
-    is_flag=True,
-    help="Paper lookup only",
-)
+@click.option("--no-llm", is_flag=True, help="Paper lookup only")
 @click.option(
     "-b",
     "--bibliography",
     type=click.Path(exists=True),
-    help="Bibliography with [Title](URL) entries",
+    help="Bibliography file (any markdown format with DOIs/URLs)",
 )
-@click.option(
-    "-o",
-    "--output",
-    type=click.Path(),
-    help="Save markdown report",
-)
+@click.option("-o", "--output", type=click.Path(), help="Save markdown report")
 def cli(
     filepath: str,
-    model: str,
+    model: tuple[str, ...],
     no_llm: bool,
     bibliography: str | None,
     output: str | None,
 ) -> None:
-    """Verify citations in a CIX library article.
+    """Verify evidence-tagged citations in a markdown article.
 
     \b
+    Extracts <span class="ev ..."> evidence spans, finds the cited papers
+    via Semantic Scholar + OpenAlex, then verifies claims against paper
+    abstracts using multiple LLMs for triangulated confidence.
+
+    \b
+    Default models: arcee-ai/trinity-large-preview:free + deepseek/deepseek-r1-0528:free
     Env: OPENROUTER_API_KEY or VERIFY_API_KEY + VERIFY_BASE_URL
     """
     console = Console()
     md = Path(filepath).read_text()
 
+    # Resolve models
+    models = list(model) if model else DEFAULT_MODELS
+
     console.print(f"\n[bold]Extracting claims from[/] {filepath}")
     claims = extract_claims(md)
     console.print(f"  Found [bold]{len(claims)}[/] evidence-tagged claims")
 
+    # Try to find bibliography (format-agnostic)
     bib_path = (
         Path(bibliography)
         if bibliography
@@ -574,6 +701,10 @@ def cli(
     biblio = load_bibliography(bib_path) if bib_path.exists() else []
     if biblio:
         console.print(f"  Loaded [bold]{len(biblio)}[/] bibliography entries from {bib_path.name}")
+
+    if not no_llm:
+        model_names = ", ".join(m.split("/")[-1].split(":")[0] for m in models)
+        console.print(f"  Models: [bold]{model_names}[/]")
     console.print()
 
     if not claims:
@@ -585,7 +716,7 @@ def cli(
         console.print("[yellow]No API key — paper lookup only.[/]\n")
         no_llm = True
 
-    verdicts = verify_all(claims, biblio, model, no_llm, console)
+    verdicts = verify_all(claims, biblio, models, no_llm, console)
     render_report(verdicts, filepath, console)
 
     if output:

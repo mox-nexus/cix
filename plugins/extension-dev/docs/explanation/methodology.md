@@ -194,7 +194,7 @@ Implication: Users can't reliably self-correct. Short-term satisfaction ≠ long
 
 ## Effect Sizes
 
-### Design Levers (Blaurock Meta-Analysis, 106 studies)
+### Design Levers (Blaurock et al. 2025, n=654)
 
 | Lever | Effect Size | Implication |
 |-------|------------|-------------|
@@ -286,7 +286,7 @@ For collaborators enhancing these extensions: the research provides directional 
 | Budzyń (Lancet, 2025) | Medical domain (colonoscopy), observational | Skill atrophy rate (-20%) may not transfer directly to software |
 | Gerlich (2025) | Cross-sectional, self-reported | Correlations (r = -0.68, -0.75) show association, not causation |
 | Lee et al. (CHI, 2025) | Self-reported critical thinking | Perceptions may differ from actual cognitive performance |
-| Blaurock (106 studies) | Service contexts (not all software) | Effect sizes (beta = 0.507, 0.415) are directional for extension design |
+| Blaurock (n=654) | Service contexts (not all software), scenario experiments | Effect sizes (beta = 0.507, 0.415) are directional for extension design |
 | Bastani (PNAS, 2025) | Education domain (Turkish math) | -17% learning harm may vary across skill types and populations |
 | Mastery OR = 35.7 | Single study | Large effect size from one study needs replication |
 | Sharma (Anthropic, 2026) | Claude.ai conversations only | Perception paradox may differ across AI systems |

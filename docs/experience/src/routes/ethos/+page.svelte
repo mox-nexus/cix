@@ -413,7 +413,7 @@
 				<ConstraintCard
 					name="Transparent by Design"
 					description="Extensions expose reasoning, ship docs that teach domain knowledge, show decisions not just outputs."
-					citation="Blaurock et al., 2024: transparency predicts good collaboration outcomes"
+					citation="Blaurock et al., 2025: transparency predicts good collaboration outcomes"
 					loopBreaks="Breaks: can't evaluate output"
 					verification="Does it log decisions? Do docs explain why, not just what?"
 					delay={0}

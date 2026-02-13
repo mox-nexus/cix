@@ -47,7 +47,7 @@ This is what complementary design enables: **speed without capability loss**.
 
 ## The Strongest Levers
 
-What predicts successful human-AI collaboration? A meta-analysis of 106 studies with 654 professionals identified the factors. <span class="ev ev-strong" title="Meta-analysis, 106 studies, 654 professionals">●</span>
+What predicts successful human-AI collaboration? Experiments with 654 professionals identified the key factors. <span class="ev ev-moderate" title="Blaurock et al. 2025, scenario experiments, n=654">◐</span>
 
 | Lever | Effect Size | What It Means |
 |-------|-------------|---------------|

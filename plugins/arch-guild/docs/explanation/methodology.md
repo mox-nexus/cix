@@ -75,7 +75,7 @@ Example: K (Strategic) cannot discuss implementation correctness, security speci
 
 ### Evidence: Control and Transparency
 
-Collaborative intelligence research identifies control (β = 0.507) and transparency (β = 0.415) as the strongest levers for effective human-AI collaboration (Blaurock et al., Journal of Service Research 2024).
+Collaborative intelligence research identifies control (β = 0.507) and transparency (β = 0.415) as the strongest levers for effective human-AI collaboration (Blaurock et al., Journal of Service Research 2025, n=654).
 
 Orthogonality locks provide transparency: you know exactly what perspective you're getting. The human retains control: agents cannot override each other's domains, forcing the human to synthesize.
 

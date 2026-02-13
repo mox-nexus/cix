@@ -6,13 +6,14 @@ Research and evidence behind collaborative building scaffolds.
 
 ## Collaboration Design
 
-**Blaurock, M., Kietzmann, J., Pitt, L., & Berthon, P. (2024). "AI-Based Service Experience Contingencies: A Meta-Analysis of 106 Empirical Studies." Journal of Service Research.**
+**Blaurock, M., Büttgen, M., & Schepers, J. (2025). ["Designing Collaborative Intelligence Systems for Employee-AI Service Co-Production."](https://journals.sagepub.com/doi/10.1177/10946705241238751) Journal of Service Research, 28(4), 544-562.**
 
-Meta-analysis establishing quantified effects of design features:
-- Transparency: β = 0.415 (strong positive effect)
+Two scenario-based experiments (n=654: 309 financial services + 345 HR professionals). Not a meta-analysis.
+- Transparency: β = 0.415 (from full text; not independently verified from public sources)
 - Process Control: β = 0.507 (strongest predictor of positive outcomes)
 - Outcome Control: Significant positive effect
 - Engagement features: b = -0.555 (negative for frequent users)
+- Directional findings confirmed: control and transparency dominate, engagement backfires
 
 **Implication:** Showing reasoning and providing control are the strongest levers for effective collaboration.
 
@@ -51,12 +52,13 @@ Population-level correlation study:
 
 **Note:** Correlation, not causation, but convergent with other studies.
 
-**Kosmyna, N., et al. (2025). "Your Brain on ChatGPT: The Impact of AI-Assisted Writing on Cognitive Load, Creativity, and Memory Recall." MIT Media Lab.**
+**Kosmyna, N., et al. (2025). ["Your Brain on ChatGPT: Cognitive Debt."](https://arxiv.org/abs/2506.08872) MIT Media Lab / arXiv preprint (not peer-reviewed).**
 
-EEG study:
-- 83.3% of AI users couldn't recall quotes from their own AI-assisted essays
-- Neural connectivity "systematically scaled down" with AI use
+EEG study, n=54 (18 per group):
+- 83% of LLM group couldn't recall quotes from their own AI-assisted essays (Session 1)
+- Neural connectivity "systematically scaled down" with AI use (up to 55% reduced)
 - Memory formation disrupted by passive consumption
+- Published critique: Stankovic et al. (arXiv:2601.00856) — methodological concerns
 
 **Implication:** Transparency and active engagement are protective factors.
 
@@ -397,9 +399,9 @@ Analysis of 7,703 files: AI-generated code inherits vulnerability patterns from 
 
 r = -0.75 between cognitive offloading and critical thinking. r = -0.68 between AI use and critical thinking. Note: correlation, not causation.
 
-**Kosmyna, N., et al. (2025). "Your Brain on ChatGPT: Cognitive Debt and AI-Assisted Writing." MIT Media Lab.**
+**Kosmyna, N., et al. (2025). ["Your Brain on ChatGPT: Cognitive Debt."](https://arxiv.org/abs/2506.08872) MIT Media Lab / arXiv preprint (not peer-reviewed).**
 
-EEG study: 83.3% of AI users couldn't recall quotes from own AI-assisted essays. Neural connectivity "systematically scaled down" with AI use.
+EEG study (n=54): 83% of LLM group couldn't recall quotes from own AI-assisted essays (Session 1). Neural connectivity "systematically scaled down" with AI use. Published critique exists (Stankovic et al.).
 
 ---
 
@@ -491,7 +493,7 @@ All 12 models tested failed to recognize knowledge limitations, providing confid
 
 When multiple independent sources point to the same conclusion:
 - Technical debt compounds: Fowler (2003), McConnell (2006), Cataldo et al. (2006)
-- Transparency matters: Blaurock meta-analysis (106 studies)
+- Transparency matters: Blaurock et al. (2025, n=654)
 - Mastery orientation protects: ACU (2025), Lee et al. (2025), Pallant et al. (2025)
 - Cognitive offloading harms: Gerlich (2025), Kosmyna et al. (2025), Lee et al. (2025)
 - Skill atrophy is real: Budzyń (2025), Bastani (2025)

@@ -30,10 +30,10 @@ This project is grounded in rigorous research synthesis from premier venues (CHI
 **On Cognitive Offloading:**
 - Higher confidence in AI significantly predicts less critical thinking enacted
 - Neural connectivity "systematically scaled down" with AI use (MIT Media Lab EEG study)
-- 83.3% of AI users couldn't recall quotes from their own AI-assisted essays (Kosmyna et al. 2025, preprint, n=54)
+- 83% of AI users couldn't recall quotes from their own AI-assisted essays (Kosmyna et al. 2025, arXiv preprint, n=54)
 
 **On Trust Calibration:**
-- Developers spend only 22.4% of coding time verifying AI suggestions (Peng et al. 2023)
+- Developers spend only 22.4% of coding time verifying AI suggestions (Mozannar et al. CHI 2024, n=21)
 - Explanations alone *increase* overreliance (Bansal et al. CHI 2021)
 - Senior developers trust AI least (2.5%) but use it most effectively (Stack Overflow 2025)
 
@@ -96,7 +96,7 @@ The relationship is one of equals with different capabilities — human judgment
 - **Constitutive** — enables new capability through collaboration
 - **Transparent by default** — provenance, traceability, explanations, observability
 - **Compounding mastery** — each interaction makes both more capable
-- **Enabling control** — user agency is the strongest lever (β = 0.507, Blaurock 2024)
+- **Enabling control** — user agency is the strongest lever (β = 0.507, Blaurock 2025)
 - **Non-conformity** — preserve intellectual diversity, resist homogenization
 
 ---
@@ -301,11 +301,11 @@ These findings inform extension design:
 
 | Lever | Effect Size | Source | Implication |
 |-------|------------|--------|-------------|
-| **Control** | β = 0.507 | Blaurock et al. 2024, meta-analysis, 106 studies | User agency is the strongest lever |
-| **Transparency** | β = 0.415 | Blaurock et al. 2024 | Showing reasoning prevents blind trust |
+| **Control** | β = 0.507 | Blaurock et al. 2025, n=654, J. Service Research | User agency is the strongest lever |
+| **Transparency** | β = 0.415 | Blaurock et al. 2025 | Showing reasoning prevents blind trust |
 | **Mastery orientation** | OR = 35.7 | Pallant et al. 2025 | Users focused on learning maintain capability |
 | **AI confidence** | β = -0.69 | Lee et al. CHI 2025 | Higher AI confidence → less critical thinking |
-| **Engagement features** | b = -0.555 | Blaurock et al. 2024 | Each added feature *reduces* trust |
+| **Engagement features** | b = -0.555 | Blaurock et al. 2025 | Each added feature *reduces* trust |
 
 **Design implications:**
 - Control > Transparency > everything else
@@ -550,7 +550,7 @@ Core research informing this project:
 - Lee et al. (2025). "The Impact of Generative AI on Critical Thinking." CHI.
 - Kosmyna et al. (2025). "Your Brain on ChatGPT: Cognitive Debt." MIT Media Lab.
 - Dhuliawala et al. (2024). "Chain-of-Verification Reduces Hallucination." ACL.
-- Blaurock et al. (2024). "Designing Collaborative Intelligence Systems." Journal of Service Research.
+- Blaurock et al. (2025). "Designing CI Systems for Employee-AI Service Co-Production." Journal of Service Research.
 - Cui/Demirer et al. (2024). "Effects of Generative AI on High Skilled Work." RCTs.
 
 Full bibliography in `docs/content/library/reference/bibliography.md`.

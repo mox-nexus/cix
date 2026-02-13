@@ -26,7 +26,7 @@ The mechanism: AI bypasses desirable difficulties — the productive struggle th
 **Key evidence:**
 - r = -0.75: cognitive offloading ↔ critical thinking (Gerlich 2025)
 - β = -0.69: AI confidence → less critical thinking enacted (Lee et al. CHI 2025)
-- 83.3% of AI users couldn't recall quotes from their own AI-assisted essays
+- 83% of AI users couldn't recall quotes from their own AI-assisted essays (Kosmyna et al. 2025, arXiv preprint, n=54)
 
 ---
 

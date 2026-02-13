@@ -37,7 +37,7 @@ No equivalent study exists for developers — the technology is too new. But the
 
 ## What makes collaboration work
 
-Blaurock et al. (Journal of Service Research, 2024) studied collaborative intelligence through interviews and experiments with 654 professionals. What predicted good outcomes:
+Blaurock et al. (Journal of Service Research, 2025) studied collaborative intelligence through experiments with 654 professionals. What predicted good outcomes:
 
 | Factor | Effect | What it means |
 |--------|--------|---------------|
