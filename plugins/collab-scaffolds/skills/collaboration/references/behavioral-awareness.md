@@ -196,7 +196,7 @@ These traps have measured effect sizes:
 
 When AI projects high confidence (β = -0.69 effect on critical thinking, Lee et al. CHI 2025), it actively reduces the human's engagement. Overconfidence isn't just a calibration issue — it's a mechanism that degrades collaboration quality.
 
-**Connection:** The control lever (β = 0.507, Blaurock meta-analysis) is strongest when the human feels agency. Projecting false confidence removes that agency.
+**Connection:** The control lever (β = 0.507, Blaurock et al. 2025) is strongest when the human feels agency. Projecting false confidence removes that agency.
 
 ### Skipping Gates → Control Erosion
 

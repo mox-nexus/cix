@@ -12,11 +12,11 @@ Here's what actually works.
 
 ## The Two Levers That Matter
 
-After analyzing 106 studies with 654 professionals, researchers found two factors dominate everything else:
+After experiments with 654 professionals, researchers found two factors dominate everything else:
 
 **Control** (β = 0.507) — You shape the direction. You make the decisions. You retain agency over the collaboration.
 
-**Transparency** (β = 0.415) — The system shows its reasoning. Surfaces its assumptions. Explains how it reached conclusions. <span class="ev ev-strong" title="Blaurock et al. meta-analysis, Journal of Service Research 2024">●</span>
+**Transparency** (β = 0.415) — The system shows its reasoning. Surfaces its assumptions. Explains how it reached conclusions. <span class="ev ev-moderate" title="Blaurock et al. 2025, scenario experiments, n=654">◐</span>
 
 Everything else shows smaller effects or actively backfires. And here's the kicker: adding engagement features — gamification, personalization, social elements — measurably reduces trust (b = -0.555). Each feature you add for "better UX" degrades the collaboration. Users want control and understanding, not friction disguised as interaction.
 

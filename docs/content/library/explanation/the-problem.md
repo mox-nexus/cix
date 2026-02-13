@@ -40,7 +40,7 @@ With AI, you shift from generation to verification. You read mostly-correct code
 
 The shift matters because **what you practice is what you get good at**. If you practice generating solutions, you become better at generation. If you practice reviewing AI output, you become better at reviewing—but only if you have the baseline competence to recognize errors.
 
-Research on [cognitive offloading](../reference/cognitive-effects-evidence) shows the mechanism: when AI handles the thinking, humans stop encoding the information. <span class="ev ev-moderate" title="EEG study, MIT Media Lab">◐</span> Participants in one study couldn't recall content from essays they'd written with AI assistance. They didn't forget—they never learned it in the first place.
+Research on [cognitive offloading](../reference/cognitive-effects-evidence) shows the mechanism: when AI handles the thinking, humans stop encoding the information. <span class="ev ev-weak" title="Kosmyna et al. 2025, arXiv preprint, n=54">○</span> Participants in one study couldn't recall content from essays they'd written with AI assistance. They didn't forget—they never learned it in the first place.
 
 ## The Invisible Slide
 

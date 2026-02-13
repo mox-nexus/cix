@@ -6,7 +6,7 @@ Research synthesis on what makes human-AI collaboration effective — the design
 
 ## Sources
 
-- [Blaurock et al. (2024). AI-Based Service Contingencies. Journal of Service Research.](https://journals.sagepub.com/doi/10.1177/10946705241253322)
+- [Blaurock et al. (2025). Designing CI Systems for Employee-AI Service Co-Production. Journal of Service Research.](https://journals.sagepub.com/doi/10.1177/10946705241238751)
 - [Ma et al. (2025). Contrastive Explanations in Human-AI Collaboration. Taylor & Francis.](https://www.tandfonline.com)
 - [Bansal et al. (2021). Does the Whole Exceed its Parts? CHI.](https://dl.acm.org/doi/10.1145/3411764.3445717)
 - [Stack Overflow Developer Survey (2025).](https://survey.stackoverflow.co/2025/)
@@ -16,9 +16,9 @@ Research synthesis on what makes human-AI collaboration effective — the design
 
 ## The Strongest Levers
 
-### Blaurock et al. Meta-Analysis (2024) <span class="ev ev-strong" title="Meta-analysis of 106 studies, 654 professionals">●</span>
+### Blaurock et al. (2025) <span class="ev ev-moderate" title="Scenario experiments, n=654, J. Service Research">◐</span>
 
-**Design:** Meta-analysis of 106 studies involving 654 professionals.
+**Design:** Two scenario-based experiments with 654 professionals (309 financial services + 345 HR).
 
 **Key findings:**
 
@@ -34,7 +34,7 @@ Research synthesis on what makes human-AI collaboration effective — the design
 
 **The engagement paradox:** Adding engagement features — gamification, personalization, social elements — reduces trust (b = -0.555). Each feature added for "better user experience" measurably degrades the collaboration. Users want control and understanding, not friction disguised as interaction.
 
-**Limitations:** Meta-analysis aggregates diverse studies with different methodologies. Effect sizes represent averages across contexts.
+**Limitations:** Scenario-based experiments, not field study. Effect sizes from full text not independently verified from public sources. Service context (financial services, HR), not software development specifically.
 
 ---
 
@@ -172,9 +172,9 @@ Day 90: Auto-accept until things break
 
 | Finding | Effect Size | Evidence Level | Source |
 |---------|------------|----------------|--------|
-| Control strongest lever | β = 0.507 | <span class="ev ev-strong">●</span> Strong | Blaurock meta-analysis |
-| Transparency second strongest | β = 0.415 | <span class="ev ev-strong">●</span> Strong | Blaurock meta-analysis |
-| Engagement features backfire | b = -0.555 | <span class="ev ev-strong">●</span> Strong | Blaurock meta-analysis |
+| Control strongest lever | β = 0.507 | <span class="ev ev-moderate">◐</span> Moderate | Blaurock et al. 2025 |
+| Transparency second strongest | β = 0.415 | <span class="ev ev-moderate">◐</span> Moderate | Blaurock et al. 2025 |
+| Engagement features backfire | b = -0.555 | <span class="ev ev-moderate">◐</span> Moderate | Blaurock et al. 2025 |
 | Explanations increase blind trust | Significant | <span class="ev ev-strong">●</span> Strong | Bansal CHI 2021 |
 | WHY > HOW for learning | 30% → 80% | <span class="ev ev-moderate">◐</span> Moderate | Security study |
 | Seniors verify, juniors accept | 2.5% vs 17% trust | <span class="ev ev-moderate">◐</span> Moderate | Stack Overflow |

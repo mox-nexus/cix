@@ -18,7 +18,7 @@ Memory encoding requires deep processing. You read a problem, consider approache
 
 AI shortcuts the sequence. Problem → AI solution → acceptance. The task completes. The mental model never updates.
 
-MIT researchers measured this neurologically using EEG during AI-assisted writing. <span class="ev ev-moderate" title="MIT Media Lab EEG study">◐</span> Neural connectivity in memory encoding regions systematically scaled down. After the task, 83.3% of participants couldn't recall quotes from essays they'd just written. They didn't forget. They never learned. The encoding step was skipped entirely.
+MIT researchers measured this neurologically using EEG during AI-assisted writing. <span class="ev ev-weak" title="Kosmyna et al. 2025, arXiv preprint, n=54, published critique">○</span> Neural connectivity in memory encoding regions systematically scaled down. After the task, 83% of participants couldn't recall quotes from essays they'd just written. They didn't forget. They never learned. The encoding step was skipped entirely.
 
 ## The Confidence-Competence Inversion
 

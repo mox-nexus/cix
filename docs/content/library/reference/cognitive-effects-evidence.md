@@ -50,20 +50,21 @@ Three-component friction significantly restored critical thinking that was other
 
 ## Neural Evidence for Cognitive Offloading
 
-### Kosmyna et al. (MIT Media Lab) <span class="ev ev-moderate" title="MIT Media Lab EEG study, small sample">◐</span>
+### Kosmyna et al. (MIT Media Lab, 2025) <span class="ev ev-weak" title="Kosmyna et al. 2025, arXiv preprint, n=54, published critique">○</span>
 
-**Design:** EEG measurement during AI-assisted vs unassisted writing.
+**Design:** Between-subjects EEG study, n=54 (18 per group: LLM, Search Engine, Brain-only). arXiv preprint ([2506.08872](https://arxiv.org/abs/2506.08872)), NOT peer-reviewed.
 
 **Key findings:**
-- Neural connectivity "systematically scaled down" during AI-assisted writing
+- Neural connectivity "systematically scaled down" during AI-assisted writing (up to 55% reduced vs brain-only)
 - Reduced activation in memory encoding regions
 - Lower engagement in executive function networks
 - Decreased integration between sensory input and long-term storage
-- 83.3% of participants couldn't recall quotes from their own AI-assisted essays
+- 83% of LLM group couldn't recall quotes from their own AI-assisted essays (Session 1)
+- Session 4 crossover: 78% of former-LLM users still couldn't quote without AI
 
-The brain treated AI-assisted writing differently from unassisted writing at a physiological level. Information was processed, formatted, submitted — but never encoded as learned knowledge. The episodic memory trace never formed because the deep processing required for encoding never occurred.
+The brain treated AI-assisted writing differently from unassisted writing at a physiological level. Information was processed, formatted, submitted — but never encoded as learned knowledge.
 
-**Limitations:** Small sample size. Single writing domain. EEG has temporal but not spatial precision.
+**Limitations:** Small sample (n=54, 18 per group). Not peer-reviewed. Published methodological critique (Stankovic et al., arXiv:2601.00856) identifies concerns with study design, reproducibility, EEG methodology. Authors state conclusions should be "treated with caution and as preliminary." Single writing domain.
 
 ---
 
@@ -150,8 +151,8 @@ Traditional AI design optimizes for Use — making the tool easy to invoke. But 
 | AI confidence → less critical thinking | β = -0.69 | <span class="ev ev-strong">●</span> Strong | Lee et al. CHI 2025 |
 | Self-confidence → more critical thinking | β = +0.35 | <span class="ev ev-strong">●</span> Strong | Lee et al. CHI 2025 |
 | PME friction restores engagement | Significant | <span class="ev ev-strong">●</span> Strong | Lee et al. CHI 2025 |
-| Neural connectivity reduced with AI | Measured via EEG | <span class="ev ev-moderate">◐</span> Moderate | Kosmyna, MIT |
-| 83.3% recall failure | 83.3% | <span class="ev ev-moderate">◐</span> Moderate | Kosmyna, MIT |
+| Neural connectivity reduced with AI | Up to 55% reduction | <span class="ev ev-weak">○</span> Weak (preprint) | Kosmyna 2025 |
+| 83% recall failure | 83% (15/18) | <span class="ev ev-weak">○</span> Weak (preprint) | Kosmyna 2025 |
 | Cognitive offloading ↔ critical thinking | r = -0.75 | <span class="ev ev-moderate">◐</span> Moderate | Gerlich 2025 |
 | Younger users more affected | Age-stratified | <span class="ev ev-moderate">◐</span> Moderate | Gerlich 2025 |
 | Performance up, metacognition flat | Observed | <span class="ev ev-moderate">◐</span> Moderate | Fernandes CHI 2025 |

@@ -38,7 +38,7 @@ Anthropic's analysis of 1.5 million conversations revealed something deeper: use
 
 ### What Actually Works
 
-A meta-analysis of 106 studies with 654 professionals found two factors that predict successful AI collaboration: process control (β = 0.507) and transparency (β = 0.415). <span class="ev ev-strong" title="Meta-analysis, 106 studies">●</span> Control is the strongest lever. Transparency matters. Explanations alone don't help — they increase acceptance regardless of correctness, building trust without calibrating it.
+A study of 654 professionals found two factors that predict successful AI collaboration: process control (β = 0.507) and transparency (β = 0.415). <span class="ev ev-moderate" title="Blaurock et al. 2025, scenario experiments, n=654">◐</span> Control is the strongest lever. Transparency matters. Explanations alone don't help — they increase acceptance regardless of correctness, building trust without calibrating it.
 
 The implication: design must actively counter the perception gap. Users can't reliably judge what helps them because short-term satisfaction diverges from long-term benefit. Transparency and control aren't just nice features — they're necessary to compensate for broken feedback loops.
 

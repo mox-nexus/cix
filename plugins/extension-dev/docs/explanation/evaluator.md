@@ -20,7 +20,7 @@ The evaluator agent checks extensions against quality gates. This document expla
 
 **Why it matters:** Transparency (β = 0.415) is the second-strongest predictor of positive AI collaboration outcomes. Without visible reasoning, users can't evaluate, learn, or calibrate trust.
 
-**Research backing:** Blaurock meta-analysis (106 studies). Also: Bansal et al. showed explanations alone increase acceptance regardless of correctness—so transparency must be genuine, not theater.
+**Research backing:** Blaurock et al. (2025, n=654). Also: Bansal et al. showed explanations alone increase acceptance regardless of correctness—so transparency must be genuine, not theater.
 
 ### Gate 3: Control
 

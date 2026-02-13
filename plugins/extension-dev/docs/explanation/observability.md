@@ -78,7 +78,7 @@ Some hooks exist specifically to interrupt patterns:
 
 ## Connection to Effect Sizes
 
-Observability connects directly to the two strongest design levers from Blaurock's meta-analysis (106 studies):
+Observability connects directly to the two strongest design levers from Blaurock et al. (2025, n=654):
 
 | Lever | Effect Size | How Observability Helps |
 |-------|------------|------------------------|
