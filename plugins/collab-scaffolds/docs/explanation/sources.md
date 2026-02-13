@@ -4,6 +4,12 @@ Research and evidence behind collaborative building scaffolds.
 
 ---
 
+## Research Synthesis
+
+Five independent research streams converge on a single finding: AI reliably improves immediate task performance while degrading the cognitive foundations that enable long-term capability. The protective factors are consistent across studies — user agency (β = 0.507), transparency (β = 0.415), and mastery orientation (OR = 35.7) all preserve human capability during AI collaboration. The scaffolds in this plugin instantiate these protective factors as concrete workflows.
+
+---
+
 ## Collaboration Design
 
 **Blaurock, M., Büttgen, M., & Schepers, J. (2025). ["Designing Collaborative Intelligence Systems for Employee-AI Service Co-Production."](https://journals.sagepub.com/doi/10.1177/10946705241238751) Journal of Service Research, 28(4), 544-562.**

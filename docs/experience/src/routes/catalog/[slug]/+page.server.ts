@@ -2,10 +2,18 @@ import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { CatalogExtension, PluginManifest, PluginComponents } from '$lib/types/catalog';
+import type {
+	CatalogExtension,
+	PluginManifest,
+	PluginComponents,
+	ExtensionDocs,
+	DocCategory,
+	DocEntry
+} from '$lib/types/catalog';
 
-const PLUGINS_DIR = resolve(process.cwd(), '../../plugins');
-const TOOLS_DIR = resolve(process.cwd(), '../../tools');
+const ROOT_DIR = resolve(process.cwd(), '../..');
+const PLUGINS_DIR = join(ROOT_DIR, 'plugins');
+const TOOLS_DIR = join(ROOT_DIR, 'tools');
 const VARIANTS = ['spark', 'emergence', 'constraint'] as const;
 
 function countFiles(dir: string, extension = '.md'): number {
@@ -44,8 +52,43 @@ function discoverComponents(dir: string): PluginComponents {
 	};
 }
 
+const DOC_CATEGORIES: DocCategory[] = ['explanation', 'how-to', 'tutorials'];
+
+function extractTitle(content: string): string {
+	for (const line of content.split('\n')) {
+		if (line.startsWith('# ')) return line.slice(2).trim();
+	}
+	return '';
+}
+
+function discoverDocs(dir: string): ExtensionDocs {
+	const docs: ExtensionDocs = { explanation: [], 'how-to': [], tutorials: [] };
+	const docsDir = join(dir, 'docs');
+	if (!existsSync(docsDir)) return docs;
+
+	for (const category of DOC_CATEGORIES) {
+		const categoryDir = join(docsDir, category);
+		if (!existsSync(categoryDir)) continue;
+
+		for (const file of readdirSync(categoryDir).filter((f) => f.endsWith('.md')).sort()) {
+			const content = readFileSync(join(categoryDir, file), 'utf-8');
+			docs[category].push({
+				slug: file.replace(/\.md$/, ''),
+				title: extractTitle(content) || file.replace(/\.md$/, ''),
+				content
+			});
+		}
+	}
+
+	return docs;
+}
+
+function countDocEntries(docs: ExtensionDocs): number {
+	return docs.explanation.length + docs['how-to'].length + docs.tutorials.length;
+}
+
 function tryLoadPlugin(slug: string): CatalogExtension | null {
-	const marketplacePath = join(PLUGINS_DIR, '.claude-plugin', 'marketplace.json');
+	const marketplacePath = join(ROOT_DIR, '.claude-plugin', 'marketplace.json');
 	if (!existsSync(marketplacePath)) return null;
 
 	const marketplace = JSON.parse(readFileSync(marketplacePath, 'utf-8'));
@@ -67,6 +110,7 @@ function tryLoadPlugin(slug: string): CatalogExtension | null {
 
 	const allPublished = Array.from(publishedNames).sort();
 	const variantIndex = allPublished.indexOf(slug);
+	const docs = discoverDocs(pluginDir);
 
 	return {
 		slug: manifest.name,
@@ -76,7 +120,9 @@ function tryLoadPlugin(slug: string): CatalogExtension | null {
 		readme,
 		components: discoverComponents(pluginDir),
 		variant: VARIANTS[variantIndex % VARIANTS.length],
-		tags: manifest.keywords ?? []
+		tags: manifest.keywords ?? [],
+		docs,
+		docCount: countDocEntries(docs)
 	};
 }
 
@@ -104,6 +150,8 @@ function tryLoadTool(slug: string): CatalogExtension | null {
 		if (versionMatch) version = versionMatch[1];
 	}
 
+	const docs = discoverDocs(toolDir);
+
 	return {
 		slug: tool.name,
 		kind: 'tool',
@@ -117,14 +165,16 @@ function tryLoadTool(slug: string): CatalogExtension | null {
 		readme,
 		components: discoverComponents(toolDir),
 		variant: VARIANTS[0],
-		tags: ['tool', 'cli']
+		tags: ['tool', 'cli'],
+		docs,
+		docCount: countDocEntries(docs)
 	};
 }
 
 export function entries() {
 	const slugs: Array<{ slug: string }> = [];
 
-	const pluginMarketplace = join(PLUGINS_DIR, '.claude-plugin', 'marketplace.json');
+	const pluginMarketplace = join(ROOT_DIR, '.claude-plugin', 'marketplace.json');
 	if (existsSync(pluginMarketplace)) {
 		const mp = JSON.parse(readFileSync(pluginMarketplace, 'utf-8'));
 		for (const p of mp.plugins ?? []) {

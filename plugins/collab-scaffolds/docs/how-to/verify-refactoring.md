@@ -1,6 +1,6 @@
 # How to Verify Refactoring is Complete
 
-AI-assisted refactoring is systematically incomplete. Research shows 63% of AI refactoring breaks code, while refactoring activity has dropped 60% since AI adoption. This guide shows you how to verify your changes are actually done.
+AI-assisted refactoring is systematically incomplete. Research shows significant declines in refactoring activity since AI adoption — GitClear (2025) found an 8x increase in code duplication and substantial reduction in refactoring work. This guide shows you how to verify your changes are actually done.
 
 ## What the Hook Detects
 

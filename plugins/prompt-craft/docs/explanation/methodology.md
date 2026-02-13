@@ -13,6 +13,10 @@ Different model architectures need different prompting techniques. What works fo
 | Autoregressive | Token-by-token generation | Guide the path (CoT, examples) |
 | Reasoning/RL | Internal search with verification | Constrain the search space |
 
+## Who This Is For
+
+You're building a skill or prompt that needs to work across model architectures. You've noticed that the same prompt works brilliantly on Claude but fails on o1—or vice versa. This explains *why* that happens so you can pick the right technique for each architecture.
+
 ---
 
 ## Why Architecture Matters
@@ -36,6 +40,48 @@ These models have internal reinforcement learning. They explore solution spaces 
 The prompt **bounds** the search.
 
 **Key insight:** Telling o1 "think step by step" is redundant—it already does. You're wasting tokens on instructions the model doesn't need.
+
+## Before/After: Same Task, Different Architecture
+
+### Autoregressive (Claude, GPT-4)
+
+**Before** (no guidance):
+```
+Summarize this research paper.
+```
+
+**After** (guided path):
+```
+Summarize this research paper. Structure your response as:
+1. Core claim (1 sentence)
+2. Key evidence (3 bullet points with specific findings)
+3. Limitations the authors acknowledge
+4. One thing the paper doesn't address
+```
+
+**Why it works:** Autoregressive models generate token-by-token. The structured prompt *leads* the sequential generation through a specific path. Without it, the model picks its own path—which may not be yours.
+
+### Reasoning (o1, Deep Think)
+
+**Before** (over-guided):
+```
+Summarize this research paper. Think step by step:
+1. First read the abstract
+2. Then identify the methodology
+3. Then extract findings
+4. Then synthesize
+```
+
+**After** (bounded search):
+```
+Summarize this research paper. Requirements:
+- Every claim must cite a specific section or figure
+- Under 200 words
+- No speculation beyond what the paper states
+- Flag if the sample size is under 100
+```
+
+**Why it works:** Reasoning models already think step-by-step internally. Telling them *how* to think is redundant—it wastes tokens and can degrade performance. Instead, define *what success looks like* and let the model find its own path within those bounds.
 
 ---
 

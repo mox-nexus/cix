@@ -6,6 +6,7 @@ Why these scaffolds exist and the research behind them.
 
 ## Contents
 
+- [Who This Is For](#who-this-is-for)
 - [The Foundation Problem](#the-foundation-problem)
 - [Compound Value vs Technical Debt](#compound-value-vs-technical-debt)
 - [Pit of Success](#pit-of-success)
@@ -22,6 +23,12 @@ Why these scaffolds exist and the research behind them.
 - [Productivity Reality (2025-2026)](#productivity-reality-2025-2026)
 - [Study Limitations](#study-limitations)
 - [The Deeper Why](#the-deeper-why)
+
+---
+
+## Who This Is For
+
+If you're evaluating whether to adopt collab-scaffolds: start with the principles below, then see the tutorials for how they feel in practice. If you're contributing to the plugin: this methodology explains the WHY behind every scaffold design decision.
 
 ---
 
@@ -81,6 +88,23 @@ The initial 5 minutes costs exponentially.
 **Steve McConnell (2006)**: Interest rates on technical debt can exceed 50% per year in maintenance costs.
 
 **Empirical evidence:** Code with high coupling requires 2-3x more time to modify than loosely coupled code (Cataldo et al., MSR 2006).
+
+### Concrete Example from This Plugin
+
+The collab-scaffolds plugin demonstrates compound value through abstraction reuse. The `verify-refactoring.md` how-to guide introduces the "zero-hits test" pattern:
+
+```bash
+git grep "old_function_name"  # Should return zero results
+```
+
+This single verification pattern is referenced in:
+- The `incomplete-refactoring-guard.sh` hook (automated enforcement)
+- The `mastery-oriented-session.md` tutorial (Phase 4 verification)
+- The `problem-solving` skill's refactoring checklist
+
+Initial 10 minutes to document the pattern. Saves 20+ minutes per refactoring session (catching incomplete renames). Compounds across every developer who learns it. The abstraction (zero-hits verification) made subsequent features (hooks, tutorials, checklists) trivial to add.
+
+If we'd documented "check for old names" separately in each file, updates would require touching 3+ files. The debt would compound instead.
 
 ---
 

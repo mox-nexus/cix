@@ -61,7 +61,7 @@ grep -r "POST /api/tasks" src/
 grep -r "notify" src/
 ```
 
-This reading step is non-negotiable. Research shows that approaching AI with understanding produces 86% mastery retention. Approaching with no understanding: 39%.
+This reading step is non-negotiable. Research shows that approaching AI with understanding leads to significantly better learning outcomes than passive acceptance (Bastani et al., PNAS 2025).
 
 **Second: Form your own approach**
 
@@ -85,7 +85,7 @@ Immediately asking AI:
 
 "Write me a task completion endpoint."
 
-This bypasses the generative step where you build understanding. The AI generates, you accept. Your neural pathways for planning and design remain inactive. Over 3 months, this degrades architectural reasoning by 22%.
+This bypasses the generative step where you build understanding. The AI generates, you accept. Your neural pathways for planning and design remain inactive. Over 3 months, this pattern contributes to measurable skill degradation (Budzyń et al., Lancet 2025).
 
 ## Phase 3: Implementation (20-30 minutes)
 
@@ -126,7 +126,7 @@ AI: "Currently, the whole request fails with 500. We could make notifications no
 
 You: "Yeah, task completion should succeed even if notifications fail. Let's make that fire-and-forget."
 
-**This dialogue is the difference between 86% and 39% mastery.**
+**This dialogue is the difference between learning and dependency.**
 
 When you ask follow-up questions, you're:
 - Catching design issues (notification shouldn't block)
@@ -137,7 +137,7 @@ When you ask follow-up questions, you're:
 
 AI generates code. You read it briefly, think "looks reasonable," and paste it in.
 
-This is vibe coding. 17% of junior developers ship AI code with zero edits. 45% of AI code contains critical vulnerabilities. The overlap is concerning.
+This is vibe coding. 17% of junior developers ship AI code with zero edits (Stack Overflow 2025). 45% of AI-generated code contains critical vulnerabilities (Veracode 2025). The overlap is concerning.
 
 ### Monitoring checkpoint
 
@@ -234,7 +234,7 @@ These are the traps that degrade mastery:
 
 **How it feels:** "AI generated it, looks reasonable, moving on."
 
-**Why it's harmful:** 45% of AI code has critical vulnerabilities. If you don't read it, you ship vulnerable code.
+**Why it's harmful:** 45% of AI code has critical vulnerabilities (Veracode 2025). If you don't read it, you ship vulnerable code.
 
 **Counter:** Treat every AI suggestion as a first draft from a junior developer. You wouldn't ship junior code without review. Same standard applies.
 
@@ -254,7 +254,7 @@ These are the traps that degrade mastery:
 
 **How it feels:** "I'm shipping so much code!"
 
-**Why it's harmful:** Research shows experienced developers are 19% slower with AI but perceive themselves as 24% faster. That's a 43-percentage-point miscalibration gap. You can't trust your intuition here.
+**Why it's harmful:** Research shows experienced developers are 19% slower with AI but perceive themselves as 24% faster (METR 2025). That's a 43-percentage-point miscalibration gap. You can't trust your intuition here.
 
 **Counter:** Measure actual time to completion, including:
 - Prompting and clarification time
@@ -279,10 +279,7 @@ When you put it all together:
 
 This pattern takes 50-60 minutes for a feature that might take 40 minutes with pure AI generation.
 
-That extra 10-20 minutes is the investment in maintaining your capability. It's the difference between:
-- 86% mastery retention vs 39%
-- Building mental models vs building dependency
-- Compounding skill vs degrading skill
+That extra 10-20 minutes is the investment in maintaining your capability. It's the difference between learning and dependency, between compounding skill and degrading skill.
 
 ## Next Steps
 

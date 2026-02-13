@@ -72,9 +72,14 @@
 				</div>
 			{/if}
 
-			<a href="{base}/catalog/{extension.slug}" class="entry-docs-link">
-				open docs &rarr;
-			</a>
+			<div class="entry-actions">
+				{#if extension.docCount > 0}
+					<span class="doc-count">{extension.docCount} doc{extension.docCount !== 1 ? 's' : ''}</span>
+				{/if}
+				<a href="{base}/catalog/{extension.slug}" class="entry-docs-link">
+					open docs &rarr;
+				</a>
+			</div>
 		</div>
 	{/if}
 </div>
@@ -197,13 +202,25 @@
 		padding: 1px var(--space-0-5);
 	}
 
+	.entry-actions {
+		display: flex;
+		align-items: baseline;
+		gap: var(--space-1-5);
+		margin-top: var(--space-1);
+	}
+
+	.doc-count {
+		font-family: var(--font-mono);
+		font-size: var(--type-xs);
+		color: var(--dao-muted);
+	}
+
 	.entry-docs-link {
 		display: inline-block;
 		font-family: var(--font-mono);
 		font-size: var(--type-sm);
 		color: var(--variant-color);
 		text-decoration: none;
-		margin-top: var(--space-1);
 		transition: opacity var(--duration-fast) var(--easing-linear);
 	}
 

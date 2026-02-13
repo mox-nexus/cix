@@ -1,7 +1,9 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import type { DocCategory } from '$lib/types/catalog';
 	import { base } from '$app/paths';
 	import { marked } from 'marked';
+	import { onMount } from 'svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -25,6 +27,52 @@
 				`${data.extension.components.commands} cmd${data.extension.components.commands !== 1 ? 's' : ''}`
 		].filter(Boolean) as string[]
 	);
+
+	// Doc tabs
+	const TAB_LABELS: Record<string, string> = {
+		readme: 'README',
+		explanation: 'Explanation',
+		'how-to': 'How-To',
+		tutorials: 'Tutorials'
+	};
+
+	const docs = data.extension.docs;
+	const availableTabs = $derived(() => {
+		const tabs = ['readme'];
+		if (!docs) return tabs;
+		for (const cat of ['explanation', 'how-to', 'tutorials'] as DocCategory[]) {
+			if (docs[cat].length > 0) tabs.push(cat);
+		}
+		return tabs;
+	});
+	const hasTabs = $derived(availableTabs().length > 1);
+
+	let activeTab = $state('readme');
+	let mounted = $state(false);
+
+	function docHtml(category: DocCategory): string {
+		if (!docs) return '';
+		return docs[category]
+			.map((entry) => marked.parse(entry.content))
+			.join('<hr class="doc-separator" />');
+	}
+
+	onMount(() => {
+		const hash = window.location.hash.slice(1);
+		if (hash && availableTabs().includes(hash)) {
+			activeTab = hash;
+		}
+		mounted = true;
+	});
+
+	$effect(() => {
+		if (!mounted) return;
+		if (activeTab !== 'readme') {
+			history.replaceState(null, '', `#${activeTab}`);
+		} else {
+			history.replaceState(null, '', window.location.pathname);
+		}
+	});
 </script>
 
 <svelte:head>
@@ -67,8 +115,31 @@
 		{/if}
 	</header>
 
+	{#if hasTabs}
+		<nav class="detail-tabs" role="tablist">
+			{#each availableTabs() as tab}
+				<button
+					role="tab"
+					class="tab"
+					class:active={activeTab === tab}
+					aria-selected={activeTab === tab}
+					onclick={() => (activeTab = tab)}
+				>
+					{TAB_LABELS[tab]}
+					{#if tab !== 'readme' && docs}
+						<span class="tab-count">{docs[tab as DocCategory].length}</span>
+					{/if}
+				</button>
+			{/each}
+		</nav>
+	{/if}
+
 	<article class="detail-content prose">
-		{@html htmlContent}
+		{#if activeTab === 'readme'}
+			{@html htmlContent}
+		{:else}
+			{@html docHtml(activeTab as DocCategory)}
+		{/if}
 	</article>
 </main>
 
@@ -168,7 +239,44 @@
 		padding: 1px var(--space-0-5);
 	}
 
-	/* README prose styles */
+	/* Doc tabs */
+	.detail-tabs {
+		max-width: 72ch;
+		margin: 0 auto var(--space-3);
+		display: flex;
+		gap: 0;
+		border-bottom: 1px solid var(--dao-border);
+	}
+
+	.tab {
+		font-family: var(--font-mono);
+		font-size: var(--type-xs);
+		color: var(--dao-muted);
+		background: none;
+		border: none;
+		border-bottom: 2px solid transparent;
+		padding: var(--space-0-5) var(--space-1-5);
+		cursor: pointer;
+		transition: color var(--duration-fast) var(--easing-linear);
+	}
+
+	.tab:hover {
+		color: var(--dao-text);
+	}
+
+	.tab.active {
+		color: var(--variant-color);
+		border-bottom-color: var(--variant-color);
+	}
+
+	.tab-count {
+		font-size: var(--type-xs);
+		color: var(--dao-muted);
+		margin-left: 0.3ch;
+		opacity: 0.6;
+	}
+
+	/* Prose content */
 	.detail-content {
 		max-width: 72ch;
 		margin: 0 auto;
@@ -277,5 +385,17 @@
 		padding-left: var(--space-1-5);
 		color: var(--dao-muted);
 		margin: var(--space-1-5) 0;
+	}
+
+	.prose :global(hr.doc-separator) {
+		border: none;
+		border-top: 1px solid var(--dao-border);
+		margin: var(--space-3) 0;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.tab {
+			transition: none;
+		}
 	}
 </style>

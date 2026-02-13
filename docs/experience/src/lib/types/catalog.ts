@@ -14,6 +14,16 @@ export interface PluginManifest {
 	license?: string;
 }
 
+export interface DocEntry {
+	slug: string;
+	title: string;
+	content: string;
+}
+
+export type DocCategory = 'explanation' | 'how-to' | 'tutorials';
+
+export type ExtensionDocs = Record<DocCategory, DocEntry[]>;
+
 export interface CatalogExtension {
 	slug: string;
 	kind: 'plugin' | 'tool';
@@ -23,4 +33,6 @@ export interface CatalogExtension {
 	components: PluginComponents;
 	variant: 'spark' | 'emergence' | 'constraint';
 	tags: string[];
+	docs?: ExtensionDocs;
+	docCount: number;
 }
