@@ -25,8 +25,12 @@ class EmbeddingConfig(BaseModel):
     dimensions: int
 
     def is_compatible_with(self, other: "EmbeddingConfig") -> bool:
-        """Check if two embedding configs are compatible."""
-        return self.dimensions == other.dimensions
+        """Check if two embedding configs are compatible.
+
+        Checks both model identity and dimensions (Dijkstra).
+        Same dimensions from different models produce incompatible spaces.
+        """
+        return self.model_name == other.model_name and self.dimensions == other.dimensions
 
 
 # Common source kinds (not exhaustive)

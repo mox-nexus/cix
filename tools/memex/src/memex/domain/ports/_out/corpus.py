@@ -9,6 +9,9 @@ from typing import Protocol
 
 from memex.domain.models import Fragment
 
+# Type alias for progress callbacks (processed, total)
+ProgressCallback = Callable[[int, int], None] | None
+
 
 class CorpusPort(Protocol):
     """Protocol for corpus storage.
@@ -68,6 +71,20 @@ class CorpusPort(Protocol):
         """Get all fragments in a conversation."""
         ...
 
+    def list_conversations(
+        self,
+        limit: int = 50,
+        offset: int = 0,
+        source_kind: str | None = None,
+    ) -> list[dict]:
+        """List conversations with summary info.
+
+        Returns:
+            List of dicts with: conversation_id, message_count, first_timestamp,
+            last_timestamp, source_kind, preview (first user message).
+        """
+        ...
+
     def stats(self) -> dict:
         """Get corpus statistics."""
         ...
@@ -113,6 +130,60 @@ class CorpusPort(Protocol):
 
         Used for validating embedder compatibility.
         """
+        ...
+
+    # --- Edge methods ---
+
+    def find_similar(self, fragment_id: str, limit: int = 10) -> list[tuple[Fragment, float]]:
+        """Find similar fragments via SIMILAR_TO edges."""
+        ...
+
+    def build_follows_edges(self) -> int:
+        """Materialize FOLLOWS edges from conversation ordering."""
+        ...
+
+    def build_similar_edges(
+        self,
+        threshold: float = 0.8,
+        k: int = 5,
+        on_progress: ProgressCallback = None,
+    ) -> int:
+        """Build SIMILAR_TO edges from embedding similarity.
+
+        Args:
+            threshold: Minimum cosine similarity (0-1)
+            k: Max similar neighbors per fragment
+            on_progress: Callback(processed, total) for progress updates
+
+        Returns:
+            Count of edges created.
+        """
+        ...
+
+    def edge_stats(self) -> dict:
+        """Get edge statistics by type."""
+        ...
+
+    # --- Trail methods ---
+
+    def create_trail(self, name: str, description: str = "") -> str:
+        """Create a named trail. Returns trail ID."""
+        ...
+
+    def add_to_trail(self, trail_name: str, fragment_id: str, note: str = "") -> int:
+        """Add fragment to trail. Returns position."""
+        ...
+
+    def get_trail(self, trail_name: str) -> list[tuple[Fragment, str]]:
+        """Get trail entries in order. Returns (Fragment, note) tuples."""
+        ...
+
+    def list_trails(self) -> list[dict]:
+        """List all trails."""
+        ...
+
+    def delete_trail(self, trail_name: str) -> bool:
+        """Delete a trail."""
         ...
 
     def close(self) -> None:

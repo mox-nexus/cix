@@ -9,10 +9,14 @@ Supports:
 from collections.abc import Callable, Iterable
 from importlib.resources import files
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import duckdb
 
 from memex.domain.models import Fragment, Provenance
+
+if TYPE_CHECKING:
+    from memex.domain.ports._out.corpus import ProgressCallback
 
 
 class DuckDBCorpus:
@@ -36,6 +40,7 @@ class DuckDBCorpus:
         self.con = duckdb.connect(str(path))
         self._init_extensions()
         self._init_schema()
+        self._init_meta_schema()
 
     def _init_extensions(self) -> None:
         """Initialize search extensions."""
@@ -98,6 +103,75 @@ class DuckDBCorpus:
             except duckdb.Error:
                 # Index creation might fail if column has NULLs, that's OK
                 pass
+
+        # Edges table — graph overlay on fragments
+        self.con.execute("""
+            CREATE TABLE IF NOT EXISTS edges (
+                source_id VARCHAR NOT NULL,
+                target_id VARCHAR NOT NULL,
+                edge_type VARCHAR NOT NULL,
+                weight FLOAT DEFAULT 1.0,
+                created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (source_id, target_id, edge_type)
+            )
+        """)
+        self.con.execute("CREATE INDEX IF NOT EXISTS idx_edges_source ON edges(source_id)")
+        self.con.execute("CREATE INDEX IF NOT EXISTS idx_edges_target ON edges(target_id)")
+        self.con.execute("CREATE INDEX IF NOT EXISTS idx_edges_type ON edges(edge_type)")
+
+        # Trails — associative paths through knowledge (Bush's memex)
+        self.con.execute("""
+            CREATE TABLE IF NOT EXISTS trails (
+                id VARCHAR PRIMARY KEY,
+                name VARCHAR NOT NULL UNIQUE,
+                description VARCHAR DEFAULT '',
+                created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        self.con.execute("""
+            CREATE TABLE IF NOT EXISTS trail_entries (
+                trail_id VARCHAR NOT NULL REFERENCES trails(id),
+                fragment_id VARCHAR NOT NULL REFERENCES fragments(id),
+                position INTEGER NOT NULL,
+                note VARCHAR DEFAULT '',
+                added_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (trail_id, position)
+            )
+        """)
+        self.con.execute(
+            "CREATE INDEX IF NOT EXISTS idx_trail_entries_trail ON trail_entries(trail_id)"
+        )
+
+    def _init_meta_schema(self) -> None:
+        """Initialize _memex_meta table for schema versioning and provenance.
+
+        Key-value store for corpus metadata. Extensible without schema changes.
+        """
+        self.con.execute("""
+            CREATE TABLE IF NOT EXISTS _memex_meta (
+                key VARCHAR PRIMARY KEY,
+                value VARCHAR NOT NULL,
+                updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        # Set schema version if not present
+        if self.get_meta("schema_version") is None:
+            self.set_meta("schema_version", "1")
+
+    def get_meta(self, key: str) -> str | None:
+        """Get metadata value by key."""
+        result = self.con.execute("SELECT value FROM _memex_meta WHERE key = ?", [key]).fetchone()
+        return result[0] if result else None
+
+    def set_meta(self, key: str, value: str) -> None:
+        """Set metadata value (upsert)."""
+        self.con.execute(
+            """
+            INSERT OR REPLACE INTO _memex_meta (key, value, updated_at)
+            VALUES (?, ?, NOW())
+            """,
+            [key, value],
+        )
 
     def _ensure_embedding_column(self) -> None:
         """Ensure embedding column exists with correct dimensions."""
@@ -349,7 +423,11 @@ class DuckDBCorpus:
         return self._fts_available
 
     def find_by_conversation(self, conversation_id: str) -> list[Fragment]:
-        """Get all fragments in a conversation."""
+        """Get all fragments in a conversation.
+
+        Supports prefix matching — if the full ID isn't found, tries prefix.
+        """
+        # Try exact match first
         rows = self.con.execute(
             """
             SELECT id, conversation_id, role, content, timestamp, source_kind, source_id
@@ -359,7 +437,61 @@ class DuckDBCorpus:
             """,
             [conversation_id],
         ).fetchall()
+
+        if rows:
+            return [self._row_to_fragment(row) for row in rows]
+
+        # Try prefix match (short IDs like "66e1524a")
+        rows = self.con.execute(
+            """
+            SELECT id, conversation_id, role, content, timestamp, source_kind, source_id
+            FROM fragments
+            WHERE conversation_id LIKE ? || '%'
+            ORDER BY timestamp
+            """,
+            [conversation_id],
+        ).fetchall()
         return [self._row_to_fragment(row) for row in rows]
+
+    def list_conversations(
+        self,
+        limit: int = 50,
+        offset: int = 0,
+        source_kind: str | None = None,
+    ) -> list[dict]:
+        """List conversations with summary info, most recent first."""
+        source_filter = "AND source_kind = ?" if source_kind else ""
+        params = [source_kind] if source_kind else []
+
+        rows = self.con.execute(
+            f"""
+            SELECT
+                conversation_id,
+                COUNT(*) as message_count,
+                MIN(timestamp) as first_ts,
+                MAX(timestamp) as last_ts,
+                source_kind,
+                MIN(CASE WHEN role = 'user' THEN content END) as preview
+            FROM fragments
+            WHERE conversation_id IS NOT NULL {source_filter}
+            GROUP BY conversation_id, source_kind
+            ORDER BY MAX(timestamp) DESC
+            LIMIT ? OFFSET ?
+            """,
+            [*params, limit, offset],
+        ).fetchall()
+
+        return [
+            {
+                "conversation_id": row[0],
+                "message_count": row[1],
+                "first_timestamp": row[2],
+                "last_timestamp": row[3],
+                "source_kind": row[4],
+                "preview": (row[5][:120] + "...") if row[5] and len(row[5]) > 120 else row[5],
+            }
+            for row in rows
+        ]
 
     def semantic_search(
         self,
@@ -536,6 +668,313 @@ class DuckDBCorpus:
             return None
         except Exception:
             return None
+
+    # --- Edge Methods ---
+
+    def add_edge(
+        self,
+        source_id: str,
+        target_id: str,
+        edge_type: str,
+        weight: float = 1.0,
+    ) -> None:
+        """Add or update an edge between two fragments."""
+        self.con.execute(
+            """
+            INSERT OR REPLACE INTO edges (source_id, target_id, edge_type, weight, created_at)
+            VALUES (?, ?, ?, ?, NOW())
+            """,
+            [source_id, target_id, edge_type, weight],
+        )
+
+    def add_edges_batch(self, edges: list[tuple[str, str, str, float]]) -> int:
+        """Batch insert edges. Each tuple: (source_id, target_id, edge_type, weight).
+
+        Returns count of edges inserted.
+        """
+        if not edges:
+            return 0
+        self.con.executemany(
+            """
+            INSERT OR REPLACE INTO edges (source_id, target_id, edge_type, weight, created_at)
+            VALUES (?, ?, ?, ?, NOW())
+            """,
+            edges,
+        )
+        return len(edges)
+
+    def get_edges(
+        self,
+        fragment_id: str,
+        edge_type: str | None = None,
+        direction: str = "outgoing",
+    ) -> list[dict]:
+        """Get edges for a fragment.
+
+        Args:
+            fragment_id: The fragment ID
+            edge_type: Optional filter by type ('FOLLOWS', 'SIMILAR_TO', etc.)
+            direction: 'outgoing', 'incoming', or 'both'
+
+        Returns:
+            List of dicts with: source_id, target_id, edge_type, weight
+        """
+        conditions = []
+        params = []
+
+        if direction in ("outgoing", "both"):
+            conditions.append("source_id = ?")
+            params.append(fragment_id)
+        if direction in ("incoming", "both"):
+            if conditions:
+                conditions = [f"({conditions[0]} OR target_id = ?)"]
+                params.append(fragment_id)
+            else:
+                conditions.append("target_id = ?")
+                params.append(fragment_id)
+
+        if edge_type:
+            conditions.append("edge_type = ?")
+            params.append(edge_type)
+
+        where = " AND ".join(conditions)
+        rows = self.con.execute(
+            f"""
+            SELECT source_id, target_id, edge_type, weight
+            FROM edges
+            WHERE {where}
+            ORDER BY weight DESC
+            """,
+            params,
+        ).fetchall()
+
+        return [
+            {"source_id": r[0], "target_id": r[1], "edge_type": r[2], "weight": r[3]} for r in rows
+        ]
+
+    def find_similar(
+        self,
+        fragment_id: str,
+        limit: int = 10,
+    ) -> list[tuple["Fragment", float]]:
+        """Find fragments connected by SIMILAR_TO edges.
+
+        Returns (Fragment, weight) tuples sorted by weight descending.
+        """
+        rows = self.con.execute(
+            """
+            SELECT f.id, f.conversation_id, f.role, f.content, f.timestamp,
+                   f.source_kind, f.source_id, e.weight
+            FROM edges e
+            JOIN fragments f ON f.id = e.target_id
+            WHERE e.source_id = ? AND e.edge_type = 'SIMILAR_TO'
+            ORDER BY e.weight DESC
+            LIMIT ?
+            """,
+            [fragment_id, limit],
+        ).fetchall()
+
+        return [(self._row_to_fragment(row[:7]), row[7]) for row in rows]
+
+    def build_follows_edges(self) -> int:
+        """Materialize FOLLOWS edges from conversation ordering.
+
+        Within each conversation, fragment N FOLLOWS fragment N-1.
+        Returns count of edges created.
+        """
+        self.con.execute("""
+            INSERT OR REPLACE INTO edges (source_id, target_id, edge_type, weight, created_at)
+            SELECT source_id, target_id, 'FOLLOWS', 1.0, NOW()
+            FROM (
+                SELECT
+                    LAG(id) OVER (PARTITION BY conversation_id ORDER BY timestamp) as source_id,
+                    id as target_id
+                FROM fragments
+                WHERE conversation_id IS NOT NULL
+            )
+            WHERE source_id IS NOT NULL
+        """)
+        count = self.con.execute(
+            "SELECT COUNT(*) FROM edges WHERE edge_type = 'FOLLOWS'"
+        ).fetchone()[0]
+        return count
+
+    def build_similar_edges(
+        self,
+        threshold: float = 0.8,
+        k: int = 5,
+        on_progress: "ProgressCallback" = None,
+    ) -> int:
+        """Build SIMILAR_TO edges using HNSW ANN index.
+
+        For each fragment, queries the HNSW index for k nearest neighbors.
+        O(n * log n) via ANN, not O(n²) brute force.
+
+        Args:
+            threshold: Minimum cosine similarity (0-1)
+            k: Max similar neighbors per fragment
+            on_progress: Callback(processed, total) for progress updates
+
+        Returns:
+            Count of edges created.
+        """
+        max_distance = 1.0 - threshold
+
+        fragment_ids = self.con.execute(
+            "SELECT id FROM fragments WHERE embedding IS NOT NULL"
+        ).fetchall()
+        total = len(fragment_ids)
+
+        if total == 0:
+            return 0
+
+        edge_count = 0
+        batch: list[tuple[str, str, str, float]] = []
+        batch_size = 500
+
+        for i, (frag_id,) in enumerate(fragment_ids):
+            neighbors = self.con.execute(
+                f"""
+                SELECT f2.id, array_cosine_distance(f1.embedding, f2.embedding) as dist
+                FROM fragments f1, fragments f2
+                WHERE f1.id = ?
+                  AND f2.id != f1.id
+                  AND f2.embedding IS NOT NULL
+                ORDER BY array_cosine_distance(f1.embedding, f2.embedding)
+                LIMIT {k}
+                """,
+                [frag_id],
+            ).fetchall()
+
+            for neighbor_id, distance in neighbors:
+                if distance <= max_distance:
+                    similarity = 1.0 - distance
+                    batch.append((frag_id, neighbor_id, "SIMILAR_TO", similarity))
+
+            if len(batch) >= batch_size:
+                self.add_edges_batch(batch)
+                edge_count += len(batch)
+                batch.clear()
+
+            if on_progress:
+                on_progress(i + 1, total)
+
+        if batch:
+            self.add_edges_batch(batch)
+            edge_count += len(batch)
+
+        return edge_count
+
+    def edge_stats(self) -> dict:
+        """Get edge statistics by type."""
+        rows = self.con.execute("""
+            SELECT edge_type, COUNT(*) as count, AVG(weight) as avg_weight
+            FROM edges
+            GROUP BY edge_type
+        """).fetchall()
+        return {row[0]: {"count": row[1], "avg_weight": round(row[2], 4)} for row in rows}
+
+    # --- Trail Methods ---
+
+    def create_trail(self, name: str, description: str = "") -> str:
+        """Create a new trail. Returns trail ID."""
+        import uuid
+
+        trail_id = str(uuid.uuid4())
+        self.con.execute(
+            """
+            INSERT INTO trails (id, name, description, created_at)
+            VALUES (?, ?, ?, NOW())
+            """,
+            [trail_id, name, description],
+        )
+        return trail_id
+
+    def add_to_trail(self, trail_name: str, fragment_id: str, note: str = "") -> int:
+        """Add a fragment to the end of a trail. Returns new position."""
+        trail = self._get_trail_by_name(trail_name)
+        if not trail:
+            raise ValueError(f"Trail '{trail_name}' not found")
+
+        # Get next position
+        result = self.con.execute(
+            "SELECT COALESCE(MAX(position), -1) + 1 FROM trail_entries WHERE trail_id = ?",
+            [trail["id"]],
+        ).fetchone()
+        position = result[0]
+
+        self.con.execute(
+            """
+            INSERT INTO trail_entries (trail_id, fragment_id, position, note, added_at)
+            VALUES (?, ?, ?, ?, NOW())
+            """,
+            [trail["id"], fragment_id, position, note],
+        )
+        return position
+
+    def get_trail(self, trail_name: str) -> list[tuple["Fragment", str]]:
+        """Get all fragments in a trail, in order.
+
+        Returns list of (Fragment, note) tuples.
+        """
+        trail = self._get_trail_by_name(trail_name)
+        if not trail:
+            return []
+
+        rows = self.con.execute(
+            """
+            SELECT f.id, f.conversation_id, f.role, f.content, f.timestamp,
+                   f.source_kind, f.source_id, te.note
+            FROM trail_entries te
+            JOIN fragments f ON f.id = te.fragment_id
+            WHERE te.trail_id = ?
+            ORDER BY te.position
+            """,
+            [trail["id"]],
+        ).fetchall()
+
+        return [(self._row_to_fragment(row[:7]), row[7] or "") for row in rows]
+
+    def list_trails(self) -> list[dict]:
+        """List all trails with entry counts."""
+        rows = self.con.execute("""
+            SELECT t.id, t.name, t.description, t.created_at,
+                   COUNT(te.fragment_id) as entry_count
+            FROM trails t
+            LEFT JOIN trail_entries te ON t.id = te.trail_id
+            GROUP BY t.id, t.name, t.description, t.created_at
+            ORDER BY t.created_at DESC
+        """).fetchall()
+
+        return [
+            {
+                "id": row[0],
+                "name": row[1],
+                "description": row[2],
+                "created_at": row[3],
+                "entry_count": row[4],
+            }
+            for row in rows
+        ]
+
+    def delete_trail(self, trail_name: str) -> bool:
+        """Delete a trail and its entries. Returns True if found."""
+        trail = self._get_trail_by_name(trail_name)
+        if not trail:
+            return False
+        self.con.execute("DELETE FROM trail_entries WHERE trail_id = ?", [trail["id"]])
+        self.con.execute("DELETE FROM trails WHERE id = ?", [trail["id"]])
+        return True
+
+    def _get_trail_by_name(self, name: str) -> dict | None:
+        """Get trail by name."""
+        row = self.con.execute(
+            "SELECT id, name, description, created_at FROM trails WHERE name = ?",
+            [name],
+        ).fetchone()
+        if not row:
+            return None
+        return {"id": row[0], "name": row[1], "description": row[2], "created_at": row[3]}
 
     def stats(self) -> dict:
         """Get corpus statistics."""

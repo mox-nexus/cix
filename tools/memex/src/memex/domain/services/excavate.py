@@ -53,6 +53,11 @@ class ExcavationService:
                 yield fragment
 
         stored = self.corpus.store(counting_generator())
+
+        # Auto-compute FOLLOWS edges for new fragments
+        if stored > 0:
+            self.corpus.build_follows_edges()
+
         return (parsed, stored)
 
     def keyword_search(
@@ -162,6 +167,15 @@ class ExcavationService:
         """Get all fragments in a conversation."""
         return self.corpus.find_by_conversation(conversation_id)
 
+    def list_conversations(
+        self,
+        limit: int = 50,
+        offset: int = 0,
+        source_kind: str | None = None,
+    ) -> list[dict]:
+        """List conversations with summary info, most recent first."""
+        return self.corpus.list_conversations(limit, offset, source_kind)
+
     def stats(self) -> dict:
         """Get corpus statistics."""
         return self.corpus.stats()
@@ -231,6 +245,47 @@ class ExcavationService:
     def rebuild_search_index(self) -> None:
         """Rebuild search indexes after data changes."""
         self.corpus.rebuild_fts_index()
+
+    def find_similar(self, fragment_id: str, limit: int = 10) -> list[tuple[Fragment, float]]:
+        """Find similar fragments via SIMILAR_TO edges."""
+        return self.corpus.find_similar(fragment_id, limit)
+
+    def build_follows_edges(self) -> int:
+        """Materialize FOLLOWS edges from conversation ordering."""
+        return self.corpus.build_follows_edges()
+
+    def build_similar_edges(
+        self,
+        threshold: float = 0.8,
+        k: int = 5,
+        on_progress: Callable[[int, int], None] | None = None,
+    ) -> int:
+        """Build SIMILAR_TO edges from embedding similarity."""
+        return self.corpus.build_similar_edges(threshold, k, on_progress)
+
+    def edge_stats(self) -> dict:
+        """Get edge statistics by type."""
+        return self.corpus.edge_stats()
+
+    def create_trail(self, name: str, description: str = "") -> str:
+        """Create a named trail. Returns trail ID."""
+        return self.corpus.create_trail(name, description)
+
+    def add_to_trail(self, trail_name: str, fragment_id: str, note: str = "") -> int:
+        """Add fragment to trail. Returns position."""
+        return self.corpus.add_to_trail(trail_name, fragment_id, note)
+
+    def get_trail(self, trail_name: str) -> list[tuple[Fragment, str]]:
+        """Get trail entries in order. Returns (Fragment, note) tuples."""
+        return self.corpus.get_trail(trail_name)
+
+    def list_trails(self) -> list[dict]:
+        """List all trails."""
+        return self.corpus.list_trails()
+
+    def delete_trail(self, trail_name: str) -> bool:
+        """Delete a trail."""
+        return self.corpus.delete_trail(trail_name)
 
     def close(self) -> None:
         """Release resources."""

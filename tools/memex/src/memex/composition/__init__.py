@@ -11,6 +11,7 @@ Architecture note (from Burner):
 """
 
 from functools import lru_cache
+from pathlib import Path
 
 from memex.adapters._out.corpus import DuckDBCorpus
 from memex.adapters._out.sources import ClaudeConversationsAdapter, OpenAIConversationsAdapter
@@ -29,24 +30,18 @@ class EmbeddingDimensionMismatchError(Exception):
 def get_embedder() -> EmbeddingPort:
     """Get or create embedder (cached, lazy load).
 
-    Selection driven by settings.embedding_model:
-    - "minilm": MiniLM-L6-v2 (384-dim) via sentence-transformers
-    - "nomic": Nomic v1.5 (768-dim) via GPT4All local inference
+    Uses fastembed (ONNX) with nomic-embed-text-v1.5 (768-dim).
+    No torch dependency. Same quality as nomic[local], cosine ~0.9999.
     """
-    if settings.embedding_model == "nomic":
-        from memex.adapters._out.embedding.nomic import NomicEmbedder
+    from memex.adapters._out.embedding.fastembed_embedder import FastEmbedEmbedder
 
-        return NomicEmbedder()
-
-    from memex.adapters._out.embedding import LocalEmbedder
-
-    return LocalEmbedder()
+    return FastEmbedEmbedder()
 
 
 def reranker_available() -> bool:
     """Check if reranker dependencies are installed."""
     try:
-        from sentence_transformers import CrossEncoder  # noqa: F401
+        from fastembed.rerank.cross_encoder import TextCrossEncoder  # noqa: F401
 
         return True
     except ImportError:
@@ -57,15 +52,15 @@ def reranker_available() -> bool:
 def get_reranker():
     """Get or create reranker (cached, lazy load).
 
-    Returns None if reranker dependencies not installed.
-    Install with: uv add sentence-transformers
+    Uses fastembed (ONNX) — no torch dependency.
+    Returns None if fastembed not installed.
     """
     if not reranker_available():
         return None
 
-    from memex.adapters._out.reranking.cross_encoder import CrossEncoderReranker
+    from memex.adapters._out.reranking.fastembed_reranker import FastEmbedReranker
 
-    return CrossEncoderReranker()
+    return FastEmbedReranker()
 
 
 def create_service(
@@ -103,6 +98,9 @@ def create_service(
                 f"{embedder.dimensions}-dim vectors. "
                 f"Run 'memex reset' to clear corpus and re-ingest with new model."
             )
+        # Record embedding provenance in meta
+        corpus.set_meta("embedding_model", embedder.model_name)
+        corpus.set_meta("embedding_dimensions", str(embedder.dimensions))
 
     adapters = [
         ClaudeConversationsAdapter(),
@@ -123,11 +121,22 @@ def create_corpus(embedding_dim: int | None = None) -> DuckDBCorpus:
     return DuckDBCorpus(settings.corpus_path, embedding_dim=embedding_dim)
 
 
+def initialize_corpus(corpus_path: Path) -> None:
+    """Create an empty corpus at the given path.
+
+    Used by init commands to bootstrap a new corpus without
+    needing to know the adapter implementation.
+    """
+    corpus = DuckDBCorpus(corpus_path)
+    corpus.close()
+
+
 __all__ = [
     "create_service",
     "create_corpus",
     "get_embedder",
     "get_reranker",
+    "initialize_corpus",
     "reranker_available",
     "EmbeddingDimensionMismatchError",
 ]

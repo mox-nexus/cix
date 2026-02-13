@@ -15,16 +15,12 @@ dependencies = [
     "pydantic>=2.0",
     "pydantic-settings>=2.0",
     "pandas>=2.0",
-    "sentence-transformers>=3.0",
+    "fastembed>=0.4",
     "ijson>=3.2",
     "pytz>=2024.1",  # Required by DuckDB for timezone handling
 ]
 
 [project.optional-dependencies]
-# Reranking is available with base install (sentence-transformers includes CrossEncoder)
-# These extras are for future advanced features:
-nomic = ["nomic[local]>=3.0"]  # Nomic Embed v1.5 with GPT4All backend
-full = ["memex[nomic]"]  # All optional features
 dev = ["pytest>=8.0", "pytest-cov>=4.0"]
 
 [project.scripts]
