@@ -1,22 +1,23 @@
 #!/bin/sh
-# Outputs plugin triggers from cix marketplace
-# POSIX-compliant
+# SessionStart: Load collab-scaffolds skills + discover other cix plugins
+# Uses CLAUDE_PLUGIN_ROOT for own skills (reliable), marketplace lookup for siblings
 
+# Collab skills — always available via CLAUDE_PLUGIN_ROOT
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-.}"
+
+echo "## cix"
+echo ""
+echo "**Load now:** \`${PLUGIN_ROOT}/skills/building/SKILL.md\`"
+echo "**Collaboration:** \`${PLUGIN_ROOT}/skills/collaboration/SKILL.md\`"
+echo "**Problem solving:** \`${PLUGIN_ROOT}/skills/problem-solving/SKILL.md\`"
+
+# Discover sibling plugins via marketplace (best-effort)
 MARKETPLACES_FILE="$HOME/.claude/plugins/known_marketplaces.json"
 
-# Get install location if marketplace exists
 if [ -f "$MARKETPLACES_FILE" ]; then
   INSTALL_LOC=$(grep -A5 '"cix"' "$MARKETPLACES_FILE" 2>/dev/null | grep 'installLocation' | sed 's/.*: *"\([^"]*\)".*/\1/')
 fi
 
-# Always output collab-scaffolds instruction
-echo "## cix"
-echo ""
-echo "**Load now:** \`$INSTALL_LOC/plugins/collab-scaffolds/skills/building/SKILL.md\`"
-echo "**Collaboration:** \`$INSTALL_LOC/plugins/collab-scaffolds/skills/collaboration/SKILL.md\`"
-echo "**Problem solving:** \`$INSTALL_LOC/plugins/collab-scaffolds/skills/problem-solving/SKILL.md\`"
-
-# If we have the marketplace, show the trigger table
 if [ -n "$INSTALL_LOC" ] && [ -f "$INSTALL_LOC/.claude-plugin/marketplace.json" ]; then
   echo ""
   echo "**Other plugins** (load when relevant):"

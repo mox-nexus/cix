@@ -1,9 +1,3 @@
----
-name: pr-conventions
-event: UserPromptSubmit
-match_arg: "\\b(pull request|PR|pr create|gh pr)\\b"
----
-
 # Pull Request Conventions
 
 ## PR Title
@@ -33,14 +27,14 @@ feat(cli): add extension search command
 Run before creating:
 
 ```bash
-uv run ruff check && uv run ruff format --check && uv run mypy extensions/cix/src && uv run pytest
+uv run ruff check && uv run ruff format --check && uv run mypy tools/cix/src && uv run pytest
 ```
 
 | Check | Command | Fixes |
 |-------|---------|-------|
 | Lint | `uv run ruff check` | `uv run ruff check --fix` |
 | Format | `uv run ruff format --check` | `uv run ruff format` |
-| Types | `uv run mypy extensions/cix/src` | Fix type errors manually |
+| Types | `uv run mypy tools/cix/src` | Fix type errors manually |
 | Tests | `uv run pytest` | Fix failing tests |
 
 ## When to Update CHANGELOG
