@@ -9,7 +9,6 @@ Prompt engineering grounded in research. Different model architectures need diff
 | `deep-reasoning` | Prompting o1, o3, Gemini Deep Think |
 | `deep-research` | AI-assisted research with citation accuracy |
 | `synthesize-papers` | Multi-paper analysis and literature review |
-| `assimilate-writing` | Replicating writing style from examples |
 
 ## Philosophy
 
@@ -21,6 +20,5 @@ Prompt engineering grounded in research. Different model architectures need diff
 
 Research from 2024-2026 including:
 - Many-Shot ICL (ACL/NeurIPS 2024)
-- Prompt Repetition (Google Research, Dec 2025)
 - Chain-of-Verification (Meta Research)
-- OSST Style Transfer (arXiv:2510.13302)
+- Deep reasoning model techniques (o1, o3, Gemini Deep Think)
