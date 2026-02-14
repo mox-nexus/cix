@@ -31,6 +31,7 @@
 		"lucide-svelte": "^0.563.0",
 		"marked": "^17.0.1",
 		"mdsvex": "^0.12.6",
+		"mermaid": "^11.12.2",
 		"rehype-slug": "^6.0.0",
 		"shiki": "^3.22.0",
 		"three": "^0.182.0",
