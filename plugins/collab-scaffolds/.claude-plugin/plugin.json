@@ -1,9 +1,17 @@
 {
   "name": "collab-scaffolds",
-  "description": "Research-grounded scaffolds for effective human-AI collaboration. Use when: making decisions, verifying claims, calibrating trust, metacognitive reflection, building with transparency and control.",
   "version": "0.5.0",
+  "description": "Research-grounded scaffolds for effective human-AI collaboration. Use when: making decisions, verifying claims, calibrating trust, metacognitive reflection, building with transparency and control.",
   "author": {
     "name": "Mox Labs",
     "email": "mox.rnd@gmail.com"
-  }
+  },
+  "license": "MIT",
+  "keywords": [
+    "collaborative-intelligence",
+    "reasoning",
+    "verification",
+    "transparency",
+    "control"
+  ]
 }
