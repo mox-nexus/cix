@@ -132,9 +132,31 @@ Don't mix types in one document.
 
 **Scanning patterns**: People read in F-pattern. Front-load keywords in headings. Headers as signposts. Bullets and bold for scannability.
 
-**AI tell-tale audit**: Avoid — delve, leverage, utilize, robust, tapestry. Uniform paragraph lengths. Rule-of-three in every list. Excessive bold. Generic openings.
+**Rhythm**: Vary sentence and paragraph length. Short declarative. Then a longer exploratory sentence that develops an idea. Fragment. Human writing has jagged rhythm — LLM writing has uniform cadence.
 
-See: `references/anti-patterns.md`
+### Anti-LLM-Speak
+
+Hard-ban vocabulary: delve, tapestry, landscape (metaphorical), leverage (verb), utilize, aforementioned, meticulous, multifaceted, "it's worth noting", "this underscores", "at its core."
+
+**Grammatical tells** (Liang et al. PNAS 2025 — measurable overuse rates):
+- Present participial clauses (2-5x overused): "Leveraging X, we..." → "X lets us..."
+- Nominalizations (1.5-2x): "The implementation of..." → "We implemented..."
+- "That" clause subjects (2.6x): "That this works is clear..." → "This works because..."
+- Trailing significance: "...which is particularly important." → Cut it.
+
+**Heading anti-patterns** — headings are highest-signal text. LLM patterns are instantly recognizable:
+- "X, Not Y" declarative contrast pairs ("Excavation, Not Observation")
+- "Gerund + Object" conference titles ("Building Collaborative Intelligence")
+- Series of balanced pairs following one template
+- Colon-split paper titles ("Cognitive Effects: How AI Reshapes Thinking")
+
+**The test**: Read headings as a list. If they follow one grammatical template, rewrite half.
+
+**Structural tells**: Uniform paragraph size, rule-of-three in every list, balanced pros/cons, five-paragraph essay shape, summary conclusions that restate instead of advance.
+
+**Four-pass revision**: Structure → Prose quality → LLM-speak detection → Voice consistency.
+
+See: `references/anti-patterns.md` — Full ban lists, grammatical countermeasures, authenticity tests, revision checklist
 
 ## Accuracy
 
