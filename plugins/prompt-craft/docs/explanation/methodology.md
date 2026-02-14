@@ -171,7 +171,6 @@ Skills are orthogonal. Each covers one domain:
 - `deep-reasoning` — Reasoning model constraints
 - `deep-research` — Hallucination reduction, verification
 - `synthesize-papers` — Multi-paper analysis
-- `assimilate-writing` — Style replication
 
 Combine as needed for complex tasks.
 
@@ -183,7 +182,6 @@ Claims made without verification propagate errors. Every skill includes verifica
 
 - **deep-research**: Chain-of-Verification (CoVe) for factual claims
 - **synthesize-papers**: Dual-LLM cross-critique for extraction
-- **assimilate-writing**: Log-probability scoring for style match
 
 Verification isn't optional—it's how you know the technique worked.
 

@@ -1,7 +1,7 @@
 {
   "name": "prompt-craft",
   "version": "0.1.0",
-  "description": "Prompt engineering for reasoning models, deep research, paper synthesis, and style imitation. Evidence-backed techniques for different model architectures.",
+  "description": "Prompt engineering for reasoning models, deep research, and paper synthesis. Evidence-backed techniques for different model architectures.",
   "author": {
     "name": "Mox Labs",
     "email": "mox.rnd@gmail.com"
@@ -11,7 +11,6 @@
     "prompt-engineering",
     "reasoning",
     "research",
-    "synthesis",
-    "style-transfer"
+    "synthesis"
   ]
 }
