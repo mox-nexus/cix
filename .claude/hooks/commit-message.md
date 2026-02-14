@@ -1,9 +1,3 @@
----
-name: commit-message
-event: UserPromptSubmit
-match_arg: "\\b(commit|git commit)\\b"
----
-
 # Commit Message Convention
 
 This project uses **Conventional Commits** for automated changelog generation and clear history.
