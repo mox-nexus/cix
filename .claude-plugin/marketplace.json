@@ -23,8 +23,8 @@
       "category": "architecture"
     },
     {
-      "name": "build-evals",
-      "source": "./plugins/build-evals",
+      "name": "craft-evals",
+      "source": "./plugins/craft-evals",
       "description": "Eval methodology for AI systems. Use when: writing evals for agents, skills, MCP servers, prompts, or measuring AI behavior.",
       "version": "0.3.0",
       "author": {
@@ -62,8 +62,8 @@
       "category": "data"
     },
     {
-      "name": "extension-dev",
-      "source": "./plugins/extension-dev",
+      "name": "craft-extensions",
+      "source": "./plugins/craft-extensions",
       "description": "Build extensions that enable effective human-AI collaboration. Use when: creating skills, agents, hooks, commands, MCPs, or tools/APIs. Patterns for transparency, control, observability, diversity.",
       "version": "0.1.0",
       "author": {
@@ -75,8 +75,8 @@
       "category": "meta"
     },
     {
-      "name": "openclaw-srt",
-      "source": "./plugins/openclaw-srt",
+      "name": "run-openclaw-srt",
+      "source": "./plugins/run-openclaw-srt",
       "description": "Set up OpenClaw with SRT sandbox for secure AI assistant operation. Use when: installing OpenClaw, configuring SRT sandboxing, securing personal AI assistants.",
       "version": "0.1.0",
       "author": {
@@ -88,8 +88,8 @@
       "category": "security"
     },
     {
-      "name": "prompt-craft",
-      "source": "./plugins/prompt-craft",
+      "name": "craft-prompts",
+      "source": "./plugins/craft-prompts",
       "description": "Prompt engineering for reasoning models, deep research, and paper synthesis. Evidence-backed techniques for different model architectures.",
       "version": "0.1.0",
       "author": {

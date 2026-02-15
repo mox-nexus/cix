@@ -7,8 +7,8 @@ PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-.}"
 
 echo "## cix"
 echo ""
-echo "**Load now:** \`${PLUGIN_ROOT}/skills/building/SKILL.md\`"
-echo "**Collaboration:** \`${PLUGIN_ROOT}/skills/collaboration/SKILL.md\`"
+echo "**Load now:** \`${PLUGIN_ROOT}/skills/crafting/SKILL.md\`"
+echo "**Collaboration:** \`${PLUGIN_ROOT}/skills/collaborating/SKILL.md\`"
 echo "**Problem solving:** \`${PLUGIN_ROOT}/skills/problem-solving/SKILL.md\`"
 
 # Discover sibling plugins via marketplace (best-effort)

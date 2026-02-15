@@ -283,7 +283,7 @@ Catch errors where they originate.
 | **Command** | User-initiated procedure | Human triggers, extension executes |
 | **MCP** | External service integration | Bridges systems, human orchestrates |
 
-For component selection, file anatomy, and build guidance: load `extension-dev:craft-plugins` skill.
+For component selection, file anatomy, and build guidance: load `craft-extensions:craft-plugins` skill.
 
 ### Key Design Concepts
 

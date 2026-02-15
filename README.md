@@ -120,7 +120,7 @@ cix is pre-alpha. Everything is subject to change.
 4. Include evals demonstrating activation and quality
 5. Submit a pull request to this repository
 
-See `plugins/extension-dev` for authoring guidance.
+See `plugins/craft-extensions` for authoring guidance.
 
 **Design standards:**
 - Extensions must make humans more capable, not dependent
