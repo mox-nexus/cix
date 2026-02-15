@@ -1,0 +1,1 @@
+import{l as t,k as l,m as o,n as a,o as c}from"./iyO_HpW3.js";function f(n){o===null&&t(),a&&o.l!==null?u(o).m.push(n):l(()=>{const e=c(n);if(typeof e=="function")return e})}function u(n){var e=n.l;return e.u??={a:[],b:[],m:[]}}export{f as o};
