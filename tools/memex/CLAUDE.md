@@ -307,11 +307,11 @@ This is implemented in `DuckDBCorpus.backfill_embeddings()` — it calls `_drop_
 
 Also set `memory_limit = '2GB'` on the DuckDB connection to prevent contention with the host process (e.g., Claude Code).
 
-### DuckDB Single-Writer Constraint
+### DuckDB Single-Process Lock
 
-DuckDB allows only one writer at a time. During `backfill` or `ingest`, all other memex commands will fail with `Conflicting lock is held`. This is by design — DuckDB is an embedded OLAP engine, not a server. Don't try to work around it; just wait for the write operation to finish. Check with `ps aux | grep memex`.
+DuckDB takes a **process-level exclusive lock** on disk-based files. When any process opens a read-write connection, no other process can connect — not even `read_only=True`. This is a [known limitation](https://github.com/duckdb/duckdb/discussions/14676); intra-process MVCC supports concurrent readers + single writer, but cross-process is fully exclusive.
 
-Implication for tooling: never run `memex status` or `memex dig` in the same session as a background backfill. Let backfill complete first.
+During `backfill` or `ingest`, all other memex commands (including `status`, `dig`) will fail with `Conflicting lock is held`. Don't try to work around it — wait for the write operation to finish. Check with `ps aux | grep memex`.
 
 ### Rich Progress Over Manual \\r
 
@@ -342,8 +342,69 @@ The SKILL.md documents these for Claude-as-operator to diagnose and tune.
 
 ---
 
+## Streaming Pipeline Pattern (Pending Refactor)
+
+The backfill pipeline currently works (OOM-safe, streaming writes) but uses imperative loops with mutable counters. Next step: refactor to functional composition per `craft-tools:python-hex` reference.
+
+### Target Shape
+
+```
+source → transform → sink → tap(side effects) → terminal
+```
+
+Each stage is a generator. Nothing materializes beyond its batch boundary.
+
+### Current → Target
+
+**Current** (`duckdb/adapter.py` — `backfill_embeddings`):
+```python
+for batch in self._unembedded_batches(batch_size):
+    ids, contents = zip(*batch)
+    for frag_id, embedding in zip(ids, embedder_stream(list(contents))):
+        self._write_embedding(frag_id, embedding)
+        updated += 1
+        if updated % 1000 == 0: ...
+        if on_progress: ...
+```
+
+**Target:**
+```python
+# Source: flat stream from DB via iter(callable, sentinel)
+rows = chain.from_iterable(iter(self._fetch_batch, []))
+
+# Transform: batch → unzip → embed → re-zip (zero accumulation)
+embedded = self._embed_rows(rows, embedder, batch_size)
+
+# Sink + side effects as stream operators
+pipeline = map(self._write_one, embedded)
+pipeline = tap_every(pipeline, 1000, lambda _: self._checkpoint())
+if on_progress:
+    c = count(1)
+    pipeline = tap(pipeline, lambda _: on_progress(next(c), total))
+
+# Terminal
+return sum(1 for _ in pipeline)
+```
+
+### Port Change Required
+
+`EmbeddingPort.embed_stream` should accept `Iterator[str]` (not `list[str]`). Stream is the primitive; single/batch are free functions derived from it. See `craft-tools:python-hex` port example.
+
+### Helpers Needed
+
+- `tap(iterator, fn)` — observe each element without consuming
+- `tap_every(iterator, n, fn)` — side effect every n-th element
+- Location: `domain/` or a small `streaming.py` util — these are domain-agnostic pipeline operators
+
+### When
+
+Apply after current backfill completes. Pure refactor — same behavior, different shape. Verify with test.
+
+---
+
 ## Pre-1.0 TODO
 
+- [ ] **FP pipeline refactor** — Apply streaming pipeline pattern to backfill (see above). Includes port signature change (`Iterator[str]`).
 - [ ] **Wire `embedding_model` setting** — `settings.embedding_model` exists but composition root hardcodes nomic-embed-text-v1.5. Wire through or remove.
 - [ ] **Verify `build_similar_edges` index usage** — self-join may be O(N^2) if DuckDB doesn't use HNSW index. Run EXPLAIN to confirm.
 - [ ] **Trails** — persistence (separate file per trail in `.memex/trails/`), sharing (trail file IS the artifact), interactive visualization (HTML artifact).

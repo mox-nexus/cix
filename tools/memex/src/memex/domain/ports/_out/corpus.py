@@ -99,14 +99,14 @@ class CorpusPort(Protocol):
 
     def backfill_embeddings(
         self,
-        embedder_stream: Callable[[list[str]], Iterator[list[float]]],
+        embedder_stream: Callable[[Iterator[str]], Iterator[list[float]]],
         batch_size: int = 100,
         on_progress: Callable[[int, int], None] | None = None,
     ) -> int:
         """Backfill embeddings for existing fragments using streaming embedding.
 
-        embedder_stream yields one embedding at a time from a generator,
-        allowing write-as-you-go without materializing all vectors.
+        embedder_stream is a 1:1 streaming transform: Iterator[str] → Iterator[list[float]].
+        The corpus adapter composes the pipeline: fetch → embed → write → checkpoint.
         """
         ...
 

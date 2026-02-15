@@ -63,7 +63,7 @@ class FastEmbedEmbedder:
 
     def embed(self, text: str) -> list[float]:
         """Embed a single text. Returns 768-dim vector."""
-        return next(self.embed_stream([text]))
+        return next(self.embed_stream(iter([text])))
 
     def embed_batch(self, texts: list[str]) -> list[list[float]]:
         """Embed multiple texts. Materializes all results.
@@ -73,14 +73,15 @@ class FastEmbedEmbedder:
         """
         if not texts:
             return []
-        return list(self.embed_stream(texts))
+        return list(self.embed_stream(iter(texts)))
 
-    def embed_stream(self, texts: list[str]) -> Iterator[list[float]]:
+    def embed_stream(self, texts: Iterator[str]) -> Iterator[list[float]]:
         """Stream embeddings one at a time from fastembed's generator.
 
-        Each vector is yielded as a Python list[float], then the numpy
-        array is eligible for GC. Callers can write each embedding to
-        storage immediately without accumulating them all in memory.
+        Accepts an iterator of texts. Each vector is yielded as a
+        Python list[float], then the numpy array is eligible for GC.
+        Callers can write each embedding to storage immediately
+        without accumulating them all in memory.
         """
         for embedding in self.model.embed(texts, batch_size=self._onnx_batch_size):
             yield embedding.tolist()
