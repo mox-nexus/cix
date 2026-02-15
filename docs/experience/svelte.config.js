@@ -69,6 +69,11 @@ const config = {
 					console.warn(`[prerender] Ignoring .md link: ${path} (from ${referrer})`);
 					return;
 				}
+				// Relative links in rendered README/docs markdown can escape the base path
+				if (message.includes('does not begin with `base`')) {
+					console.warn(`[prerender] Ignoring out-of-base link: ${path} (from ${referrer})`);
+					return;
+				}
 				throw new Error(message);
 			},
 			handleMissingId: 'warn'

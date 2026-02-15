@@ -1,6 +1,6 @@
 # craft-explanations
 
-Explanation craft through simultaneous encoding. Part of the [cix](../../) marketplace.
+Explanation craft through simultaneous encoding. Part of the cix marketplace.
 
 ## What This Plugin Does
 
