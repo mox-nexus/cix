@@ -2,8 +2,14 @@
 
 No torch dependency. Same nomic-embed-text-v1.5 quality, ONNX backend.
 Replaces both LocalEmbedder (sentence-transformers) and NomicEmbedder (GPT4All).
+
+Memory model: fastembed's embed() returns a generator. We preserve that
+generator through embed_stream() so callers can write-as-you-go without
+materializing all embeddings at once. embed() and embed_batch() materialize
+for convenience in non-bulk paths (single queries, small batches).
 """
 
+from collections.abc import Iterator
 from functools import cached_property
 
 from memex.domain.models import EmbeddingConfig
@@ -57,12 +63,24 @@ class FastEmbedEmbedder:
 
     def embed(self, text: str) -> list[float]:
         """Embed a single text. Returns 768-dim vector."""
-        embeddings = list(self.model.embed([text], batch_size=1))
-        return embeddings[0].tolist()
+        return next(self.embed_stream([text]))
 
     def embed_batch(self, texts: list[str]) -> list[list[float]]:
-        """Embed multiple texts. More efficient than single calls."""
+        """Embed multiple texts. Materializes all results.
+
+        Use embed_stream() for bulk operations to avoid holding
+        all embeddings in memory at once.
+        """
         if not texts:
             return []
-        embeddings = list(self.model.embed(texts, batch_size=self._onnx_batch_size))
-        return [e.tolist() for e in embeddings]
+        return list(self.embed_stream(texts))
+
+    def embed_stream(self, texts: list[str]) -> Iterator[list[float]]:
+        """Stream embeddings one at a time from fastembed's generator.
+
+        Each vector is yielded as a Python list[float], then the numpy
+        array is eligible for GC. Callers can write each embedding to
+        storage immediately without accumulating them all in memory.
+        """
+        for embedding in self.model.embed(texts, batch_size=self._onnx_batch_size):
+            yield embedding.tolist()

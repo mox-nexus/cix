@@ -4,7 +4,7 @@ No SQL in port contract (Karman) - that's implementation detail.
 Uses domain types only (Burner).
 """
 
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Iterator
 from typing import Protocol
 
 from memex.domain.models import Fragment
@@ -99,11 +99,15 @@ class CorpusPort(Protocol):
 
     def backfill_embeddings(
         self,
-        embedder_batch: Callable[[list[str]], list[list[float]]],
+        embedder_stream: Callable[[list[str]], Iterator[list[float]]],
         batch_size: int = 100,
         on_progress: Callable[[int, int], None] | None = None,
     ) -> int:
-        """Backfill embeddings for existing fragments using batch embedding."""
+        """Backfill embeddings for existing fragments using streaming embedding.
+
+        embedder_stream yields one embedding at a time from a generator,
+        allowing write-as-you-go without materializing all vectors.
+        """
         ...
 
     def count_without_embeddings(self) -> int:
