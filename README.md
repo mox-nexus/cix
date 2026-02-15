@@ -5,13 +5,8 @@ Collaborative Intelligence Extensions for Claude Code.
 ## Install
 
 ```bash
-git clone https://github.com/mox-nexus/cix.git
-```
-
-Then add plugins to Claude Code:
-
-```bash
-claude plugin add ./cix/plugins/arch-guild
+uv tool install cix --from git+https://github.com/mox-nexus/cix#subdirectory=tools/cix
+cix install arch-guild
 ```
 
 ## Extensions

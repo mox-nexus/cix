@@ -3,7 +3,6 @@
 	import { base } from '$app/paths';
 
 	const links = [
-		{ path: '/ethos', label: 'ethos' },
 		{ path: '/catalog', label: 'catalog' },
 		{ path: '/library', label: 'library' }
 	];
