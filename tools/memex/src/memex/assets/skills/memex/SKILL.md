@@ -1,3 +1,14 @@
+---
+name: Memex
+description: >
+  This skill should be used when the user asks to "search my conversations",
+  "find where I discussed", "what did I decide about", "what did I work on",
+  "set up memex", "import conversations", "ingest export", "create a trail",
+  "find similar", "show recent conversations", "memex timeline",
+  "memex status", "dig through conversations", or mentions searching AI
+  conversation history, conversation memory, or knowledge trails.
+---
+
 # Memex Skill
 
 Extended memory for you and your agents. Query AI conversations from Claude.ai, ChatGPT, and other sources.
@@ -10,11 +21,13 @@ Extended memory for you and your agents. Query AI conversations from Claude.ai, 
 | "What did I work on last week?" | `memex timeline` or SQL with date filter | |
 | "Show recent conversations" | `memex timeline` | Shows @N indices |
 | "Open that conversation" | `memex thread @3` | From search/timeline results |
-| "Find similar to this" | `memex similar @3` | Uses knowledge graph |
+| "Find similar to this" | `memex similar @3` | Uses SIMILAR_TO edges (embedding similarity) |
 | "Build a trail" | `memex trail create "name"` then `trail add "name" @N` | Associative paths |
 | "Is memex set up?" | `memex status` | Shows capabilities, pending actions |
 | "Search is slow" | `memex backfill` | Generate missing embeddings |
+| "Set up memex" | `memex init` | Guided wizard (first run, TTY) |
 | "Set up for this project" | `memex init --local` | Creates .memex/ in CWD |
+| "Import conversations" | `memex ingest <file>` or `memex init --import-file <path>` | |
 
 ## @N References
 
@@ -72,7 +85,9 @@ Tuning (rarely needed): `memex dig "query" --semantic-weight 0.8` (default: 0.6)
 | `memex reset` | Delete corpus and start fresh |
 | **Discovery** | |
 | `memex status` | Config, capabilities, pending actions |
-| `memex init` | First-time global setup |
+| `memex init` | Guided first-time setup (wizard on TTY) |
+| `memex init --yes` | Silent setup (CI/scripts, no prompts) |
+| `memex init --import-file <path>` | Setup + immediate import |
 | `memex init --local` | Project-local store in CWD |
 | **Power User** | |
 | `memex query "<sql>"` | Raw SQL (DuckDB) |
@@ -103,9 +118,13 @@ Memex uses `.memex/` directories like `.git/` — walks up from CWD to find the 
 ### Setup
 
 ```bash
-memex init              # Global store at ~/.memex/ (user-level, default)
-memex init --local      # Project-local store at ./.memex/ (directory-level)
+memex init                                       # Guided wizard (detects exports, offers import)
+memex init --yes                                 # Silent (CI/scripts, no prompts)
+memex init --import-file ~/Downloads/conv.json   # Setup + immediate import
+memex init --local                               # Project-local store at ./.memex/
 ```
+
+On first run with a TTY, `memex init` launches an interactive wizard that detects conversation exports in ~/Downloads and ~/Desktop, offers source selection (Claude/ChatGPT), and runs inline ingest. Use `--yes` to skip all prompts.
 
 Local `.memex/` structure (add to .gitignore):
 
@@ -142,4 +161,5 @@ For detailed patterns, use `memex --skill -r <name>`:
 | query | SQL query patterns, output formats |
 | ingest | Ingest workflow, embedding options |
 | schema | Full schema, index details |
-| embeddings | Model selection, dimension mismatch, backfill patterns |
+| embeddings | Model details, dimension mismatch, backfill patterns |
+| trails | Trail usage patterns, examples, design tips |

@@ -146,8 +146,8 @@ These entities appeared in the original guild deliberation but are deferred:
 ┌─────────────────────────────────────────────────────┐
 │ DRIVEN (_out)                                       │
 │ ├── CorpusPort → DuckDB (FTS + VSS)                │
-│ ├── EmbeddingPort → MiniLM (local)                  │
-│ ├── RerankerPort → MS MARCO cross-encoder           │
+│ ├── EmbeddingPort → nomic-embed-text-v1.5 (fastembed)│
+│ ├── RerankerPort → MS MARCO cross-encoder (fastembed)│
 │ └── SourceAdapterPort → Claude, OpenAI              │
 └─────────────────────────────────────────────────────┘
 ```
@@ -270,10 +270,9 @@ tools/memex/
             │       ├── adapter.py         # DuckDB + FTS + VSS
             │       └── skill.md           # Corpus skill doc
             ├── embedding/
-            │   ├── local.py               # MiniLM-L6-v2 (384-dim, default)
-            │   └── nomic.py               # Nomic v1.5 (768-dim, GPT4All/Metal)
+            │   └── fastembed_embedder.py  # nomic-embed-text-v1.5 (768-dim, ONNX)
             ├── reranking/
-            │   └── cross_encoder.py       # MS MARCO MiniLM cross-encoder
+            │   └── fastembed_reranker.py  # MS MARCO cross-encoder (ONNX)
             └── sources/
                 ├── claude_conversations/  # Claude.ai export adapter
                 └── openai_conversations/  # ChatGPT export adapter
@@ -301,7 +300,7 @@ The CLI is a thin driving adapter. It calls `ExcavationService` methods, never r
 ## Known Tech Debt
 
 - **Config format**: TOML works for single-tool config. When cix+memex share infrastructure, consider YAML with full layered scoping (packaged → project → user → global).
-- **Nomic embedder**: Functional via `nomic` client with `inference_mode='local'` (GPT4All/Metal). Not yet exercised in production — needs real-world validation with large corpora.
+- **Embedding model config**: `settings.embedding_model` exists but isn't wired into the composition root — `FastEmbedEmbedder()` is hardcoded to nomic-embed-text-v1.5. Wire the setting or remove it.
 
 ---
 

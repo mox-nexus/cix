@@ -1,11 +1,20 @@
 """Observability - Rich console output.
 
 Provides transparent feedback to users about what's happening.
+Two consoles: stdout for data, stderr for metadata (hints, progress, errors).
 """
+
+import sys
 
 from rich.console import Console
 
 console = Console()
+_stderr = Console(stderr=True)
+
+
+def is_piped() -> bool:
+    """Check if stdout is piped (not a TTY)."""
+    return not sys.stdout.isatty()
 
 
 def status(message: str):
@@ -23,19 +32,29 @@ def step(message: str, detail: str | None = None):
 
 def success(message: str):
     """Log success."""
-    console.print(f"[green]✓[/] {message}")
+    _stderr.print(f"[green]✓[/] {message}")
 
 
 def warning(message: str):
     """Log warning."""
-    console.print(f"[yellow]⚠[/] {message}")
+    _stderr.print(f"[yellow]⚠[/] {message}")
 
 
 def error(message: str):
     """Log error."""
-    console.print(f"[red]✗[/] {message}")
+    _stderr.print(f"[red]✗[/] {message}")
 
 
 def info(message: str):
     """Log info."""
-    console.print(f"[blue]ℹ[/] {message}")
+    _stderr.print(f"[blue]ℹ[/] {message}")
+
+
+def hint(message: str):
+    """Log a next-step hint (always stderr, never pollutes piped output)."""
+    _stderr.print(f"[dim]Tip: {message}[/]")
+
+
+def dim(message: str):
+    """Log dim metadata (always stderr — method info, progress notes)."""
+    _stderr.print(f"[dim]{message}[/]")

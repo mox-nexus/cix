@@ -38,17 +38,15 @@ Stores original JSON for rebuild capability. Don't query directly.
 
 ## Embedding Details
 
-Embeddings are stored as fixed-dimension float arrays. Dimension depends on model:
+Embeddings are stored as fixed-dimension float arrays on the `fragments` table.
 
-| Model | Dimensions |
-|-------|------------|
-| all-MiniLM-L6-v2 (default) | 384 |
-| text-embedding-ada-002 | 1536 |
-| voyage-large-2 | 1024 |
+| Model | Dimensions | Backend |
+|-------|------------|---------|
+| nomic-ai/nomic-embed-text-v1.5 | 768 | fastembed (ONNX) |
 
-Check current model: `memex status`
+Check current model and coverage: `memex status`
 
-**Important**: Changing models requires `memex reset` - dimensions must match.
+**Important**: Changing models requires `memex reset` — dimensions must match across the corpus.
 
 ## Useful Queries
 

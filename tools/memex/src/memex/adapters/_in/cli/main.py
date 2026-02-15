@@ -37,6 +37,15 @@ from memex.composition import (
     reranker_available,
 )
 
+
+def _default_format() -> str:
+    """TTY-aware default output format.
+
+    Panel for humans at a terminal, ids for piped output.
+    """
+    return "ids" if obs.is_piped() else "panel"
+
+
 # Configure command groups for better discoverability
 click.rich_click.COMMAND_GROUPS = {
     "memex": [
@@ -92,17 +101,53 @@ def main(ctx: click.Context, verbose: bool, skill: bool, reference: str | None):
 
 @main.command()
 @click.option("--local", is_flag=True, help="Create project-local .memex/ in current directory")
-def init(local: bool):
+@click.option("--yes", "-y", is_flag=True, help="Skip prompts (scripting)")
+@click.option(
+    "--import-file",
+    "import_path",
+    type=click.Path(exists=True, path_type=Path),
+    help="Import a file immediately after init",
+)
+def init(local: bool, yes: bool, import_path: Path | None):
     """Initialize memex for first use.
 
-    Creates config file and corpus directory.
-
-    Global (default): Creates ~/.memex/ for system-wide use.
-    Local (--local): Creates .memex/ in the current directory for project-specific memory.
+    Creates config, corpus, and optionally imports conversations.
+    Interactive mode (default): Guides you through setup and import.
+    Scripting mode (--yes): Creates store silently, no prompts.
 
     Example:
-        memex init            # Global store
-        memex init --local    # Project-local store
+        memex init                                       # Guided wizard
+        memex init --yes                                 # Silent (CI/scripts)
+        memex init --import-file ~/Downloads/conv.json   # Init + import
+        memex init --local                               # Project-local store
+    """
+    if local:
+        _init_local()
+        return
+
+    context = _detect_init_context()
+    _init_global_store(quiet=yes)
+
+    # Import: flag takes precedence, then wizard, then hint
+    if import_path:
+        _ingest_inline(import_path)
+    elif not yes and context["is_tty"] and context["first_run"]:
+        chosen = _run_import_wizard(context)
+        if chosen:
+            _ingest_inline(chosen)
+        else:
+            obs.success("Memex initialized")
+            obs.hint("memex ingest <file> when you're ready to import")
+    else:
+        obs.hint("memex ingest ~/Downloads/conversations.json")
+
+
+def _init_global_store(*, quiet: bool = False):
+    """Initialize global ~/.memex/ store (dirs, config, corpus).
+
+    Pure infrastructure — no wizard prompts. The init() command
+    handles UX flow (wizard vs silent) after this returns.
+    When quiet=True (--yes mode), suppresses welcome banner.
     """
     from memex.config.settings import (
         config_exists,
@@ -111,64 +156,33 @@ def init(local: bool):
         get_global_memex_dir,
     )
 
-    if local:
-        _init_local()
-    else:
-        _init_global(
-            config_exists,
-            create_default_config,
-            get_global_config_path,
-            get_global_memex_dir,
-        )
-
-
-def _init_global(
-    config_exists,
-    create_default_config,
-    get_global_config_path,
-    get_global_memex_dir,
-):
-    """Initialize global ~/.memex/ store."""
-    obs.console.print("\n[bold]Welcome to Memex[/bold]\n")
-    obs.console.print("Extended memory for you and your agents.\n")
-    obs.console.print("Your AI conversations hold decisions, context, and trails of thought.")
-    obs.console.print("Memex makes them findable - by you, and by the agents you work with.\n")
+    if not quiet:
+        obs.console.print("\n[bold]Welcome to Memex[/bold]\n")
+        obs.console.print("Extended memory for you and your agents.")
+        obs.console.print("Your AI conversations hold decisions, context, and trails of thought.")
+        obs.console.print("Memex makes them findable.\n")
 
     memex_dir = get_global_memex_dir()
     config_path = get_global_config_path()
 
-    # Create directory
     if not memex_dir.exists():
         memex_dir.mkdir(parents=True)
-        obs.console.print(f"[dim]Created {memex_dir}[/dim]")
+        obs.step(f"Created {memex_dir}")
 
-    # Create config
     if config_exists():
-        obs.console.print(f"[dim]Config already exists at {config_path}[/dim]")
+        obs.dim(f"Config already exists at {config_path}")
     else:
         config_path.write_text(create_default_config())
-        obs.console.print(f"[dim]Created config at {config_path}[/dim]")
+        obs.step(f"Created config at {config_path}")
 
-    # Initialize corpus (just create empty if not exists)
     corpus_path = memex_dir / "corpus.duckdb"
     if not corpus_path.exists():
         from memex.composition import initialize_corpus
 
         initialize_corpus(corpus_path)
-        obs.console.print(f"[dim]Created corpus at {corpus_path}[/dim]")
+        obs.step(f"Created corpus at {corpus_path}")
     else:
-        obs.console.print(f"[dim]Corpus exists at {corpus_path}[/dim]")
-
-    obs.console.print("\n[bold]Next steps:[/bold]")
-    obs.console.print("  1. Export your data:")
-    obs.console.print("     - Claude: Settings > Account > Export Data")
-    obs.console.print("     - ChatGPT: Settings > Data Controls > Export")
-    obs.console.print()
-    obs.console.print("  2. Import: [cyan]memex ingest ~/Downloads/conversations.json[/cyan]")
-    obs.console.print()
-    obs.console.print('  3. Search: [cyan]memex dig "that auth decision"[/cyan]')
-    obs.console.print()
-    obs.console.print("Run [cyan]memex status[/cyan] anytime to see what's indexed.\n")
+        obs.dim(f"Corpus exists at {corpus_path}")
 
 
 def _init_local():
@@ -186,25 +200,230 @@ def _init_local():
 
     # Create directory
     local_dir.mkdir(parents=True)
-    obs.console.print(f"[dim]Created {local_dir}[/dim]")
+    obs.step(f"Created {local_dir}")
 
     # Create local config
     corpus_path = local_dir / "corpus.duckdb"
     config_path = local_dir / "config.toml"
     config_path.write_text(create_default_config(corpus_path))
-    obs.console.print(f"[dim]Created config at {config_path}[/dim]")
+    obs.step(f"Created config at {config_path}")
 
     # Initialize empty corpus
     from memex.composition import initialize_corpus
 
     initialize_corpus(corpus_path)
-    obs.console.print(f"[dim]Created corpus at {corpus_path}[/dim]")
+    obs.step(f"Created corpus at {corpus_path}")
 
     obs.console.print()
     obs.success("Local memex workspace ready")
     obs.info("All memex commands in this directory (and subdirectories) will use this store.")
     obs.info("Tip: Add .memex/ to your .gitignore")
     obs.console.print()
+
+
+# --- Init Wizard Helpers ---
+
+
+def _detect_init_context() -> dict:
+    """Detect user context for guided init wizard.
+
+    Called BEFORE store creation so first_run reflects true state.
+    Export scanning is top-level only (~/Downloads, ~/Desktop) — fast, non-invasive.
+    """
+    import sys
+
+    from memex.config.settings import config_exists
+
+    context = {
+        "first_run": not config_exists(),
+        "is_tty": not obs.is_piped() and sys.stdin.isatty(),
+    }
+
+    exports: list[Path] = []
+    scan_dirs = [Path.home() / "Downloads", Path.home() / "Desktop"]
+    patterns = ["conversations.json", "conversations*.json", "chat*.json"]
+
+    for d in scan_dirs:
+        if d.is_dir():
+            for pattern in patterns:
+                for f in d.glob(pattern):
+                    if f.is_file() and f.stat().st_size > 100:
+                        exports.append(f)
+            # Claude exports are often zipped — match export-like names only
+            for zip_pattern in ["claude*.zip", "*export*.zip", "*conversations*.zip"]:
+                for f in d.glob(zip_pattern):
+                    if f.is_file() and f.stat().st_size > 1000:
+                        exports.append(f)
+
+    # Newest first, deduplicate, cap at 5
+    exports = sorted(set(exports), key=lambda f: f.stat().st_mtime, reverse=True)
+    context["exports"] = exports[:5]
+    return context
+
+
+def _run_import_wizard(context: dict) -> Path | None:
+    """Interactive import wizard. Returns path to ingest, or None to skip.
+
+    Only called when: first_run + TTY + global init.
+    Uses click.prompt for TTY-safe input with defaults and validation.
+    """
+    obs.console.print()
+    obs.console.print("─" * 40)
+    obs.console.print()
+    obs.console.print("[bold]Ready to import your conversations?[/bold]")
+    obs.console.print()
+
+    source = click.prompt(
+        "  Where did you export from?\n\n"
+        "  [1] Claude  (Settings > Account > Export Data)\n"
+        "  [2] ChatGPT (Settings > Data Controls > Export)\n"
+        "  [3] I'll do this later\n\n"
+        "  Choice",
+        type=click.IntRange(1, 3),
+        default=1,
+    )
+
+    if source == 3:
+        obs.console.print()
+        obs.info("When you're ready: memex ingest ~/Downloads/conversations.json")
+        obs.info("Run memex status anytime to see what's indexed.")
+        return None
+
+    # Source-specific export instructions
+    if source == 1:
+        export_hint = "claude.ai → Settings → Account → Export Data"
+    else:
+        export_hint = "chatgpt.com → Settings → Data Controls → Export"
+
+    # Check for detected exports
+    exports = context.get("exports", [])
+    if exports:
+        obs.console.print()
+        obs.console.print("  [dim]Found likely exports:[/dim]")
+        for i, f in enumerate(exports, 1):
+            size_mb = f.stat().st_size / (1024 * 1024)
+            age = _human_age(f.stat().st_mtime)
+            obs.console.print(f"    [{i}] {f.name} ({size_mb:.1f} MB, {age})")
+
+        choice = click.prompt(
+            "\n  Which file? (0 to enter path manually)",
+            type=click.IntRange(0, len(exports)),
+            default=1,
+        )
+        if choice > 0:
+            return exports[choice - 1]
+
+    # Manual entry — no exports found or user chose manual
+    obs.console.print()
+    if not exports:
+        obs.console.print("  [dim]No exports found in ~/Downloads or ~/Desktop.[/dim]")
+        obs.console.print(f"  [dim]To export: {export_hint}[/dim]")
+
+    path_str = click.prompt(
+        "  File path (Enter to skip)",
+        default="",
+        show_default=False,
+    )
+
+    if path_str.strip():
+        p = Path(path_str.strip()).expanduser()
+        if p.exists():
+            return p
+        obs.error(f"File not found: {p}")
+        obs.info("When you find the file: memex ingest <path>")
+
+    return None
+
+
+def _ingest_inline(path: Path):
+    """Run ingest as part of init wizard — always embeds, friendly output."""
+    _do_ingest(path, embed=True, wizard=True)
+
+
+def _do_ingest(path: Path, *, embed: bool = True, wizard: bool = False):
+    """Shared ingest logic for both init wizard and ingest command.
+
+    Calls through ExcavationService — no direct infrastructure access.
+    Args:
+        embed: Generate embeddings (True) or keyword-only (False).
+        wizard: Use friendly wizard output (True) or standard CLI output (False).
+    """
+    from memex.config.settings import settings
+
+    if embed:
+        with obs.status("Loading embedding model..."):
+            service = create_service(with_embedder=True)
+    else:
+        service = create_service()
+
+    try:
+        with obs.status("Parsing..."):
+            parsed, stored = service.ingest(path)
+
+        obs.dim(f"Parsed {parsed:,} fragments, stored {stored:,} new")
+
+        if embed and stored > 0 and service.embedder:
+
+            def embed_progress(processed: int, total: int):
+                pct = processed / total * 100 if total > 0 else 100
+                obs.console.print(
+                    f"\r[dim]Embedding... {processed:,}/{total:,} ({pct:.0f}%)[/dim]",
+                    end="",
+                )
+
+            embedded = service.backfill_embeddings(settings.batch_size, embed_progress)
+            obs.console.print()
+
+            if not wizard and embedded < stored:
+                failed = stored - embedded
+                obs.warning(f"{failed:,} fragments failed embedding")
+                obs.info("Run 'memex backfill' to retry")
+
+        with obs.status("Building search index..."):
+            service.rebuild_search_index()
+
+        # Output: wizard gets friendly closing, CLI gets standard hints
+        if wizard:
+            obs.console.print()
+            obs.success(f"Ingested {stored:,} fragments (ready for semantic search)")
+            obs.console.print()
+            obs.console.print("  You're all set! Try:")
+            obs.console.print()
+            obs.console.print('    [cyan]memex dig "that auth discussion"[/cyan]')
+            obs.console.print("    [cyan]memex status[/cyan]")
+            obs.console.print()
+        elif embed:
+            obs.success(f"Ingested {stored:,} fragments (ready for semantic search)")
+            obs.hint('memex dig "your query" to search')
+        else:
+            obs.success(f"Ingested {stored:,} fragments (keyword search only)")
+            obs.info("Run 'memex backfill' for semantic search")
+            obs.hint('memex dig "your query" to search')
+    except ValueError as e:
+        obs.error(str(e))
+        obs.info("Supported formats: Claude export (.json, .zip), OpenAI export")
+        if not wizard:
+            obs.info("Run 'memex sources' for all adapters")
+    finally:
+        service.close()
+
+
+def _human_age(mtime: float) -> str:
+    """Human-readable file age: 'today', 'yesterday', '3 days ago', or 'Feb 10'."""
+    from datetime import UTC, datetime
+
+    now = datetime.now(UTC)
+    file_time = datetime.fromtimestamp(mtime, tz=UTC)
+    delta = now - file_time
+
+    if delta.days == 0:
+        return "today"
+    elif delta.days == 1:
+        return "yesterday"
+    elif delta.days < 7:
+        return f"{delta.days} days ago"
+    else:
+        return file_time.strftime("%b %d")
 
 
 # --- Search Commands ---
@@ -216,7 +435,7 @@ def _init_local():
 @click.option("--source", "-s", help="Filter by source kind")
 @click.option("--semantic-weight", "-w", default=None, type=float, help="Weight for semantic (0-1)")
 @click.option("--no-rerank", is_flag=True, help="Disable reranking (faster, less precise)")
-@click.option("--format", "-f", "fmt", type=click.Choice(["panel", "json", "ids"]), default="panel")
+@click.option("--format", "-f", "fmt", type=click.Choice(["panel", "json", "ids"]), default=None)
 def dig(
     query: str,
     limit: int,
@@ -245,21 +464,24 @@ def dig(
     with obs.status("Loading..."):
         service = create_service(with_embedder=True, with_reranker=use_reranker)
 
-    # Show what retrieval methods are active
+    # Show what retrieval methods are active (stderr — metadata, not data)
     methods = ["BM25"]
     if service.has_semantic_search():
         methods.append("semantic")
     else:
         coverage = service.embedding_coverage()
         if coverage[0] == 0:
-            obs.console.print("[dim](semantic unavailable: run 'memex backfill' first)[/dim]")
+            obs.info("semantic unavailable: run 'memex backfill' first")
     if service.has_reranker():
         methods.append("reranking")
-    obs.console.print(f"[dim]Using: {' + '.join(methods)}[/dim]")
+    obs.dim(f"Using: {' + '.join(methods)}")
 
     results = service.hybrid_search(
         query, limit, source, semantic_weight, use_reranker=not no_rerank
     )
+
+    if fmt is None:
+        fmt = _default_format()
 
     if not results:
         _handle_no_results(query, service)
@@ -267,13 +489,15 @@ def dig(
 
     obs.success(f"Found {len(results)} results for '{query}'")
     format_fragments(results, fmt, obs.console)
+    if fmt == "panel":
+        obs.hint("memex thread @N to view a conversation, memex similar @1 for related")
 
 
 @main.command()
 @click.argument("query")
 @click.option("--limit", "-n", default=20, help="Max results")
 @click.option("--source", "-s", help="Filter by source kind")
-@click.option("--format", "-f", "fmt", type=click.Choice(["panel", "json", "ids"]), default="panel")
+@click.option("--format", "-f", "fmt", type=click.Choice(["panel", "json", "ids"]), default=None)
 def keyword(query: str, limit: int, source: str | None, fmt: str):
     """Keyword-only search (all words must match, no embeddings).
 
@@ -282,6 +506,9 @@ def keyword(query: str, limit: int, source: str | None, fmt: str):
     Example:
         memex keyword "OAuth" --limit 50
     """
+    if fmt is None:
+        fmt = _default_format()
+
     service = create_service()
     results = service.keyword_search(query, limit, source_kind=source)
 
@@ -291,6 +518,8 @@ def keyword(query: str, limit: int, source: str | None, fmt: str):
 
     obs.success(f"Found {len(results)} keyword matches for '{query}'")
     format_fragments(results, fmt, obs.console)
+    if fmt == "panel":
+        obs.hint("memex thread @N to view a conversation")
 
 
 @main.command()
@@ -298,7 +527,7 @@ def keyword(query: str, limit: int, source: str | None, fmt: str):
 @click.option("--limit", "-n", default=20, help="Max results")
 @click.option("--source", "-s", help="Filter by source kind")
 @click.option("--min-score", "-m", default=0.3, help="Minimum similarity (0-1)")
-@click.option("--format", "-f", "fmt", type=click.Choice(["panel", "json", "ids"]), default="panel")
+@click.option("--format", "-f", "fmt", type=click.Choice(["panel", "json", "ids"]), default=None)
 def semantic(query: str, limit: int, source: str | None, min_score: float, fmt: str):
     """Semantic search using embeddings.
 
@@ -306,6 +535,9 @@ def semantic(query: str, limit: int, source: str | None, min_score: float, fmt: 
         memex semantic "authentication decisions"
         memex semantic "rate limiting" --min-score 0.5
     """
+    if fmt is None:
+        fmt = _default_format()
+
     with obs.status("Loading embedding model..."):
         service = create_service(with_embedder=True)
 
@@ -326,6 +558,8 @@ def semantic(query: str, limit: int, source: str | None, min_score: float, fmt: 
 
     obs.success(f"Found {len(results)} semantic matches")
     format_fragments(results, fmt, obs.console)
+    if fmt == "panel":
+        obs.hint("memex thread @N to view a conversation, memex similar @1 for related")
 
 
 # --- View Commands ---
@@ -402,7 +636,7 @@ def timeline(limit: int, offset: int, source: str | None):
 @main.command()
 @click.argument("fragment_ref")
 @click.option("--limit", "-n", default=10, help="Max similar fragments")
-@click.option("--format", "-f", "fmt", type=click.Choice(["panel", "json", "ids"]), default="panel")
+@click.option("--format", "-f", "fmt", type=click.Choice(["panel", "json", "ids"]), default=None)
 def similar(fragment_ref: str, limit: int, fmt: str):
     """Find fragments similar to a given one.
 
@@ -413,6 +647,9 @@ def similar(fragment_ref: str, limit: int, fmt: str):
         memex similar @1                # Similar to result #1
         memex similar abc123            # Similar to fragment abc123
     """
+    if fmt is None:
+        fmt = _default_format()
+
     # Resolve @N → fragment ID
     fragment_id = resolve_fragment_ref(fragment_ref)
     if fragment_id is None:
@@ -428,6 +665,8 @@ def similar(fragment_ref: str, limit: int, fmt: str):
             return
         obs.success(f"Found {len(similar_frags)} similar fragments")
         format_fragments(similar_frags, fmt, obs.console)
+        if fmt == "panel":
+            obs.hint("memex thread @N to view the full conversation")
     finally:
         service.close()
 
@@ -450,56 +689,8 @@ def ingest(path: Path, no_embed: bool):
     """
     from memex.config.settings import settings
 
-    # Determine if we should embed (config default, overridden by flag)
     should_embed = settings.embed_by_default and not no_embed
-
-    # Load service with embedder if embedding
-    if should_embed:
-        with obs.status("Loading embedding model..."):
-            service = create_service(with_embedder=True)
-    else:
-        service = create_service()
-
-    try:
-        # Phase 1: Parse and store (delegated to service)
-        with obs.status("Parsing..."):
-            parsed, stored = service.ingest(path)
-
-        obs.console.print(f"[dim]Parsed {parsed:,} fragments, stored {stored:,} new[/dim]")
-
-        # Phase 2: Embed if requested (batch, efficient)
-        if should_embed and stored > 0 and service.embedder:
-
-            def embed_progress(processed: int, batch_total: int):
-                pct = processed / batch_total * 100 if batch_total > 0 else 100
-                obs.console.print(
-                    f"\r[dim]Embedding... {processed:,}/{batch_total:,} ({pct:.0f}%)[/dim]", end=""
-                )
-
-            embedded = service.backfill_embeddings(settings.batch_size, embed_progress)
-            obs.console.print()  # newline after progress
-
-            if embedded < stored:
-                failed = stored - embedded
-                obs.warning(f"{failed:,} fragments failed embedding")
-                obs.info("Run 'memex backfill' to retry")
-
-        # Rebuild FTS index (DuckDB FTS doesn't auto-update)
-        with obs.status("Building search index..."):
-            service.rebuild_search_index()
-
-        # Final status
-        if should_embed:
-            obs.success(f"Ingested {stored:,} fragments (ready for semantic search)")
-        else:
-            obs.success(f"Ingested {stored:,} fragments (keyword search only)")
-            obs.info("Run 'memex backfill' for semantic search")
-    except ValueError as e:
-        obs.error(str(e))
-        obs.info("Supported formats: Claude export (.json, .zip), OpenAI export")
-        obs.info("Run 'memex sources' for all adapters")
-    finally:
-        service.close()
+    _do_ingest(path, embed=should_embed)
 
 
 @main.command()
@@ -567,6 +758,7 @@ def backfill(batch_size: int):
             updated = service.backfill_embeddings(batch_size, on_progress)
 
         obs.success(f"Generated embeddings for {updated:,} fragments")
+        obs.hint('memex dig "your query" for semantic search')
     finally:
         service.close()
 
@@ -915,7 +1107,7 @@ def trail_create(name: str, description: str):
     try:
         service.create_trail(name, description)
         obs.success(f"Created trail '{name}'")
-        obs.info(f'Add fragments: memex trail add "{name}" @N')
+        obs.hint(f'memex trail add "{name}" @N (search first, then add results)')
     except Exception as e:
         if "UNIQUE" in str(e):
             obs.error(f"Trail '{name}' already exists")
