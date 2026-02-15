@@ -1,6 +1,6 @@
 """Embedding port - interface for text vectorization.
 
-Converts text to embeddings for semantic search.
+Stream is the primitive. Single and batch are convenience methods.
 Implementation details (model choice) stay in adapters.
 """
 
@@ -15,10 +15,12 @@ class EmbeddingPort(Protocol):
 
     Converts text → vector for semantic similarity search.
 
-    Three interfaces:
-    - embed(): single text, returns vector (for queries)
-    - embed_batch(): multiple texts, materializes all (for small batches)
-    - embed_stream(): multiple texts, yields one at a time (for bulk ops)
+    embed_stream() is the primitive: Iterator[str] → Iterator[list[float]].
+    1:1 streaming transform. Texts in, vectors out. Nothing materializes
+    beyond the ONNX batch boundary.
+
+    embed() and embed_batch() are convenience methods for non-bulk paths
+    (queries, small batches). They materialize results.
     """
 
     def embed(self, text: str) -> list[float]:
@@ -26,12 +28,13 @@ class EmbeddingPort(Protocol):
         ...
 
     def embed_batch(self, texts: list[str]) -> list[list[float]]:
-        """Embed multiple texts. Returns list of vectors."""
+        """Embed multiple texts. Materializes all results."""
         ...
 
-    def embed_stream(self, texts: list[str]) -> Iterator[list[float]]:
+    def embed_stream(self, texts: Iterator[str]) -> Iterator[list[float]]:
         """Stream embeddings one at a time. For bulk operations.
 
+        Accepts an iterator of texts, yields one embedding per text.
         Callers should consume and write each vector immediately
         rather than collecting them all in memory.
         """

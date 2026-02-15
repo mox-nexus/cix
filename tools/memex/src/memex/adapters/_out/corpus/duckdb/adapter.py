@@ -8,12 +8,14 @@ Supports:
 
 from collections.abc import Callable, Iterable, Iterator
 from importlib.resources import files
+from itertools import batched, chain, count
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import duckdb
 
 from memex.domain.models import Fragment, Provenance
+from memex.domain.streaming import tap, tap_every
 
 if TYPE_CHECKING:
     from memex.domain.ports._out.corpus import ProgressCallback
@@ -572,23 +574,78 @@ class DuckDBCorpus:
         ).fetchone()
         return result[0] if result else 0
 
+    def _unembedded_ids_by_length(self) -> list[str]:
+        """Pre-fetch all unembedded fragment IDs, sorted by content length.
+
+        Cheap: ~2MB for 60K UUIDs. Two benefits:
+        1. Eliminates progressive scan degradation (O(n²) → O(n))
+        2. Similar-length fragments batch together, minimizing ONNX padding waste
+        """
+        return [
+            row[0]
+            for row in self.con.execute(
+                "SELECT id FROM fragments WHERE embedding IS NULL ORDER BY LENGTH(content)"
+            ).fetchall()
+        ]
+
+    def _fetch_content_batch(self, ids: tuple[str, ...]) -> list[tuple[str, str]]:
+        """Fetch content for a batch of fragment IDs.
+
+        Preserves approximate length ordering from the pre-sorted ID list.
+        """
+        placeholders = ",".join("?" * len(ids))
+        return self.con.execute(
+            f"SELECT id, content FROM fragments WHERE id IN ({placeholders})",
+            list(ids),
+        ).fetchall()
+
+    def _write_embedding(self, frag_id: str, embedding: list[float]) -> None:
+        """Write a single embedding vector to a fragment."""
+        self.con.execute(
+            f"""
+            UPDATE fragments
+            SET embedding = ?::FLOAT[{self._embedding_dim}]
+            WHERE id = ?
+            """,
+            (embedding, frag_id),
+        )
+
+    def _write_one(self, pair: tuple[str, list[float]]) -> tuple[str, list[float]]:
+        """Write one (id, embedding) pair. Returns pair for passthrough."""
+        frag_id, embedding = pair
+        self._write_embedding(frag_id, embedding)
+        return pair
+
+    def _embed_rows(
+        self,
+        rows: Iterator[tuple[str, str]],
+        embedder_stream: Callable[[Iterator[str]], Iterator[list[float]]],
+        batch_size: int,
+    ) -> Iterator[tuple[str, list[float]]]:
+        """Batch, unzip, embed, re-zip, flatten. Zero accumulation.
+
+        At any point: one batch of ids (strings, cheap) + one ONNX
+        inference (onnx_batch_size vectors). Nothing grows with corpus size.
+        """
+        for batch in batched(rows, batch_size):
+            ids, contents = zip(*batch)
+            yield from zip(ids, embedder_stream(iter(contents)))
+
+    def _checkpoint(self) -> None:
+        """Flush WAL to disk."""
+        self.con.execute("CHECKPOINT")
+
     def backfill_embeddings(
         self,
-        embedder_stream: Callable[[list[str]], Iterator[list[float]]],
+        embedder_stream: Callable[[Iterator[str]], Iterator[list[float]]],
         batch_size: int = 100,
         on_progress: Callable[[int, int], None] | None = None,
     ) -> int:
-        """Backfill embeddings using streaming — write-as-you-go.
+        """Backfill embeddings — streaming FP pipeline, no accumulation.
 
-        Memory-safe pipeline:
-        1. Fetch a batch of texts from DB
-        2. Feed to embedder_stream (generator — yields one vector at a time)
-        3. Write each vector to DB immediately (no accumulation)
-        4. Checkpoint periodically to flush WAL
-        5. Drop/rebuild HNSW index around the whole operation
-
-        Peak memory: model (~1GB) + one ONNX inference batch (~1-5GB) +
-        one embedding vector (~3KB). No batch-sized accumulation.
+        Pipeline: source → transform → sink → tap(side effects) → terminal.
+        Each stage is a generator. Nothing materializes beyond its batch boundary.
+        Peak memory: model + one ONNX inference (~5GB). Nothing accumulates.
         """
         if not self._embedding_dim:
             msg = "Corpus created without embedding support. Pass embedding_dim."
@@ -600,50 +657,35 @@ class DuckDBCorpus:
 
         self._drop_hnsw_index()
 
-        updated = 0
-        checkpoint_interval = 1000  # Flush WAL every 1000 individual writes
-
         try:
-            while True:
-                rows = self.con.execute(
-                    f"""
-                    SELECT id, content
-                    FROM fragments
-                    WHERE embedding IS NULL
-                    LIMIT {batch_size}
-                    """
-                ).fetchall()
+            # Source: pre-fetch IDs sorted by content length, then cursor by ID.
+            # Sorted IDs → similar-length ONNX batches (minimizes padding waste).
+            # Cursor by ID → O(n) total scan instead of O(n²) progressive degradation.
+            unembedded_ids = self._unembedded_ids_by_length()
+            rows = chain.from_iterable(
+                self._fetch_content_batch(id_batch)
+                for id_batch in batched(unembedded_ids, batch_size)
+            )
 
-                if not rows:
-                    break
+            # Transform: pair with embeddings (streaming, bounded)
+            embedded = self._embed_rows(rows, embedder_stream, batch_size)
 
-                ids = [row[0] for row in rows]
-                contents = [row[1] for row in rows]
+            # Sink: write each to DB (side effect, passthrough)
+            pipeline: Iterator = map(self._write_one, embedded)
 
-                # Stream: embedder yields one vector at a time,
-                # we write each immediately — nothing accumulates
-                for frag_id, embedding in zip(ids, embedder_stream(contents)):
-                    self.con.execute(
-                        f"""
-                        UPDATE fragments
-                        SET embedding = ?::FLOAT[{self._embedding_dim}]
-                        WHERE id = ?
-                        """,
-                        (embedding, frag_id),
-                    )
-                    updated += 1
+            # Tap: checkpoint every 1000 writes
+            pipeline = tap_every(pipeline, 1000, lambda _: self._checkpoint())
 
-                    if updated % checkpoint_interval == 0:
-                        self.con.execute("CHECKPOINT")
+            # Tap: progress reporting
+            if on_progress:
+                c = count(1)
+                pipeline = tap(pipeline, lambda _: on_progress(next(c), total))
 
-                    if on_progress:
-                        on_progress(updated, total)
-
+            # Terminal: consume and count
+            return sum(1 for _ in pipeline)
         finally:
-            self.con.execute("CHECKPOINT")
+            self._checkpoint()
             self._create_hnsw_index()
-
-        return updated
 
     def _drop_hnsw_index(self) -> None:
         """Drop HNSW index for bulk write operations."""
@@ -653,10 +695,16 @@ class DuckDBCorpus:
             pass
 
     def _create_hnsw_index(self) -> None:
-        """Create HNSW index for semantic search."""
+        """Create HNSW index for semantic search.
+
+        Temporarily lifts DuckDB memory_limit for index construction —
+        HNSW needs random access across all vectors, and the 2GB cap
+        forces unnecessary disk I/O.
+        """
         if not self._vss_available or not self._embedding_dim:
             return
         try:
+            self.con.execute("SET memory_limit = '8GB'")
             self.con.execute("""
                 CREATE INDEX IF NOT EXISTS idx_fragments_embedding
                 ON fragments USING HNSW (embedding)
@@ -664,6 +712,8 @@ class DuckDBCorpus:
             """)
         except duckdb.Error:
             pass
+        finally:
+            self.con.execute("SET memory_limit = '2GB'")
 
     def has_semantic_search(self) -> bool:
         """Check if VSS extension is available."""
