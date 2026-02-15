@@ -38,6 +38,7 @@ class DuckDBCorpus:
         self._embedding_dim = embedding_dim
         path.parent.mkdir(parents=True, exist_ok=True)
         self.con = duckdb.connect(str(path))
+        self.con.execute("SET memory_limit = '2GB'")
         self._init_extensions()
         self._init_schema()
         self._init_meta_schema()
@@ -93,16 +94,7 @@ class DuckDBCorpus:
         )
 
         # HNSW index for semantic search (if VSS available and embeddings enabled)
-        if self._vss_available and self._embedding_dim:
-            try:
-                self.con.execute("""
-                    CREATE INDEX IF NOT EXISTS idx_fragments_embedding
-                    ON fragments USING HNSW (embedding)
-                    WITH (metric = 'cosine')
-                """)
-            except duckdb.Error:
-                # Index creation might fail if column has NULLs, that's OK
-                pass
+        self._create_hnsw_index()
 
         # Edges table — graph overlay on fragments
         self.con.execute("""
@@ -588,13 +580,8 @@ class DuckDBCorpus:
     ) -> int:
         """Backfill embeddings for existing fragments using batch embedding.
 
-        Args:
-            embedder_batch: Function to convert texts to embedding vectors (batch)
-            batch_size: Number of fragments to process per batch
-            on_progress: Callback(processed, total) for progress updates
-
-        Returns:
-            Number of fragments updated.
+        Memory-safe: drops HNSW index before bulk writes, checkpoints
+        periodically to flush WAL, rebuilds index after completion.
         """
         if not self._embedding_dim:
             msg = "Corpus created without embedding support. Pass embedding_dim."
@@ -604,45 +591,77 @@ class DuckDBCorpus:
         if total == 0:
             return 0
 
+        # Drop HNSW index before bulk update — maintaining it during writes
+        # causes O(n log n) memory growth as DuckDB rebuilds the graph
+        self._drop_hnsw_index()
+
         updated = 0
-        while True:
-            # Fetch batch of fragments without embeddings
-            rows = self.con.execute(
-                f"""
-                SELECT id, content
-                FROM fragments
-                WHERE embedding IS NULL
-                LIMIT {batch_size}
-                """
-            ).fetchall()
+        checkpoint_interval = 10  # Flush WAL every 10 batches
 
-            if not rows:
-                break
+        try:
+            while True:
+                rows = self.con.execute(
+                    f"""
+                    SELECT id, content
+                    FROM fragments
+                    WHERE embedding IS NULL
+                    LIMIT {batch_size}
+                    """
+                ).fetchall()
 
-            # Extract IDs and contents
-            ids = [row[0] for row in rows]
-            contents = [row[1] for row in rows]
+                if not rows:
+                    break
 
-            # Generate embeddings in batch (10x faster than one-by-one)
-            embeddings = embedder_batch(contents)
+                ids = [row[0] for row in rows]
+                contents = [row[1] for row in rows]
+                embeddings = embedder_batch(contents)
 
-            # Batch UPDATE using executemany
-            update_params = [(embedding, frag_id) for frag_id, embedding in zip(ids, embeddings)]
-            self.con.executemany(
-                f"""
-                UPDATE fragments
-                SET embedding = ?::FLOAT[{self._embedding_dim}]
-                WHERE id = ?
-                """,
-                update_params,
-            )
+                update_params = [
+                    (embedding, frag_id) for frag_id, embedding in zip(ids, embeddings)
+                ]
+                self.con.executemany(
+                    f"""
+                    UPDATE fragments
+                    SET embedding = ?::FLOAT[{self._embedding_dim}]
+                    WHERE id = ?
+                    """,
+                    update_params,
+                )
 
-            updated += len(rows)
+                updated += len(rows)
 
-            if on_progress:
-                on_progress(updated, total)
+                if updated % (batch_size * checkpoint_interval) == 0:
+                    self.con.execute("CHECKPOINT")
+
+                if on_progress:
+                    on_progress(updated, total)
+
+        finally:
+            # Always rebuild HNSW index, even if interrupted
+            self.con.execute("CHECKPOINT")
+            self._create_hnsw_index()
 
         return updated
+
+    def _drop_hnsw_index(self) -> None:
+        """Drop HNSW index for bulk write operations."""
+        try:
+            self.con.execute("DROP INDEX IF EXISTS idx_fragments_embedding")
+        except duckdb.Error:
+            pass
+
+    def _create_hnsw_index(self) -> None:
+        """Create HNSW index for semantic search."""
+        if not self._vss_available or not self._embedding_dim:
+            return
+        try:
+            self.con.execute("""
+                CREATE INDEX IF NOT EXISTS idx_fragments_embedding
+                ON fragments USING HNSW (embedding)
+                WITH (metric = 'cosine')
+            """)
+        except duckdb.Error:
+            pass
 
     def has_semantic_search(self) -> bool:
         """Check if VSS extension is available."""

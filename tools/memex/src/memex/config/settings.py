@@ -17,6 +17,8 @@ from pydantic_settings import BaseSettings
 _CONFIG_KEY_MAP = {
     ("corpus", "path"): "corpus_path",
     ("embedding", "model"): "embedding_model",
+    ("embedding", "onnx_batch_size"): "onnx_batch_size",
+    ("embedding", "onnx_threads"): "onnx_threads",
     ("ingest", "embed_by_default"): "embed_by_default",
     ("ingest", "batch_size"): "batch_size",
     ("search", "rerank_by_default"): "rerank_by_default",
@@ -54,7 +56,14 @@ def _find_local_memex_dir() -> Path | None:
     Returns the .memex/ directory path if found, None otherwise.
     Skips ~/.memex/ (the global store) to avoid false positives.
     Stops at filesystem root.
+
+    Respects MEMEX_FORCE_GLOBAL env var — returns None immediately if set,
+    forcing all resolution to the global store.
     """
+    import os
+
+    if os.environ.get("MEMEX_FORCE_GLOBAL"):
+        return None
     try:
         current = Path.cwd()
     except OSError:
@@ -111,6 +120,8 @@ class Settings(BaseSettings):
 
     # Embedding
     embedding_model: str = "minilm"  # "minilm" (384-dim) or "nomic" (768-dim)
+    onnx_batch_size: int = 4  # Documents per ONNX inference call (lower = less RAM)
+    onnx_threads: int = 2  # ONNX inter-op threads (lower = less RAM)
 
     # Search
     rerank_by_default: bool = True
@@ -130,7 +141,25 @@ class Settings(BaseSettings):
         return {**global_config, **local_config, **values}
 
 
-settings = Settings()
+_settings: Settings | None = None
+
+
+def get_settings() -> Settings:
+    """Get or create settings (lazy — defers construction until first access).
+
+    This allows CLI flags (like --global) to set env vars before settings
+    are constructed, respecting the precedence chain properly.
+    """
+    global _settings
+    if _settings is None:
+        _settings = Settings()
+    return _settings
+
+
+def reset_settings() -> None:
+    """Reset the cached settings instance (for testing)."""
+    global _settings
+    _settings = None
 
 
 def find_local_memex_dir() -> Path | None:
@@ -183,6 +212,9 @@ path = "{path}"
 [embedding]
 # "minilm" (384-dim, fast) or "nomic" (768-dim, higher quality)
 model = "minilm"
+# ONNX runtime resource controls (lower = less RAM, slower)
+# onnx_batch_size = 4   # docs per inference call (1-16)
+# onnx_threads = 2      # inter-op parallelism (1-4)
 
 [ingest]
 embed_by_default = true

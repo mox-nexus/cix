@@ -77,18 +77,43 @@ click.rich_click.COMMAND_GROUPS = {
 }
 
 
+def _set_global_store(ctx: click.Context, param: click.Parameter, value: bool) -> bool:
+    """Eager callback: force global ~/.memex/ store before settings construct."""
+    if value:
+        import os
+
+        os.environ["MEMEX_CORPUS_PATH"] = str(Path.home() / ".memex" / "corpus.duckdb")
+        os.environ["MEMEX_FORCE_GLOBAL"] = "1"
+    return value
+
+
 @click.group(invoke_without_command=True)
 @click.option("--verbose", "-v", is_flag=True, help="Verbose output")
+@click.option(
+    "--global",
+    "use_global",
+    is_flag=True,
+    is_eager=True,
+    expose_value=True,
+    callback=_set_global_store,
+    help="Force global ~/.memex/ store (ignore local .memex/)",
+)
 @click.option("--skill", is_flag=True, help="Output skill documentation for Claude")
 @click.option("--reference", "-r", help="Specific skill reference (use with --skill)")
 @click.version_option(prog_name="memex (experimental)")
 @click.pass_context
-def main(ctx: click.Context, verbose: bool, skill: bool, reference: str | None):
+def main(
+    ctx: click.Context,
+    verbose: bool,
+    use_global: bool,
+    skill: bool,
+    reference: str | None,
+):
     """Memex - Extended memory for you and your agents. [experimental]"""
-    from memex.config.settings import settings
-
     if verbose:
-        settings.verbose = True
+        import os
+
+        os.environ["MEMEX_VERBOSE"] = "true"
 
     if skill:
         content = skill_module.get_skill(reference)
@@ -348,7 +373,7 @@ def _do_ingest(path: Path, *, embed: bool = True, wizard: bool = False):
         embed: Generate embeddings (True) or keyword-only (False).
         wizard: Use friendly wizard output (True) or standard CLI output (False).
     """
-    from memex.config.settings import settings
+    from memex.config.settings import get_settings
 
     if embed:
         with obs.status("Loading embedding model..."):
@@ -363,16 +388,22 @@ def _do_ingest(path: Path, *, embed: bool = True, wizard: bool = False):
         obs.dim(f"Parsed {parsed:,} fragments, stored {stored:,} new")
 
         if embed and stored > 0 and service.embedder:
+            with Progress(
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                BarColumn(),
+                TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                TextColumn("({task.completed:,}/{task.total:,})"),
+                TimeElapsedColumn(),
+                console=obs.console,
+                transient=True,
+            ) as progress_bar:
+                task = progress_bar.add_task("Embedding", total=stored)
 
-            def embed_progress(processed: int, total: int):
-                pct = processed / total * 100 if total > 0 else 100
-                obs.console.print(
-                    f"\r[dim]Embedding... {processed:,}/{total:,} ({pct:.0f}%)[/dim]",
-                    end="",
-                )
+                def embed_progress(processed: int, total: int):
+                    progress_bar.update(task, completed=processed, total=total)
 
-            embedded = service.backfill_embeddings(settings.batch_size, embed_progress)
-            obs.console.print()
+                embedded = service.backfill_embeddings(get_settings().batch_size, embed_progress)
 
             if not wizard and embedded < stored:
                 failed = stored - embedded
@@ -454,12 +485,12 @@ def dig(
         memex dig "authentication decisions" --semantic-weight 0.8
         memex dig "OAuth" --no-rerank
     """
-    from memex.config.settings import settings
+    from memex.config.settings import get_settings
 
     # Resolve defaults from settings
     if semantic_weight is None:
-        semantic_weight = settings.semantic_weight
-    use_reranker = reranker_available() and settings.rerank_by_default and not no_rerank
+        semantic_weight = get_settings().semantic_weight
+    use_reranker = reranker_available() and get_settings().rerank_by_default and not no_rerank
 
     with obs.status("Loading..."):
         service = create_service(with_embedder=True, with_reranker=use_reranker)
@@ -687,9 +718,9 @@ def ingest(path: Path, no_embed: bool):
         memex ingest ~/Downloads/conversations.json
         memex ingest export.zip --no-embed
     """
-    from memex.config.settings import settings
+    from memex.config.settings import get_settings
 
-    should_embed = settings.embed_by_default and not no_embed
+    should_embed = get_settings().embed_by_default and not no_embed
     _do_ingest(path, embed=should_embed)
 
 
@@ -759,6 +790,9 @@ def backfill(batch_size: int):
 
         obs.success(f"Generated embeddings for {updated:,} fragments")
         obs.hint('memex dig "your query" for semantic search')
+    except MemoryError:
+        obs.error("Out of memory. Try: memex backfill --threads 2 --batch-size 50")
+        raise SystemExit(137)
     finally:
         service.close()
 
@@ -777,9 +811,9 @@ def reset(yes: bool, backup: bool):
         memex reset --yes        # Skip confirmation
         memex reset --backup     # Backup to corpus.duckdb.bak first
     """
-    from memex.config.settings import settings
+    from memex.config.settings import get_settings
 
-    corpus_path = settings.corpus_path
+    corpus_path = get_settings().corpus_path
 
     if not corpus_path.exists():
         obs.warning("No corpus found. Nothing to reset.")
@@ -827,7 +861,7 @@ def status():
     Displays corpus stats, embedding coverage, and which features
     are active (reranking, semantic search, etc.).
     """
-    from memex.config.settings import settings
+    from memex.config.settings import get_settings
 
     # Get embedder info (doesn't require corpus)
     embedder = get_embedder()
@@ -870,7 +904,7 @@ def status():
         obs.console.print("[cyan]Store:[/cyan]      ~/.memex/ (global)")
 
     # Corpus info
-    obs.console.print(f"[cyan]Corpus:[/cyan]     {settings.corpus_path}")
+    obs.console.print(f"[cyan]Corpus:[/cyan]     {get_settings().corpus_path}")
     obs.console.print(f"[cyan]Fragments:[/cyan]  {stats['total_fragments']:,}")
     if coverage[1] > 0:
         pct = coverage[0] / coverage[1] * 100
@@ -950,7 +984,7 @@ def status():
 @main.command()
 def corpus():
     """Show corpus statistics."""
-    from memex.config.settings import settings
+    from memex.config.settings import get_settings
 
     service = create_service()
     stats = service.stats()
@@ -962,7 +996,7 @@ def corpus():
     table.add_row("Fragments", f"{stats['total_fragments']:,}")
     table.add_row("Conversations", f"{stats['conversations']:,}")
     table.add_row("Sources", str(stats["sources"]))
-    table.add_row("Corpus Path", str(settings.corpus_path))
+    table.add_row("Corpus Path", str(get_settings().corpus_path))
     if stats["earliest"]:
         table.add_row("Earliest", stats["earliest"].strftime("%Y-%m-%d"))
     if stats["latest"]:
@@ -1047,12 +1081,12 @@ def query(sql_query: str, fmt: str):
 @main.command()
 def sql():
     """Interactive SQL shell (DuckDB-specific)."""
-    from memex.config.settings import settings
+    from memex.config.settings import get_settings
 
     corpus = create_corpus()
 
     obs.console.print("[bold]Memex SQL Shell[/] (type 'exit' to quit)")
-    obs.console.print(f"[dim]Corpus: {settings.corpus_path}[/]")
+    obs.console.print(f"[dim]Corpus: {get_settings().corpus_path}[/]")
 
     try:
         while True:

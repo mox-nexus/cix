@@ -15,7 +15,7 @@ from pathlib import Path
 
 from memex.adapters._out.corpus import DuckDBCorpus
 from memex.adapters._out.sources import ClaudeConversationsAdapter, OpenAIConversationsAdapter
-from memex.config.settings import settings
+from memex.config.settings import get_settings
 from memex.domain.ports._out.embedding import EmbeddingPort
 from memex.domain.services import ExcavationService
 
@@ -32,10 +32,15 @@ def get_embedder() -> EmbeddingPort:
 
     Uses fastembed (ONNX) with nomic-embed-text-v1.5 (768-dim).
     No torch dependency. Same quality as nomic[local], cosine ~0.9999.
+    ONNX resource settings flow from Settings (env vars / config.toml).
     """
     from memex.adapters._out.embedding.fastembed_embedder import FastEmbedEmbedder
 
-    return FastEmbedEmbedder()
+    s = get_settings()
+    return FastEmbedEmbedder(
+        onnx_batch_size=s.onnx_batch_size,
+        onnx_threads=s.onnx_threads,
+    )
 
 
 def reranker_available() -> bool:
@@ -86,7 +91,7 @@ def create_service(
 
     # Corpus dimensions flow from embedder
     embedding_dim = embedder.dimensions if embedder else None
-    corpus = DuckDBCorpus(settings.corpus_path, embedding_dim=embedding_dim)
+    corpus = DuckDBCorpus(get_settings().corpus_path, embedding_dim=embedding_dim)
 
     # Fail-fast: validate existing corpus dimensions match embedder
     if embedder:
@@ -118,7 +123,7 @@ def create_corpus(embedding_dim: int | None = None) -> DuckDBCorpus:
         embedding_dim: If provided, enables embedding column with this dimension.
                       If None, FTS-only mode.
     """
-    return DuckDBCorpus(settings.corpus_path, embedding_dim=embedding_dim)
+    return DuckDBCorpus(get_settings().corpus_path, embedding_dim=embedding_dim)
 
 
 def initialize_corpus(corpus_path: Path) -> None:

@@ -11,12 +11,12 @@ Usage:
 import json
 from pathlib import Path
 
-from memex.config.settings import settings
-
 
 def _register_path() -> Path:
     """Path to the last-results register."""
-    return settings.corpus_path.parent / "last_results.json"
+    from memex.config.settings import get_settings
+
+    return get_settings().corpus_path.parent / "last_results.json"
 
 
 def save_results(results: list[dict]) -> None:
