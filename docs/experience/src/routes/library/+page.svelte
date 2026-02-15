@@ -5,6 +5,7 @@
 	import { base } from '$app/paths';
 	import { CrossLinks } from '$lib/components/nav';
 	import QuadrantAisle from './QuadrantAisle.svelte';
+	import QuadrantCard from './QuadrantCard.svelte';
 
 	const DIFFICULTY_ICON: Record<string, string> = {
 		foundational: '○',
@@ -31,43 +32,30 @@
 
 	let overview = $derived($readingOverview);
 	let totalArticles = $derived(
-		LIBRARY.find((q) => q.id === 'explanation')?.entries.length ?? 0
+		LIBRARY.reduce((sum, q) => sum + q.entries.length, 0)
 	);
 	let progress = $derived($readingProgress);
 
 	// --- Aisle expansion state ---
 	let expandedQuadrants = $state(new Set<string>());
-	let hasAutoExpanded = false;
 
-	function toggleQuadrant(id: string) {
+	function toggleAndScroll(id: string) {
+		const wasExpanded = expandedQuadrants.has(id);
 		const next = new Set(expandedQuadrants);
-		if (next.has(id)) {
+		if (wasExpanded) {
 			next.delete(id);
 		} else {
 			next.add(id);
 		}
 		expandedQuadrants = next;
+		if (!wasExpanded) {
+			requestAnimationFrame(() => {
+				document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			});
+		}
 	}
 
-	function expandAndScroll(id: string) {
-		if (!expandedQuadrants.has(id)) {
-			const next = new Set(expandedQuadrants);
-			next.add(id);
-			expandedQuadrants = next;
-		}
-		// Scroll after DOM update
-		requestAnimationFrame(() => {
-			document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-		});
-	}
-
-	// Auto-expand explanation for first-time visitors (once only)
-	$effect(() => {
-		if (!hasAutoExpanded && overview.completed === 0 && overview.visited <= 1) {
-			hasAutoExpanded = true;
-			expandedQuadrants = new Set([...expandedQuadrants, 'explanation']);
-		}
-	});
+	let isFirstVisit = $derived(overview.completed === 0 && overview.visited <= 1);
 
 	function entryState(slug: string): string {
 		return progress.entries[slug] || 'unvisited';
@@ -133,31 +121,30 @@
 		</span>
 	</div>
 
-	<!-- Quadrant navigation strip -->
-	<nav class="quadrant-strip" aria-label="Content quadrants">
-		{#each QUADRANT_ORDER as q}
+	<!-- Quadrant grid -->
+	<div class="quadrant-grid" role="navigation" aria-label="Content quadrants">
+		{#each QUADRANT_ORDER as q, i}
 			{@const count = quadrantCount(q.id)}
-			<button
-				class="quadrant-chip"
-				data-variant={q.id}
-				onclick={() => expandAndScroll(q.id)}
-			>
-				<span class="chip-label">{q.label}</span>
-				<span class="chip-count">{count}</span>
-			</button>
-		{/each}
-	</nav>
+			{@const isPlaceholder = !quadrantData(q.id) || quadrantCount(q.id) === 0}
 
-	<!-- Suggested start (shown for first-time visitors) -->
-	{#if overview.completed === 0 && overview.visited <= 1}
-		<div class="suggested-start">
-			<span class="suggested-label">start here</span>
-			<a href="{base}/library/explanation/what-is-ci" class="suggested-link">
-				<span class="suggested-title">What is CI</span>
-				<span class="suggested-desc">The collaborative intelligence thesis · 5 min</span>
-			</a>
-		</div>
-	{/if}
+			<QuadrantCard
+				id="{q.id}-card"
+				label={q.label}
+				tagline={q.tagline}
+				{count}
+				preview={CLUSTER_PREVIEW[q.id]}
+				progress={quadrantProgress(q.id)}
+				placeholder={isPlaceholder}
+				variant={q.id}
+				delay={i * 80}
+				active={expandedQuadrants.has(q.id)}
+				suggestedSlug={q.id === 'explanation' && isFirstVisit ? 'what-is-ci' : undefined}
+				suggestedTitle={q.id === 'explanation' && isFirstVisit ? 'What is CI' : undefined}
+				suggestedMeta={q.id === 'explanation' && isFirstVisit ? '5 min' : undefined}
+				onclick={() => toggleAndScroll(q.id)}
+			/>
+		{/each}
+	</div>
 
 	<!-- Quadrant aisles -->
 	<div class="aisles">
@@ -172,7 +159,7 @@
 				tagline={q.tagline}
 				{count}
 				expanded={expandedQuadrants.has(q.id)}
-				ontoggle={() => toggleQuadrant(q.id)}
+				ontoggle={() => toggleAndScroll(q.id)}
 				preview={CLUSTER_PREVIEW[q.id]}
 				progress={quadrantProgress(q.id)}
 				placeholder={isPlaceholder}
@@ -312,86 +299,19 @@
 		white-space: nowrap;
 	}
 
-	/* --- Quadrant Strip --- */
+	/* --- Quadrant Grid --- */
 
-	.quadrant-strip {
-		display: flex;
+	.quadrant-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
 		gap: var(--space-2);
-		padding-bottom: var(--space-2);
-		border-bottom: 1px solid var(--dao-border-subtle);
-		margin-bottom: var(--space-4);
-		flex-wrap: wrap;
-	}
-
-	.quadrant-chip {
-		font-family: var(--font-sans);
-		font-size: var(--type-xs);
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-widest);
-		color: var(--dao-muted);
-		background: none;
-		border: none;
-		cursor: pointer;
-		display: inline-flex;
-		align-items: center;
-		gap: var(--space-1);
-		padding: 0;
-		transition: color var(--duration-fast) var(--easing-linear);
-	}
-
-	.quadrant-chip:hover {
-		color: var(--dao-text);
-	}
-
-	.quadrant-chip[data-variant='explanation']:hover { color: var(--quadrant-explanation); }
-	.quadrant-chip[data-variant='how-to']:hover { color: var(--quadrant-how-to); }
-	.quadrant-chip[data-variant='tutorials']:hover { color: var(--quadrant-tutorials); }
-	.quadrant-chip[data-variant='reference']:hover { color: var(--quadrant-reference); }
-
-	.chip-count {
-		font-family: var(--font-mono);
-		font-size: var(--type-xs);
-		opacity: 0.5;
-	}
-
-	/* --- Suggested Start --- */
-
-	.suggested-start {
-		background: var(--dao-surface);
-		border: 1px solid var(--dao-border);
-		border-left: 3px solid var(--spark-core);
-		border-radius: var(--radius-sm);
-		padding: var(--space-2) var(--space-3);
 		margin-bottom: var(--space-4);
 	}
 
-	.suggested-label {
-		font-family: var(--font-sans);
-		font-size: var(--type-xs);
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-widest);
-		color: var(--spark-core);
-		display: block;
-		margin-bottom: var(--space-1);
-	}
-
-	.suggested-link {
-		text-decoration: none;
-		display: block;
-	}
-
-	.suggested-title {
-		font-family: var(--font-sans);
-		font-size: var(--type-base);
-		font-weight: 600;
-		color: var(--dao-text);
-		display: block;
-	}
-
-	.suggested-desc {
-		font-family: var(--font-mono);
-		font-size: var(--type-sm);
-		color: var(--dao-muted);
+	@media (max-width: 600px) {
+		.quadrant-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 
 	/* --- Aisles Container --- */
@@ -592,7 +512,6 @@
 	@media (prefers-reduced-motion: reduce) {
 		.cluster-entry,
 		.ref-link,
-		.quadrant-chip,
 		.progress-fill,
 		.progress-visited {
 			transition: none;

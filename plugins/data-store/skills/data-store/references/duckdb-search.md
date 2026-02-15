@@ -178,6 +178,58 @@ RRF preferred — simpler, more robust.
 
 ---
 
+## Bulk Write Performance
+
+### Drop Indexes Before Bulk Operations
+
+DuckDB's HNSW index maintains an in-memory graph. During bulk UPDATEs (e.g., backfilling embeddings), the index incrementally incorporates each new vector — O(n log n) memory growth that can OOM on large datasets.
+
+**Pattern: drop → write → rebuild**
+
+```sql
+-- Before bulk write
+DROP INDEX IF EXISTS idx_embedding;
+
+-- Bulk operations here (INSERT, UPDATE, etc.)
+-- CHECKPOINT every ~1000 rows to flush WAL
+CHECKPOINT;
+
+-- After bulk write
+CREATE INDEX idx_embedding ON fragments
+    USING HNSW (embedding)
+    WITH (metric = 'cosine');
+```
+
+Building the index once from scratch is both faster and uses a fraction of the memory vs. incremental maintenance. This is the same principle as PostgreSQL's `DROP INDEX` before `COPY` or Elasticsearch's `refresh_interval: -1`.
+
+### Memory and WAL Management
+
+```sql
+-- Cap DuckDB memory when running alongside other processes
+SET memory_limit = '2GB';
+```
+
+DuckDB defaults to 80% of system RAM. In shared environments (e.g., running inside Claude Code), this causes contention. Set an explicit limit.
+
+**WAL accumulation:** DuckDB buffers write-ahead log entries in memory. During tight update loops, auto-checkpoint may not trigger between batches. Force periodic checkpoints to bound memory:
+
+```sql
+-- Every ~1000 rows during bulk operations
+CHECKPOINT;
+```
+
+### FTS Index Rebuild
+
+FTS indexes don't auto-update (see above). After any bulk ingest:
+
+```sql
+PRAGMA drop_fts_index('fragments');
+PRAGMA create_fts_index('fragments', 'id', 'content',
+    stemmer='english', stopwords='english');
+```
+
+---
+
 ## Production Recommendations
 
 ### Phase 1: Keyword Search

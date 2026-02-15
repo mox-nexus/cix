@@ -22,6 +22,8 @@ The non-obvious patterns that separate correct tools from delightful ones. For s
 
 For exemplars, anti-patterns, and the full audit checklist: see [cli-dx.md](references/cli-dx.md).
 
+**Python hex + streaming patterns:** See [python-hex.md](references/python-hex.md) — hexagonal layout, functional streaming, itertools pipelines, ONNX resource model.
+
 ---
 
 ## Key Decision Frameworks
