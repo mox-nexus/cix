@@ -6,7 +6,7 @@ Supports:
 - Full-text search via FTS extension (BM25 scoring)
 """
 
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Iterator
 from importlib.resources import files
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -574,14 +574,21 @@ class DuckDBCorpus:
 
     def backfill_embeddings(
         self,
-        embedder_batch: Callable[[list[str]], list[list[float]]],
+        embedder_stream: Callable[[list[str]], Iterator[list[float]]],
         batch_size: int = 100,
         on_progress: Callable[[int, int], None] | None = None,
     ) -> int:
-        """Backfill embeddings for existing fragments using batch embedding.
+        """Backfill embeddings using streaming — write-as-you-go.
 
-        Memory-safe: drops HNSW index before bulk writes, checkpoints
-        periodically to flush WAL, rebuilds index after completion.
+        Memory-safe pipeline:
+        1. Fetch a batch of texts from DB
+        2. Feed to embedder_stream (generator — yields one vector at a time)
+        3. Write each vector to DB immediately (no accumulation)
+        4. Checkpoint periodically to flush WAL
+        5. Drop/rebuild HNSW index around the whole operation
+
+        Peak memory: model (~1GB) + one ONNX inference batch (~1-5GB) +
+        one embedding vector (~3KB). No batch-sized accumulation.
         """
         if not self._embedding_dim:
             msg = "Corpus created without embedding support. Pass embedding_dim."
@@ -591,12 +598,10 @@ class DuckDBCorpus:
         if total == 0:
             return 0
 
-        # Drop HNSW index before bulk update — maintaining it during writes
-        # causes O(n log n) memory growth as DuckDB rebuilds the graph
         self._drop_hnsw_index()
 
         updated = 0
-        checkpoint_interval = 10  # Flush WAL every 10 batches
+        checkpoint_interval = 1000  # Flush WAL every 1000 individual writes
 
         try:
             while True:
@@ -614,30 +619,27 @@ class DuckDBCorpus:
 
                 ids = [row[0] for row in rows]
                 contents = [row[1] for row in rows]
-                embeddings = embedder_batch(contents)
 
-                update_params = [
-                    (embedding, frag_id) for frag_id, embedding in zip(ids, embeddings)
-                ]
-                self.con.executemany(
-                    f"""
-                    UPDATE fragments
-                    SET embedding = ?::FLOAT[{self._embedding_dim}]
-                    WHERE id = ?
-                    """,
-                    update_params,
-                )
+                # Stream: embedder yields one vector at a time,
+                # we write each immediately — nothing accumulates
+                for frag_id, embedding in zip(ids, embedder_stream(contents)):
+                    self.con.execute(
+                        f"""
+                        UPDATE fragments
+                        SET embedding = ?::FLOAT[{self._embedding_dim}]
+                        WHERE id = ?
+                        """,
+                        (embedding, frag_id),
+                    )
+                    updated += 1
 
-                updated += len(rows)
+                    if updated % checkpoint_interval == 0:
+                        self.con.execute("CHECKPOINT")
 
-                if updated % (batch_size * checkpoint_interval) == 0:
-                    self.con.execute("CHECKPOINT")
-
-                if on_progress:
-                    on_progress(updated, total)
+                    if on_progress:
+                        on_progress(updated, total)
 
         finally:
-            # Always rebuild HNSW index, even if interrupted
             self.con.execute("CHECKPOINT")
             self._create_hnsw_index()
 

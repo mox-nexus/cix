@@ -215,7 +215,7 @@ class ExcavationService:
         """
         if not self.embedder:
             return 0
-        return self.corpus.backfill_embeddings(self.embedder.embed_batch, batch_size, on_progress)
+        return self.corpus.backfill_embeddings(self.embedder.embed_stream, batch_size, on_progress)
 
     def embedding_coverage(self) -> tuple[int, int]:
         """Get embedding coverage stats.
