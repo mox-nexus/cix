@@ -143,6 +143,8 @@ Local `.memex/` structure (add to .gitignore):
 | Changing embedding model | `memex reset --backup`, then `memex ingest <file>` |
 | Fast import, embed later | `memex ingest <file> --no-embed`, then `memex backfill` |
 | Backfill killed / OOM | Tune ONNX resources (see below) |
+| DuckDB lock error during backfill | Normal — DuckDB holds an exclusive write lock. Wait for backfill to finish. Check with `ps aux \| grep memex` |
+| Any command fails with `Conflicting lock` | Another memex process is running (backfill, ingest). Only one writer at a time. |
 
 ## Resource Tuning (Backfill / Embedding)
 
@@ -177,6 +179,7 @@ onnx_threads = 1
 - **Fusion**: RRF (k=60)
 - **Backfill is idempotent**: `memex backfill` resumes from where it left off (`WHERE embedding IS NULL`). Safe to interrupt and restart.
 - **Backfill is memory-safe**: drops HNSW index before bulk writes, checkpoints periodically, rebuilds index after. DuckDB capped at 2GB.
+- **DuckDB is single-writer**: only one process can write at a time. During backfill/ingest, all other memex commands will fail with a lock error. This is expected — wait or check `ps aux | grep memex`.
 
 ## References
 
