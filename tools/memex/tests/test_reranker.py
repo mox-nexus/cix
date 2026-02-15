@@ -2,25 +2,25 @@
 
 import numpy as np
 import pytest
-from memex.adapters._out.reranking.cross_encoder import CrossEncoderReranker
+from memex.adapters._out.reranking.fastembed_reranker import FastEmbedReranker
 from memex.domain.models import Fragment
 
 
-class TestCrossEncoderReranker:
-    """Unit tests for CrossEncoderReranker."""
+class TestFastEmbedReranker:
+    """Unit tests for FastEmbedReranker."""
 
     @pytest.fixture
     def reranker(self):
         """Create reranker instance (model loaded lazily)."""
-        return CrossEncoderReranker()
+        return FastEmbedReranker()
 
     def test_model_name_default(self, reranker):
         """Should use default MS MARCO model."""
-        assert reranker.model_name == "cross-encoder/ms-marco-MiniLM-L-6-v2"
+        assert reranker.model_name == "Xenova/ms-marco-MiniLM-L-6-v2"
 
     def test_model_name_custom(self):
         """Should allow custom model name."""
-        custom = CrossEncoderReranker("custom/model-name")
+        custom = FastEmbedReranker("custom/model-name")
         assert custom.model_name == "custom/model-name"
 
     def test_rerank_empty_candidates(self, reranker):
@@ -59,7 +59,7 @@ class TestCrossEncoderReranker:
 
     def test_model_lazy_loading(self):
         """Model should not load until first rerank call."""
-        reranker = CrossEncoderReranker()
+        reranker = FastEmbedReranker()
 
         # Before use, cached_property hasn't populated __dict__
         assert "model" not in reranker.__dict__
