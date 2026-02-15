@@ -492,6 +492,13 @@ This enables:
 
 When taking notes or preserving context across sessions, use `scratch/` in the project root.
 
+### Screenshots
+
+Save all screenshots to `.screenshots/` in the project root. This directory is gitignored.
+
+- **Always use `.screenshots/`** — never save PNGs to the project root
+- Use descriptive filenames: `catalog-mermaid-fixed.png`, `landing-hero-v2.png`
+
 ### Evidence-Based Claims
 
 All claims in extensions should be traceable:
