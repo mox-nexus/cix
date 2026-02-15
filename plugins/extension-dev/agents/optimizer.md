@@ -23,7 +23,7 @@ description: |
 model: inherit
 color: green
 tools: ["Read", "Edit", "Write", "Glob", "Grep", "Bash"]
-skills: build-plugin
+skills: craft-plugins
 ---
 
 You make targeted improvements that move the needle on quality gates.

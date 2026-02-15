@@ -6,33 +6,34 @@ Build extensions that enable effective human-AI collaboration.
 
 | Skill | Purpose | Use When |
 |-------|---------|----------|
-| **build-plugin** | Claude Code extensions (skills, commands, agents, hooks, MCP) | Creating any Claude Code component |
-| **build-capability** | General capability authoring patterns | Creating skills, CLIs, APIs, any tool |
+| **craft-plugins** | Claude Code extensions (skills, commands, agents, hooks, MCP) | Creating any Claude Code component |
+| **craft-tools** | Software tools — CLIs, APIs, libraries | Creating CLIs, APIs, packages, or improving tool DX |
 
 ## Relationship
 
 ```
-build-capability (general patterns)
+craft-tools (general patterns)
        ↓
-build-plugin (Claude Code specifics)
+craft-plugins (Claude Code specifics)
        ↓
 plugin-dev (templates & structure)
 ```
 
-- **build-capability:** Universal patterns (progressive disclosure, degrees of freedom, feedback loops)
-- **build-plugin:** Claude Code specific (skills, agents, hooks, commands, MCP, composition)
+- **craft-tools:** Universal patterns (CLI DX, API design, progressive disclosure, packaging)
+- **craft-plugins:** Claude Code specific (skills, agents, hooks, commands, MCP, composition)
 - **plugin-dev:** Templates and directory structure (referenced, not duplicated)
 
 ## When to Use
 
 | Need | Use |
 |------|-----|
-| Creating a Claude Code skill | build-plugin |
-| Creating a Claude Code agent | build-plugin |
-| Creating a hook or command | build-plugin |
-| Building an MCP server | build-plugin |
-| Authoring any capability (skill, CLI, API) | build-capability |
-| Understanding progressive disclosure | build-capability |
+| Creating a Claude Code skill | craft-plugins |
+| Creating a Claude Code agent | craft-plugins |
+| Creating a hook or command | craft-plugins |
+| Building an MCP server | craft-plugins |
+| Building a CLI tool | craft-tools |
+| Building an API | craft-tools |
+| Improving CLI developer experience | craft-tools |
 | Plugin directory structure | plugin-dev |
 
 ## Agents
@@ -59,14 +60,15 @@ extension-dev/
 │   ├── evaluator.md              # Quality validation (7 gates)
 │   └── optimizer.md              # Targeted fix patterns
 ├── skills/
-│   ├── build-plugin/             # Claude Code extensions
+│   ├── craft-plugins/            # Claude Code extensions
 │   │   ├── SKILL.md
 │   │   └── references/
 │   │       ├── observability.md  # OTel instrumentation
 │   │       └── evidence-workflow.md  # Research methodology
-│   └── build-capability/         # General capability authoring
+│   └── craft-tools/              # Software tools (CLIs, APIs, libraries)
 │       ├── SKILL.md
 │       └── references/
+│           └── cli-dx.md         # CLI DX patterns (six laws)
 └── README.md
 ```
 
