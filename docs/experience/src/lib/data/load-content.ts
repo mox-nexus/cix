@@ -15,20 +15,22 @@ export async function loadLibraryContent(quadrant: Quadrant, slug: string) {
 	}
 
 	const filename = entry.file ?? slug;
-	const modules = import.meta.glob('../../../../content/library/**/*.md');
+	const modules = import.meta.glob('../../../../content/library/**/*.md', {
+		query: '?raw',
+		import: 'default',
+		eager: true
+	}) as Record<string, string>;
 	const path = `../../../../content/library/${quadrant}/${filename}.md`;
-	const loader = modules[path];
+	const content = modules[path];
 
-	if (!loader) {
+	if (!content) {
 		throw error(404, `Content not found: ${quadrant}/${filename}`);
 	}
-
-	const post = (await loader()) as { default: any; metadata?: Record<string, unknown> };
 	const nav = getNavigation(quadrant, slug);
 
 	return {
-		content: post.default,
-		metadata: post.metadata ?? {},
+		content,
+		metadata: {},
 		quadrant,
 		slug,
 		entry,
