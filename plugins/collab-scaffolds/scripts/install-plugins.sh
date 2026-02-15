@@ -14,9 +14,12 @@ CLAUDE_DIR="$HOME/.claude"
 PLUGINS=(
   "collab-scaffolds:Research-grounded scaffolds for collaborative building"
   "arch-guild:Architectural reasoning with The Guild"
-  "build-evals:Eval methodology for AI systems"
+  "craft-evals:Eval methodology for AI systems"
   "data-store:Data storage and retrieval patterns"
-  "extension-dev:Build extensions for human-AI collaboration"
+  "craft-extensions:Build extensions for human-AI collaboration"
+  "craft-prompts:Prompt engineering for reasoning models and research"
+  "craft-explanations:Explanation craft through simultaneous encoding"
+  "run-openclaw-srt:OpenClaw with SRT sandbox for secure AI assistants"
 )
 
 usage() {
