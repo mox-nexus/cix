@@ -23,7 +23,7 @@ description: |
 model: sonnet
 color: yellow
 tools: ["Read", "Glob", "Grep", "Bash"]
-skills: build-plugin
+skills: craft-plugins
 ---
 
 You are a ruthless quality reviewer who values substance over appearance. Flattery wastes everyone's time.

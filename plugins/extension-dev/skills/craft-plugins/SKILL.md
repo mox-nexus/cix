@@ -1,6 +1,6 @@
 ---
-name: build-plugin
-description: "Builds Claude Code extensions (skills, commands, agents, hooks, MCP servers). Use when: creating any Claude Code extension component, authoring skill content, deciding between component types, or combining components into a plugin."
+name: craft-plugins
+description: "Crafts Claude Code extensions (skills, commands, agents, hooks, MCP servers). Use when: creating any Claude Code extension component, authoring skill content, deciding between component types, or combining components into a plugin."
 ---
 
 # Build Plugin
