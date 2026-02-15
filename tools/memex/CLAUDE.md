@@ -307,6 +307,12 @@ This is implemented in `DuckDBCorpus.backfill_embeddings()` — it calls `_drop_
 
 Also set `memory_limit = '2GB'` on the DuckDB connection to prevent contention with the host process (e.g., Claude Code).
 
+### DuckDB Single-Writer Constraint
+
+DuckDB allows only one writer at a time. During `backfill` or `ingest`, all other memex commands will fail with `Conflicting lock is held`. This is by design — DuckDB is an embedded OLAP engine, not a server. Don't try to work around it; just wait for the write operation to finish. Check with `ps aux | grep memex`.
+
+Implication for tooling: never run `memex status` or `memex dig` in the same session as a background backfill. Let backfill complete first.
+
 ### Rich Progress Over Manual \\r
 
 Never use `console.print(f"\\r...", end="")` for progress. Rich emits full ANSI escape sequences per call, which GPU-accelerated terminals (Ghostty) buffer indefinitely. Use `rich.progress.Progress` — it rate-limits updates and handles single-line overwrite properly.
