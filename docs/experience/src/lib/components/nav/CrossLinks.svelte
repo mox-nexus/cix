@@ -3,7 +3,6 @@
 	import { base } from '$app/paths';
 
 	const allLinks = [
-		{ path: '/ethos', label: 'ethos', description: 'understand why', variant: 'spark' as const },
 		{ path: '/catalog', label: 'catalog', description: 'explore extensions', variant: 'emergence' as const },
 		{ path: '/library', label: 'library', description: 'deep research', variant: 'constraint' as const }
 	];

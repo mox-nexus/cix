@@ -4,6 +4,8 @@
 	import { getQuadrant, getClusterEntries } from '$lib/data/library';
 	import { readingProgress } from '$lib/stores/reading-progress';
 	import { base } from '$app/paths';
+	import Markdown from 'svelte-exmarkdown';
+	import { plugins } from './markdown-plugins';
 	import TableOfContents from './TableOfContents.svelte';
 	import ClusterNav from './ClusterNav.svelte';
 	import ArticleFooter from './ArticleFooter.svelte';
@@ -13,7 +15,7 @@
 		quadrant: Quadrant;
 		slug?: string;
 		entry?: LibraryEntry;
-		content: any;
+		content: string;
 		metadata?: Record<string, unknown>;
 		position?: number;
 		total?: number;
@@ -24,7 +26,6 @@
 	let { quadrant, slug, entry, content, metadata, position, total, prev, next }: Props = $props();
 
 	let quadrantMeta = $derived(getQuadrant(quadrant));
-	let Content = $derived(content);
 	let clusterEntries = $derived(
 		entry?.cluster ? getClusterEntries(entry.cluster) : []
 	);
@@ -148,7 +149,7 @@
 			<a href="{base}/library#{quadrant}">{quadrantMeta.label.toLowerCase()}</a>
 		</nav>
 
-		<Content />
+		<Markdown md={content} {plugins} />
 
 		{#if slug}
 			<ArticleFooter

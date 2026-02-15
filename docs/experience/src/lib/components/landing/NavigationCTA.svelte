@@ -14,7 +14,6 @@
 
 	let {
 		links = [
-			{ path: '/ethos', label: 'ethos', description: 'understand why', variant: 'spark' },
 			{ path: '/catalog', label: 'catalog', description: 'explore extensions', variant: 'emergence' },
 			{ path: '/library', label: 'library', description: 'deep research', variant: 'constraint' }
 		]
