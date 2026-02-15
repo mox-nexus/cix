@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 from memex.adapters._out.corpus.duckdb import DuckDBCorpus
-from memex.adapters._out.reranking.cross_encoder import CrossEncoderReranker
+from memex.adapters._out.reranking.fastembed_reranker import FastEmbedReranker
 from memex.domain.models import Fragment
 from memex.domain.services import ExcavationService
 
@@ -41,7 +41,7 @@ class TestExcavationServiceReranking:
             corpus=temp_corpus,
             source_adapters=[],
             embedder=None,
-            reranker=CrossEncoderReranker(),
+            reranker=FastEmbedReranker(),
         )
 
     def test_hybrid_search_without_reranker(self, service_no_reranker):
@@ -83,7 +83,7 @@ class TestExcavationServiceReranking:
     def test_reranker_model_name(self, service_with_reranker):
         """Service exposes reranker model name."""
         name = service_with_reranker.reranker_model_name()
-        assert name == "cross-encoder/ms-marco-MiniLM-L-6-v2"
+        assert name == "Xenova/ms-marco-MiniLM-L-6-v2"
 
     def test_reranker_model_name_none(self, service_no_reranker):
         """Service returns None when no reranker."""
