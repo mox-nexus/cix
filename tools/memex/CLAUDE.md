@@ -297,10 +297,55 @@ The CLI is a thin driving adapter. It calls `ExcavationService` methods, never r
 
 ---
 
-## Known Tech Debt
+## Performance Patterns
 
-- **Config format**: TOML works for single-tool config. When cix+memex share infrastructure, consider YAML with full layered scoping (packaged → project → user → global).
-- **Embedding model config**: `settings.embedding_model` exists but isn't wired into the composition root — `FastEmbedEmbedder()` is hardcoded to nomic-embed-text-v1.5. Wire the setting or remove it.
+### Bulk Write: Drop Index → Write → Rebuild
+
+DuckDB's HNSW index grows O(n log n) in memory when maintained during bulk UPDATEs. For backfill operations (embedding 50K+ fragments), **always** drop the HNSW index first, write in batches with periodic `CHECKPOINT`, then rebuild.
+
+This is implemented in `DuckDBCorpus.backfill_embeddings()` — it calls `_drop_hnsw_index()` before the loop and `_create_hnsw_index()` in a `finally` block. The same principle applies to any future bulk write operation.
+
+Also set `memory_limit = '2GB'` on the DuckDB connection to prevent contention with the host process (e.g., Claude Code).
+
+### Rich Progress Over Manual \\r
+
+Never use `console.print(f"\\r...", end="")` for progress. Rich emits full ANSI escape sequences per call, which GPU-accelerated terminals (Ghostty) buffer indefinitely. Use `rich.progress.Progress` — it rate-limits updates and handles single-line overwrite properly.
+
+### ONNX Resource Model
+
+ONNX Runtime pads all sequences in a batch to the max length, then allocates O(batch * seq_len^2) attention tensors. With real corpus text (avg ~2500 chars), the default batch_size=256 can require ~90GB for 100 documents — instant SIGKILL on most machines.
+
+Two knobs control ONNX memory, exposed via `Settings` (env vars / config.toml):
+
+| Setting | Env Var | Default | Effect |
+|---------|---------|---------|--------|
+| `onnx_batch_size` | `MEMEX_ONNX_BATCH_SIZE` | 4 | Docs per inference call. Peak RAM scales linearly. |
+| `onnx_threads` | `MEMEX_ONNX_THREADS` | 2 | ONNX inter-op threads. Each thread allocates a memory arena. |
+
+Flow: `Settings` (Pydantic) → `composition/get_embedder()` → `FastEmbedEmbedder(onnx_batch_size=..., onnx_threads=...)`. The embedder is a plain adapter — it receives config through constructor injection, never reaches back to settings.
+
+Resource profiles (approximate peak during backfill):
+
+| Profile | batch_size | threads | Peak RAM | Target |
+|---------|-----------|---------|----------|--------|
+| Conservative | 2 | 1 | ~2GB | 8GB machines, CI |
+| Default | 4 | 2 | ~5GB | 16-64GB machines |
+| Aggressive | 8 | 4 | ~10GB | 64GB+ with fast backfill |
+
+The SKILL.md documents these for Claude-as-operator to diagnose and tune.
+
+---
+
+## Pre-1.0 TODO
+
+- [ ] **Wire `embedding_model` setting** — `settings.embedding_model` exists but composition root hardcodes nomic-embed-text-v1.5. Wire through or remove.
+- [ ] **Verify `build_similar_edges` index usage** — self-join may be O(N^2) if DuckDB doesn't use HNSW index. Run EXPLAIN to confirm.
+- [ ] **Trails** — persistence (separate file per trail in `.memex/trails/`), sharing (trail file IS the artifact), interactive visualization (HTML artifact).
+- [ ] **Config format migration path** — TOML works for single-tool config. When cix+memex share infrastructure, consider YAML with layered scoping.
+- [ ] **Test coverage** — backfill, ONNX resource paths, settings precedence, enhanced Claude adapter extraction.
+- [ ] **Reranker resource controls** — similar ONNX knobs may be needed for the cross-encoder.
+- [ ] **Code quality pass** — Pydantic where appropriate (data models, port contracts), type annotations, docstring consistency across adapters.
+- [ ] **Clean up stale config** — `embedding_model: str = "minilm"` default is wrong (we use nomic). Reconcile settings with reality.
 
 ---
 

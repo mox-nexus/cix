@@ -142,6 +142,30 @@ Local `.memex/` structure (add to .gitignore):
 | No semantic results | `memex status` (check embedding coverage), then `memex backfill` |
 | Changing embedding model | `memex reset --backup`, then `memex ingest <file>` |
 | Fast import, embed later | `memex ingest <file> --no-embed`, then `memex backfill` |
+| Backfill killed / OOM | Tune ONNX resources (see below) |
+
+## Resource Tuning (Backfill / Embedding)
+
+ONNX Runtime memory scales with `batch_size × seq_len²`. Before running `memex backfill` on large corpora (10K+ fragments), check available RAM and tune if needed.
+
+**Defaults work for 16-64GB machines.** Only tune for constrained environments.
+
+| Machine RAM | Set before backfill |
+|-------------|---------------------|
+| 64GB+ | Defaults are fine |
+| 16-32GB | Defaults are fine |
+| 8-16GB | `MEMEX_ONNX_BATCH_SIZE=2 MEMEX_ONNX_THREADS=1` |
+| <8GB / CI | `MEMEX_ONNX_BATCH_SIZE=1 MEMEX_ONNX_THREADS=1` |
+
+Or set permanently in `~/.memex/config.toml`:
+
+```toml
+[embedding]
+onnx_batch_size = 2
+onnx_threads = 1
+```
+
+**Diagnosis**: If `memex backfill` exits silently (SIGKILL, exit 137), it's OOM. Lower `onnx_batch_size` first (biggest lever), then `onnx_threads`.
 
 ## Key Facts
 
@@ -151,6 +175,8 @@ Local `.memex/` structure (add to .gitignore):
 - **Vector search**: DuckDB VSS with HNSW
 - **FOLLOWS edges**: auto-computed on ingest (no manual step needed)
 - **Fusion**: RRF (k=60)
+- **Backfill is idempotent**: `memex backfill` resumes from where it left off (`WHERE embedding IS NULL`). Safe to interrupt and restart.
+- **Backfill is memory-safe**: drops HNSW index before bulk writes, checkpoints periodically, rebuilds index after. DuckDB capped at 2GB.
 
 ## References
 

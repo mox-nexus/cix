@@ -21,21 +21,27 @@ class FastEmbedEmbedder:
 
     DEFAULT_MODEL = "nomic-ai/nomic-embed-text-v1.5"
     EMBEDDING_DIM = 768
+    DEFAULT_ONNX_BATCH_SIZE = 4
+    DEFAULT_ONNX_THREADS = 2
 
     def __init__(
         self,
         model_name: str = DEFAULT_MODEL,
         dimensions: int = EMBEDDING_DIM,
+        onnx_batch_size: int = DEFAULT_ONNX_BATCH_SIZE,
+        onnx_threads: int = DEFAULT_ONNX_THREADS,
     ):
         self._model_name = model_name
         self._dimensions = dimensions
+        self._onnx_batch_size = onnx_batch_size
+        self._onnx_threads = onnx_threads
 
     @cached_property
     def model(self):
         """Lazy load the embedding model."""
         from fastembed import TextEmbedding
 
-        return TextEmbedding(model_name=self._model_name)
+        return TextEmbedding(model_name=self._model_name, threads=self._onnx_threads)
 
     @property
     def model_name(self) -> str:
@@ -51,12 +57,12 @@ class FastEmbedEmbedder:
 
     def embed(self, text: str) -> list[float]:
         """Embed a single text. Returns 768-dim vector."""
-        embeddings = list(self.model.embed([text]))
+        embeddings = list(self.model.embed([text], batch_size=1))
         return embeddings[0].tolist()
 
     def embed_batch(self, texts: list[str]) -> list[list[float]]:
         """Embed multiple texts. More efficient than single calls."""
         if not texts:
             return []
-        embeddings = list(self.model.embed(texts))
+        embeddings = list(self.model.embed(texts, batch_size=self._onnx_batch_size))
         return [e.tolist() for e in embeddings]
