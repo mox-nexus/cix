@@ -22,6 +22,7 @@ _CONFIG_KEY_MAP = {
     ("ingest", "embed_by_default"): "embed_by_default",
     ("ingest", "batch_size"): "batch_size",
     ("search", "rerank_by_default"): "rerank_by_default",
+    ("embedding", "provider"): "onnx_provider",
     ("search", "semantic_weight"): "semantic_weight",
 }
 
@@ -119,9 +120,10 @@ class Settings(BaseSettings):
     batch_size: int = 100
 
     # Embedding
-    embedding_model: str = "minilm"  # "minilm" (384-dim) or "nomic" (768-dim)
+    embedding_model: str = "nomic"  # "minilm" (384-dim) or "nomic" (768-dim)
     onnx_batch_size: int = 4  # Documents per ONNX inference call (lower = less RAM)
     onnx_threads: int = 2  # ONNX inter-op threads (lower = less RAM)
+    onnx_provider: str = "auto"  # "auto", "coreml", "cuda", or "cpu"
 
     # Search
     rerank_by_default: bool = True
@@ -211,7 +213,9 @@ path = "{path}"
 
 [embedding]
 # "minilm" (384-dim, fast) or "nomic" (768-dim, higher quality)
-model = "minilm"
+model = "nomic"
+# ONNX execution provider: "auto" (detect GPU), "coreml", "cuda", "cpu"
+# provider = "auto"
 # ONNX runtime resource controls (lower = less RAM, slower)
 # onnx_batch_size = 4   # docs per inference call (1-16)
 # onnx_threads = 2      # inter-op parallelism (1-4)
