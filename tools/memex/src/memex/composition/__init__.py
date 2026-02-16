@@ -26,6 +26,52 @@ class EmbeddingDimensionMismatchError(Exception):
     pass
 
 
+# Shorthand → ONNX Runtime provider name
+_PROVIDER_MAP = {
+    "coreml": "CoreMLExecutionProvider",
+    "cuda": "CUDAExecutionProvider",
+    "cpu": "CPUExecutionProvider",
+}
+
+
+def _detect_providers(override: str = "auto") -> list[str]:
+    """Resolve ONNX execution providers.
+
+    Args:
+        override: "auto" for hardware detection, or explicit shorthand
+                  ("coreml", "cuda", "cpu").
+
+    Returns:
+        Ordered provider list for ONNX Runtime (tries in order, CPU always last).
+
+    Raises:
+        ValueError: If override is not a recognized provider name.
+    """
+    if override != "auto":
+        key = override.lower()
+        if key not in _PROVIDER_MAP:
+            valid = ", ".join(sorted(_PROVIDER_MAP))
+            raise ValueError(f"Unknown ONNX provider '{override}'. Valid values: auto, {valid}")
+        providers = [_PROVIDER_MAP[key]]
+        if key != "cpu":
+            providers.append("CPUExecutionProvider")
+        return providers
+
+    # Auto-detect: prefer CoreML > CUDA > CPU
+    try:
+        import onnxruntime
+
+        available = onnxruntime.get_available_providers()
+    except ImportError:
+        return ["CPUExecutionProvider"]
+
+    for preferred in ["CoreMLExecutionProvider", "CUDAExecutionProvider"]:
+        if preferred in available:
+            return [preferred, "CPUExecutionProvider"]
+
+    return ["CPUExecutionProvider"]
+
+
 @lru_cache(maxsize=1)
 def get_embedder() -> EmbeddingPort:
     """Get or create embedder (cached, lazy load).
@@ -37,9 +83,11 @@ def get_embedder() -> EmbeddingPort:
     from memex.adapters._out.embedding.fastembed_embedder import FastEmbedEmbedder
 
     s = get_settings()
+    providers = _detect_providers(s.onnx_provider)
     return FastEmbedEmbedder(
         onnx_batch_size=s.onnx_batch_size,
         onnx_threads=s.onnx_threads,
+        providers=providers,
     )
 
 
@@ -65,7 +113,9 @@ def get_reranker():
 
     from memex.adapters._out.reranking.fastembed_reranker import FastEmbedReranker
 
-    return FastEmbedReranker()
+    s = get_settings()
+    providers = _detect_providers(s.onnx_provider)
+    return FastEmbedReranker(providers=providers)
 
 
 def create_service(
@@ -137,6 +187,7 @@ def initialize_corpus(corpus_path: Path) -> None:
 
 
 __all__ = [
+    "_detect_providers",
     "create_service",
     "create_corpus",
     "get_embedder",

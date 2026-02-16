@@ -21,15 +21,16 @@ class FastEmbedReranker:
 
     DEFAULT_MODEL = "Xenova/ms-marco-MiniLM-L-6-v2"
 
-    def __init__(self, model_name: str = DEFAULT_MODEL):
+    def __init__(self, model_name: str = DEFAULT_MODEL, providers: list[str] | None = None):
         self._model_name = model_name
+        self._providers = providers
 
     @cached_property
     def model(self):
         """Lazy load the cross-encoder model."""
         from fastembed.rerank.cross_encoder import TextCrossEncoder
 
-        return TextCrossEncoder(model_name=self._model_name)
+        return TextCrossEncoder(model_name=self._model_name, providers=self._providers)
 
     def rerank(
         self,

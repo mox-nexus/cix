@@ -36,18 +36,24 @@ class FastEmbedEmbedder:
         dimensions: int = EMBEDDING_DIM,
         onnx_batch_size: int = DEFAULT_ONNX_BATCH_SIZE,
         onnx_threads: int = DEFAULT_ONNX_THREADS,
+        providers: list[str] | None = None,
     ):
         self._model_name = model_name
         self._dimensions = dimensions
         self._onnx_batch_size = onnx_batch_size
         self._onnx_threads = onnx_threads
+        self._providers = providers
 
     @cached_property
     def model(self):
         """Lazy load the embedding model."""
         from fastembed import TextEmbedding
 
-        return TextEmbedding(model_name=self._model_name, threads=self._onnx_threads)
+        return TextEmbedding(
+            model_name=self._model_name,
+            threads=self._onnx_threads,
+            providers=self._providers,
+        )
 
     @property
     def model_name(self) -> str:

@@ -31,6 +31,7 @@ from memex.adapters._in.cli.last_results import (
 )
 from memex.composition import (
     EmbeddingDimensionMismatchError,
+    _detect_providers,
     create_corpus,
     create_service,
     get_embedder,
@@ -917,6 +918,13 @@ def status():
     # Embedding model
     model_info = f"[green]{embedder.model_name}[/green] ({embedder.dimensions}-dim)"
     obs.console.print(f"  Embedding Model: {model_info}")
+
+    # ONNX provider
+    s = get_settings()
+    resolved = _detect_providers(s.onnx_provider)
+    provider_name = resolved[0].replace("ExecutionProvider", "")
+    suffix = " (auto-detected)" if s.onnx_provider == "auto" else ""
+    obs.console.print(f"  ONNX Provider:   [green]{provider_name}[/green]{suffix}")
 
     # Keyword search
     obs.console.print("  Keyword Search:  [green]BM25 via DuckDB FTS[/green]")
