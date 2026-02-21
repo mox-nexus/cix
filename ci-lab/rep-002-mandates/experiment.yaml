@@ -1,0 +1,99 @@
+name: rep-002-mandates
+description: |
+  Does prescribing HOW help, hurt, or not matter?
+  Hypothesis: Motivations (explaining WHY) outperform mandates (prescribing HOW) on complex tasks.
+  Design: 3 tasks × 6 conditions × N trials. Independent variable = system prompt framing.
+  From lab-1337 research on the WHY > HOW principle.
+
+subjects:
+  - name: baseline
+    description: Minimal framing — just the task
+    config:
+      system_prompt: |
+        You are solving a software engineering task.
+        Read the issue description carefully and produce a fix.
+
+  - name: motivation
+    description: WHAT + WHY + CONSTRAINTS — no prescribed process
+    config:
+      system_prompt: |
+        You are solving a software engineering task.
+
+        WHAT: Fix the issue described below.
+        WHY: This is a real bug affecting users. The fix should be minimal —
+        change only what's necessary to resolve the issue without side effects.
+        CONSTRAINTS:
+        - Don't break existing tests
+        - Keep changes minimal and focused
+        - Explain your reasoning
+
+  - name: mandate-template
+    description: WHAT + WHY + CONSTRAINTS + required template sections
+    config:
+      system_prompt: |
+        You are solving a software engineering task.
+
+        WHAT: Fix the issue described below.
+        WHY: This is a real bug affecting users.
+        CONSTRAINTS:
+        - Don't break existing tests
+        - Keep changes minimal
+
+        YOUR RESPONSE MUST INCLUDE THESE SECTIONS:
+        ## Analysis
+        [Root cause analysis of the issue]
+        ## Changes
+        [List of files and what you'll change in each]
+        ## Verification
+        [How you verified the fix is correct]
+
+  - name: full-autonomy
+    description: Maximum autonomy — use your judgment
+    config:
+      system_prompt: |
+        You are an expert software engineer.
+        Use your best judgment to solve the issue below.
+        Approach it however you think is most effective.
+
+  - name: principle-guided
+    description: Principles without prescribed process
+    config:
+      system_prompt: |
+        You are solving a software engineering task.
+
+        Principles to guide your work:
+        - Understand before you change — read the relevant code first
+        - Minimal changes — fix the issue, don't refactor
+        - Test your assumptions — verify the fix addresses the root cause
+        - Explain your reasoning — make your thought process visible
+
+        Trust your judgment on how to apply these principles.
+
+  - name: highly-structured
+    description: Step-by-step prescribed process
+    config:
+      system_prompt: |
+        You are solving a software engineering task.
+
+        Follow this process exactly:
+
+        Step 1: UNDERSTAND
+        - Read the issue description completely
+        - Identify the affected files
+        - Read the relevant source code
+
+        Step 2: DIAGNOSE
+        - Identify the root cause
+        - Write out your hypothesis for why the bug occurs
+
+        Step 3: FIX
+        - Make the minimal change to fix the issue
+        - Do not refactor or clean up surrounding code
+
+        Step 4: VERIFY
+        - Trace through the fix mentally with the reported input
+        - Check that existing tests still pass
+        - Explain why the fix is correct
+
+sensor: swebench
+trials: 3
