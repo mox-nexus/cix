@@ -12,16 +12,9 @@ This isn't theoretical. The evidence base shows what works—Generation-Then-Com
 
 The highest-performing pattern wasn't writing code without AI. It was AI generates, then human comprehends through questioning.
 
-A 2026 Anthropic study tracked how 52 programmers learned to code async patterns:
+The mechanism behind this is explained in [The Four-Minute Difference](../explanation/the-four-minute-difference): a 2026 Anthropic study (n=52) found that programmers who asked follow-up questions after AI generation reached 86% mastery — higher than those who wrote code themselves. Those who accepted AI output without comprehension reached 39%.
 
-| Approach | Mastery Score |
-|----------|---------------|
-| AI generates → human asks follow-up questions | 86% |
-| Human writes code, requests explanations | 68% |
-| Human writes code themselves (no AI) | 65% |
-| Human accepts AI code without questions | 39% |
-
-The 86% group learned more than those who wrote code themselves while completing tasks faster. They got both speed and understanding. The failure mode wasn't accepting AI output—it was accepting without comprehending.
+The failure mode wasn't accepting AI output — it was accepting without comprehending.
 
 What this looks like in practice:
 

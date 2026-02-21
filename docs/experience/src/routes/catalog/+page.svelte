@@ -64,7 +64,6 @@
 	.catalog-page {
 		min-height: 100vh;
 		min-height: 100dvh;
-		background: var(--dao-bg);
 		padding: var(--space-4) var(--space-3);
 		padding-bottom: var(--space-4);
 	}
@@ -75,7 +74,7 @@
 	}
 
 	.catalog-header h1 {
-		font-size: var(--type-xl);
+		font-size: var(--type-2xl);
 		margin: 0 0 var(--space-1) 0;
 	}
 

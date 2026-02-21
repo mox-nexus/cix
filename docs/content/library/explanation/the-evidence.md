@@ -1,75 +1,77 @@
 # The Evidence
 
-When independent researchers study AI from different angles, they keep finding the same pattern.
+The pattern appears in every independent study that measures it.
+
+Five research groups, different methods, different domains — not one building on another, but genuinely independent — found the same underlying dynamic. When you use AI as a substitute for thinking, output improves while capability erodes. When you use it as an amplifier that requires your reasoning to be good, output improves and capability is maintained or grows.
+
+That's not a hypothesis; it's a pattern with five independent measurements.
 
 ---
 
-## Five Converging Findings
+## Interaction design determines the outcome
 
-### Same Tool, Opposite Outcomes
+The most direct evidence: same tool, same people, same timeframe, opposite results.
 
-The first surprise: identical AI access produces radically different results depending on how people engage with it. Anthropic researchers tracked 52 engineers learning a new library with AI help. Six patterns emerged. The highest-mastery pattern — generate code first, then ask follow-up questions — led to 86% task success. The lowest — use AI to iteratively debug errors — produced 24% success. <span class="ev ev-moderate" title="RCT, n=52, single study">◐</span>
+52 engineers learning a new Python library. Six different patterns of AI engagement emerged naturally. Engineers who generated code with AI and then asked follow-up questions to understand it reached 86% task mastery. Those who used AI to iteratively debug errors — delegating the reasoning — reached 24%. The gap opened across four extra minutes of comprehension per session. (Shen & Tamkin, Anthropic, 2026 — randomized controlled trial.) <span class="ev ev-moderate" title="RCT, n=52, single study">◐</span>
 
-This wasn't about the AI's capability. Everyone used the same tool. The interaction model determined whether people learned or offloaded.
+A larger study replicated this at the population level. 1,000 students using AI tutors, split between unrestricted access and a tutor designed to scaffold rather than answer. Unrestricted AI produced 17% worse exam performance. The scaffolded version showed no degradation. Same technology, same students — the interaction design was the variable. (Bastani et al., PNAS 2025.) <span class="ev ev-strong" title="RCT, n=1,000, PNAS peer-reviewed">●</span>
 
-A larger education study confirmed this at scale. When 1,000 students used unrestricted ChatGPT for practice problems, they scored 17% worse on exams. When the same technology included guardrails that required active engagement, exam scores matched students who never used AI at all. <span class="ev ev-strong" title="RCT, n=1,000, PNAS peer-reviewed">●</span>
-
-Design shapes outcome. The hypothesis isn't "AI harms learning" — it's "substitutive engagement harms learning while complementary engagement preserves it."
-
-[Read the full skill formation evidence →](../reference/skill-formation-evidence)
-
-### Measurable Cognitive Shifts
-
-When researchers measure what happens inside people's heads during AI use, they find systematic changes. Knowledge workers who trust AI more show measurably less critical thinking (β = -0.69). EEG studies during AI-assisted writing reveal reduced memory encoding — 83% of users couldn't recall quotes from their own AI-assisted essays. Medical studies show endoscopists' unaided polyp detection dropping 20% after three months of AI assistance.
-
-Four independent studies, different methods, different domains. The pattern holds: cognitive offloading is real and measurable. Neural connectivity scales down. Skills atrophy from disuse. The engagement shift from execution to oversight happens without corresponding increases in verification rigor.
-
-[Read the full cognitive effects evidence →](../reference/cognitive-effects-evidence)
-
-### The Gap Between Perception and Reality
-
-Here's the problem with measurable harm: people don't notice it. An experiment with 16 experienced developers predicted they'd be 24% faster with AI. Actual result? 19% slower. <span class="ev ev-moderate" title="RCT, n=16, rigorous design">◐</span> The 43-point gap between prediction and reality prevents self-correction.
-
-At scale, Stack Overflow surveys show the paradox: trust in AI accuracy dropped 10 percentage points while adoption rose 8 points. People use tools they don't trust and perceive benefits they don't receive.
-
-Anthropic's analysis of 1.5 million conversations revealed something deeper: users rate disempowering interactions more favorably in the moment. Interactions that distorted reality or substituted judgment felt helpful. But when users acted on those outputs, satisfaction dropped below baseline. The feedback loop is broken — harm feels helpful, so people can't learn from experience.
-
-[Read the full productivity evidence →](../reference/productivity-evidence)
-
-### What Actually Works
-
-A study of 654 professionals found two factors that predict successful AI collaboration: process control (β = 0.507) and transparency (β = 0.415). <span class="ev ev-moderate" title="Blaurock et al. 2025, scenario experiments, n=654">◐</span> Control is the strongest lever. Transparency matters. Explanations alone don't help — they increase acceptance regardless of correctness, building trust without calibrating it.
-
-The implication: design must actively counter the perception gap. Users can't reliably judge what helps them because short-term satisfaction diverges from long-term benefit. Transparency and control aren't just nice features — they're necessary to compensate for broken feedback loops.
-
-[Read the full collaboration design evidence →](../reference/collaboration-design-evidence)
-
-### Convergence Toward Consensus
-
-When 70+ different language models answer 26,000 open-ended questions, their outputs cluster into just a few dominant patterns. Temperature and ensembling don't restore diversity — RLHF training penalizes valid but idiosyncratic responses. <span class="ev ev-strong" title="NeurIPS Best Paper, 70+ models">●</span>
-
-A meta-analysis across 28 studies and 8,214 participants quantified the effect: individual creative performance rises slightly while collective diversity drops hard (g = -0.863, a large negative effect). Image generation studies found all 700 iterative loops converged to just 12 motifs regardless of starting prompt. Cultural analysis showed AI pushes writing toward Western norms, dropping classification accuracy from 90.6% to 83.5%.
-
-The diversity that enables collective intelligence — Hong and Page showed diverse groups outperform best-ability groups — disappears when everyone uses the same AI. Individual gains, collective loss.
-
-One study offers hope: using 10 diverse AI personas eliminated the homogenization effect. Design can preserve diversity, but it requires deliberate choice.
-
-[Read the full homogenization evidence →](../reference/homogenization-evidence)
+[Skill formation evidence →](../reference/skill-formation-evidence)
 
 ---
 
-## The Pattern
+## The cognitive shift shows up in measurement
 
-These aren't separate problems. They're facets of the same dynamic:
+The interaction pattern affects behavior — and that shows up in how people think.
 
-**Substitutive AI** (does the work for you) improves immediate output while degrading the cognitive foundations that enable long-term capability.
+Researchers measuring critical thinking found a direct correlation: the more confidence workers placed in AI output, the less critical thinking they enacted (β = -0.69, Lee et al., CHI 2025). Trust calibrated down, not up. EEG studies during AI-assisted writing showed reduced memory encoding compared to independent writing — 83% of users couldn't recall quotes from their own AI-assisted essays (Kosmyna et al., MIT, 2025). Medical studies measured the effect at the skill level: after three months of AI-assisted colonoscopy, endoscopists' unaided polyp detection dropped 20% (Budzyń et al., Lancet 2025).
 
-**Complementary AI** (amplifies your work) shows neutral or positive effects on both output and capability.
+Different instruments measuring the same thing: offloading changes how the brain engages with the work.
 
-The evidence comes from different researchers, different methods, different domains. It converges because it's measuring the same underlying pattern from different angles.
+[Cognitive effects evidence →](../reference/cognitive-effects-evidence)
 
-One longitudinal study tracked participants for two months after a 7-day AI experiment. Creativity dropped remarkably when AI was withdrawn, and homogeneity kept climbing even months later. The "creative scar" persisted. Users didn't truly acquire capability — they borrowed it, and lost their own in the process.
+---
 
-The research doesn't say AI is harmful. It says the design choice between substitution and complementarity determines whether AI makes humans more capable or more dependent.
+## The harm is invisible from the inside
 
-Control and transparency aren't just usability features. They're the mechanisms that enable complementary collaboration. The question isn't whether to use AI — it's whether the collaboration is structured to compound human capability or substitute for it.
+Here's the problem with measurable harm: it's not felt as harm.
+
+16 experienced developers predicted AI would make them 24% faster. Rigorous measurement showed they were 19% slower — a 43-point gap between expectation and reality. (METR RCT.) <span class="ev ev-moderate" title="RCT, n=16, rigorous design">◐</span> Stack Overflow data tells the same story at scale: trust in AI accuracy dropped 10 percentage points over a year while adoption rose 8 points. People use tools they don't fully trust and perceive benefits that measurement doesn't confirm.
+
+Anthropic's analysis of 1.5 million conversations found the deepest version of this: users rated interactions that substituted their judgment as helpful in the moment, but when they acted on those outputs, satisfaction dropped below baseline. The feedback loop that would let you learn from bad outcomes is broken — harm that feels like help can't be corrected from experience.
+
+[Productivity evidence →](../reference/productivity-evidence)
+
+---
+
+## Control and transparency are the mechanism
+
+One study measured what differentiates effective from ineffective AI collaboration, rather than just observing outcomes.
+
+654 professionals across different AI collaboration contexts. Two factors predicted positive outcomes: process control (β = 0.507) and transparency (β = 0.415). The user's ability to direct the interaction was the strongest lever. Transparency mattered, but with an important nuance: explanations alone increased acceptance regardless of correctness — they built confidence without calibrating judgment. The transparency that helped was transparency that gave users something to evaluate and act on. (Blaurock et al., Journal of Service Research, 2025.) <span class="ev ev-moderate" title="Blaurock et al. 2025, scenario experiments, n=654">◐</span>
+
+[Collaboration design evidence →](../reference/collaboration-design-evidence)
+
+---
+
+## At scale: homogenization
+
+When the same substitution dynamic plays out across millions of users, there's a collective effect beyond individual skill erosion.
+
+70+ language models answering 26,000 open-ended questions converge to the same handful of patterns. Temperature scaling and ensembling don't restore variety — RLHF training systematically penalizes valid but idiosyncratic responses. A meta-analysis across 28 studies and 8,214 participants found individual performance rises slightly while collective diversity drops significantly (g = -0.863, NeurIPS Best Paper). <span class="ev ev-strong" title="NeurIPS Best Paper, 70+ models">●</span> When everyone uses the same AI, solution variety collapses.
+
+The problem isn't aesthetic. Diverse groups outperform best-ability homogeneous groups on complex problems — the variety that disappeared is functionally necessary for handling unexpected failures.
+
+[Homogenization evidence →](../reference/homogenization-evidence)
+
+---
+
+## The pattern
+
+These findings don't describe five separate problems. They're the same dynamic measured from different angles.
+
+Substitutive AI — interaction designs where the AI does the reasoning and the human approves — improves immediate output while degrading the cognitive foundations that enable long-term capability. The degradation is invisible from the inside because satisfaction stays high and productivity feels real. At scale, individual capability loss becomes collective capability loss as homogenized outputs erode the diversity that makes groups more capable than their best members.
+
+Complementary AI — designed to require the human's reasoning to be good, to give users control and transparent evidence, to scaffold rather than substitute — shows neutral or positive effects on both output and capability.
+
+Five independent studies. The same finding. The design axis between substitution and complementarity is real, measurable, and consequential.

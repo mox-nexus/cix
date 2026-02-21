@@ -4,8 +4,7 @@
 	interface Link {
 		path: string;
 		label: string;
-		description: string;
-		variant?: 'spark' | 'emergence' | 'constraint';
+		variant?: 'spark' | 'emergence' | 'reference';
 	}
 
 	interface Props {
@@ -14,8 +13,8 @@
 
 	let {
 		links = [
-			{ path: '/catalog', label: 'catalog', description: 'explore extensions', variant: 'emergence' },
-			{ path: '/library', label: 'library', description: 'deep research', variant: 'constraint' }
+			{ path: '/catalog', label: 'catalog', variant: 'spark' },
+			{ path: '/library', label: 'docs', variant: 'reference' }
 		]
 	}: Props = $props();
 </script>
@@ -25,7 +24,6 @@
 		<a href="{base}{link.path}" class="link link-{link.variant ?? 'spark'}">
 			<span class="label">{link.label}</span>
 			<span class="arrow">→</span>
-			<span class="description">{link.description}</span>
 		</a>
 	{/each}
 </nav>
@@ -34,8 +32,8 @@
 	.nav-links {
 		display: flex;
 		flex-direction: column;
+		align-items: flex-end;
 		gap: var(--space-2);
-		min-width: 160px;
 	}
 
 	.link {
@@ -43,47 +41,48 @@
 		align-items: baseline;
 		gap: 0.5ch;
 		font-family: var(--font-mono);
-		font-size: var(--type-base);
+		font-size: var(--type-lg);
 		text-decoration: none;
 		transition: color var(--duration-fast) var(--easing-linear);
 	}
 
 	.label {
-		font-weight: 600;
-		color: var(--dao-text);
+		font-weight: 400;
 	}
 
 	.arrow {
-		color: var(--dao-muted);
-		transition: color var(--duration-fast) var(--easing-linear);
+		transition: transform var(--duration-fast) var(--easing-linear),
+		            color var(--duration-fast) var(--easing-linear);
+		display: inline-block;
 	}
 
-	.description {
-		color: var(--dao-text-secondary);
+	/* Spark (catalog) — blue */
+	.link-spark .label  { color: var(--spark-core); }
+	.link-spark .arrow  { color: oklch(75% 0.18 240 / 0.45); }
+	.link-spark:hover .label,
+	.link-spark:hover .arrow { color: var(--spark-core); }
+
+	/* Emergence (ethos) — green */
+	.link-emergence .label  { color: var(--emergence-core); }
+	.link-emergence .arrow  { color: oklch(75% 0.2 145 / 0.45); }
+	.link-emergence:hover .label,
+	.link-emergence:hover .arrow { color: var(--emergence-core); }
+
+	/* Reference (docs) — indigo */
+	.link-reference .label  { color: var(--quadrant-reference); }
+	.link-reference .arrow  { color: oklch(68% 0.10 290 / 0.45); }
+	.link-reference:hover .label,
+	.link-reference:hover .arrow { color: var(--quadrant-reference); }
+
+	/* Hover: arrow nudges right */
+	.link:hover .arrow {
+		transform: translateX(0.3ch);
 	}
 
-	.link-spark:hover .label {
-		color: var(--spark-core);
-	}
-
-	.link-spark:hover .arrow {
-		color: var(--spark-core);
-	}
-
-	.link-emergence:hover .label {
-		color: var(--emergence-core);
-	}
-
-	.link-emergence:hover .arrow {
-		color: var(--emergence-core);
-	}
-
-	.link-constraint:hover .label {
-		color: var(--ci-red);
-	}
-
-	.link-constraint:hover .arrow {
-		color: var(--ci-red);
+	.link:focus-visible {
+		outline: 1px solid currentColor;
+		outline-offset: 4px;
+		border-radius: var(--radius-sm);
 	}
 
 	@media (max-width: 768px) {
@@ -93,11 +92,7 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.link {
-			transition: none;
-		}
-
-		.arrow {
+		.link, .arrow {
 			transition: none;
 		}
 	}

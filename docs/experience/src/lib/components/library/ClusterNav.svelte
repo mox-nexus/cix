@@ -85,16 +85,15 @@
 
 	.entry-indicator {
 		font-family: var(--font-mono);
-		font-size: 0.625rem;
+		font-size: var(--type-xs);
 		width: 1.4em;
 		text-align: center;
 		flex-shrink: 0;
 		color: var(--dao-muted);
-		opacity: 0.5;
 	}
 
 	.entry-indicator.visited {
-		opacity: 0.8;
+		color: var(--dao-text-secondary);
 	}
 
 	.entry-indicator.completed {

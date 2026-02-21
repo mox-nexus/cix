@@ -1,43 +1,43 @@
 # craft-explanations
 
-Explanation craft through simultaneous encoding. Part of the cix marketplace.
+Write explanations that land with different audiences simultaneously. Uses the Three Doors framework — principle, concretions, and ground — so the receiver pulls what they need instead of being forced through a prescribed sequence.
 
-## What This Plugin Does
+## When to Use
 
-Helps Claude write explanations that carry all three doors simultaneously — principle, concretions, and ground — so the receiver pulls what they need rather than being forced through a prescribed sequence.
+- Writing docs that need to teach multiple audiences
+- Explanations that only resonate with one type of reader
+- Diagrams that feel incomplete or confusing
+- Content that's too abstract or too concrete
+- Restructuring documentation collections
 
 ## The Three Doors
 
-| Door | Explanation | Engineering | Philosophy |
-|------|-------------|-------------|------------|
-| **1** | Principle | Abstraction | Universal |
-| **2** | Concretions | Planning | Constituency |
-| **3** | Ground | Execution | Self |
+| Door | What It Carries | Example |
+|------|----------------|---------|
+| **1 — Principle** | Abstraction, universal truth | "Why does this matter?" |
+| **2 — Concretions** | Planning, constituency | "Who is this for and how?" |
+| **3 — Ground** | Execution, self | "Show me, let me do it" |
+
+Good explanations encode all three. Most get stuck in one door (modal lock).
 
 ## Skills
 
-| Skill | Purpose |
-|-------|---------|
-| **craft-explanations** | Three Doors encoding, modal lock diagnosis, explanation routing |
-| **weaving** | Re-weave modal-locked content across all three doors |
-| **visual-communication** | Diagram type selection (Mermaid, D2, C4), visual explanation design |
-| **information-architecture** | Collection-level structure, single source of truth, layer model |
+| Skill | Use When |
+|-------|----------|
+| `craft-explanations` | Writing new explanations with Three Doors encoding |
+| `weaving` | Re-weaving existing content that's stuck in one door |
+| `visual-communication` | Choosing diagram types (Mermaid, D2, C4) |
+| `information-architecture` | Organizing documentation collections |
 
 ## Agents
 
 | Agent | Entry Door | Best For |
 |-------|-----------|----------|
-| **feynman** | Door 3 (Ground · Execution · Self) | Docs, tutorials, teaching |
-| **sagan** | Door 1 (Principle · Abstraction · Universal) | Vision docs, concept overviews |
-| **tufte** | Door 2 (Concretions · Planning · Constituency) | Diagram decisions, data explanation |
-| **socrates** | Forces traversal across all doors | Reviewing explanations, deepening understanding |
+| **feynman** | Ground | Docs, tutorials, concrete examples |
+| **sagan** | Principle | Vision docs, concept overviews |
+| **tufte** | Concretions | Data visualization, diagram design |
+| **socrates** | All doors | Reviewing explanations, finding gaps |
 
-## Design Philosophy
+## License
 
-See `docs/explanation/methodology.md` for the full rationale. Key points:
-
-- **Three Doors** — principle, concretions, and ground as simultaneous dimensions, not sequential layers
-- **Directional modal lock** — shifts go through the next door (1→2→3), not a skip
-- **Wider, not louder** — encode all three doors so signal survives lossy compression
-- **Dimensional shift** — the most powerful moments happen when understanding crosses doors
-- **Constituency is the bridge** — you can't reach Self without passing through Constituency
+MIT

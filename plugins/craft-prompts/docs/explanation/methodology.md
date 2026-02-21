@@ -171,6 +171,7 @@ Skills are orthogonal. Each covers one domain:
 - `deep-reasoning` — Reasoning model constraints
 - `deep-research` — Hallucination reduction, verification
 - `synthesize-papers` — Multi-paper analysis
+- `multi-agent` — Subagent orchestration and context engineering
 
 Combine as needed for complex tasks.
 

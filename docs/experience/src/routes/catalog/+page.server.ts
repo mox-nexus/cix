@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import type { PageServerLoad } from './$types';
-import type { CatalogExtension, PluginManifest, PluginComponents, DocCategory } from '$lib/types/catalog';
+import type { CatalogExtension, PluginManifest, PluginComponents } from '$lib/types/catalog';
 
 const ROOT_DIR = resolve(process.cwd(), '../..');
 const PLUGINS_DIR = join(ROOT_DIR, 'plugins');
@@ -45,19 +45,6 @@ function discoverComponents(dir: string): PluginComponents {
 	};
 }
 
-const DOC_CATEGORIES: DocCategory[] = ['explanation', 'how-to', 'tutorials'];
-
-function countDocs(dir: string): number {
-	const docsDir = join(dir, 'docs');
-	if (!existsSync(docsDir)) return 0;
-
-	let count = 0;
-	for (const category of DOC_CATEGORIES) {
-		count += countFiles(join(docsDir, category));
-	}
-	return count;
-}
-
 function loadPlugins(): CatalogExtension[] {
 	const marketplacePath = join(ROOT_DIR, '.claude-plugin', 'marketplace.json');
 	if (!existsSync(marketplacePath)) return [];
@@ -90,8 +77,7 @@ function loadPlugins(): CatalogExtension[] {
 			readme,
 			components: discoverComponents(pluginDir),
 			variant: VARIANTS[extensions.length % VARIANTS.length],
-			tags: manifest.keywords ?? [],
-			docCount: countDocs(pluginDir)
+			tags: manifest.keywords ?? []
 		});
 	}
 
@@ -136,8 +122,7 @@ function loadTools(): CatalogExtension[] {
 			readme,
 			components: discoverComponents(toolDir),
 			variant: VARIANTS[extensions.length % VARIANTS.length],
-			tags: ['tool', 'cli'],
-			docCount: countDocs(toolDir)
+			tags: ['tool', 'cli']
 		});
 	}
 
