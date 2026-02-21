@@ -139,7 +139,7 @@ Agents are named after the people whose work defines their domain:
 
 ## Design Decision 5: Why Masters vs Specialists?
 
-Why not just activate all 13 agents every time?
+Why not just activate all 14 agents every time?
 
 **Noise reduction.** Not every decision needs every perspective. CRUD endpoints don't need Knuth's complexity analysis. Marketing pages don't need Dijkstra's formal correctness.
 

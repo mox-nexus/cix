@@ -1,0 +1,24 @@
+name: humaneval
+description: |
+  OpenAI HumanEval benchmark — 164 Python programming problems.
+  Measures functional correctness of generated code via pass@k.
+  Standard benchmark for code generation models.
+
+  Cases are loaded from the HumanEval dataset.
+  See: https://github.com/openai/human-eval
+
+subjects:
+  - name: claude-sonnet
+    description: Claude Sonnet single-shot code generation
+    config:
+      model: claude-sonnet-4-20250514
+      temperature: 0.2
+
+  - name: claude-haiku
+    description: Claude Haiku single-shot code generation
+    config:
+      model: claude-haiku-4-5-20251001
+      temperature: 0.2
+
+sensor: code-execution
+trials: 10

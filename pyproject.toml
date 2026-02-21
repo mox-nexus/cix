@@ -17,12 +17,16 @@ dev = [
     "pytz>=2024.1",  # Required by DuckDB TIMESTAMPTZ
     "memex",  # Workspace package
     "cix",    # Workspace package
+    "matrix", # Workspace package
+    "ix",     # Workspace package
 ]
 
 # Install workspace packages for testing
 [tool.uv.sources]
 memex = { workspace = true }
 cix = { workspace = true }
+matrix = { workspace = true }
+ix = { workspace = true }
 
 [tool.ruff]
 line-length = 100

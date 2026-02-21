@@ -5,7 +5,7 @@
 **Skills**: architecture, design, operations, scaffold
 **Agents**: K, Karman, Burner, Lamport, Erlang, Vector, Ace, Ixian, Dijkstra, Knuth, Lotfi, Taleb, Chesterton
 
-Each agent has one domain and an orthogonality lock — they cannot discuss anything outside it. This forces genuine perspective diversity instead of 13 variations of the same opinion.
+Each agent has one domain and an orthogonality lock — they cannot discuss anything outside it. This forces genuine perspective diversity instead of 14 variations of the same opinion.
 
 ## Quick start
 
