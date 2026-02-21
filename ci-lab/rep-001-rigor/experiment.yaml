@@ -1,0 +1,37 @@
+name: rep-001-rigor
+description: |
+  Does iteration improve code generation outcomes?
+  Hypothesis: Multiple self-review iterations produce more correct code than single-shot generation.
+  Design: 2 tasks × 3 conditions × N trials. Independent variable = iteration count.
+
+subjects:
+  - name: single
+    description: Single attempt, no self-review
+    config:
+      iterations: 1
+      review_prompt: null
+
+  - name: ralph-3
+    description: 3 iterations with self-review
+    config:
+      iterations: 3
+      review_prompt: |
+        Review your solution for:
+        1. Edge cases (empty input, single element, overlapping boundaries)
+        2. Time complexity — is there a more efficient approach?
+        3. Correctness — trace through the test cases mentally
+        If you find issues, rewrite the solution.
+
+  - name: ralph-5
+    description: 5 iterations with self-review
+    config:
+      iterations: 5
+      review_prompt: |
+        Review your solution for:
+        1. Edge cases (empty input, single element, overlapping boundaries)
+        2. Time complexity — is there a more efficient approach?
+        3. Correctness — trace through the test cases mentally
+        If you find issues, rewrite the solution.
+
+sensor: function-test
+trials: 5

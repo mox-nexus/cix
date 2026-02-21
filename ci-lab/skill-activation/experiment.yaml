@@ -1,0 +1,7 @@
+name: skill-activation
+description: Does the build-eval skill activate for eval-related prompts?
+sensor: activation
+trials: 5
+subjects:
+  - name: build-eval
+    description: Agent with build-eval skill available

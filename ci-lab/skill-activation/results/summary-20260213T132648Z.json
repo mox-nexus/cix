@@ -1,0 +1,2855 @@
+{
+  "experiment_name": "skill-activation",
+  "case_results": [
+    {
+      "case_id": "must-001",
+      "expectation": "must_trigger",
+      "score": 0.8,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-001",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I write evals for my coding agent']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-001",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I write evals for my coding agent']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-001",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I write evals for my coding agent']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-001",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I write evals for my coding agent']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-001",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: no activation for 'How do I write evals for my coding agent']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-002",
+      "expectation": "must_trigger",
+      "score": 0.8,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-002",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What metrics should I use to measure my ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-002",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What metrics should I use to measure my ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-002",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What metrics should I use to measure my ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-002",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: no activation for 'What metrics should I use to measure my ']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "must-002",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What metrics should I use to measure my ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-003",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-003",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I test if my skill activates corr']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-003",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I test if my skill activates corr']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-003",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I test if my skill activates corr']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-003",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I test if my skill activates corr']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-003",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I test if my skill activates corr']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-004",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-004",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What's the difference between precision ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-004",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What's the difference between precision ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-004",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What's the difference between precision ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-004",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What's the difference between precision ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-004",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What's the difference between precision ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-005",
+      "expectation": "must_trigger",
+      "score": 0.8,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-005",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'Should I use DeepEval or Braintrust for ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-005",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'Should I use DeepEval or Braintrust for ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-005",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'Should I use DeepEval or Braintrust for ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-005",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'Should I use DeepEval or Braintrust for ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-005",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Should I use DeepEval or Braintrust for ']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-006",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-006",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I evaluate a multi-agent system?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-006",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I evaluate a multi-agent system?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-006",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I evaluate a multi-agent system?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-006",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I evaluate a multi-agent system?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-006",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I evaluate a multi-agent system?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-007",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-007",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What is pass@k and when should I use it?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-007",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What is pass@k and when should I use it?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-007",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What is pass@k and when should I use it?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-007",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What is pass@k and when should I use it?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-007",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What is pass@k and when should I use it?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-008",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-008",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I measure if my MCP server tools ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-008",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I measure if my MCP server tools ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-008",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I measure if my MCP server tools ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-008",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I measure if my MCP server tools ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-008",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I measure if my MCP server tools ']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-009",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-009",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'I need to build a test suite for my AI a']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-009",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'I need to build a test suite for my AI a']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-009",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'I need to build a test suite for my AI a']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-009",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'I need to build a test suite for my AI a']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-009",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'I need to build a test suite for my AI a']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-010",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-010",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I red team my LLM application?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-010",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I red team my LLM application?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-010",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I red team my LLM application?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-010",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I red team my LLM application?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-010",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I red team my LLM application?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-011",
+      "expectation": "must_trigger",
+      "score": 0.8,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-011",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What benchmarks exist for coding agents?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-011",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What benchmarks exist for coding agents?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-011",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What benchmarks exist for coding agents?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-011",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: no activation for 'What benchmarks exist for coding agents?']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "must-011",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What benchmarks exist for coding agents?']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-012",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-012",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I create a labeled dataset for my']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-012",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I create a labeled dataset for my']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-012",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I create a labeled dataset for my']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-012",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I create a labeled dataset for my']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-012",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I create a labeled dataset for my']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-013",
+      "expectation": "must_trigger",
+      "score": 0.8,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-013",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'My agent passes 60% of tests. Is that go']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-013",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: no activation for 'My agent passes 60% of tests. Is that go']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "must-013",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'My agent passes 60% of tests. Is that go']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-013",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'My agent passes 60% of tests. Is that go']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-013",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'My agent passes 60% of tests. Is that go']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-014",
+      "expectation": "must_trigger",
+      "score": 0.8,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-014",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I evaluate handoffs between agent']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-014",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I evaluate handoffs between agent']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-014",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I evaluate handoffs between agent']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-014",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'How do I evaluate handoffs between agent']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-014",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: no activation for 'How do I evaluate handoffs between agent']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "must-015",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "must-015",
+          "trial": 0,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What's the difference between task compl']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-015",
+          "trial": 1,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What's the difference between task compl']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-015",
+          "trial": 2,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What's the difference between task compl']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-015",
+          "trial": 3,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What's the difference between task compl']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "must-015",
+          "trial": 4,
+          "expectation": "must_trigger",
+          "response": {
+            "content": "[mock: activated for 'What's the difference between task compl']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "not-001",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "not-001",
+          "trial": 0,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Write a Python function to calculate fac']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-001",
+          "trial": 1,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Write a Python function to calculate fac']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-001",
+          "trial": 2,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Write a Python function to calculate fac']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-001",
+          "trial": 3,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Write a Python function to calculate fac']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-001",
+          "trial": 4,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Write a Python function to calculate fac']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "not-002",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "not-002",
+          "trial": 0,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Explain how async/await works in JavaScr']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-002",
+          "trial": 1,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Explain how async/await works in JavaScr']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-002",
+          "trial": 2,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Explain how async/await works in JavaScr']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-002",
+          "trial": 3,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Explain how async/await works in JavaScr']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-002",
+          "trial": 4,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Explain how async/await works in JavaScr']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "not-003",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "not-003",
+          "trial": 0,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Help me debug this React component']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-003",
+          "trial": 1,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Help me debug this React component']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-003",
+          "trial": 2,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Help me debug this React component']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-003",
+          "trial": 3,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Help me debug this React component']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-003",
+          "trial": 4,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Help me debug this React component']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "not-004",
+      "expectation": "should_not_trigger",
+      "score": 0.4,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "not-004",
+          "trial": 0,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'What database should I use for my applic']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-004",
+          "trial": 1,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: activated for 'What database should I use for my applic']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "not-004",
+          "trial": 2,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'What database should I use for my applic']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-004",
+          "trial": 3,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'What database should I use for my applic']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-004",
+          "trial": 4,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: activated for 'What database should I use for my applic']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "not-005",
+      "expectation": "should_not_trigger",
+      "score": 0.2,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "not-005",
+          "trial": 0,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Write unit tests for this function']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-005",
+          "trial": 1,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: activated for 'Write unit tests for this function']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "not-005",
+          "trial": 2,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Write unit tests for this function']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-005",
+          "trial": 3,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Write unit tests for this function']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-005",
+          "trial": 4,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Write unit tests for this function']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "not-006",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "not-006",
+          "trial": 0,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'How do I deploy my app to AWS?']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-006",
+          "trial": 1,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'How do I deploy my app to AWS?']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-006",
+          "trial": 2,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'How do I deploy my app to AWS?']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-006",
+          "trial": 3,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'How do I deploy my app to AWS?']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-006",
+          "trial": 4,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'How do I deploy my app to AWS?']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "not-007",
+      "expectation": "should_not_trigger",
+      "score": 0.2,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "not-007",
+          "trial": 0,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: activated for 'Explain the CAP theorem']",
+            "tool_calls": [
+              {
+                "name": "Skill",
+                "input": {
+                  "skill": "build-eval"
+                }
+              }
+            ],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": true,
+            "score": 1.0,
+            "details": "skill=build-eval, activated=True"
+          }
+        },
+        {
+          "case_id": "not-007",
+          "trial": 1,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Explain the CAP theorem']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-007",
+          "trial": 2,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Explain the CAP theorem']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-007",
+          "trial": 3,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Explain the CAP theorem']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-007",
+          "trial": 4,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Explain the CAP theorem']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "not-008",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "not-008",
+          "trial": 0,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Help me write a CLI tool in Rust']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-008",
+          "trial": 1,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Help me write a CLI tool in Rust']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-008",
+          "trial": 2,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Help me write a CLI tool in Rust']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-008",
+          "trial": 3,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Help me write a CLI tool in Rust']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-008",
+          "trial": 4,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Help me write a CLI tool in Rust']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "not-009",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "not-009",
+          "trial": 0,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'What's the best way to handle authentica']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-009",
+          "trial": 1,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'What's the best way to handle authentica']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-009",
+          "trial": 2,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'What's the best way to handle authentica']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-009",
+          "trial": 3,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'What's the best way to handle authentica']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-009",
+          "trial": 4,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'What's the best way to handle authentica']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "not-010",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": [
+        {
+          "case_id": "not-010",
+          "trial": 0,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Review this pull request for me']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-010",
+          "trial": 1,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Review this pull request for me']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-010",
+          "trial": 2,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Review this pull request for me']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-010",
+          "trial": 3,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Review this pull request for me']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        },
+        {
+          "case_id": "not-010",
+          "trial": 4,
+          "expectation": "should_not_trigger",
+          "response": {
+            "content": "[mock: no activation for 'Review this pull request for me']",
+            "tool_calls": [],
+            "duration_ms": 0,
+            "tokens_input": 0,
+            "tokens_output": 0
+          },
+          "evaluation": {
+            "passed": false,
+            "score": 0.0,
+            "details": "skill=build-eval, activated=False"
+          }
+        }
+      ]
+    }
+  ],
+  "metrics": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "tp": 15,
+    "fp": 0,
+    "fn": 0,
+    "tn": 10
+  },
+  "interpretation": {
+    "status": "excellent",
+    "issues": [],
+    "suggestions": []
+  }
+}

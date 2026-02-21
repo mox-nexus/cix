@@ -1,0 +1,45 @@
+[project]
+name = "ix"
+version = "0.1.0"
+description = "Intelligent Experimentation — evals, benchmarks, and QoS experiments"
+# readme = "README.md"  # TODO: create when ready
+requires-python = ">=3.12"
+license = "MIT"
+authors = [
+    { name = "Yashodeep Vyas", email = "yza.vyas@gmail.com" }
+]
+
+dependencies = [
+    "rich-click>=1.8",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "python-frontmatter>=1.0",
+    "matrix",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23"]
+claude = ["claude-agent-sdk>=0.1"]
+deepeval = ["deepeval>=2.0"]
+
+[project.scripts]
+ix = "ix.adapters._in.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ix"]
+
+[tool.hatch.build.targets.wheel.sources]
+"src" = ""
+
+[tool.hatch.build]
+include = [
+    "src/ix/**/*.py",
+    "src/ix/**/*.md",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

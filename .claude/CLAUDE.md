@@ -447,7 +447,7 @@ All claims in extensions should be traceable to specific sources with author, ye
 
 ## arch-guild Ontology (Karman-Approved)
 
-The arch-guild plugin provides 13 orthogonal reasoning agents across 10 Core Drives, 3 Skills, and a Domain Vocabulary Mapping mechanism.
+The arch-guild plugin provides 13 orthogonal reasoning agents across 10 Core Drives, 4 Skills, and a Domain Vocabulary Mapping mechanism.
 
 ### Domain Vocabulary Mapping
 
@@ -482,6 +482,20 @@ The guild speaks in agent metaphors (Erlang's "Valve", Lamport's "Time", Burner'
 Full bibliography with 45+ entries, effect sizes, and expandable abstracts: `docs/content/library/reference/bibliography.md`
 
 Primary source papers collected as text: `scratch/papers/`
+
+---
+
+## Session Bootstrap
+
+**CRITICAL: On session start, read `scratch/bootstrap-session-2026-02-16.md` FIRST.**
+
+It documents a recurring issue where context overflow flattens architectural decisions into shallow renames. It contains the correct two-layer architecture (`ix.domain` + `ix.domains.eval`) that was user-approved but never implemented due to context loss.
+
+Previous bootstrap (still relevant for Matrix status): `scratch/bootstrap-session-2026-02-14.md`
+
+Key references:
+- `scratch/kmaster-ix-reference.md` — definitive ix reference (ontology, arch, CLI, landscape)
+- `scratch/matrix-v1-spec.md` — full Matrix platform spec (config, registry, container, adapters)
 
 ---
 
