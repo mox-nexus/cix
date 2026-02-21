@@ -148,7 +148,7 @@
 	}
 
 	.circle-icon {
-		opacity: 0.5;
+		opacity: 0.7;
 	}
 
 	.position-label {

@@ -6,7 +6,7 @@
 
 	let {
 		brand = 'cix',
-		tagline = 'marketplace for extensions that enhance AI collaboration'
+		tagline = 'AI makes you faster. Does it make you better?'
 	}: Props = $props();
 </script>
 
@@ -37,8 +37,8 @@
 	.tagline {
 		font-family: var(--font-mono);
 		font-size: var(--type-base);
-		color: var(--dao-text-secondary);
-		letter-spacing: var(--tracking-wide);
+		color: var(--dao-text);
+		letter-spacing: var(--tracking-normal);
 		margin: var(--space-1) 0 0;
 	}
 

@@ -10,7 +10,7 @@
 body {
 	font-family: var(--font-mono);
 	font-size: var(--type-base);
-	line-height: var(--leading-snug);
+	line-height: var(--leading-normal);
 	letter-spacing: var(--tracking-normal);
 	font-feature-settings: 'kern' 1, 'liga' 0;  /* no ligatures in mono */
 	color: var(--dao-text);
@@ -28,25 +28,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-	font-size: var(--type-xl);      /* 36px - page identity */
+	font-size: var(--type-2xl);     /* 36px - page identity */
 	margin-block-start: var(--space-4);
 	margin-block-end: var(--space-3);
 }
 
 h2 {
-	font-size: var(--type-lg);      /* 27px - navigation level */
+	font-size: var(--type-xl);      /* 27px - section level */
 	margin-block-start: var(--space-4);
 	margin-block-end: var(--space-2);
 }
 
 h3 {
-	font-size: var(--type-base);    /* 18px - section markers */
+	font-size: var(--type-lg);      /* 24px - subsection */
 	margin-block-start: var(--space-3);
 	margin-block-end: var(--space-1);
 }
 
 h4 {
-	font-size: var(--type-base);
+	font-size: var(--type-base);    /* 18px - paragraph-level heading */
 	font-weight: 600;
 	margin-block-start: var(--space-2);
 	margin-block-end: var(--space-1);

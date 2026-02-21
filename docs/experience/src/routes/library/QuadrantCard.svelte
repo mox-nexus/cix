@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { base } from '$app/paths';
+
 	interface Props {
 		id: string;
 		label: string;
@@ -9,11 +11,6 @@
 		placeholder?: boolean;
 		variant?: string;
 		delay?: number;
-		active?: boolean;
-		suggestedSlug?: string;
-		suggestedTitle?: string;
-		suggestedMeta?: string;
-		onclick: () => void;
 	}
 
 	let {
@@ -25,15 +22,8 @@
 		progress,
 		placeholder = false,
 		variant = 'explanation',
-		delay = 0,
-		active = false,
-		suggestedSlug,
-		suggestedTitle,
-		suggestedMeta,
-		onclick
+		delay = 0
 	}: Props = $props();
-
-	import { base } from '$app/paths';
 
 	const VARIANT_COLOR: Record<string, string> = {
 		explanation: 'var(--quadrant-explanation)',
@@ -46,58 +36,59 @@
 	let progressPct = $derived(
 		progress && progress.total > 0 ? (progress.completed / progress.total) * 100 : 0
 	);
+	let href = $derived(placeholder ? undefined : `${base}/library/${id}`);
 </script>
 
-<div
-	class="quadrant-card"
-	class:active
-	class:placeholder
-	style="--stagger-delay: {delay}ms; --variant-color: {variantColor}"
->
-	<button
-		class="card-toggle"
-		onclick={onclick}
-		disabled={placeholder}
-		aria-expanded={active}
-		aria-controls={id}
+{#if placeholder}
+	<div
+		class="quadrant-card placeholder"
+		style="--stagger-delay: {delay}ms; --variant-color: {variantColor}"
 	>
-		<div class="card-header">
-			<h2 class="card-label">{label}</h2>
-			<span class="card-count">{count}</span>
-		</div>
-		<p class="card-tagline">{tagline}</p>
-		{#if preview}
-			<p class="card-preview">{preview}</p>
-		{/if}
-		{#if progress && progress.total > 0}
-			<div class="card-progress">
-				<div class="card-progress-bar">
-					<div class="card-progress-fill" style="width: {progressPct}%"></div>
-				</div>
-				<span class="card-progress-text">{progress.completed}/{progress.total}</span>
+		<div class="card-body">
+			<div class="card-header">
+				<h2 class="card-label">{label}</h2>
 			</div>
-		{/if}
-		{#if placeholder}
+			<p class="card-tagline">{tagline}</p>
 			<p class="card-coming-soon">Coming soon.</p>
-		{/if}
-	</button>
-
-	{#if suggestedSlug && suggestedTitle}
-		<a href="{base}/library/explanation/{suggestedSlug}" class="card-suggested">
-			<span class="suggested-badge">start here</span>
-			<span class="suggested-title">{suggestedTitle}</span>
-			{#if suggestedMeta}
-				<span class="suggested-meta">{suggestedMeta}</span>
+		</div>
+	</div>
+{:else}
+	<a
+		{href}
+		class="quadrant-card"
+		style="--stagger-delay: {delay}ms; --variant-color: {variantColor}"
+	>
+		<div class="card-body">
+			<div class="card-header">
+				<h2 class="card-label">{label}</h2>
+				<span class="card-count">{count}</span>
+			</div>
+			<p class="card-tagline">{tagline}</p>
+			{#if preview}
+				<p class="card-preview">{preview}</p>
 			{/if}
-		</a>
-	{/if}
-</div>
+			{#if progress && progress.total > 0}
+				<div class="card-progress">
+					<div class="card-progress-bar">
+						<div class="card-progress-fill" style="width: {progressPct}%"></div>
+					</div>
+					<span class="card-progress-text">{progress.completed}/{progress.total}</span>
+				</div>
+			{/if}
+		</div>
+		<span class="card-arrow" aria-hidden="true">&rarr;</span>
+	</a>
+{/if}
 
 <style>
 	.quadrant-card {
+		display: flex;
+		align-items: center;
 		border: 1px solid var(--dao-border);
 		border-left: 3px solid var(--variant-color);
-		background: var(--dao-surface);
+		background: transparent;
+		text-decoration: none;
+		color: inherit;
 		opacity: 0;
 		transform: translateY(12px);
 		animation: card-appear 400ms var(--easing-smooth) forwards;
@@ -106,7 +97,11 @@
 	}
 
 	.quadrant-card.placeholder {
-		--card-final-opacity: 0.5;
+		--card-final-opacity: 1;
+	}
+
+	.quadrant-card.placeholder .card-label {
+		color: var(--dao-muted);
 	}
 
 	@keyframes card-appear {
@@ -120,26 +115,9 @@
 		border-color: var(--variant-color);
 	}
 
-	.quadrant-card.active {
-		border-color: var(--variant-color);
-	}
-
-	/* --- Toggle Button --- */
-
-	.card-toggle {
-		display: block;
-		width: 100%;
-		padding: var(--space-2) var(--space-3);
-		background: none;
-		border: none;
-		cursor: pointer;
-		text-align: left;
-		color: inherit;
-		font: inherit;
-	}
-
-	.quadrant-card.placeholder .card-toggle {
-		cursor: default;
+	.card-body {
+		flex: 1;
+		padding: var(--space-3) var(--space-3);
 	}
 
 	.card-header {
@@ -150,9 +128,7 @@
 
 	.card-label {
 		font-family: var(--font-sans);
-		font-size: var(--type-xs);
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-widest);
+		font-size: var(--type-lg);
 		color: var(--variant-color);
 		margin: 0;
 		font-weight: 600;
@@ -162,7 +138,6 @@
 		font-family: var(--font-mono);
 		font-size: var(--type-xs);
 		color: var(--dao-muted);
-		opacity: 0.5;
 	}
 
 	.card-tagline {
@@ -170,7 +145,7 @@
 		font-size: var(--type-sm);
 		color: var(--dao-muted);
 		line-height: var(--leading-relaxed);
-		margin: var(--space-0-5) 0 0 0;
+		margin: var(--space-1) 0 0 0;
 	}
 
 	.card-preview {
@@ -180,8 +155,6 @@
 		margin: var(--space-1) 0 0 0;
 		letter-spacing: var(--tracking-wide);
 	}
-
-	/* --- Progress Bar --- */
 
 	.card-progress {
 		display: flex;
@@ -209,7 +182,6 @@
 		font-family: var(--font-mono);
 		font-size: var(--type-xs);
 		color: var(--dao-muted);
-		opacity: 0.5;
 	}
 
 	.card-coming-soon {
@@ -219,45 +191,16 @@
 		margin: var(--space-1) 0 0 0;
 	}
 
-	/* --- Suggested Entry --- */
-
-	.card-suggested {
-		display: flex;
-		align-items: baseline;
-		gap: var(--space-1);
-		padding: var(--space-1) var(--space-3) var(--space-2);
-		border-top: 1px solid var(--dao-border-subtle);
-		text-decoration: none;
-		transition: background var(--duration-fast) var(--easing-linear);
-	}
-
-	.card-suggested:hover {
-		background: var(--dao-bg);
-	}
-
-	.suggested-badge {
-		font-family: var(--font-sans);
-		font-size: var(--type-xs);
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-widest);
-		color: var(--spark-core);
-		white-space: nowrap;
-	}
-
-	.suggested-title {
-		font-family: var(--font-sans);
-		font-size: var(--type-sm);
-		font-weight: 600;
-		color: var(--dao-text);
-	}
-
-	.suggested-meta {
-		font-family: var(--font-mono);
-		font-size: var(--type-xs);
+	.card-arrow {
+		font-size: var(--type-xl);
 		color: var(--dao-muted);
+		padding-right: var(--space-3);
+		transition: color var(--duration-fast) var(--easing-linear);
 	}
 
-	/* --- Reduced Motion --- */
+	.quadrant-card:hover .card-arrow {
+		color: var(--variant-color);
+	}
 
 	@media (prefers-reduced-motion: reduce) {
 		.quadrant-card {
@@ -271,10 +214,8 @@
 		}
 	}
 
-	/* --- Touch Targets --- */
-
 	@media (pointer: coarse) {
-		.card-toggle {
+		.card-body {
 			min-height: 44px;
 		}
 	}

@@ -1,7 +1,7 @@
 {
   "name": "craft-prompts",
   "version": "0.1.0",
-  "description": "Prompt engineering for reasoning models, deep research, and paper synthesis. Evidence-backed techniques for different model architectures.",
+  "description": "Prompt engineering for reasoning models, deep research, paper synthesis, and multi-agent orchestration. Evidence-backed techniques for different model architectures and execution patterns.",
   "author": {
     "name": "Mox Labs",
     "email": "mox.rnd@gmail.com"
@@ -11,6 +11,8 @@
     "prompt-engineering",
     "reasoning",
     "research",
-    "synthesis"
+    "synthesis",
+    "multi-agent",
+    "orchestration"
   ]
 }
