@@ -145,6 +145,9 @@ Homogenization, model collapse, and what happens at the systemic level.
 <span class="ev ev-weak" title="Meta-analysis, arXiv preprint, submitted to CHI, not yet peer-reviewed">○</span> **Holzner, M., Maier, C.D., & Feuerriegel, S. (2025).** [Generative AI and Creativity: A Meta-Analysis.](https://arxiv.org/abs/2505.17241) arXiv (submitted to ACM CHI, not yet peer-reviewed). 28 studies, n=8,214. Individual performance: g=+0.273. Idea diversity: **g=-0.863** (95% CI: [-1.328, -0.398], p<0.001). Leave-one-out: g=-0.655 to g=-0.952, all CIs exclude zero.
 → [The Stakes](../explanation/the-stakes), [Honest Limits](../explanation/honest-limits)
 
+<span class="ev ev-strong" title="Science Advances, computational experiment, N=24-200 agents">●</span> **Ashery, A.F., Aiello, L.M., & Baronchelli, A. (2025).** [Emergent Social Conventions and Collective Bias in LLM Populations.](https://www.science.org/doi/10.1126/sciadv.adu9368) Science Advances. Populations of LLM agents spontaneously develop social conventions. Strong collective biases emerge even when individual agents show no bias — bias is a property of the interaction, not the components.
+→ [The Stakes](../explanation/the-stakes)
+
 <span class="ev ev-moderate" title="arXiv, 27 LLMs, 70M claims">◐</span> **Masud, S. et al. (2025).** Epistemic Diversity of LLM Outputs. arXiv:2510.04226. 27 language models, 155 topics, 70 million claims. Every model produced outputs less epistemically diverse than a basic web search. Larger models less diverse than smaller ones.
 → [The Stakes](../explanation/the-stakes)
 
