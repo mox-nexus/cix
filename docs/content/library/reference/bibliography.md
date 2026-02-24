@@ -1,86 +1,17 @@
 # Bibliography
 
-Primary sources organized by topic. Verified 2026-02-11.
+Primary sources for the v3 library, organized by argument arc. Every entry is cited in at least one article; every citation in the articles appears here.
 
 **Evidence strength:** <span class="ev ev-strong">●</span> Strong (multiple studies, large n, peer-reviewed) · <span class="ev ev-moderate">◐</span> Moderate (single quality source) · <span class="ev ev-weak">○</span> Weak (expert opinion, preprint) · <span class="ev ev-speculative">◌</span> Speculative (inference)
 
 ---
 
-## Skill Formation & Learning
+## The Paradox
 
-<span class="ev ev-moderate" title="RCT, n=52, arXiv preprint">◐</span> **Shen, J.H. & Tamkin, A. (2026).** [How AI Impacts Skill Formation.](https://arxiv.org/abs/2601.20245) Anthropic. Cohen's d = 0.738 (17pp skill gap). Six interaction patterns: 3 preserve learning, 3 don't. → [skill-formation](../explanation/skill-formation), [evidence](../explanation/the-evidence)
+Productivity gains and learning harm — coexisting, documented, and invisible from inside.
 
-<details><summary>Design & abstract</summary>
-
-RCT, n=52 (26 control, 26 treatment), junior Python developers learning Trio library. 35-minute coding task + comprehension quiz (~58.5 min total). AI group scored 50% vs control 67% on quiz. Largest gap on debugging questions. High-scoring patterns: Generation-Then-Comprehension (86% mastery), Conceptual Inquiry (second-fastest). Chat-based interface (not agentic tools). Crowdworkers, not workplace context. Four pilot studies required due to non-compliance. Immediate comprehension only — no longitudinal retention data.
-
-</details>
-
-<span class="ev ev-strong" title="RCT, n≈1,000, PNAS peer-reviewed">●</span> **Bastani, H. et al. (2025).** [Generative AI without guardrails can harm learning.](https://www.pnas.org/doi/10.1073/pnas.2422633122) PNAS. -17% exam performance without AI after unrestricted use; hint-only guardrails mitigated harm. → [problem](../explanation/the-problem), [evidence](../explanation/the-evidence)
-
-<details><summary>Design & abstract</summary>
-
-RCT (field experiment), n≈1,000 Turkish high school math students, three arms. GPT Base (unrestricted ChatGPT-4): +48% grades with AI, **-17% on exams without AI** vs control. GPT Tutor (hint-only, guardrailed): +127% grades with AI, negative effects "largely mitigated." Mechanism: "Without guardrails, students use GPT-4 as a 'crutch' during practice." PNAS peer-reviewed (received Nov 2024, accepted May 2025). Minor correction published Aug 2025 (affiliation typo only).
-
-</details>
-
-<span class="ev ev-moderate" title="Longitudinal, n=61">◐</span> **Zhou, Y. et al. (2025).** [Creative Scar Without Generative AI.](https://www.sciencedirect.com/science/article/abs/pii/S0160791X25002775) Technology in Society. Longitudinal (7-day lab + 2-month follow-up): creativity drops on AI withdrawal, homogeneity persists months later. → [evidence](../explanation/the-evidence)
-
----
-
-## Cognitive Effects
-
-<span class="ev ev-strong" title="CHI peer-reviewed, n=319, SEM">●</span> **Lee, H.P. et al. (2025).** [The Impact of Generative AI on Critical Thinking.](https://dl.acm.org/doi/full/10.1145/3706598.3713778) CHI 2025. β = -0.69 (AI confidence → less critical thinking); β = +0.35 (self-confidence → more CT). PME friction intervention restores CT. → [problem](../explanation/the-problem), [evidence](../explanation/the-evidence)
-
-<details><summary>Design & abstract</summary>
-
-Structural equation modeling with 319 knowledge workers (CHI peer-reviewed). AI-confidence strongly predicts reduced critical thinking (β = -0.69). Self-confidence predicts maintained CT (β = +0.35). Three-component metacognitive friction (Planning, Monitoring, Evaluation) significantly restored CT suppressed by AI confidence. Single-point friction insufficient — all three needed. Limitation: cross-sectional, not longitudinal. β assumes causality in SEM but data is observational.
-
-</details>
-
-<span class="ev ev-weak" title="arXiv preprint, n=54, published methodological critique">○</span> **Kosmyna, N. et al. (2025).** [Your Brain on ChatGPT.](https://arxiv.org/abs/2506.08872) MIT Media Lab / arXiv preprint. 83% of LLM group unable to quote own essays (Session 1); up to 55% reduced EEG connectivity vs brain-only group. → [problem](../explanation/the-problem), [evidence](../explanation/the-evidence)
-
-<details><summary>Design & abstract</summary>
-
-Between-subjects EEG study, n=54 (18 per group: LLM, Search Engine, Brain-only). **arXiv preprint — not peer-reviewed.** Session 1: 83% (15/18) of LLM group couldn't quote any passage from essays written minutes earlier, vs ~11% in other groups. Brain connectivity "systematically scaled down" with external support level. Session 4 crossover (n=18): 78% of former-LLM users still couldn't quote when writing without AI. **Published critique:** Stankovic et al. (arXiv:2601.00856) identifies concerns with study design, reproducibility, EEG methodology, and reporting inconsistencies. Authors themselves state conclusions should be "treated with caution and as preliminary."
-
-</details>
-
-<span class="ev ev-moderate" title="Survey, n=666, MDPI peer-reviewed">◐</span> **Gerlich, M. (2025).** [AI Tools in Society.](https://www.mdpi.com/2075-4698/15/1/6) MDPI Societies. r = -0.68 (AI use ↔ critical thinking), r = -0.75 (cognitive offloading ↔ CT). → [evidence](../explanation/the-evidence)
-
-<details><summary>Design & abstract</summary>
-
-Cross-sectional survey, n=666. Self-reported measures of AI use, cognitive offloading, and critical thinking. Strong negative correlations but cross-sectional design — associations, not causation. MDPI peer-reviewed.
-
-</details>
-
-<span class="ev ev-strong" title="CHI peer-reviewed, controlled experiment">●</span> **Bansal, G. et al. (2021).** [Does the Whole Exceed its Parts?](https://dl.acm.org/doi/10.1145/3411764.3445717) CHI 2021. Explanations increase AI acceptance regardless of correctness — false confidence when AI is wrong. → [evidence](../explanation/the-evidence)
-
-<span class="ev ev-moderate" title="~1.5M conversations, single platform, arXiv preprint">◐</span> **Sharma, M. et al. (2026).** [Who's in Charge? Disempowerment Patterns.](https://arxiv.org/abs/2601.19062) Anthropic. ~1.5M Claude.ai conversations. Users rate disempowering interactions MORE favorably; satisfaction drops when acting on outputs. → [evidence](../explanation/the-evidence)
-
-<details><summary>Design & abstract</summary>
-
-Large-scale observational analysis of ~1.5 million Claude.ai conversations (Anthropic, January 2026). Users rate harmful/disempowering interactions more favorably in the moment. When users acted on AI outputs, satisfaction dropped below baseline. Users expressed regret: "I should have listened to my own intuition." Implication: short-term satisfaction ≠ long-term benefit — the feedback loop is broken. arXiv preprint, single platform (Claude.ai only).
-
-</details>
-
----
-
-## Skill Degradation
-
-<span class="ev ev-moderate" title="Multicentre observational, 19 endoscopists, Lancet peer-reviewed">◐</span> **Budzyń, B. et al. (2025).** [Endoscopist deskilling risk after AI exposure in colonoscopy.](https://www.thelancet.com/journals/langas/article/PIIS2468-1253(25)00133-5/abstract) Lancet Gastroenterol. Hepatol. 20% relative decline in unaided detection (28.4% → 22.4%) after AI exposure introduced. → [problem](../explanation/the-problem), [evidence](../explanation/the-evidence)
-
-<details><summary>Design & abstract</summary>
-
-Multicentre observational study (before/after design), 19 endoscopists, 4 centres in Poland, Sept 2021–March 2022. Adenoma detection rate on **non-AI colonoscopies** compared before vs after AI-assisted colonoscopy was introduced. Pre-AI: 28.4% (n=795). Post-AI exposure: 22.4% (n=648). 20% relative decline, 6% absolute. NOT a crossover RCT — AI was not "removed." Limitation: observational, single specialty, cannot establish causation definitively. Lancet peer-reviewed.
-
-</details>
-
----
-
-## Productivity & Developer Behavior
-
-<span class="ev ev-moderate" title="Within-subject RCT, n=16, arXiv preprint">◐</span> **Becker, J. et al. / METR (2025).** [Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity.](https://arxiv.org/abs/2507.09089) arXiv preprint. AI made experienced devs 19% slower (95% CI: +1.6% to +39%); devs predicted 24% speedup. → [problem](../explanation/the-problem), [evidence](../explanation/the-evidence)
+<span class="ev ev-moderate" title="Within-subject RCT, n=16, arXiv preprint">◐</span> **Becker, J. et al. / METR (2025).** [Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity.](https://arxiv.org/abs/2507.09089) arXiv preprint. AI made experienced devs 19% slower (95% CI: +1.6% to +39%); devs predicted 24% speedup. 43-percentage-point perception gap.
+→ [The Paradox](../explanation/the-paradox), [Honest Limits](../explanation/honest-limits)
 
 <details><summary>Design & abstract</summary>
 
@@ -88,120 +19,153 @@ Within-subject RCT, n=16 experienced open-source developers, 246 real tasks from
 
 </details>
 
-<span class="ev ev-strong" title="3 RCTs, n=4,867">●</span> **Cui, Z., Demirer, M. et al. (2024).** Effects of Generative AI on High Skilled Work. 3 RCTs at Microsoft, Accenture, Fortune 100. 26% more tasks completed with AI. → [problem](../explanation/the-problem), [evidence](../explanation/the-evidence)
+<span class="ev ev-strong" title="3 RCTs, n=4,867">●</span> **Cui, Z., Demirer, M. et al. (2024).** Effects of Generative AI on High Skilled Work. SSRN working paper. 3 RCTs at Microsoft, Accenture, Fortune 100. 26% more tasks completed with AI (LATE for adopters). Less experienced developers benefited more.
+→ [The Paradox](../explanation/the-paradox), [Honest Limits](../explanation/honest-limits)
 
-<span class="ev ev-moderate" title="CHI 2024 Honorable Mention, n=21, lab study">◐</span> **Mozannar, H. et al. (2024).** [Reading Between the Lines: Modeling User Behavior and Costs in AI-Assisted Programming.](https://dl.acm.org/doi/abs/10.1145/3613904.3641936) CHI 2024. Developers spend 22.4% (±13%) of coding time verifying AI suggestions — the most time-consuming Copilot state. → [evidence](../explanation/the-evidence), [first-principles](../explanation/first-principles-ci)
-
-<details><summary>Design & abstract</summary>
-
-Lab study, n=21 programmers, VS Code + GitHub Copilot. Participants completed 20-minute coding tasks over video call, then retrospectively labeled recordings using CUPS (Copilot User Productivity States) taxonomy. "Verifying suggestion" consumed 22.4% (±12.97%) of session time. All Copilot-related states combined: 51.5% (±19.3%). MIT + Microsoft Research. CHI 2024 Honorable Mention. arXiv preprint: [2210.14306](https://arxiv.org/abs/2210.14306).
-
-</details>
-
-<span class="ev ev-moderate" title="Observational, 500K interactions, single platform">◐</span> **Anthropic (2025).** [AI's Impact on Software Development.](https://www.anthropic.com/research/impact-software-development) Anthropic Economic Index. 79% automation rate on Claude Code (vs 49% on Claude.ai). Only 35.8% of Claude Code interactions involve feedback loops where humans stay involved. → [evidence](../explanation/the-evidence)
+<span class="ev ev-moderate" title="RCT, n=52, arXiv preprint">◐</span> **Shen, J.H. & Tamkin, A. (2026).** [How AI Impacts Skill Formation.](https://arxiv.org/abs/2601.20245) Anthropic. arXiv preprint. Cohen's d = 0.738 (17pp skill gap). Six interaction patterns: 3 preserve learning, 3 don't. Generation-Then-Comprehension (86%) vs AI Delegation (39%).
+→ [The Paradox](../explanation/the-paradox), [The Mechanism](../explanation/the-mechanism), [The Design Lever](../explanation/the-design-lever), [Honest Limits](../explanation/honest-limits)
 
 <details><summary>Design & abstract</summary>
 
-Observational usage analysis of 500K coding interactions, April 6-13, 2025. Platforms: Claude.ai (Free/Pro) and Claude Code. Inference-based categorization of interaction types (automation vs augmentation, directive vs feedback loop). Language distribution: JS+TS 31%, HTML+CSS 28%, Python 14%. Startups 32.9% of Claude Code usage vs Enterprise 23.8%. No measurement of code quality, productivity outcomes, or skill impact. Early-adopter bias. Excludes Team/Enterprise/API usage.
+RCT, n=52 (26 control, 26 treatment), junior Python developers learning Trio library. 35-minute coding task + comprehension quiz (~58.5 min total). AI group scored 50% vs control 67% on quiz. Largest gap on debugging questions. High-scoring patterns: Generation-Then-Comprehension (86% mastery), Conceptual Inquiry (second-fastest). Chat-based interface (not agentic tools). Crowdworkers, not workplace context. Four pilot studies required due to non-compliance. Immediate comprehension only — no longitudinal retention data.
 
 </details>
 
-<span class="ev ev-moderate" title="Large survey, observational">◐</span> Stack Overflow Developer Survey (2024-2025). [2025 survey.](https://survey.stackoverflow.co/2025/) Senior devs trust AI output 2.5% vs junior 17%; seniors ship more AI code (32% vs 13%). → [problem](../explanation/the-problem), [evidence](../explanation/the-evidence)
-
----
-
-## Collaboration Design
-
-<span class="ev ev-moderate" title="Scenario experiments, n=654, J. Service Research peer-reviewed">◐</span> **Blaurock, M., Büttgen, M., & Schepers, J. (2025).** [Designing Collaborative Intelligence Systems for Employee-AI Service Co-Production.](https://journals.sagepub.com/doi/10.1177/10946705241238751) Journal of Service Research, 28(4), 544-562. Control and transparency are the strongest design levers; engagement features reduce trust. → [evidence](../explanation/the-evidence), [why-it-matters](../explanation/why-it-matters)
+<span class="ev ev-strong" title="RCT, n~1,000, PNAS peer-reviewed">●</span> **Bastani, H. et al. (2025).** [Generative AI without guardrails can harm learning.](https://www.pnas.org/doi/10.1073/pnas.2422633122) PNAS. GPT Base: +48% during, -17% on unassisted exam. GPT Tutor (hints): +127% during, harm largely mitigated. Same model, different design, different trajectory.
+→ [The Paradox](../explanation/the-paradox), [The Design Lever](../explanation/the-design-lever), [Honest Limits](../explanation/honest-limits)
 
 <details><summary>Design & abstract</summary>
 
-Two scenario-based experiments (NOT a meta-analysis). Study 1: n=309 financial services employees. Study 2: n=345 HR professionals. Combined n=654. Includes an extensive literature review as a preliminary step, but results come from experiments, not meta-analytic aggregation. Finds process control, transparency, and outcome control are the most important design features for employee-AI co-production, while engagement features are less relevant or counterproductive. Specific effect sizes (β = 0.507 for control, β = 0.415 for transparency, b = -0.555 for engagement) cited in earlier versions of this project are from the full text and have not been independently verified from public sources. Directional findings are confirmed from the abstract and secondary sources. Peer-reviewed, Journal of Service Research.
+RCT (field experiment), n≈1,000 Turkish high school math students, three arms. GPT Base (unrestricted ChatGPT-4): +48% grades with AI, **-17% on exams without AI** vs control. GPT Tutor (hint-only, guardrailed): +127% grades with AI, negative effects "largely mitigated." Mechanism: "Without guardrails, students use GPT-4 as a 'crutch' during practice." PNAS peer-reviewed (received Nov 2024, accepted May 2025). Minor correction published Aug 2025 (affiliation typo only).
+
+</details>
+
+<span class="ev ev-moderate" title="Multicentre observational, 19 endoscopists, Lancet peer-reviewed">◐</span> **Budzyń, B. et al. (2025).** [Endoscopist deskilling risk after AI exposure in colonoscopy.](https://www.thelancet.com/journals/langas/article/PIIS2468-1253(25)00133-5/abstract) Lancet Gastroenterol. Hepatol. 21% relative decline in unaided adenoma detection (28.4% → 22.4%) after AI exposure. Observational, n=1,443.
+→ [The Paradox](../explanation/the-paradox), [Honest Limits](../explanation/honest-limits)
+
+<details><summary>Design & abstract</summary>
+
+Multicentre observational study (before/after design), 19 endoscopists, 4 centres in Poland, Sept 2021–March 2022. Adenoma detection rate on **non-AI colonoscopies** compared before vs after AI-assisted colonoscopy was introduced. Pre-AI: 28.4% (n=795). Post-AI exposure: 22.4% (n=648). 21% relative decline, 6pp absolute. NOT a crossover RCT — AI was not "removed." Limitation: observational, single specialty, cannot establish causation definitively. Lancet peer-reviewed.
+
+</details>
+
+<span class="ev ev-moderate" title="Mixed review, conceptual distinction">◐</span> **Natali, L. et al. (2025).** Deskilling and upskilling inhibition in medicine after AI adoption. Distinguishes deskilling (experts lose what they have) from "upskilling inhibition" (novices never develop skills when AI provides answers first).
+→ [The Paradox](../explanation/the-paradox)
+
+<span class="ev ev-moderate" title="Large survey, ICSE peer-reviewed, n=410">◐</span> **Liang, J.T. et al. (2024).** Usability of AI Programming Assistants. ICSE 2024. n=410 developers. Primary uses: reducing keystrokes, recalling syntax, finishing fast. Primary barrier: control — can't get tool to generate what they want.
+→ [The Paradox](../explanation/the-paradox)
+
+---
+
+## The Mechanism
+
+How cognitive offloading works — trust, explanations, the generative step, encoding.
+
+<span class="ev ev-moderate" title="Within-subject, n=30, PACMHCI">◐</span> **Chen, Z. et al. (2025).** AI-Assisted Note-Taking. PACMHCI. n=30, within-subject design. Full automation → lowest post-test scores; intermediate AI → highest; manual → most effortful but strong comprehension. Preferred ≠ effective.
+→ [The Mechanism](../explanation/the-mechanism)
+
+<span class="ev ev-strong" title="CHI peer-reviewed, n=319, mixed-effects regression">●</span> **Lee, H.P. et al. (2025).** [The Impact of Generative AI on Critical Thinking.](https://dl.acm.org/doi/full/10.1145/3706598.3713778) CHI 2025. β=-0.69 (AI confidence → less critical thinking, p<0.001). Self-confidence effects (β=+0.26, p=0.026; β=+0.31, p=0.046) do not survive Benjamini-Hochberg correction (threshold p<0.007). Uses mixed-effects regression, n=319 workers, 936 task examples.
+→ [The Mechanism](../explanation/the-mechanism), [The Design Lever](../explanation/the-design-lever)
+
+<details><summary>Design & abstract</summary>
+
+Cross-sectional survey with mixed-effects regression modeling, 319 knowledge workers across 936 task examples (CHI peer-reviewed). AI-confidence strongly predicts reduced critical thinking (β=-0.69). Self-confidence effects show correct direction but do not survive the paper's own multiple comparisons correction (Benjamini-Hochberg threshold p<0.007). Limitation: cross-sectional, not longitudinal — correlation direction is assumed, not experimentally established. Reverse causation is possible.
+
+</details>
+
+<span class="ev ev-moderate" title="~1.5M conversations, single platform, arXiv preprint">◐</span> **Sharma, M. et al. (2026).** [Who's in Charge? Disempowerment Patterns.](https://arxiv.org/abs/2601.19062) Anthropic. arXiv preprint. ~1.5M Claude.ai conversations. Severe disempowerment potential: <1 in 1,000 conversations. Disempowering interactions receive higher approval ratings.
+→ [The Mechanism](../explanation/the-mechanism)
+
+<details><summary>Design & abstract</summary>
+
+Large-scale observational analysis of ~1.5 million Claude.ai conversations (Anthropic, January 2026). Conversations flagged as moderate-or-severe disempowerment potential show positivity rates above the baseline across all categories. Causal mechanism is uncertain; several explanations possible; paper acknowledges this explicitly. Implication for training: approval ratings feed preference models, so systems trained on approval data may drift toward disempowerment. arXiv preprint, single platform (Claude.ai only).
+
+</details>
+
+<span class="ev ev-strong" title="CHI peer-reviewed, controlled experiment, 378 citations">●</span> **Bansal, G. et al. (2021).** [Does the Whole Exceed its Parts?](https://dl.acm.org/doi/10.1145/3411764.3445717) CHI 2021. AI explanations increase acceptance regardless of correctness. Complementary performance gains NOT increased by explanations. A wrong AI that explains itself confidently is more dangerous than one that doesn't.
+→ [The Mechanism](../explanation/the-mechanism), [The Design Lever](../explanation/the-design-lever), [What cix Does](../explanation/what-cix-does), [Honest Limits](../explanation/honest-limits)
+
+<span class="ev ev-weak" title="arXiv preprint, n=54, published methodological critique">○</span> **Kosmyna, N. et al. (2025).** [Your Brain on ChatGPT.](https://arxiv.org/abs/2506.08872) MIT Media Lab. arXiv preprint. 83% of LLM group unable to quote own essays (Session 1 behavioral finding); EEG methodology disputed (published critique by Stankovic et al.).
+→ [The Mechanism](../explanation/the-mechanism)
+
+<details><summary>Design & abstract</summary>
+
+Between-subjects EEG study, n=54 (18 per group: LLM, Search Engine, Brain-only). **arXiv preprint — not peer-reviewed.** Session 1: 83% (15/18) of LLM group couldn't quote any passage from essays written minutes earlier, vs ~11% in other groups. **Published critique:** Stankovic et al. (arXiv:2601.00856) identifies concerns with study design, reproducibility, EEG methodology, and reporting inconsistencies. Authors themselves state conclusions should be "treated with caution and as preliminary." The behavioral recall finding (83% failure) does not depend on the disputed EEG interpretation.
+
+</details>
+
+<span class="ev ev-moderate" title="RCT, n=30 per condition, AIED, arXiv preprint">◐</span> **Siddiqui, T. et al. (2025).** [AI-Supported Writing Process.](https://arxiv.org/abs/) AIED. RCT, n=30 per condition. Correlation between integrated writing tool use and knowledge transformation: r=0.608 (p=0.001). Correlation between chat-based LLM use and knowledge transformation: r≈0.
+→ [The Mechanism](../explanation/the-mechanism), [Honest Limits](../explanation/honest-limits)
+
+<span class="ev ev-moderate" title="IUI peer-reviewed, N=124 total">◐</span> **Kazemitabaar, S. et al. (2025).** Cognitive Engagement Techniques for AI-Assisted Code Learning. IUI 2025. N=82 + N=42 = 124 total. Seven friction techniques tested; Lead-and-Reveal most effective. Population: novice undergrads (18-23), data structures course.
+→ [The Mechanism](../explanation/the-mechanism), [The Design Lever](../explanation/the-design-lever), [Honest Limits](../explanation/honest-limits)
+
+<span class="ev ev-weak" title="Qualitative case study, Cornell">○</span> **Umarova, Z. et al. (2025).** Writer-AI Interactions in Writing Process. Cornell. Qualitative case study. Proactive idea exploration produced new ideas regardless of tool type; prolonged mindless copyediting produced few ideas even with Socratic AI.
+→ [The Mechanism](../explanation/the-mechanism), [The Design Lever](../explanation/the-design-lever), [Honest Limits](../explanation/honest-limits)
+
+<span class="ev ev-moderate" title="Foundational, replicated across decades">◐</span> **Slamecka, N.J. & Graf, P. (1978).** The Generation Effect: Delineation of a Phenomenon. Journal of Experimental Psychology: Human Learning and Memory. Self-generated information retained ~22% better than passively received information. Replicated across decades of cognitive psychology.
+→ [The Paradox](../explanation/the-paradox), [The Mechanism](../explanation/the-mechanism)
+
+<span class="ev ev-moderate" title="Foundational, theoretical framework">◐</span> **Bereiter, C. & Scardamalia, M. (1987).** The Psychology of Written Composition. Knowledge telling vs knowledge transforming — expert writing as a recursive process that generates new understanding through the act of composition. Theoretical basis used in Siddiqui et al. 2025.
+→ [The Paradox](../explanation/the-paradox), [The Mechanism](../explanation/the-mechanism)
+
+<span class="ev ev-moderate" title="QCA, n=192, Studies in Higher Education peer-reviewed">◐</span> **Pallant, J.I. et al. (2025).** Mastering Knowledge with GenAI. Studies in Higher Education. QCA of 192 student reflections. Mastery-oriented GenAI use: OR=35.782 (p<0.001) for critical thinking. Not RCT — self-selection possible.
+→ [The Paradox](../explanation/the-paradox), [The Design Lever](../explanation/the-design-lever), [Honest Limits](../explanation/honest-limits)
+
+---
+
+## The Design Lever
+
+Which design features move outcomes — process control, transparency, engagement, orientation.
+
+<span class="ev ev-moderate" title="Scenario experiments, n=654, J. Service Research peer-reviewed">◐</span> **Blaurock, M., Büttgen, M., & Schepers, J. (2025).** [Designing Collaborative Intelligence Systems for Employee-AI Service Co-Production.](https://journals.sagepub.com/doi/10.1177/10946705241238751) Journal of Service Research, 28(4), 544-562. Study 2 on perceived outcome responsibility: process control b=0.715 (p<.001), outcome control b=0.524 (p<.011), transparency b=0.511 (p<.001), engagement b=0.090 (ns). All four engagement hypotheses rejected. Expertise reversal: control features significant only for AI novices.
+→ [The Design Lever](../explanation/the-design-lever), [What cix Does](../explanation/what-cix-does), [Honest Limits](../explanation/honest-limits)
+
+<details><summary>Design & abstract</summary>
+
+Two scenario-based experiments (NOT a meta-analysis). Study 1: n=309 financial services employees. Study 2: n=345 HR professionals. Combined n=654. Finds process control, transparency, and outcome control are the most important design features for employee-AI co-production; engagement features are not significant or counterproductive. Exploratory post-hoc: AI-experienced subgroup (n=42) showed no significant positive effects for control features; engagement showed what authors call "significant negative effect" on perceived service improvement (b=0.555, p<.05, statistical twin sample — note: source reports positive coefficient but describes as negative effect, a reporting inconsistency). Peer-reviewed, Journal of Service Research.
 
 </details>
 
 ---
 
-## Homogenization & Diversity
+## The Stakes
 
-<span class="ev ev-strong" title="NeurIPS Best Paper, 70+ models, 26,000 queries">●</span> **Jiang, L. et al. (2025).** [Artificial Hivemind: Open-Ended Homogeneity of LLMs.](https://arxiv.org/abs/2510.22954) **NeurIPS 2025 Best Paper.** 70+ LLMs converge; temperature/ensembling don't help; RLHF punishes diversity. → [evidence](../explanation/the-evidence), [why-it-matters](../explanation/why-it-matters)
+Homogenization, model collapse, and what happens at the systemic level.
 
-<span class="ev ev-strong" title="Science Advances, controlled experiment">●</span> **Doshi, A.R. & Hauser, O.P. (2024).** [Individual Creativity vs Collective Diversity.](https://www.science.org/doi/10.1126/sciadv.adn5290) Science Advances. +8.1% individual novelty, +10.7% story similarity. "Social dilemma: individually better off, collectively homogenized." → [evidence](../explanation/the-evidence), [why-it-matters](../explanation/why-it-matters)
+<span class="ev ev-moderate" title="PNAS, Microsoft Research, 100 generations">◐</span> **Xu, Y. et al. (2025).** Echoes in AI: LLM Homogenization. PNAS, Microsoft Research. 100 GPT-4 completions of a Kafka story: 50/100 had the policeman give directions (second left), 16/100 featured the same bakery. Human-written stories stayed unique.
+→ [The Stakes](../explanation/the-stakes)
 
-<span class="ev ev-strong" title="Meta-analysis, 28 studies, n=8,214">●</span> **Anderson, B.R. et al. (2025).** [Generative AI and Creativity: A Meta-Analysis.](https://arxiv.org/abs/2505.17241) arXiv. **g = -0.863** diversity reduction across 28 studies (n=8,214). Individual performance up (+0.27), collective diversity down hard. → [evidence](../explanation/the-evidence)
+<span class="ev ev-strong" title="NeurIPS 2025, 70+ models, 26,000 queries">●</span> **Jiang, L. et al. (2025).** [Artificial Hivemind: Open-Ended Homogeneity of LLMs.](https://arxiv.org/abs/2510.22954) NeurIPS 2025. 70+ LLMs converge on the same outputs across model families. Sentence embedding similarity 71-82%. RLHF reward models miscalibrated to idiosyncratic preferences — penalize diversity.
+→ [The Stakes](../explanation/the-stakes), [What cix Does](../explanation/what-cix-does), [Honest Limits](../explanation/honest-limits)
 
-<span class="ev ev-moderate" title="700 AI image runs, Patterns/Cell">◐</span> **Hintze, A. et al. (2026).** [Visual Elevator Music.](https://www.cell.com/patterns/fulltext/S2666-3899(25)00299-5) Patterns/Cell. 700 AI image runs converged to just 12 motifs. → [evidence](../explanation/the-evidence)
+<span class="ev ev-strong" title="Science Advances, preregistered experiment, n=893">●</span> **Doshi, A.R. & Hauser, O.P. (2024).** [Individual Creativity vs Collective Diversity.](https://www.science.org/doi/10.1126/sciadv.adn5290) Science Advances. Preregistered, n=893. +8.1% individual novelty (b=0.311, p<0.001), +10.7% collective similarity. "Social dilemma: individually better off, collectively homogenized."
+→ [The Stakes](../explanation/the-stakes), [Honest Limits](../explanation/honest-limits)
 
-**Ashery, A.F. et al. (2025).** [Emergent Collective Bias in LLM Populations.](https://www.science.org/doi/10.1126/sciadv.adu9368) Science Advances. Bias emerges between agents, not within. → [evidence](../explanation/the-evidence)
+<span class="ev ev-weak" title="Meta-analysis, arXiv preprint, submitted to CHI, not yet peer-reviewed">○</span> **Holzner, M., Maier, C.D., & Feuerriegel, S. (2025).** [Generative AI and Creativity: A Meta-Analysis.](https://arxiv.org/abs/2505.17241) arXiv (submitted to ACM CHI, not yet peer-reviewed). 28 studies, n=8,214. Individual performance: g=+0.273. Idea diversity: **g=-0.863** (95% CI: [-1.328, -0.398], p<0.001). Leave-one-out: g=-0.655 to g=-0.952, all CIs exclude zero.
+→ [The Stakes](../explanation/the-stakes), [Honest Limits](../explanation/honest-limits)
 
-**Agarwal, D. et al. (2025).** [AI Homogenizes Writing Toward Western Styles.](https://dl.acm.org/doi/10.1145/3706598.3713564) CHI 2025. 7.1pp cultural distinctiveness reduction. → [evidence](../explanation/the-evidence)
+<span class="ev ev-moderate" title="arXiv, 27 LLMs, 70M claims">◐</span> **Masud, S. et al. (2025).** Epistemic Diversity of LLM Outputs. arXiv:2510.04226. 27 language models, 155 topics, 70 million claims. Every model produced outputs less epistemically diverse than a basic web search. Larger models less diverse than smaller ones.
+→ [The Stakes](../explanation/the-stakes)
 
-**Shumailov, I. et al. (2024).** [Model Collapse.](https://www.nature.com/articles/s41586-024-07566-y) Nature. AI trained on AI output loses tails, then collapses. → [evidence](../explanation/the-evidence)
+<span class="ev ev-weak" title="arXiv preprint, modified replication, proof-of-concept">○</span> **Wan, Y. & Kalman, Y.M. (2025).** [AI Personas Preserve Diversity.](https://arxiv.org/abs/2504.13868) arXiv preprint. Modified replication of Doshi & Hauser. 10 distinct AI personas: intra-persona similarity 0.92, inter-persona similarity 0.20. Homogenization effect eliminated. Proof-of-concept; not independently replicated.
+→ [The Stakes](../explanation/the-stakes), [What cix Does](../explanation/what-cix-does), [Honest Limits](../explanation/honest-limits)
 
-**Xu et al. (2025).** Echoes in AI: LLM Homogenization. PNAS. → [evidence](../explanation/the-evidence), [why-it-matters](../explanation/why-it-matters)
+<span class="ev ev-strong" title="Nature, Vol 631, demonstrated on multiple architectures">●</span> **Shumailov, I. et al. (2024).** [Model Collapse.](https://www.nature.com/articles/s41586-024-07566-y) Nature, Vol 631. Training generative models on model-generated content causes progressive loss of distribution tails. Early collapse: rare content disappears. Late collapse: convergence to very small variance. "Irreversible defects." Demonstrated on LLMs, VAEs, and Gaussian mixture models.
+→ [The Stakes](../explanation/the-stakes), [Honest Limits](../explanation/honest-limits)
 
-**Zhang et al. (2025).** [AI and Survey Response Homogenization.](https://journals.sagepub.com/doi/10.1177/00491241251327130) Sociological Methods & Research. 34% used LLMs; responses more homogeneous. → [evidence](../explanation/the-evidence), [why-it-matters](../explanation/why-it-matters)
+<span class="ev ev-moderate" title="ICLR 2025, FAIR/Meta">◐</span> **Dohmatob, E. et al. (2025).** Strong Model Collapse. ICLR 2025, FAIR/Meta. Even 1% synthetic data fraction can lead to model collapse; larger models amplify collapse. IMPORTANT: 1% figure derived from supervised linear regression theoretical setting, not production LLM training.
+→ [The Stakes](../explanation/the-stakes), [Honest Limits](../explanation/honest-limits)
 
-<span class="ev ev-strong" title="PNAS, formal mathematical proof">●</span> **Hong & Page (2004).** Groups of Diverse Problem Solvers. PNAS. → [why-it-matters](../explanation/why-it-matters)
+<span class="ev ev-moderate" title="arXiv, Stanford/MIT/Maryland/Harvard, not peer-reviewed">◐</span> **Gerstgrasser, M. et al. (2024).** [Is Model Collapse Inevitable?](https://arxiv.org/abs/2404.01413) arXiv. Stanford/MIT/Maryland/Harvard. Replacing real data with synthetic → inevitable collapse (unbounded test error). Accumulating synthetic alongside real data → bounded error. Escape condition requires continuing human data generation.
+→ [The Stakes](../explanation/the-stakes), [Honest Limits](../explanation/honest-limits)
 
-Lorenz et al. (2011). How Social Influence Undermines Crowd Wisdom. PNAS.
+<span class="ev ev-strong" title="PNAS, formal mathematical proof">●</span> **Hong, L. & Page, S.E. (2004).** Groups of Diverse Problem Solvers Can Outperform Groups of High-Ability Problem Solvers. PNAS. Formal mathematical proof: diversity of perspective can trump individual ability in collective problem-solving.
+→ [The Stakes](../explanation/the-stakes)
 
-Jeppesen & Lakhani (2010). Marginality and Problem-Solving. Organization Science.
-
-Janis, I. (1972/1982). Groupthink.
-
-Surowiecki, J. (2004). The Wisdom of Crowds.
-
-Phillips, K. et al. (2006-2014). How Diversity Works.
-
-**Ashby, W.R. (1956).** Law of Requisite Variety. → [first-principles](../explanation/first-principles-ci), [why-it-matters](../explanation/why-it-matters)
-
-<span class="ev ev-weak" title="Expert analysis, historical case study">○</span> **Haldane, A. (2009, 2016).** Financial Monoculture. Bank of England. → [why-it-matters](../explanation/why-it-matters)
-
-**Wan & Kalman (2025).** [AI Personas Preserve Diversity.](https://arxiv.org/abs/2504.13868) arXiv. Mitigation: 10 diverse personas eliminated homogenization effect. → [evidence](../explanation/the-evidence)
-
----
-
-## Hype & Adoption
-
-ABBYY (2024). AI Trust Barometer.
-
-BCG (2024). Where's the Value in AI?
-
-Bikhchandani et al. (1992). Information Cascades. Journal of Political Economy.
-
-Duan et al. (2009). Informational Cascades and Software Adoption. MIS Quarterly.
-
-Sparrow et al. (2011). Google Effects on Memory. Science.
-
-Parasuraman & Manzey (2010). Complacency and Bias in Automation. Human Factors.
+<span class="ev ev-weak" title="Expert analysis, historical case study">○</span> **Haldane, A. (2009, 2016).** Financial Monoculture. Bank of England. When system components become highly correlated, aggregate risk approaches any single component's risk. Diversification becomes illusory.
+→ [The Stakes](../explanation/the-stakes)
 
 ---
 
-## First Principles
-
-Feynman, R. On Self-Deception. → [first-principles](../explanation/first-principles-ci)
-
-Dijkstra, E. (1972). The Humble Programmer. → [first-principles](../explanation/first-principles-ci)
-
-Koffka, K. The Gestalt Insight. → [first-principles](../explanation/first-principles-ci)
-
-Chesterton, G.K. (1929). Chesterton's Fence. → [first-principles](../explanation/first-principles-ci)
-
-Taleb, N. (2012). Antifragile. → [first-principles](../explanation/first-principles-ci)
-
-Zadeh, L. (1965). Fuzzy Sets. → [first-principles](../explanation/first-principles-ci)
-
----
-
-## Reasoning Techniques
-
-Dhuliawala et al. (2024). Chain-of-Verification. ACL.
-
-Zheng et al. (2023). Step-Back Prompting. ICLR 2024.
-
-Wang et al. (2023). Self-Consistency.
-
----
-
-*Last verified: 2026-02-11*
+*Sources verified against text files in scratch/papers/ where available.*
