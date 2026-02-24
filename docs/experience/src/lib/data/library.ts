@@ -112,7 +112,6 @@ export const LIBRARY: QuadrantMeta[] = [
 				title: 'What cix Does',
 				description:
 					'How cix operationalizes the design levers — process control at install, transparency through dual content, mastery through orthogonality.',
-				file: 'what-cix-does.md',
 				cluster: 'design',
 				difficulty: 'intermediate',
 				readMinutes: 8,
@@ -124,7 +123,6 @@ export const LIBRARY: QuadrantMeta[] = [
 				title: 'Honest Limits',
 				description:
 					'What the research has not measured, what claims are assembled rather than demonstrated, and where cix itself remains a bet.',
-				file: 'honest-limits.md',
 				cluster: 'limits',
 				difficulty: 'foundational',
 				readMinutes: 8,

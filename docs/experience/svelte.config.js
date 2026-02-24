@@ -26,7 +26,7 @@ const config = {
 					return;
 				}
 				// Bibliography cross-references to library articles — warn during restructure
-				if (path.startsWith('/library/explanation/') && referrer?.includes('/library/')) {
+				if (path.includes('/library/explanation/') && referrer?.includes('/library/')) {
 					console.warn(`[prerender] Stale library link: ${path} (from ${referrer})`);
 					return;
 				}
