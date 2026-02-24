@@ -18,7 +18,7 @@ PLUGINS=(
   "data-store:Data storage and retrieval patterns"
   "craft-extensions:Build extensions for human-AI collaboration"
   "craft-prompts:Prompt engineering for reasoning models and research"
-  "craft-explanations:Explanation craft through simultaneous encoding"
+  "craft-rhetoric:Explanation craft organized by the Five Canons of Classical Rhetoric"
   "run-openclaw-srt:OpenClaw with SRT sandbox for secure AI assistants"
 )
 

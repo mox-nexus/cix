@@ -25,9 +25,15 @@ const config = {
 					console.warn(`[prerender] Ignoring out-of-base link: ${path} (from ${referrer})`);
 					return;
 				}
+				// Bibliography cross-references to library articles — warn during restructure
+				if (path.startsWith('/library/explanation/') && referrer?.includes('/library/')) {
+					console.warn(`[prerender] Stale library link: ${path} (from ${referrer})`);
+					return;
+				}
 				throw new Error(message);
 			},
-			handleMissingId: 'warn'
+			handleMissingId: 'warn',
+			handleUnseenRoutes: 'warn'
 		},
 		alias: {
 			'$content': '../content'

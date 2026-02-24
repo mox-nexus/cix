@@ -1,6 +1,6 @@
 [project]
 name = "cix"
-version = "0.1.0"
+version = "1.0.0"
 description = "Collaborative Intelligence Extensions CLI - Discover, install, and manage cognitive extensions"
 readme = "README.md"
 requires-python = ">=3.12"
