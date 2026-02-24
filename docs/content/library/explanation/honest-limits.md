@@ -29,7 +29,7 @@ written for.
 No study has measured developer capability — not task performance, not satisfaction ratings,
 but the actual cognitive capability to reason through unfamiliar technical problems without AI —
 after extended real-world AI use. Not 35 minutes. Not 10 weeks of math homework. After two
-years of AI-assisted professional coding. [Solid — confirmed absent from the research collection. See [The Paradox](the-paradox), "The Critical Gap in the Developer Evidence."]
+years of AI-assisted professional coding. See [The Paradox](the-paradox), "The Critical Gap in the Developer Evidence."
 
 The closest analogues are:
 - Shen & Tamkin (2026): a 35-minute task with a new Python library. One session.
@@ -39,15 +39,13 @@ The closest analogues are:
   domain, a different kind of skill, with the observational caveats that entails.
 
 These establish the mechanism. They do not establish what happens to a software developer's
-fundamental problem-solving capability after two years of consistent AI delegation. [Solid for
-the gap itself; Solid for the mechanism studies; Probable for the medical analogue.]
+fundamental problem-solving capability after two years of consistent AI delegation.
 
 The honest claim is not "developer capability declines." The honest claim is: every mechanism
 the research documents, and every parallel domain studied, points in the same direction. And
 the METR perception data — 16 developers who couldn't detect a 43-point gap between predicted
 and actual productivity — suggests that if the decline is happening, we would not detect it from
-inside our own experience. [Solid — Becker/METR 2025, S17. The 43-point gap is measured directly
-within the study.]
+inside our own experience (Becker et al. 2025).
 
 This is the gap that matters most to the person reading this article right now. Not a gap in
 theory. A gap in measurement of what is happening to you specifically.
@@ -76,8 +74,7 @@ was AI-generated.
 
 No single study has placed code comprehension and prose evaluation as paired conditions in
 the same experiment. The distinction is assembled from these parallel studies, not demonstrated
-directly. [Solid for each individual study; the code/prose distinction itself is an inference from
-convergent evidence. See [The Mechanism](the-mechanism), "Why Code and Prose Diverge."]
+directly. See [The Mechanism](the-mechanism), "Why Code and Prose Diverge."
 
 The boundary is also blurry. Code has execution traces; but architectural decisions, abstract
 system design, complex reasoning about performance tradeoffs — these are code-adjacent work
@@ -94,26 +91,24 @@ human outputs → homogenized content accumulates in public training data → fu
 trained on that data progressively lose the tails of the distribution.
 
 Each link in this chain has strong independent evidence. Homogenization is established: Holzner
-et al.'s meta-analysis of 28 studies (g=-0.863 diversity reduction, n=8,214) [Probable — arXiv
-preprint, submitted to ACM CHI, not yet peer-reviewed]; Jiang et al.'s demonstration across
-70+ language models that RLHF optimizes for consensus [Solid — NeurIPS 2025];
+et al.'s meta-analysis of 28 studies (g=-0.863 diversity reduction, n=8,214); Jiang et al.'s
+demonstration across 70+ language models that RLHF optimizes for consensus (NeurIPS 2025);
 Doshi & Hauser's social dilemma result (+8.1% individual quality, +10.7% collective similarity)
-[Solid — Science Advances, preregistered, n=893]. Model collapse dynamics are established:
-Shumailov et al. showed tails disappear first, irreversibly [Solid — Nature, Vol 631].
-Gerstgrasser et al. showed replacement → inevitable collapse; accumulation → bounded error
-[Solid for mathematical result — arXiv, Stanford/MIT/Maryland/Harvard; not peer-reviewed].
+(Science Advances). Model collapse dynamics are established:
+Shumailov et al. showed tails disappear first, irreversibly (Nature 2024).
+Gerstgrasser et al. showed replacement leads to inevitable collapse; accumulation leads to bounded error
+(arXiv 2024).
 
 What has not been demonstrated is the chain as an integrated phenomenon. No study measures
 substitutive AI use at scale → contamination of public corpora → collapse dynamics in
 next-generation models as a continuous, observed process. The individual links are established;
-the loop is a logical inference from those links. [See [The Stakes](the-stakes), "The Collapse Chain." This inference is the strongest available
-case for a systemic risk — it must be stated as an inference, not as established fact.]
+the loop is a logical inference from those links. See [The Stakes](the-stakes), "The Collapse Chain."
 
 There are additional uncertainties within the chain. Dohmatob et al.'s 1% synthetic data
 threshold — "even the smallest fraction of synthetic data... can still lead to model collapse"
 — comes from a supervised linear regression model, not from production LLM training. Whether
 frontier model training is subject to the same dynamics at the same thresholds is not known.
-[Solid direction; uncertain specific threshold — see [The Stakes](the-stakes) for the caveat, confirmed against Dohmatob source text.]
+See [The Stakes](the-stakes) for the full caveat.
 
 ---
 
@@ -127,16 +122,14 @@ preserving gains. Shen & Tamkin's Generation-Then-Comprehension pattern showed t
 comprehension after AI code generation preserved learning. Kazemitabaar et al.'s Lead-and-Reveal
 technique — where the AI guides the learner through the problem-solving process, prompting
 what to do at each stage before revealing the code — was the most effective of seven tested
-friction techniques. [Solid — Kazemitabaar et al. 2025, IUI, N=82+42. Population: novice
-undergraduates, data structures course, not professional developers.]
+friction techniques (Kazemitabaar et al. 2025, IUI).
 
 These are useful. They don't answer the question of how collaborative generation should work
 for prose and ideas at the scale of professional knowledge work.
 
 Should the human produce a rough draft and the AI refine it? Should they alternate passes?
 Should the AI generate options and the human choose and extend? The ground truth names this
-directly: "The exact interaction model for prose/ideas is an open question." [Ground truth
-discourse, Step 4, item 4.] No study has directly tested these alternatives as paired conditions.
+directly: "The exact interaction model for prose/ideas is an open question." No study has directly tested these alternatives as paired conditions.
 Siddiqui et al.'s integrated writing tool (Script&Shift) provides evidence that scaffolded
 subprocesses preserve knowledge transformation — but it is a single study with n=30 per
 condition, on undergraduate source-based writing, at arXiv preprint stage.
@@ -156,7 +149,7 @@ No study has measured what happens to developers who use cix extensions. Not whe
 critical thinking is preserved. Not whether their architectural reasoning compounds or atrophies.
 Not whether the discourse step in craft-rhetoric actually produces unique content or whether
 users accept the first synthesis that sounds reasonable. The `build-evals` plugin exists; it has
-not been run. [Solid — see [What cix Does](what-cix-does), "What cix Does Not Claim."]
+not been run. See [What cix Does](what-cix-does), "What cix Does Not Claim."
 
 This means every specific claim about cix is an extrapolation:
 
@@ -168,15 +161,13 @@ This means every specific claim about cix is an extrapolation:
   But the Bansal et al. finding — that explanations increase acceptance regardless of correctness —
   warns that well-documented methodology can produce compliance rather than evaluation. Whether
   the docs/ layer enables genuine calibration or serves as a reassurance artifact that users skim
-  and accept is not measured. [Solid — Bansal et al. 2021, CHI, 378 citations, multi-study.]
+  and accept is not measured (Bansal et al. 2021, CHI).
 
 - The dao engagement model — skills as methodologies for discovering the user's unique approach,
   not catalogs of preset answers — is meant to resist the homogenization cix documents. It depends
   on the discourse step producing something the human actually generated, not something they
   approved. Whether that happens in practice depends entirely on whether the human brings
-  something to discover. [Architectural — ground truth Step 4 item 5, and Wan & Kalman 2025
-  as proof-of-concept countermeasure, arXiv preprint, single modified replication, not independently
-  replicated.]
+  something to discover.
 
 The design choices are grounded. The outcomes are not measured. That is where the project stands.
 
@@ -186,7 +177,7 @@ The design choices are grounded. The outcomes are not measured. That is where th
 
 The research in [The Paradox](the-paradox) through [The Stakes](the-stakes) exists inside a market context that the research itself doesn't
 resolve. The productivity gains are real: Cui et al.'s three corporate RCTs measured +26% task
-completion across 4,867 developers. [Solid — Cui et al. 2024, S18, SSRN working paper.] That
+completion across 4,867 developers (Cui et al. 2024, SSRN). That
 signal is what organizations measure, fund, and adopt.
 
 A 26% task completion gain appears in a dashboard in week three. Skill atrophy — if it matches
@@ -204,7 +195,7 @@ guarantee that complementary design at scale produces the outcomes the theory pr
 timescale that matters for individual career development or collective epistemic health. The
 honest framing from the ground truth discourse: "Market forces favor quick wins. Mastery
 orientation is not the primary market driver. cix is betting against the dominant incentive
-structure." [Ground truth Step 4, item 1.]
+structure."
 
 ---
 
@@ -229,8 +220,8 @@ designs, different domains.
 
 The research shows design can steer toward positive outcomes. It is the best-supported finding
 in this library. The same study that shows -17% exam
-performance for GPT Base shows no significant harm for GPT Tutor. Same model. Different design.
-[Solid — Bastani et al. 2025, S2, PNAS.]
+performance for GPT Base shows no significant harm for GPT Tutor. Same model. Different design
+(Bastani et al. 2025, PNAS).
 
 The gaps are not a reason to doubt the design. They are a map of what to measure next. What
 happens to developer capability over two years of AI use. Whether code comprehension and prose

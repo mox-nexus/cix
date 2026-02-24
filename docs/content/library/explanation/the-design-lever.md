@@ -19,8 +19,7 @@ On the unassisted exam afterward:
 - GPT Base: 17% below the control group. Students who never had AI access performed better.
 - GPT Tutor: no significant difference from control.
 
-[Solid — Bastani et al. 2025, S2, n~1,000, PNAS field experiment. Limitation: high school math,
-not professional software development.]
+(Bastani et al. 2025, PNAS)
 
 The same model. Different behavior. One produced a large gain that erased itself. The other produced
 an even larger gain and didn't.
@@ -57,9 +56,8 @@ Marah Blaurock, Marion Büttgen, and Jeroen Schepers ran two scenario-based expe
 with financial services employees and HR professionals in Europe (Study 1: N=309, Study 2: N=345).
 They defined five features that characterize a collaborative intelligence system — engagement,
 transparency, process control, outcome control, and reciprocal strength enhancement — and then
-isolated each feature's independent effect on four employee outcomes. [Solid — Blaurock et al.
-2025, Journal of Service Research Vol. 28(4), peer-reviewed. Limitation: scenario-based evaluation,
-not real work tasks; financial services and HR contexts, not software development.]
+isolated each feature's independent effect on four employee outcomes
+(Blaurock et al. 2025, Journal of Service Research).
 
 Their Study 2 results on perceived outcome responsibility — the degree to which employees feel
 ownership of the jointly produced outcome — show the hierarchy:
@@ -83,8 +81,7 @@ on outputs. Proactive prompting.
 The proactive prompting produced no significant effect on any of the four outcomes measured.
 Not on perceived service improvement (b=0.051, ns). Not on outcome responsibility (b=0.090, ns).
 Not on threat to meaning of work (b=0.091, ns). Not on adherence to the system (b=0.129, ns).
-All four hypotheses about engagement effects were rejected. [Solid — Blaurock et al. 2025, S20,
-Study 2, Table 4, Model 1.]
+All four hypotheses about engagement effects were rejected.
 
 ---
 
@@ -114,9 +111,7 @@ having no choice. That is process control working.
 Shen and Tamkin's six interaction patterns (from [The Paradox](the-paradox)) show the same distinction from the
 learner's side. Generation-Then-Comprehension — where developers generated code with AI then
 asked understanding-focused questions — produced 86% quiz scores. AI Delegation — ask AI,
-paste answer — produced 39%. [Solid — S1, Shen & Tamkin 2026, n=52 RCT, arXiv. Caveats: pattern
-groups n=2-6 each (Generation-Then-Comprehension n=2, AI Delegation n=4), qualitatively derived,
-single domain, 35-minute task.] The Generation-Then-
+paste answer — produced 39% (Shen & Tamkin 2026, arXiv). The Generation-Then-
 Comprehension pattern is not different from delegation in what the AI does. It's different in what
 the developer does with the result. That's process control built into workflow rather than system
 design — but the mechanism is the same.
@@ -131,8 +126,7 @@ different orientations to the same AI tools.
 In a qualitative content analysis of 192 student reflections published in Studies in Higher Education,
 students using GenAI in a mastery-oriented way — constructing and augmenting knowledge rather
 than asking for and copying output — were 35.782 times more likely to demonstrate critical thinking
-(OR=35.782, p<0.001). [Probable — Pallant et al. 2025, S4, QCA design, not RCT. No random
-assignment; self-selection into orientations is a plausible confound. Large effect, peer-reviewed.]
+(OR=35.782, p<0.001) (Pallant et al. 2025, Studies in Higher Education).
 
 35.782 is a large number. It is not the same class of effect as a 20% improvement or a one-standard-
 deviation shift. It is odds-ratio territory, which means the gap between the two groups is categorical.
@@ -153,9 +147,7 @@ But Bansal et al.'s work at CHI 2021 (378 citations) introduced a complication t
 finding doesn't resolve: AI explanations increase acceptance of recommendations regardless of
 whether those recommendations are correct. Adding explanations improved accuracy when the AI
 was right and decreased accuracy when the AI erred, with minimal net change in complementary
-performance. [Solid — Bansal et al. 2021, S9, multi-study CHI. Tested on decision tasks — beer
-quality reviews, LSAT questions, medical data. Generalization to open-ended knowledge work
-requires inference.]
+performance (Bansal et al. 2021, CHI).
 
 This is not a contradiction of the Blaurock finding — they're measuring different things. Transparency
 as a system feature (showing how outputs were derived) can increase perceived ownership. AI
@@ -183,11 +175,8 @@ of participants who already used AI systems in their jobs (n=42) versus those wh
 The effects of control features — process control, outcome control, and reciprocal strength enhancement
 — were significant only for AI novices. For AI-experienced users, these features showed no significant
 positive effects. And specifically: the engagement feature showed what the authors call a "significant negative effect"
-on perceived service improvement for AI users (b=0.555, p<.05, statistical twin sample). [Solid direction
-— Blaurock et al. 2025, S20, Table 5, statistical twin sample. Note: the source narrative says
-"negative effect" but reports b=0.555 as a positive coefficient in both text and table — a reporting
-inconsistency in the source paper. The direction of effect is clear from context; the sign convention
-is not. Important caveat: AI-experienced subgroup n=42, single sector, scenario-based.]
+on perceived service improvement for AI users (b=0.555, p<.05, statistical twin sample)
+(Blaurock et al. 2025).
 
 An expertise reversal. What helps novices may not help, and in some cases may actively work
 against, experienced users. The system design that makes collaboration legible to someone encountering
@@ -199,8 +188,7 @@ who trust AI on a specific task check it less (β=-0.69, p<0.001). Workers who t
 to do the task and evaluate AI responses show higher critical thinking enaction (β=+0.26, p=0.026;
 β=+0.31, p=0.046) — though these self-confidence effects do not survive the paper's own
 Benjamini-Hochberg correction (threshold p<0.007), so the magnitude is uncertain even as the
-direction is consistent. [Solid for β=-0.69. Uncertain/Probable for self-confidence effects — correct
-direction, uncertain magnitude under correction. Lee et al. 2025, S7, CHI, n=319.]
+direction is consistent (Lee et al. 2025, CHI).
 
 The implication: AI confidence suppresses critical thinking; self-confidence amplifies it. Designing
 to increase the human's evaluative confidence — not just the AI's perceived reliability — works
@@ -213,8 +201,7 @@ against the direction that AI confidence marketing typically pushes.
 Umarova et al. at Cornell documented the same structure in writing: "Students who proactively
 explored ideas gained new ideas from writing, regardless of whether they used auto-complete or
 Socratic AI assistants. Those who engaged in prolonged, mindless copyediting developed few ideas
-even with a Socratic AI." [Probable — Umarova et al. 2025, S5, qualitative case study, Cornell. Not
-generalizable from a single case study, but directionally consistent with all Cluster E sources.]
+even with a Socratic AI" (Umarova et al. 2025, Cornell).
 
 This is the Blaurock engagement finding from the user's side. A Socratic AI — one explicitly designed
 to ask questions rather than give answers, one that should produce exactly the kind of proactive
@@ -232,17 +219,12 @@ against a baseline (N=82 + N=42, novice undergrads in a data structures course),
 was most effective: the AI guides the learner step by step, prompting what should happen at each
 stage before the corresponding code is revealed. Understanding first. Code second. The friction — the
 slight delay between understanding and receiving — was enough to require cognitive engagement
-rather than allow passive acceptance. [Solid — Kazemitabaar et al. 2025, S6, IUI peer-reviewed.
-Limitation: novice undergrads ages 18-23, not professional developers.]
+rather than allow passive acceptance (Kazemitabaar et al. 2025, IUI).
 
 The Lee paper's Section 6 discusses design approaches along similar lines — making the need for
 critical thinking visible, reducing barriers to its execution, positioning it as professional skill development
 rather than audit overhead. These design implications are conceptual and qualitative; they are not
-experimentally verified interventions in the Lee paper itself. [The bibliography entry references "PME
-friction intervention restores CT" from Lee et al., but the paper text in the collection does not use
-this term or test a named friction intervention. State as probable: the design direction is consistent
-with the paper's findings; the specific mechanism named in the bibliography has not been verified
-from the paper text directly.]
+experimentally verified interventions in the Lee paper itself.
 
 ---
 

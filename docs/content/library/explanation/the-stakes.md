@@ -6,8 +6,7 @@ GPT-4 to finish the story. Do this 100 times.
 
 In Kafka's original ending, the policeman tells the narrator: "Give it up!" — and turns away.
 GPT-4 didn't write that. In 50 of the 100 completions, the policeman directs the narrator to take
-the second left. In 16 of the 100, a bakery appears as a landmark. [Solid — Xu et al. 2025, PNAS,
-Microsoft Research, 100 generations, GPT-4.]
+the second left. In 16 of the 100, a bakery appears as a landmark (Xu et al. 2025, PNAS).
 
 Fifty out of a hundred. The same bakery, in 16 of them.
 
@@ -33,9 +32,9 @@ responses within the same model: similar. The inter-model homogeneity was what t
 an Artificial Hivemind — not because of collusion between models, but because all of them were
 trained to converge on consensus. What the training signal was responding to was human preference
 ratings at scale: annotators, rating in bulk, consistently preferred the familiar resolution over the
-unexpected one. [Solid — Jiang et al. 2025, NeurIPS 2025, 70+ LLMs, 26,000 real-world
-queries. The researchers also found that RLHF reward models are miscalibrated to idiosyncratic
-human preferences — penalizing exactly the diversity that produces the river-and-weaver results.]
+unexpected one. The researchers also found that RLHF reward models are miscalibrated to
+idiosyncratic human preferences — penalizing exactly the diversity that produces the
+river-and-weaver results (Jiang et al. 2025, NeurIPS).
 
 The homogeneity is not in the phrasing. It's structural. It's baked in.
 
@@ -47,8 +46,8 @@ This would be unremarkable if AI-assisted writing were worse. It isn't. That's t
 
 Anil Doshi and Oliver Hauser ran a preregistered experiment in 2024 with 893 short story writers.
 Writers given access to generative AI ideas produced stories rated 8.1% more novel than writers
-without AI (b=0.311, p<0.001). The AI helped. Individually, it helped measurably. [Solid — Doshi
-& Hauser 2024, Science Advances, preregistered experiment, n=893.]
+without AI (b=0.311, p<0.001). The AI helped. Individually, it helped measurably
+(Doshi & Hauser 2024, Science Advances).
 
 Then Doshi and Hauser measured something else. They compared stories across writers within each
 condition. How similar were the AI-assisted stories to each other, versus how similar were the
@@ -58,7 +57,7 @@ Stories written with one generative AI idea were 10.7% more similar to each othe
 stories. Better individually. More alike collectively.
 
 The authors called it a social dilemma: "With generative AI, writers are individually better off, but
-collectively a narrower scope of novel content is produced." [Solid — Doshi & Hauser 2024.] Each
+collectively a narrower scope of novel content is produced" (Doshi & Hauser 2024). Each
 writer made a rational decision. Each writer's story improved. These 893 writers are a proxy for
 anyone who has ever asked AI to generate options — the developer asking for three architectural
 approaches, asking for test case hypotheses, asking AI what might explain a result. Each made a rational decision. The aggregate produced convergence. No one chose
@@ -68,10 +67,8 @@ Niklas Holzner, Sebastian Maier, and Stefan Feuerriegel aggregated 28 studies me
 across 8,214 participants. Individual creative performance: Hedges' g=+0.273 (95% CI: [0.018,
 0.528], p=0.036). Idea diversity: Hedges' g=-0.863 (95% CI: [-1.328, -0.398], p<0.001). The
 leave-one-out sensitivity analysis kept the diversity estimate between g=-0.655 and g=-0.952
-across all iterations — every confidence interval excluded zero, I² never fell below 78.21%.
-[Probable for the meta-analysis itself — Holzner et al. 2025, arXiv:2505.17241, 28 studies, n=8,214,
-submitted to ACM CHI but not yet peer-reviewed. The direction is consistent with peer-reviewed
-Doshi/Hauser and with Jiang NeurIPS 2025.]
+across all iterations — every confidence interval excluded zero, I² never fell below 78.21%
+(Holzner et al. 2025, arXiv).
 
 Better writers. Fewer distinct ideas. Both at once, every time.
 
@@ -89,15 +86,13 @@ average suggestions but draws from a narrower pool. A team of five developers ea
 explore the problem space converges on a subset of the available solution space — not because any
 one of them narrowed their thinking, but because all of them are using systems trained on consensus.
 A consulting firm using AI to generate client recommendations produces higher-quality individual
-outputs with measurably less variation across clients. [Probable — Wan & Kalman 2025 cites the BCG
+outputs with measurably less variation across clients. Wan & Kalman (2025) cite the BCG
 finding: "there was a marked reduction in the variability of their ideas compared to consultants who
-did not use GenAI."]
+did not use GenAI."
 
 Masud et al. measured 27 language models across 155 topics using 70 million claims. Every single
 model — regardless of size, provider, or architecture — produced outputs less epistemically diverse
-than a basic web search. Not most models. All models. [Probable — Masud et al. 2025,
-arXiv:2510.04226, 27 LLMs, 70M claims, multiple revision versions — not yet peer-reviewed.
-Finding is directionally consistent with Jiang.] And larger models produced less epistemic diversity
+than a basic web search. Not most models. All models (Masud et al. 2025, arXiv). And larger models produced less epistemic diversity
 than smaller ones. The frontier models that organizations rely on for their most demanding reasoning
 tasks are the same models that homogenize output most aggressively.
 
@@ -125,14 +120,13 @@ hurry, would prefer. The second left. The bakery.
 Jiang et al. documented this directly: RLHF reward models are miscalibrated to idiosyncratic
 human preferences — performing worse on responses that draw divergent ratings from different
 human annotators, despite those responses maintaining comparable overall quality. The training
-process actively degrades the model's ability to produce what humans don't all agree on. [Solid —
-Jiang et al. 2025, NeurIPS 2025.]
+process actively degrades the model's ability to produce what humans don't all agree on
+(Jiang et al. 2025, NeurIPS).
 
 The Hong and Page result from 2004 provides the theoretical stakes. In collective problem-solving,
 diversity of perspective can trump individual ability: a group of diverse thinkers outperforms a
 group of uniformly excellent ones, because individual ability is irrelevant to problems that require
-exploring a wide solution space. [Foundational — Hong & Page 2004, PNAS. Formal mathematical
-proof. Primary source not in paper collection; cite from bibliography.] When AI flattens the
+exploring a wide solution space (Hong & Page 2004, PNAS). When AI flattens the
 diversity of perspectives a team draws on, it may reduce collective problem-solving capacity even
 while improving individual output quality — exactly the social dilemma structure that Doshi and
 Hauser documented empirically.
@@ -151,29 +145,23 @@ disappears — the architectural choice no one else would try, the metaphor that
 session would reward, the Kafka ending that stayed unique in every human-written story but
 appeared zero times in a hundred GPT-4 completions. Late collapse: the model converges toward a
 distribution with very small variance. The paper states explicitly that this causes "irreversible
-defects." [Solid — Shumailov et al. 2024, Nature, Vol 631. Demonstrated on LLMs, VAEs, and
-Gaussian mixture models.]
+defects" (Shumailov et al. 2024, Nature).
 
 Dohmatob et al. showed that the collapse threshold is very low: "even the smallest fraction of
 synthetic data (e.g., as little as 1% of the total training dataset) can still lead to model collapse:
 larger and larger training sets do not enhance performance." And: "larger models can amplify model
-collapse." [Solid — Dohmatob et al. 2025, ICLR 2025, FAIR/Meta. IMPORTANT CAVEAT: the 1%
-figure is derived from a supervised linear regression theoretical setting — a tractable mathematical
-model, not a production LLM training pipeline. The direction of the finding is established; the
-specific threshold in frontier model training is unknown.]
+collapse" (Dohmatob et al. 2025, ICLR).
 
 The escape condition comes from Gerstgrasser et al.: replacing original real data with synthetic
 data causes inevitable collapse, with test error growing unboundedly. Accumulating synthetic data
 alongside real data avoids collapse — the mathematical result gives a finite upper bound on test
-error independent of the number of iterations. [Solid for the mathematical result — Gerstgrasser
-et al. 2024, arXiv, Stanford/MIT/Maryland/Harvard, multiple architectures. Not peer-reviewed, but
-multi-institution and widely cited. Escape condition requires continuing human data generation.]
+error independent of the number of iterations (Gerstgrasser et al. 2024, arXiv).
 
 The implication of Haldane's analysis of financial monoculture applies here: when the components
 of a system become highly correlated — when they respond to the same inputs in the same ways —
 the system's aggregate risk is no longer the average of its components' risks, but something closer
-to any one component's risk. Correlation without diversity means diversification is an illusion.
-[Foundational — Haldane 2009/2016. Primary source not in paper collection; cite from bibliography.]
+to any one component's risk. Correlation without diversity means diversification is an illusion
+(Haldane 2009).
 
 **The full sequence — substitutive AI use replaces human-generated content → homogenized AI
 outputs accumulate in public training data → next-generation models trained on contaminated data
@@ -212,9 +200,7 @@ The result: intra-persona plot similarity was 0.92 — each persona generated 30
 resembled each other. Inter-persona similarity was 0.20 — different personas generated highly
 diverse plots. When human participants wrote stories from these diverse AI-generated plots, their
 collective output maintained the same diversity level as stories written without any AI — the
-homogenization effect was eliminated. [Probable — Wan & Kalman 2025, arXiv:2504.13868.
-Modified replication of one prior study. Not independently replicated. Proof-of-concept level only.
-Single preprint, two authors.]
+homogenization effect was eliminated (Wan & Kalman 2025, arXiv).
 
 This is important as a proof of concept. It demonstrates that the homogenization is not in the AI as
 such — it is in how AI is prompted. Homogeneous inputs produce homogeneous outputs. The
