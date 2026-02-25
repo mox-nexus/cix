@@ -6,7 +6,7 @@ How intelligent experimentation works: ix as a multi-agent system running on the
 
 ## The Two Layers
 
-**Matrix** is the platform — the agentic data plane. It owns agent execution, DAG orchestration, storage, configuration, and dependency injection.
+**Matrix** is the agent runtime. It owns agent execution, DAG orchestration, storage, configuration, and dependency injection.
 
 **ix** is an experimentation tool — a multi-agent system that runs inside Matrix. It defines experiment models, components, and lifecycle. Matrix handles the rest.
 
@@ -90,7 +90,7 @@ Each adapter maps `AgentSpec` to its native API. The Claude adapter maps `instru
 
 ### Construct and Artifacts
 
-Matrix's data plane is the **Construct** — an append-only ledger of immutable **Artifacts**:
+Matrix's core abstraction is the **Construct** — an append-only ledger of immutable **Artifacts**:
 
 ```python
 class Artifact(BaseModel, frozen=True):
@@ -367,7 +367,7 @@ runs_per_condition: 5
 | StoragePort | **Matrix** | Shared persistence |
 | Container (DI) | **Matrix** | Wires adapters into components |
 | Orchestrator (DAG) | **Matrix** | Kind-agnostic execution |
-| Construct, Artifact | **Matrix** | Core data plane types |
+| Construct, Artifact | **Matrix** | Core runtime types |
 | Config loader | **Matrix** | Shared config strategy |
 | Experiment models | **ix** | Domain-specific |
 | Subject (union) | **ix** | ix domain concept |
