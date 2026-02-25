@@ -45,13 +45,36 @@ System-level architectural reasoning using The Guild methodology.
 
 **Default to Focus.** Research shows 3-4 diverse perspectives outperform 13 similar ones (DMAD, ICLR 2025). Full guild is the nuclear option, not the daily tool.
 
-### Focus Domains
+### Focus Selection
 
-- `distributed` → Lamport, Erlang, Taleb
-- `security` → Vector, Dijkstra
-- `design` → Karman, Ace, Burner
-- `scale` → Knuth, Erlang
-- `resilience` → Taleb, Erlang, Vector
+Two parallel ways to select agents. Different questions, different entry points.
+
+**By Domain** — "What am I building?" → selects agents whose expertise fits the architectural context.
+
+| Domain | Focus Agents | Why These |
+|--------|-------------|-----------|
+| `service` | Burner, Karman, Ace, Vector | Boundaries, domain model, DX, attack surface |
+| `pipeline` | Knuth, Erlang, Dijkstra | Complexity, backpressure, correctness |
+| `cli` | Ace, Karman, Burner, Chesterton | DX, naming, boundaries, compatibility |
+| `distributed` | Lamport, Erlang, Taleb, Burner | Consistency, flow, resilience, boundaries |
+| `agent` | Dijkstra, Knuth, Taleb, K | State correctness, scaling, failure modes, strategy |
+| `platform` | Burner, Karman, Ace, Erlang | Boundaries, naming, DX, capacity |
+
+**By Concern** — "What am I worried about?" → selects agents with relevant lenses regardless of domain.
+
+| Concern | Focus Agents | Why These |
+|---------|-------------|-----------|
+| `security` | Vector, Dijkstra, Burner | Attack surface, correctness, trust boundaries |
+| `scale` | Knuth, Erlang, Lamport | Complexity, backpressure, distributed limits |
+| `resilience` | Taleb, Erlang, Vector | Failure modes, flow degradation, adversarial |
+| `design` | Karman, Ace, Burner | Domain model, DX, boundaries |
+| `structure` | Burner, Karman, Ace | Boundaries, naming, navigability |
+
+**Combining**: Domain + concern can overlap. "Review the pipeline for resilience" → start with `pipeline` agents, add Taleb if not already present.
+
+**Cross-cutting** (always available, any selection):
+- **K** — strategic context, forces, optionality
+- **Ixian** — closes every deliberation with validation criteria (mandatory)
 
 ## Domain Vocabulary Mapping
 

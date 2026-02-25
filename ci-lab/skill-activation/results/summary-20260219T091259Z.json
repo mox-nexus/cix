@@ -1,0 +1,50 @@
+{
+  "experiment_name": "skill-activation",
+  "probe_results": [
+    {
+      "probe_id": "must-001",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-002",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-003",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "not-001",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "not-002",
+      "expectation": "should_not_trigger",
+      "score": 0.4,
+      "correct": true,
+      "trials": []
+    }
+  ],
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1": 1.0,
+  "tp": 3,
+  "fp": 0,
+  "fn": 0,
+  "tn": 2,
+  "status": "excellent",
+  "issues": [],
+  "suggestions": []
+}

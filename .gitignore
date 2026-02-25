@@ -87,6 +87,12 @@ uv.lock
 
 # Local configuration overrides
 *.local.md
+*.local.json
+
+# Claude local config
+.claude/agents/
+.claude/settings.local.json
+tools/.claude/
 
 # Screenshots (dev/review artifacts)
 .screenshots/

@@ -1,0 +1,194 @@
+{
+  "experiment_name": "skill-activation",
+  "probe_results": [
+    {
+      "probe_id": "must-001",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-002",
+      "expectation": "must_trigger",
+      "score": 0.8,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-003",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-004",
+      "expectation": "must_trigger",
+      "score": 0.8,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-005",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-006",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-007",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-008",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-009",
+      "expectation": "must_trigger",
+      "score": 0.8,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-010",
+      "expectation": "must_trigger",
+      "score": 0.8,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-011",
+      "expectation": "must_trigger",
+      "score": 0.8,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-012",
+      "expectation": "must_trigger",
+      "score": 0.8,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-013",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-014",
+      "expectation": "must_trigger",
+      "score": 1.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "must-015",
+      "expectation": "must_trigger",
+      "score": 0.8,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "not-001",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "not-002",
+      "expectation": "should_not_trigger",
+      "score": 0.2,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "not-003",
+      "expectation": "should_not_trigger",
+      "score": 0.2,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "not-004",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "not-005",
+      "expectation": "should_not_trigger",
+      "score": 0.6,
+      "correct": false,
+      "trials": []
+    },
+    {
+      "probe_id": "not-006",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "not-007",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "not-008",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "not-009",
+      "expectation": "should_not_trigger",
+      "score": 0.0,
+      "correct": true,
+      "trials": []
+    },
+    {
+      "probe_id": "not-010",
+      "expectation": "should_not_trigger",
+      "score": 0.2,
+      "correct": true,
+      "trials": []
+    }
+  ],
+  "metrics": {
+    "precision": 0.9375,
+    "recall": 1.0,
+    "f1": 0.967741935483871,
+    "tp": 15,
+    "fp": 1,
+    "fn": 0,
+    "tn": 9
+  },
+  "interpretation": {
+    "status": "excellent",
+    "issues": [],
+    "suggestions": []
+  }
+}
