@@ -11,42 +11,23 @@ Build a marketplace of cognitive extensions grounded in the **Collaborative Inte
 
 ## The Evidence Base
 
-This project is grounded in rigorous research synthesis from premier venues (CHI, ICSE, Nature, PNAS, NeurIPS). The findings are sobering:
+This project is grounded in rigorous research synthesis from premier venues (CHI, ICSE, Nature, PNAS, NeurIPS).
 
 ### The Central Paradox
 
 **AI reliably improves immediate task performance while simultaneously degrading the cognitive foundations that enable long-term human capability.**
 
-| Finding | Source | Implication |
-|---------|--------|-------------|
-| 26% more tasks completed with AI | Cui/Demirer RCTs (n=4,867) | Productivity gains are real |
-| 17% worse exam performance without AI | Bastani et al. PNAS (n=1,000) | Learning harm is real |
-| 86% vs 24% mastery from same AI access | Shen & Tamkin, Anthropic RCT (n=52) | Interaction pattern determines outcome |
-| 20% skill reduction after 3 months | Budzyń et al. Lancet 2025 | Deskilling is measurable |
-| β = -0.69 correlation | Lee et al. CHI 2025 | AI confidence → less critical thinking |
+The productivity gains are real. The learning harm is real. The interaction pattern — not the technology — determines which outcome you get. Same AI, different design, opposite results.
 
-### Key Research Findings
+### What the Research Establishes
 
-**On Cognitive Offloading:**
-- Higher confidence in AI significantly predicts less critical thinking enacted
-- Neural connectivity "systematically scaled down" with AI use (MIT Media Lab EEG study)
-- 83% of AI users couldn't recall quotes from their own AI-assisted essays (Kosmyna et al. 2025, arXiv preprint, n=54)
+- **Cognitive offloading is measurable**: AI confidence predicts less critical thinking; neural engagement scales down with AI use
+- **Skill atrophy is real and invisible**: Performance degrades after AI exposure, and the performer can't detect it
+- **Homogenization is structural**: AI outputs are measurably less diverse than human outputs at the population level, and the effect persists after withdrawal
+- **The engagement model is the lever**: Hints preserve learning; direct answers harm it. Control features work; engagement features don't. Same technology, different design, opposite outcomes.
+- **The critical developer study doesn't exist**: No longitudinal measurement of developer capability without AI after extended AI use
 
-**On Trust Calibration:**
-- Developers spend only 22.4% of coding time verifying AI suggestions (Mozannar et al. CHI 2024, n=21)
-- Explanations alone *increase* overreliance (Bansal et al. CHI 2021)
-- Senior developers trust AI least (2.5%) but use it most effectively (Stack Overflow 2025)
-
-**On Skill Atrophy:**
-- 20% decline in unaided detection after AI exposure (Budzyń et al. Lancet 2025, multicentre observational, 19 endoscopists)
-- Creativity drops on AI withdrawal, homogeneity persists months later (Zhou et al. 2025, n=61)
-- The critical developer study doesn't exist: no longitudinal measurement of developer capability without AI after extended AI use
-- Protective factor: high self-confidence correlates with maintained critical thinking
-
-**On Learning:**
-- GPT Tutor (hints only): No harm to learning
-- GPT Base (direct answers): 17% harm to learning
-- Same technology, different design philosophy, opposite outcomes
+Full evidence with effect sizes, sample sizes, and citations: `docs/content/library/reference/bibliography.md`
 
 ---
 
@@ -68,16 +49,8 @@ The fundamental design decision for every extension:
 
 ### The WHY > HOW Principle
 
-From cix research:
+Explaining motivation produces dramatically better outcomes than prescribing method. Extensions should teach reasoning frameworks, not prescribe solutions:
 
-| Approach | Outcome |
-|----------|---------|
-| Prescribe HOW (do X, then Y, then Z) | 30% secure-by-construction |
-| Explain WHAT + WHY | **80% secure-by-construction** |
-
-**2.5x improvement** from explaining motivation rather than mandating method.
-
-Extensions should teach reasoning frameworks, not prescribe solutions:
 ```
 ❌ "Always use prepared statements for SQL"
 ✅ "SQL injection occurs when user input is treated as code.
@@ -96,7 +69,7 @@ The relationship is one of equals with different capabilities — human judgment
 - **Constitutive** — enables new capability through collaboration
 - **Transparent by default** — provenance, traceability, explanations, observability
 - **Compounding mastery** — each interaction makes both more capable
-- **Enabling control** — user agency is the strongest lever (β = 0.507, Blaurock 2025)
+- **Enabling control** — user agency is the strongest design lever
 - **Non-conformity** — preserve intellectual diversity, resist homogenization
 
 ---
@@ -295,23 +268,17 @@ For component selection, file anatomy, and build guidance: load `craft-extension
 
 ---
 
-## Research-Backed Effect Sizes
+## Design Lever Hierarchy
 
-These findings inform extension design:
+Research establishes a clear ordering of what actually works in human-AI co-production:
 
-| Lever | Effect Size | Source | Implication |
-|-------|------------|--------|-------------|
-| **Control** | β = 0.507 | Blaurock et al. 2025, n=654, J. Service Research | User agency is the strongest lever |
-| **Transparency** | β = 0.415 | Blaurock et al. 2025 | Showing reasoning prevents blind trust |
-| **Mastery orientation** | OR = 35.7 | Pallant et al. 2025 | Users focused on learning maintain capability |
-| **AI confidence** | β = -0.69 | Lee et al. CHI 2025 | Higher AI confidence → less critical thinking |
-| **Engagement features** | b = -0.555 | Blaurock et al. 2025 | Each added feature *reduces* trust |
+1. **Control** — User agency is the strongest lever. Process control, outcome control, the ability to direct and constrain.
+2. **Transparency** — Showing reasoning prevents blind trust. But: explanations that *substitute* for evaluation increase overreliance.
+3. **Mastery orientation** — Users focused on learning maintain capability; users focused on task completion lose it.
+4. **AI confidence suppresses critical thinking** — Marketing AI on reliability pushes users toward blind acceptance. Build the human's evaluative confidence instead.
+5. **Engagement features don't work** — Gamification, achievement tracking, "was this helpful?" prompts add nothing measurable. For experienced users, they reduce trust.
 
-**Design implications:**
-- Control > Transparency > everything else
-- Build extensions that encourage mastery, not just performance
-- Show reasoning; don't just give answers
-- Don't add engagement features for their own sake
+Full effect sizes and sources: `docs/content/library/reference/bibliography.md`
 
 ---
 
@@ -382,47 +349,20 @@ For streaming/incremental updates, use DuckDB with:
 
 > "Can't vibe through answers. Must ground in evidence."
 
-### Why Verification Matters
-
-Research shows:
-- 40-50% of AI-generated code contains security vulnerabilities
 - LLMs cannot reliably self-correct without external feedback
 - Verification must be decoupled from generation to be effective
-
-### Chain-of-Verification Pattern
-
-Independent verification prevents hallucination from corrupting fact-checking:
-1. Generate initial response
-2. Plan verification questions targeting specific claims
-3. Answer each question **independently** (without access to initial response)
-4. Synthesize corrections
-
-This achieves **50-70% hallucination reduction** (Dhuliawala et al. ACL 2024).
+- Chain-of-Verification: generate → plan verification questions → answer independently → synthesize corrections
 
 ---
 
 ## Protective Practices
 
-Based on research, extensions should encourage:
+Extensions should encourage:
 
-### 1. Attempt-First Protocol
-Spend 15-30 minutes on problems before AI consultation. This preserves problem-solving practice.
-
-### 2. Verification Workflows
-Require human review of all AI contributions regardless of perceived quality.
-
-### 3. Metacognitive Prompts
-"What do you think the answer is?" before revealing AI analysis.
-
-### 4. AI-Free Assessment Periods
-Periodic work without AI to maintain baseline capability.
-
-### 5. Explicit Uncertainty Communication
-Never project false confidence. Use evidence levels:
-- **Strong**: Multiple peer-reviewed sources
-- **Moderate**: Single quality source or converging indirect evidence
-- **Weak**: Expert opinion or theoretical prediction
-- **Speculative**: Reasonable inference without direct evidence
+- **Attempt-first**: Try before consulting AI. Preserves problem-solving practice.
+- **Verification workflows**: Human review of all AI contributions regardless of perceived quality.
+- **Metacognitive prompts**: "What do you think?" before revealing AI analysis.
+- **Explicit uncertainty**: Never project false confidence. Use evidence levels: Strong / Moderate / Weak / Speculative.
 
 ---
 
@@ -501,19 +441,7 @@ Save all screenshots to `.screenshots/` in the project root. This directory is g
 
 ### Evidence-Based Claims
 
-All claims in extensions should be traceable:
-```
-✅ "According to Bastani et al. (PNAS 2025), unrestricted ChatGPT use caused 17% worse exam performance"
-❌ "AI harms learning"
-```
-
-### Uncertainty Acknowledgment
-
-When evidence is limited:
-```
-✅ "This is speculative - no direct research exists, but analogous domain findings suggest..."
-❌ "Research shows..." (when it doesn't)
-```
+All claims in extensions should be traceable to specific sources with author, year, and finding. Never say "research shows" without a citation. When evidence is limited, say so explicitly.
 
 ---
 
@@ -551,16 +479,9 @@ The guild speaks in agent metaphors (Erlang's "Valve", Lamport's "Time", Burner'
 
 ## References
 
-Core research informing this project:
+Full bibliography with 45+ entries, effect sizes, and expandable abstracts: `docs/content/library/reference/bibliography.md`
 
-- Bastani et al. (2025). "Generative AI without guardrails can harm learning." PNAS.
-- Lee et al. (2025). "The Impact of Generative AI on Critical Thinking." CHI.
-- Kosmyna et al. (2025). "Your Brain on ChatGPT: Cognitive Debt." MIT Media Lab.
-- Dhuliawala et al. (2024). "Chain-of-Verification Reduces Hallucination." ACL.
-- Blaurock et al. (2025). "Designing CI Systems for Employee-AI Service Co-Production." Journal of Service Research.
-- Cui/Demirer et al. (2024). "Effects of Generative AI on High Skilled Work." RCTs.
-
-Full bibliography in `docs/content/library/reference/bibliography.md`.
+Primary source papers collected as text: `scratch/papers/`
 
 ---
 

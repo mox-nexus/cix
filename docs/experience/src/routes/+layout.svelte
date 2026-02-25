@@ -38,11 +38,11 @@
 		bottom: var(--space-1);
 		right: var(--space-1);
 		font-family: var(--font-mono);
-		font-size: 0.55rem;
+		font-size: var(--type-xs);
 		letter-spacing: 0.15em;
 		text-transform: uppercase;
 		color: var(--dao-muted, #555);
-		opacity: 0.4;
+		opacity: 0.3;
 		pointer-events: none;
 		z-index: 9999;
 	}

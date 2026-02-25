@@ -1,0 +1,286 @@
+# The Design Lever
+
+Nearly a thousand Turkish high school students. One school. One school year. Same GPT-4 model
+underneath both conditions. Two different designs sitting on top of it.
+
+GPT Base mimicked standard ChatGPT. Students asked questions, GPT-4 answered them. If they
+asked for the solution to a math problem, they got the solution.
+
+GPT Tutor used guardrails based on teacher input. When students asked for the solution, they got
+a hint designed to help them make progress toward figuring it out.
+
+During the practice sessions:
+- GPT Base: grades improved 48% over the control group.
+- GPT Tutor: grades improved 127%.
+
+Both AI conditions outperformed control. Both were helpful. Both were using GPT-4.
+
+On the unassisted exam afterward:
+- GPT Base: 17% below the control group. Students who never had AI access performed better.
+- GPT Tutor: no significant difference from control.
+
+(Bastani et al. 2025, PNAS)
+
+The same model. Different behavior. One produced a large gain that erased itself. The other produced
+an even larger gain and didn't.
+
+This is what it looks like when harm is a design variable, not a fate.
+
+---
+
+## The GPT Base Students Said Something
+
+The Bastani paper's language about GPT Base users: students "attempt to use GPT-4 as a 'crutch'
+by asking for and copying solutions." And they did not perceive any reduction in their learning as a
+consequence. The perception gap from [The Paradox](the-paradox) appears here again: the students using GPT Base felt
+the assistance working. The exam afterward was the only measure they didn't get to see before
+the damage was done.
+
+What the guardrails in GPT Tutor changed was not the model's capability. It changed what the
+model would do with a student's request for an answer. The hint — specifically teacher-designed
+to prompt the student toward the next step without completing it — kept the cognitive gap open.
+The student still had to work through the resolution. The learning happened because the tool
+required it to.
+
+This is the mechanism from [The Mechanism](the-mechanism) expressed as a design choice: the generative step is the encoding
+event. GPT Base closed the gap. GPT Tutor kept it open.
+
+---
+
+## What Happens When You Vary One Feature at a Time
+
+The Bastani comparison shows what different designs do to outcomes. It doesn't decompose which
+specific feature of GPT Tutor does the work. That's what Blaurock et al. measured.
+
+Marah Blaurock, Marion Büttgen, and Jeroen Schepers ran two scenario-based experiments
+with financial services employees and HR professionals in Europe (Study 1: N=309, Study 2: N=345).
+They defined five features that characterize a collaborative intelligence system — engagement,
+transparency, process control, outcome control, and reciprocal strength enhancement — and then
+isolated each feature's independent effect on four employee outcomes
+(Blaurock et al. 2025, Journal of Service Research).
+
+Their Study 2 results on perceived outcome responsibility — the degree to which employees feel
+ownership of the jointly produced outcome — show the hierarchy:
+
+- Process control: b=0.715 (p<.001)
+- Outcome control: b=0.524 (p<.011)
+- Transparency: b=0.511 (p<.001)
+- Engagement: b=0.090 (not significant)
+
+Process control means the user can influence what data the system considers and the rules by
+which it generates output. Outcome control means the user can appeal or modify the final decision
+after it's produced. The two control features together say: the human's judgment is not just
+consulted but structurally indispensable.
+
+Transparency means the system explains how it reached its conclusions — what parameters shaped
+the output. Not a black box.
+
+Engagement means the system actively asks for the user's opinion at crossroads and solicits feedback
+on outputs. Proactive prompting.
+
+The proactive prompting produced no significant effect on any of the four outcomes measured.
+Not on perceived service improvement (b=0.051, ns). Not on outcome responsibility (b=0.090, ns).
+Not on threat to meaning of work (b=0.091, ns). Not on adherence to the system (b=0.129, ns).
+All four hypotheses about engagement effects were rejected.
+
+---
+
+## Why Engagement Features Don't Work
+
+The result looks counterintuitive: asking users for their input at decision points — building
+participation into the interface — has no measurable effect on whether they feel ownership or
+perceive improvement. But it follows from the mechanism.
+
+Cognitive engagement is not the same thing as being prompted for input. A system that asks
+"do you agree with this recommendation?" before proceeding can produce the checked-box behavior
+without the cognitive work. The user registers a preference. The generative step — forming the
+judgment, tracing the reasoning, producing the evaluation — may or may not happen.
+
+Process control and outcome control work differently. They give the human structural authority
+over what goes into the system and what comes out. When you can modify the parameters and
+override the decision, the recommendation is not the endpoint — it's the input to your judgment.
+The authority to override is also the responsibility to evaluate. These features make passive
+acceptance harder to sustain.
+
+Notice what this means in practice. The moment you have authority to override the recommendation
+is the moment you are answerable for whatever comes next. You didn't ask to become the judge —
+the design made you one. You may not override it. But you cannot simply receive it anymore,
+because receiving it now means choosing not to override it. That is a different cognitive act than
+having no choice. That is process control working.
+
+Shen and Tamkin's six interaction patterns (from [The Paradox](the-paradox)) show the same distinction from the
+learner's side. Generation-Then-Comprehension — where developers generated code with AI then
+asked understanding-focused questions — produced 86% quiz scores. AI Delegation — ask AI,
+paste answer — produced 39% (Shen & Tamkin 2026, arXiv). The Generation-Then-
+Comprehension pattern is not different from delegation in what the AI does. It's different in what
+the developer does with the result. That's process control built into workflow rather than system
+design — but the mechanism is the same.
+
+---
+
+## The Scale of the Orientation Effect
+
+Blaurock isolates design features. Pallant et al. measured what happens when students bring
+different orientations to the same AI tools.
+
+In a qualitative content analysis of 192 student reflections published in Studies in Higher Education,
+students using GenAI in a mastery-oriented way — constructing and augmenting knowledge rather
+than asking for and copying output — were 35.782 times more likely to demonstrate critical thinking
+(OR=35.782, p<0.001) (Pallant et al. 2025, Studies in Higher Education).
+
+35.782 is a large number. It is not the same class of effect as a 20% improvement or a one-standard-
+deviation shift. It is odds-ratio territory, which means the gap between the two groups is categorical.
+Students who used AI to figure things out were not slightly more likely to think critically. They were
+in a qualitatively different relationship with the work.
+
+The same AI. Different orientation. A 35-fold difference in the probability of critical thinking.
+
+---
+
+## The Transparency Complication
+
+Transparency ranked third in Blaurock's hierarchy (b=0.511) — a real positive effect. Understanding
+how the system reaches its conclusions should improve outcome responsibility and reduce the
+black-box problem.
+
+But Bansal et al.'s work at CHI 2021 (378 citations) introduced a complication that the Blaurock
+finding doesn't resolve: AI explanations increase acceptance of recommendations regardless of
+whether those recommendations are correct. Adding explanations improved accuracy when the AI
+was right and decreased accuracy when the AI erred, with minimal net change in complementary
+performance (Bansal et al. 2021, CHI).
+
+This is not a contradiction of the Blaurock finding — they're measuring different things. Transparency
+as a system feature (showing how outputs were derived) can increase perceived ownership. AI
+explanations as a communication format (showing reasoning in real-time) can increase compliance
+without improving calibration.
+
+The distinction matters for design. Transparency that surfaces what the system considered — and
+therefore what the human could have decided differently — is not the same as transparency that
+presents a polished rationale for a conclusion already reached. The first creates an entry point for
+evaluation. The second provides an explanation that can substitute for evaluation.
+
+Bansal's result says: a wrong AI that explains itself confidently is more dangerous than a wrong AI
+that doesn't. This should constrain how transparency is implemented alongside the evidence that
+transparency generally helps.
+
+---
+
+## Who the Levers Work For
+
+The Blaurock results contain a finding that changes the design calculation depending on who is
+using the system.
+
+After publishing their main effects, Blaurock conducted exploratory post-hoc analyses on the subset
+of participants who already used AI systems in their jobs (n=42) versus those who did not (n=303).
+The effects of control features — process control, outcome control, and reciprocal strength enhancement
+— were significant only for AI novices. For AI-experienced users, these features showed no significant
+positive effects. And specifically: the engagement feature showed what the authors call a "significant negative effect"
+on perceived service improvement for AI users (b=0.555, p<.05, statistical twin sample)
+(Blaurock et al. 2025).
+
+An expertise reversal. What helps novices may not help, and in some cases may actively work
+against, experienced users. The system design that makes collaboration legible to someone encountering
+AI-assisted workflows for the first time can become friction — or worse, patronizing prompting — for
+someone who has already internalized the workflow.
+
+The Lee et al. survey of 319 knowledge workers documented this from the attitudinal side. Workers
+who trust AI on a specific task check it less (β=-0.69, p<0.001). Workers who trust their own ability
+to do the task and evaluate AI responses show higher critical thinking enaction (β=+0.26, p=0.026;
+β=+0.31, p=0.046) — though these self-confidence effects do not survive the paper's own
+Benjamini-Hochberg correction (threshold p<0.007), so the magnitude is uncertain even as the
+direction is consistent (Lee et al. 2025, CHI).
+
+The implication: AI confidence suppresses critical thinking; self-confidence amplifies it. Designing
+to increase the human's evaluative confidence — not just the AI's perceived reliability — works
+against the direction that AI confidence marketing typically pushes.
+
+---
+
+## The Mode Problem
+
+Umarova et al. at Cornell documented the same structure in writing: "Students who proactively
+explored ideas gained new ideas from writing, regardless of whether they used auto-complete or
+Socratic AI assistants. Those who engaged in prolonged, mindless copyediting developed few ideas
+even with a Socratic AI" (Umarova et al. 2025, Cornell).
+
+This is the Blaurock engagement finding from the user's side. A Socratic AI — one explicitly designed
+to ask questions rather than give answers, one that should produce exactly the kind of proactive
+engagement that Blaurock's engagement feature was meant to operationalize — didn't help students
+who were in the wrong mode. They used it for copyediting. The tool provided the prompting. They
+ignored it.
+
+Design can create conditions for cognitive engagement. It cannot guarantee the human is in the mode
+required to use them. What it can do is make passive acceptance structurally harder — which is
+what process control and outcome control accomplish by giving the human structural authority over
+input and output. The engagement feature prompts. The control features require.
+
+Kazemitabaar et al. found the same principle in code learning. Of seven friction techniques tested
+against a baseline (N=82 + N=42, novice undergrads in a data structures course), Lead-and-Reveal
+was most effective: the AI guides the learner step by step, prompting what should happen at each
+stage before the corresponding code is revealed. Understanding first. Code second. The friction — the
+slight delay between understanding and receiving — was enough to require cognitive engagement
+rather than allow passive acceptance (Kazemitabaar et al. 2025, IUI).
+
+The Lee paper's Section 6 discusses design approaches along similar lines — making the need for
+critical thinking visible, reducing barriers to its execution, positioning it as professional skill development
+rather than audit overhead. These design implications are conceptual and qualitative; they are not
+experimentally verified interventions in the Lee paper itself.
+
+---
+
+## The Affirmative Claim
+
+[The Paradox](the-paradox) established: the gain is real and the harm is real, simultaneously.
+[The Mechanism](the-mechanism) established: the harm follows from a mechanism — the generative step is the encoding event,
+and substitutive use bypasses it.
+This article's claim: the mechanism creates a design variable. The engagement model is not fixed. The
+same tool can be configured to produce the gain without the harm.
+
+Bastani's field experiment (PNAS, n~1,000) shows same model, different guardrails, different learning
+trajectory. Not a small effect: -17% for one design, no harm for the other, measured on an unassisted
+exam.
+
+Shen and Tamkin show the same thing from the user's side: same AI assistant, different interaction
+pattern, 86% vs 39% learning outcome.
+
+Pallant shows the same thing from the orientation side: same AI tools, different goal structure,
+OR=35.782 for critical thinking.
+
+Blaurock isolates which design features produce which effects: process control (b=0.715) and outcome
+control (b=0.524) are the strongest levers. Transparency helps (b=0.511) but requires careful design
+to avoid the compliance trap Bansal documented. Engagement prompting produces nothing.
+
+These four studies — different populations, different domains, different methods — all point in the
+same direction. The variation is in how much design can change, not in whether it can.
+
+The design implication is specific. Complementary engagement design — design that keeps the human
+structurally in the loop, gives them authority over the process and the outcome, builds in the
+understanding before the answer — produces better learning outcomes and more felt ownership than
+design that either maximizes immediate AI capability or adds proactive prompting on top of unrestricted
+AI access.
+
+What none of this evidence yet shows: whether these design levers maintain their effects over time
+as users develop AI experience. Blaurock's expertise reversal suggests the effects attenuate. Whether
+design that works for novices eventually fails or reverses for experienced users is unmeasured. The
+claim is that design matters. The claim is not that any single design solution is permanent.
+
+---
+
+## What the Paradox Was Hiding
+
+[The Paradox](the-paradox)'s central tension — the gain and the harm coexist — is partially resolved here.
+
+The gain and the harm do not coexist in the same design. They coexist in the default design. GPT
+Base produced both. GPT Tutor produced the gain without the harm. The AI Delegation pattern
+produced some productivity with learning harm. Generation-Then-Comprehension produced similar
+productivity with preserved learning.
+
+The paradox was: the conditions that produce the gain are the same conditions that produce the harm.
+This was true for substitutive, unguarded AI use. What the Cluster E evidence shows is that those
+conditions are not fixed. The gain comes from AI handling cognitive load. The harm comes from AI
+permanently owning the cognitive work. The design question is: how do you give AI the load while
+keeping the human in ownership of the work?
+
+Process control and outcome control — structural authority over input and output — are the most
+measured answers to that question. They don't resolve the full problem. They are a start. And unlike
+engagement prompting, they have evidence behind them.

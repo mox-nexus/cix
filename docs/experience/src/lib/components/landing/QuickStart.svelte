@@ -2,8 +2,8 @@
 	let copied = $state<string | null>(null);
 
 	const commands = [
-		{ label: 'cli', cmd: 'uv tool install cix', variant: 'emergence' as const },
-		{ label: 'marketplace', cmd: 'claude plugin marketplace add mox-nexus/cix', variant: 'spark' as const }
+		{ label: 'marketplace', cmd: 'claude marketplace add mox-labs/cix', variant: 'spark' as const },
+		{ label: 'cli', cmd: 'uvx --from "cix @ git+https://github.com/mox-nexus/cix#subdirectory=tools/cix" cix', variant: 'emergence' as const }
 	];
 
 	async function copy(cmd: string) {
@@ -16,18 +16,19 @@
 <aside class="quickstart">
 	{#each commands as { label, cmd, variant }}
 		<div class="method">
-			<span class="label">{label}</span>
-			<button
-				class="cmd cmd-{variant}"
-				class:copied={copied === cmd}
-				onclick={() => copy(cmd)}
-				title="Copy to clipboard"
-			>
-				<code>{cmd}</code>
-				<span class="copy-indicator" aria-hidden="true">
+			<div class="method-header">
+				<span class="label">{label}</span>
+				<button
+					class="copy-btn"
+					class:copied={copied === cmd}
+					onclick={() => copy(cmd)}
+					title="Copy to clipboard"
+					aria-label="Copy {label} command"
+				>
 					{copied === cmd ? '✓' : '⎘'}
-				</span>
-			</button>
+				</button>
+			</div>
+			<pre class="code-block code-{variant}"><code>{cmd}</code></pre>
 		</div>
 	{/each}
 </aside>
@@ -36,92 +37,78 @@
 	.quickstart {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
 		justify-content: center;
-		gap: var(--space-1);
+		gap: var(--space-2);
+		width: 100%;
 	}
 
 	.method {
 		display: flex;
+		flex-direction: column;
+		gap: var(--space-0-5);
+	}
+
+	.method-header {
+		display: flex;
 		align-items: center;
-		gap: var(--space-1);
+		justify-content: space-between;
 	}
 
 	.label {
 		font-family: var(--font-mono);
-		font-size: var(--type-sm);
+		font-size: var(--type-xs);
 		color: var(--dao-muted);
 		letter-spacing: var(--tracking-wide);
-		white-space: nowrap;
-		min-width: 9ch;
-		text-align: right;
 	}
 
-	.cmd {
+	.copy-btn {
 		font-family: var(--font-mono);
-		font-size: var(--type-base);
-		background: var(--dao-surface);
-		border: 1px solid var(--dao-border);
-		padding: var(--space-0-5) var(--space-1-5);
-		margin: 0;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		gap: var(--space-1);
-		transition: border-color var(--duration-fast) var(--easing-linear);
-	}
-
-	.cmd:hover {
-		border-color: var(--dao-text-secondary);
-	}
-
-	.cmd.copied {
-		border-color: var(--emergence-core);
-	}
-
-	.cmd-emergence code {
-		color: var(--emergence-core);
-	}
-
-	.cmd-spark code {
-		color: var(--spark-core);
-	}
-
-	.cmd code {
-		white-space: nowrap;
-	}
-
-	.copy-indicator {
 		font-size: var(--type-sm);
 		color: var(--dao-muted);
 		opacity: 0.4;
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 0;
 		transition: opacity var(--duration-fast) var(--easing-linear);
 	}
 
-	.cmd:hover .copy-indicator {
+	.copy-btn:hover {
 		opacity: 0.8;
 	}
 
-	.cmd.copied .copy-indicator {
+	.copy-btn.copied {
 		color: var(--emergence-core);
 		opacity: 1;
 	}
 
-	@media (max-width: 768px) {
-		.method {
-			flex-direction: column;
-			gap: var(--space-0-5);
-		}
+	.code-block {
+		font-family: var(--font-mono);
+		font-size: var(--type-sm);
+		background: var(--dao-surface);
+		border: 1px solid var(--dao-border);
+		padding: var(--space-1) var(--space-1-5);
+		margin: 0;
+		overflow-x: auto;
+		white-space: pre;
+		border-radius: 2px;
+	}
 
-		.label {
-			text-align: center;
-			min-width: auto;
-		}
+	.code-block code {
+		background: none;
+		padding: 0;
+	}
+
+	.code-spark code {
+		color: var(--spark-core);
+	}
+
+	.code-emergence code {
+		color: var(--emergence-core);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.cmd,
-		.copy-indicator {
+		.copy-btn {
 			transition: none;
 		}
 	}

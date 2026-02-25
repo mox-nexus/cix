@@ -15,7 +15,7 @@ const config = {
 		}),
 		prerender: {
 			handleHttpError({ path, referrer, message }) {
-				// Library markdown may contain .md cross-references that don't match routes
+				// Docs markdown may contain .md cross-references that don't match routes
 				if (path.endsWith('.md')) {
 					console.warn(`[prerender] Ignoring .md link: ${path} (from ${referrer})`);
 					return;
@@ -25,9 +25,15 @@ const config = {
 					console.warn(`[prerender] Ignoring out-of-base link: ${path} (from ${referrer})`);
 					return;
 				}
+				// Bibliography cross-references to docs articles — warn during restructure
+				if (path.includes('/docs/') && referrer?.includes('/docs/')) {
+					console.warn(`[prerender] Stale docs link: ${path} (from ${referrer})`);
+					return;
+				}
 				throw new Error(message);
 			},
-			handleMissingId: 'warn'
+			handleMissingId: 'warn',
+			handleUnseenRoutes: 'warn'
 		},
 		alias: {
 			'$content': '../content'

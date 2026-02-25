@@ -97,7 +97,7 @@ We use **Semantic Versioning** (semver): `MAJOR.MINOR.PATCH`
 
 During alpha/beta: `0.x.y` where breaking changes bump MINOR.
 
-Current: **0.1.0** (alpha)
+Current: **1.0.0**
 
 ## Pull Requests
 
@@ -141,7 +141,7 @@ cd cix
 uv sync
 
 # Install CLI for development
-uv tool install --editable ./extensions/cix
+uv tool install --editable ./tools/cix
 
 # Run tests
 uv run pytest
@@ -151,14 +151,14 @@ uv run ruff check
 uv run ruff format --check
 
 # Type check
-uv run mypy extensions/cix/src
+uv run mypy tools/cix/src
 ```
 
 ## Release Process
 
 1. Update version in:
-   - `extensions/cix/pyproject.toml`
-   - `extensions/cix/src/cix/__init__.py`
+   - `tools/cix/pyproject.toml`
+   - `tools/cix/src/cix/__init__.py`
 
 2. Update `CHANGELOG.md`
 

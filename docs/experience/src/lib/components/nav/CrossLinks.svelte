@@ -4,7 +4,7 @@
 
 	const allLinks = [
 		{ path: '/catalog', label: 'catalog', description: 'explore extensions', variant: 'emergence' as const },
-		{ path: '/library', label: 'library', description: 'deep research', variant: 'constraint' as const }
+		{ path: '/docs', label: 'docs', description: 'deep research', variant: 'constraint' as const }
 	];
 
 	let currentPath = $derived(page.url.pathname.slice(base.length) || '/');

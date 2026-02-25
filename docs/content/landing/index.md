@@ -4,17 +4,17 @@ Cognitive extensions that amplify human capability, not replace it.
 
 ## Install
 
-**CLI tool**
+**Claude Code marketplace**
 ```bash
-uv tool install git+https://github.com/mox-nexus/cix
+claude marketplace add mox-labs/cix
 ```
 
-**Claude Code plugin**
-```
-/plugin install https://github.com/mox-nexus/cix
+**CLI tool**
+```bash
+uvx --from "cix @ git+https://github.com/mox-nexus/cix#subdirectory=tools/cix" cix
 ```
 
 ## Browse
 
 - [Catalog](/catalog/) — available extensions
-- [Library](/library/) — research basis
+- [Docs](/docs/) — research basis

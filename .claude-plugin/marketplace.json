@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Collaborative Intelligence Extensions - Cognitive extensions that enhance human capability, not replace it.",
-    "version": "0.1.0"
+    "version": "1.0.0"
   },
   "plugins": [
     {
@@ -75,10 +75,10 @@
       "category": "meta"
     },
     {
-      "name": "run-openclaw-srt",
-      "source": "./plugins/run-openclaw-srt",
-      "description": "Set up OpenClaw with SRT sandbox for secure AI assistant operation. Use when: installing OpenClaw, configuring SRT sandboxing, securing personal AI assistants.",
-      "version": "0.1.0",
+      "name": "run-openclaw-seatbelt",
+      "source": "./plugins/run-openclaw-seatbelt",
+      "description": "Set up OpenClaw with macOS Seatbelt sandbox for secure AI assistant operation. Use when: installing OpenClaw, configuring filesystem sandboxing, securing personal AI assistants.",
+      "version": "0.2.0",
       "author": {
         "name": "Mox Labs",
         "email": "mox.rnd@gmail.com"
@@ -101,16 +101,16 @@
       "category": "methodology"
     },
     {
-      "name": "craft-explanations",
-      "source": "./plugins/craft-explanations",
-      "description": "Explanation craft through simultaneous encoding. Use when: writing docs, explaining concepts, teaching in conversation, creating tutorials, curating documentation collections, making diagrams for explanation.",
-      "version": "0.2.0",
+      "name": "craft-rhetoric",
+      "source": "./plugins/craft-rhetoric",
+      "description": "Explanation craft organized by the Five Canons of Classical Rhetoric. Use when: writing docs, explaining concepts, creating tutorials, curating collections, making diagrams and cinematic animation, designing staged experiences, reviewing content for propagation and human authorship.",
+      "version": "0.1.1",
       "author": {
         "name": "Mox Labs",
         "email": "mox.rnd@gmail.com"
       },
       "license": "MIT",
-      "keywords": ["explanations", "documentation", "teaching", "diagrams", "visual-communication", "information-architecture", "pedagogy"],
+      "keywords": ["rhetoric", "explanations", "documentation", "teaching", "diagrams", "dataviz", "animation", "staging", "comprehension", "pedagogy"],
       "category": "communication"
     }
   ]

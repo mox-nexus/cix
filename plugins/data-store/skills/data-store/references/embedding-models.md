@@ -262,6 +262,52 @@ def search(query: str):
 
 ---
 
+## Real-World Cost: CPU-Only Backfill on 60K Fragments
+
+Measured on Apple M1 Max (64GB), macOS 14.4, onnxruntime 1.24.1, fastembed 0.7.4.
+
+**Corpus:** 59,336 fragments from Claude + OpenAI conversations. Median 778 chars, max 256K chars, 55 fragments over 50K chars.
+
+### CPU-Only (no GPU acceleration)
+
+| Metric | Value |
+|--------|-------|
+| Model | nomic-embed-text-v1.5 (768-dim) |
+| ONNX batch_size | 4 |
+| ONNX threads | 2 |
+| Fragments to embed | 43,736 |
+| Wall time | **8+ hours** (did not complete in session) |
+| Peak RSS | 4.6GB (ONNX arena growth + HNSW construction) |
+| Corpus size growth | 396MB → 635MB (+239MB) |
+| DuckDB lock | Exclusive — tool unusable during entire backfill |
+
+### Why So Slow
+
+1. **CPU-only ONNX** — no Metal/CoreML/CUDA despite M1 Max GPU being available
+2. **Long-tail content** — 55 fragments over 50K chars take seconds each to embed
+3. **ONNX padding** — even with length-sorting, long fragments dominate batch time
+4. **HNSW index build** — O(n log n) on 59K × 768-dim vectors at end of backfill
+5. **Single-process lock** — can't even check progress during the run
+
+### What Would Fix It
+
+| Fix | Expected Speedup | Effort |
+|-----|-------------------|--------|
+| CoreML auto-detect (M1 Max) | 3-8x | Small (wire `providers` param) |
+| Embed on ingest (no bulk backfill) | Eliminates the problem | Small (already partially implemented) |
+| API backend (OpenAI/Voyage) | 44K in ~5 minutes, ~$1-2 | Medium (new adapter) |
+| Server mode (no DuckDB lock) | Tool stays usable | Large (new architecture) |
+
+### DX Lesson
+
+**Nobody should ever wait 8 hours for search to work.** The default path must:
+1. Embed on ingest (not as a separate step)
+2. Auto-detect GPU (not default to CPU)
+3. Keep the tool usable during bulk operations
+4. Show progress from outside the process
+
+---
+
 ## What NOT to Do
 
 | Anti-Pattern | Better |

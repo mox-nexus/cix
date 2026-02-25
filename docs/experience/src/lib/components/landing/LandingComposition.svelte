@@ -61,7 +61,6 @@
 	.landing-grid {
 		height: 100vh;
 		height: 100dvh;
-		background: var(--dao-bg);
 		position: relative;
 		overflow: hidden;
 
@@ -70,12 +69,12 @@
 		 * Columns: sidebars get min-content, center expands
 		 * Rows: north/south get auto (min needed), center row expands
 		 */
-		grid-template-columns: minmax(min-content, 1.5fr) minmax(120px, 1fr) minmax(min-content, 1.5fr);
+		grid-template-columns: minmax(min-content, 1fr) minmax(180px, 1.2fr) minmax(min-content, 1fr);
 		grid-template-rows: auto 1fr auto;
 		grid-template-areas:
-			"west     north     east"
-			"west     center    east"
-			"margin-sw south    margin-se";
+			".         north      ."
+			"west      center     east"
+			"margin-sw south      margin-se";
 		gap: var(--space-2);
 		padding: var(--space-3);
 	}
@@ -87,14 +86,14 @@
 		z-index: 0;
 		background:
 			radial-gradient(
-				ellipse 50% 50% at 50% 50%,
+				ellipse 60% 50% at 15% 15%,
 				var(--spark-atmosphere) 0%,
-				transparent 60%
+				transparent 65%
 			),
 			radial-gradient(
-				ellipse 100% 80% at 50% 100%,
+				ellipse 80% 60% at 50% 110%,
 				var(--emergence-atmosphere) 0%,
-				transparent 50%
+				transparent 55%
 			);
 	}
 
@@ -110,19 +109,16 @@
 		z-index: 1;
 		display: flex;
 		align-items: center;
-		justify-content: flex-end;
-		padding-right: var(--space-3);
-		align-self: center; /* Vertically center with sigil row */
+		justify-content: flex-start;
+		padding-left: var(--space-3);
 	}
 
 	.pos-center {
 		grid-area: center;
 		z-index: 1;
-		/* Sigil fills available space */
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-height: 0; /* Allow shrinking */
 	}
 
 	.pos-east {
@@ -143,7 +139,7 @@
 	.pos-margin-sw {
 		grid-area: margin-sw;
 		z-index: 1;
-		align-self: end;
+		align-self: center;
 	}
 
 	.pos-margin-se {

@@ -1,0 +1,24 @@
+{
+  "name": "craft-rhetoric",
+  "version": "0.2.0",
+  "description": "Rhetoric craft grounded in the five canons. Setup, discourse, cartography (magellan), planning, then per-deliverable: inventio (feynman), memoria (sagan), dispositio (vyasa), elocutio (orwell), actio (tufte/jobs), evaluate (socrates). Socrates gates between steps. Use when: writing docs, explaining concepts, research synthesis, creating tutorials, curating collections, making diagrams and cinematic animation, designing staged experiences, reviewing content for propagation and human authorship.",
+  "author": {
+    "name": "Mox Labs",
+    "email": "mox.rnd@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "rhetoric",
+    "explanations",
+    "documentation",
+    "teaching",
+    "diagrams",
+    "dataviz",
+    "animation",
+    "voice-evaluation",
+    "information-architecture",
+    "staging",
+    "comprehension",
+    "pedagogy"
+  ]
+}

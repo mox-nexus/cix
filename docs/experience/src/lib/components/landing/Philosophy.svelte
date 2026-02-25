@@ -16,11 +16,13 @@
 			"A competent programmer is fully aware of the strictly limited size of his own skull."
 			<cite>Dijkstra</cite>
 		</blockquote>
-		<p class="hook"><em>Extend it.</em></p>
 		<p>
-			Agency + intelligence =
-			capability that compounds.
-			Extensions that sharpen, not substitute.
+			How you use AI determines whether
+			it compounds your craft or erodes it.
+		</p>
+		<p class="hook">
+			<span class="extend">Extend your mind,</span>
+			<span class="replace">don't replace it.</span>
 		</p>
 	{/if}
 </aside>
@@ -29,11 +31,11 @@
 	.philosophy {
 		display: flex;
 		flex-direction: column;
-		align-items: flex-end;
+		align-items: flex-start;
 		justify-content: center;
-		gap: var(--space-2);
+		gap: var(--space-3);
 		height: 100%;
-		text-align: right;
+		text-align: left;
 		min-width: 200px;
 	}
 
@@ -56,8 +58,19 @@
 
 	.hook {
 		font-family: var(--font-mono);
-		font-size: var(--type-xl);
-		margin: 0;
+		font-size: var(--type-lg);
+		margin: var(--space-3) 0 0;
+		line-height: var(--leading-snug);
+	}
+
+	.extend {
+		color: var(--spark-core);
+		font-weight: 600;
+	}
+
+	.replace {
+		color: var(--ci-red);
+		font-weight: 600;
 	}
 
 	.philosophy :global(p) {
@@ -66,11 +79,5 @@
 		color: var(--dao-text-secondary);
 		line-height: var(--leading-relaxed);
 		margin: 0;
-	}
-
-	.philosophy :global(em) {
-		color: var(--emergence-core);
-		font-style: normal;
-		font-weight: 600;
 	}
 </style>
