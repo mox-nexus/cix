@@ -3,7 +3,7 @@
 
 	const commands = [
 		{ label: 'marketplace', cmd: 'claude marketplace add mox-labs/cix', variant: 'spark' as const },
-		{ label: 'cli', cmd: 'uvx --from git+https://github.com/mox-nexus/cix cix', variant: 'emergence' as const }
+		{ label: 'cli', cmd: 'uvx --from "cix @ git+https://github.com/mox-nexus/cix#subdirectory=tools/cix" cix', variant: 'emergence' as const }
 	];
 
 	async function copy(cmd: string) {

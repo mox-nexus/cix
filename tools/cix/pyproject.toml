@@ -1,6 +1,6 @@
 [project]
 name = "cix"
-version = "1.0.0"
+version = "0.1.0"
 description = "Collaborative Intelligence Extensions CLI - Discover, install, and manage cognitive extensions"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -8,11 +8,15 @@ license = "MIT"
 authors = [
     { name = "Yashodeep Vyas", email = "yza.vyas@gmail.com" }
 ]
-
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
 dependencies = [
     "rich-click>=1.8",
     "pydantic>=2.0",
-    "pyyaml>=6.0",
     "gitpython>=3.1",
 ]
 
@@ -22,6 +26,11 @@ dev = ["pytest>=8.0"]
 [project.scripts]
 cix = "cix.adapters._in.cli:main"
 
+[project.urls]
+Homepage = "https://mox-nexus.github.io/cix"
+Repository = "https://github.com/mox-nexus/cix"
+Issues = "https://github.com/mox-nexus/cix/issues"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -29,7 +38,6 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/cix"]
 
-# Include skill.md files as package data
 [tool.hatch.build.targets.wheel.sources]
 "src" = ""
 

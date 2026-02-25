@@ -23,9 +23,9 @@ Establishes that complementary AI design -- where human and AI capabilities comb
 **Blaurock, M., Buttgen, M., & Schepers, J. (2025). "Designing Collaborative Intelligence Systems for Employee-AI Service Co-Production." Journal of Service Research, 28(4), 544-562.**
 
 Two scenario-based experiments (n=654) establishing effect sizes:
-- Process Control: beta = 0.507 (strongest predictor)
-- Transparency: beta = 0.415
-- Engagement features: b = -0.555 (negative for frequent users)
+- Process Control: b = 0.715 (strongest predictor)
+- Transparency: b = 0.511
+- Engagement features: b = 0.090 (not significant)
 
 **Relevance to cix:** Extensions that maximize user control and transparency are prioritized. Engagement features (gamification, nudges) are actively discouraged.
 

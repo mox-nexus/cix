@@ -2,27 +2,31 @@
 
 > Discover, install, and manage cognitive extensions that enhance rather than replace human capability.
 
-## Philosophy
-
-cix is built on the **Collaborative Intelligence** thesis: AI tools should amplify human capability, not substitute for it. Every extension in this ecosystem is designed to make you more capable, not dependent.
-
 ## Installation
+
+From PyPI (once published):
 
 ```bash
 uv tool install cix
 ```
 
+From git:
+
+```bash
+uvx --from "cix @ git+https://github.com/mox-nexus/cix#subdirectory=tools/cix" cix
+```
+
 ## Quick Start
 
 ```bash
-# Add a source (marketplace of extensions)
-cix source add https://github.com/mox-nexus/cix-extensions
+# Add the mox-labs marketplace
+cix source add https://github.com/mox-nexus/cix
 
 # List available extensions
 cix list -a
 
 # Install an extension
-cix add reasoning-frameworks
+cix add arch-guild
 
 # See what's installed
 cix list
@@ -53,6 +57,7 @@ cix show <extension>        # Show extension details
 
 ```bash
 cix info                    # Show cix configuration and status
+cix --skill                 # Output skill documentation for Claude
 ```
 
 ## Extension Types
@@ -69,7 +74,7 @@ cix info                    # Show cix configuration and status
 1. **Complementary, not Substitutive** - Extensions enhance your capability, they don't replace it
 2. **Transparent Reasoning** - See why, not just what
 3. **Human-Initiated** - You control when and how extensions engage
-4. **Evidence-Based** - Claims are grounded in research and experience
+4. **Source-Agnostic** - No central registry; you choose which sources to trust
 
 ## License
 
