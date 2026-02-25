@@ -1,34 +1,26 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { Quadrant, LibraryEntry } from '$lib/data/library';
-	import { getQuadrant, getClusterEntries } from '$lib/data/library';
+	import type { DocsEntry } from '$lib/data/docs';
 	import { readingProgress } from '$lib/stores/reading-progress';
 	import { base } from '$app/paths';
 	import Markdown from 'svelte-exmarkdown';
 	import { plugins } from './markdown-plugins';
 	import TableOfContents from './TableOfContents.svelte';
-	import ClusterNav from './ClusterNav.svelte';
 	import ArticleFooter from './ArticleFooter.svelte';
 	import EvidencePopover from './EvidencePopover.svelte';
 
 	interface Props {
-		quadrant: Quadrant;
 		slug?: string;
-		entry?: LibraryEntry;
+		entry?: DocsEntry;
 		content: string;
 		metadata?: Record<string, unknown>;
 		position?: number;
 		total?: number;
-		prev?: LibraryEntry;
-		next?: LibraryEntry;
+		prev?: DocsEntry;
+		next?: DocsEntry;
 	}
 
-	let { quadrant, slug, entry, content, metadata, position, total, prev, next }: Props = $props();
-
-	let quadrantMeta = $derived(getQuadrant(quadrant));
-	let clusterEntries = $derived(
-		entry?.cluster ? getClusterEntries(entry.cluster) : []
-	);
+	let { slug, entry, content, metadata, position, total, prev, next }: Props = $props();
 
 	// Extract headings + title client-side (markdown has no frontmatter)
 	let headings = $state<{ id: string; text: string; level: number }[]>([]);
@@ -138,15 +130,13 @@
 </script>
 
 <svelte:head>
-	<title>{articleTitle || 'Article'} — cix Library</title>
+	<title>{articleTitle || 'Article'} — cix Docs</title>
 </svelte:head>
 
 <div class="article-layout">
 	<article class="library-prose" bind:this={articleEl}>
 		<nav class="article-breadcrumb">
-			<a href="{base}/library">library</a>
-			<span class="breadcrumb-sep">/</span>
-			<a href="{base}/library#{quadrant}">{quadrantMeta.label.toLowerCase()}</a>
+			<a href="{base}/docs">docs</a>
 		</nav>
 
 		<Markdown md={content} {plugins} />
@@ -154,7 +144,6 @@
 		{#if slug}
 			<ArticleFooter
 				{slug}
-				{quadrant}
 				{entry}
 				{prev}
 				{next}
@@ -163,21 +152,13 @@
 			/>
 		{:else}
 			<nav class="article-back">
-				<a href="{base}/library#{quadrant}">&larr; {quadrantMeta.label}</a>
+				<a href="{base}/docs">&larr; docs</a>
 			</nav>
 		{/if}
 	</article>
 
 	<aside class="article-sidebar">
 		<TableOfContents {headings} />
-		{#if entry?.cluster && slug}
-			<ClusterNav
-				cluster={entry.cluster}
-				currentSlug={slug}
-				entries={clusterEntries}
-				{quadrant}
-			/>
-		{/if}
 	</aside>
 </div>
 

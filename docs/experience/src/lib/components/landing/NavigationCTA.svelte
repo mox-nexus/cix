@@ -14,7 +14,7 @@
 	let {
 		links = [
 			{ path: '/catalog', label: 'catalog', variant: 'spark' },
-			{ path: '/library', label: 'docs', variant: 'reference' }
+			{ path: '/docs', label: 'docs', variant: 'reference' }
 		]
 	}: Props = $props();
 </script>

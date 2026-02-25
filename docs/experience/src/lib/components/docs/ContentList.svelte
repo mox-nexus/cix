@@ -1,19 +1,18 @@
 <script lang="ts">
-	import type { Quadrant, LibraryEntry } from '$lib/data/library';
+	import type { DocsEntry } from '$lib/data/docs';
 	import { base } from '$app/paths';
 
 	interface Props {
-		quadrant: Quadrant;
-		entries: LibraryEntry[];
+		entries: DocsEntry[];
 		ordered?: boolean;
 	}
 
-	let { quadrant, entries, ordered = false }: Props = $props();
+	let { entries, ordered = false }: Props = $props();
 </script>
 
-<nav class="content-list" aria-label="{quadrant} articles">
+<nav class="content-list" aria-label="Articles">
 	{#each entries as entry, i}
-		<a href="{base}/library/{quadrant}/{entry.slug}" class="list-entry">
+		<a href="{base}/docs/{entry.slug}" class="list-entry">
 			{#if ordered}
 				<span class="entry-number">{String(i + 1).padStart(2, '0')}</span>
 			{/if}

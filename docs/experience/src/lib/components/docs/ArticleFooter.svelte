@@ -1,20 +1,19 @@
 <script lang="ts">
-	import type { Quadrant, LibraryEntry } from '$lib/data/library';
-	import { resolveEntries } from '$lib/data/library';
+	import type { DocsEntry } from '$lib/data/docs';
+	import { resolveEntries } from '$lib/data/docs';
 	import { readingProgress, getReadingState } from '$lib/stores/reading-progress';
 	import { base } from '$app/paths';
 
 	interface Props {
 		slug: string;
-		quadrant: Quadrant;
-		entry?: LibraryEntry;
-		prev?: LibraryEntry;
-		next?: LibraryEntry;
+		entry?: DocsEntry;
+		prev?: DocsEntry;
+		next?: DocsEntry;
 		position?: number;
 		total?: number;
 	}
 
-	let { slug, quadrant, entry, prev, next, position, total }: Props = $props();
+	let { slug, entry, prev, next, position, total }: Props = $props();
 
 	let state = $derived.by(() => {
 		const s = $readingProgress.entries[slug];
@@ -52,7 +51,7 @@
 				{#each relatedEntries as related}
 					{@const relState = $readingProgress.entries[related.slug] || 'unvisited'}
 					<li>
-						<a href="{base}/library/{quadrant}/{related.slug}" class="related-link">
+						<a href="{base}/docs/{related.slug}" class="related-link">
 							<span class="related-indicator" class:completed={relState === 'completed'}>
 								{#if relState === 'completed'}&#10003;{:else if relState === 'visited'}&#9679;{:else}&#9675;{/if}
 							</span>
@@ -73,7 +72,7 @@
 	<nav class="seq-nav" aria-label="Article navigation">
 		<div class="seq-nav-links">
 			{#if prev}
-				<a href="{base}/library/{quadrant}/{prev.slug}" class="nav-prev">
+				<a href="{base}/docs/{prev.slug}" class="nav-prev">
 					<span class="nav-arrow">&larr;</span>
 					<span class="nav-label">{prev.title}</span>
 				</a>
@@ -82,13 +81,13 @@
 			{/if}
 
 			{#if next}
-				<a href="{base}/library/{quadrant}/{next.slug}" class="nav-next">
+				<a href="{base}/docs/{next.slug}" class="nav-next">
 					<span class="nav-label">{next.title}</span>
 					<span class="nav-arrow">&rarr;</span>
 				</a>
 			{:else}
-				<a href="{base}/library" class="nav-next">
-					<span class="nav-label">Back to Library</span>
+				<a href="{base}/docs" class="nav-next">
+					<span class="nav-label">Back to Docs</span>
 					<span class="nav-arrow">&rarr;</span>
 				</a>
 			{/if}

@@ -1,12 +1,11 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { ArticleShell } from '$lib/components/library';
+	import { ArticleShell } from '$lib/components/docs';
 
 	let { data }: { data: PageData } = $props();
 </script>
 
 <ArticleShell
-	quadrant="how-to"
 	slug={data.slug}
 	entry={data.entry}
 	content={data.content}

@@ -1,16 +1,15 @@
 <script lang="ts">
-	import type { Quadrant, LibraryEntry } from '$lib/data/library';
+	import type { DocsEntry } from '$lib/data/docs';
 	import { base } from '$app/paths';
 
 	interface Props {
-		quadrant: Quadrant;
 		position: number;
 		total: number;
-		prev?: LibraryEntry;
-		next?: LibraryEntry;
+		prev?: DocsEntry;
+		next?: DocsEntry;
 	}
 
-	let { quadrant, position, total, prev, next }: Props = $props();
+	let { position, total, prev, next }: Props = $props();
 </script>
 
 <nav class="article-nav" aria-label="Article navigation">
@@ -18,7 +17,7 @@
 
 	<div class="article-nav-links">
 		{#if prev}
-			<a href="{base}/library/{quadrant}/{prev.slug}" class="nav-prev">
+			<a href="{base}/docs/{prev.slug}" class="nav-prev">
 				<span class="nav-arrow">&larr;</span>
 				<span class="nav-label">{prev.title}</span>
 			</a>
@@ -27,13 +26,13 @@
 		{/if}
 
 		{#if next}
-			<a href="{base}/library/{quadrant}/{next.slug}" class="nav-next">
+			<a href="{base}/docs/{next.slug}" class="nav-next">
 				<span class="nav-label">{next.title}</span>
 				<span class="nav-arrow">&rarr;</span>
 			</a>
 		{:else}
-			<a href="{base}/library" class="nav-next">
-				<span class="nav-label">Back to Library</span>
+			<a href="{base}/docs" class="nav-next">
+				<span class="nav-label">Back to Docs</span>
 				<span class="nav-arrow">&rarr;</span>
 			</a>
 		{/if}

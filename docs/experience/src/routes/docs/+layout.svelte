@@ -2,12 +2,12 @@
 	let { children } = $props();
 </script>
 
-<main id="main" class="library-layout">
+<main id="main" class="docs-layout">
 	{@render children()}
 </main>
 
 <style>
-	.library-layout {
+	.docs-layout {
 		min-height: 100vh;
 		min-height: 100dvh;
 		padding: var(--space-4) var(--space-3);
