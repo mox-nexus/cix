@@ -1,6 +1,6 @@
 ---
 name: evaluating
-description: "Content evaluation — propagation test, structural confidence, evidence verification."
+description: "This skill should be used when the user asks to 'is this ready to ship', 'does this content work', 'evaluate this piece', 'check evidence quality', or needs propagation testing and evidence verification."
 version: 0.1.0
 ---
 
@@ -19,7 +19,7 @@ version: 0.1.0
 
 ## The Propagation Test
 
-Socrates' primary evaluation criterion. After reading the content:
+Ebert's primary evaluation criterion. After reading the content:
 
 1. **Can the reader explain it to someone else?** Not repeat it — explain it. Can they reconstruct the reasoning in their own words?
 2. **Does understanding survive one hop?** If the reader explains it to a third person, does the third person understand? Content that can't survive forwarding is information, not understanding.
@@ -125,12 +125,12 @@ When evaluating whether content carries genuine understanding (not just informat
 ## What Evaluating Does Not Do
 
 Evaluating checks content completeness and accuracy. It does NOT check:
-- Voice quality, LLM tells, rhythm (voicing skill)
+- Voice quality, LLM tells, rhythm (voicing skill — orwell handles this)
 - Visual design (figures skill)
 - Collection structure (arranging skill)
 - Staging and pacing (staging skill)
 
-This separation is intentional — attention economics. Socrates' context contains zero noise about voice craft. His attention stays focused on whether understanding propagates.
+This separation is intentional — attention economics. Ebert's context contains zero noise about voice craft. His attention stays focused on whether understanding propagates.
 
 ## References
 

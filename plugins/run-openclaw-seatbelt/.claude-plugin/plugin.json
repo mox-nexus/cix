@@ -1,0 +1,19 @@
+{
+  "name": "run-openclaw-seatbelt",
+  "version": "0.2.0",
+  "description": "Sets up OpenClaw with macOS Seatbelt sandbox for secure AI operation. Use when: user asks to 'install OpenClaw', 'sandbox my AI assistant', 'configure Seatbelt', or needs filesystem sandboxing for AI assistants.",
+  "author": {
+    "name": "Mox Labs",
+    "email": "mox.rnd@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "openclaw",
+    "seatbelt",
+    "sandbox-exec",
+    "sandbox",
+    "security",
+    "telegram",
+    "daemon"
+  ]
+}

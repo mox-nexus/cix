@@ -1,6 +1,6 @@
 ---
 name: build-eval
-description: "Write rigorous evals for LLM agents, multi-agent systems, skills, MCP servers, and prompts. Use when: building test suites, measuring agent effectiveness, evaluating coordination, or choosing eval frameworks. Covers: DeepEval, Braintrust, RAGAS, precision/recall, F1, task completion, pass@k, iterative metrics, multi-agent coordination."
+description: "This skill should be used when the user asks to 'write evals', 'test this agent', 'measure skill quality', 'evaluate this prompt', 'build a test suite', or needs eval methodology for agents, multi-agent systems, skills, MCP servers, or prompts."
 ---
 
 # build-eval

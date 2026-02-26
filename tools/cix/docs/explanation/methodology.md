@@ -109,10 +109,10 @@ cix doesn't run a central registry. It aggregates from user-registered sources. 
 ### CLI-First
 
 ```bash
-cix add arch-guild           # Install
+cix add guild-arch           # Install
 cix list                     # What's installed
 cix update                   # Update all
-cix rm arch-guild            # Remove
+cix rm guild-arch            # Remove
 ```
 
 The CLI is the primary interface. It follows the same conventions as `uv`, `cargo`, and `brew` -- subcommand-based, flags for options, human-readable output.
@@ -153,7 +153,7 @@ cix manages four types of Claude Code extensions:
 | **Hook** | Event-triggered behavior (PreToolUse, PostToolUse, etc.) | Runs automatically on events |
 | **MCP Server** | External service integration | Bridges systems via protocol |
 
-A **package** bundles one or more extensions into an installable unit. The `arch-guild` package, for example, contains 13 agents and 4 skills.
+A **package** bundles one or more extensions into an installable unit. The `guild-arch` package, for example, contains 13 agents and 4 skills.
 
 ---
 

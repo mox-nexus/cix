@@ -1,7 +1,7 @@
 {
   "name": "craft-evals",
   "version": "0.3.0",
-  "description": "Eval methodology for AI systems. Use when: writing evals for agents, skills, MCP servers, prompts, or measuring AI behavior.",
+  "description": "Guides eval design and methodology for AI systems. Use when: user asks to 'write evals', 'test this agent', 'measure skill quality', 'evaluate this prompt', or needs eval frameworks for agents, skills, or MCP servers.",
   "author": {
     "name": "Mox Labs",
     "email": "mox.rnd@gmail.com"

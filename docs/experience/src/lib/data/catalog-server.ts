@@ -52,6 +52,9 @@ function loadPlugins(): CatalogExtension[] {
 	const publishedNames = new Set(
 		marketplace.plugins.map((p: { name: string }) => p.name)
 	);
+	const catalogDescriptions = new Map(
+		marketplace.plugins.map((p: { name: string; description: string }) => [p.name, p.description])
+	);
 
 	const extensions: CatalogExtension[] = [];
 
@@ -68,10 +71,15 @@ function loadPlugins(): CatalogExtension[] {
 		const readmePath = join(pluginDir, 'README.md');
 		const readme = existsSync(readmePath) ? readFileSync(readmePath, 'utf-8') : '';
 
+		const catalogDesc = catalogDescriptions.get(manifest.name);
+		const displayManifest = catalogDesc
+			? { ...manifest, description: catalogDesc }
+			: manifest;
+
 		extensions.push({
 			slug: manifest.name,
 			kind: 'plugin',
-			manifest,
+			manifest: displayManifest,
 			tagline: extractTagline(readme),
 			readme,
 			components: discoverComponents(pluginDir),

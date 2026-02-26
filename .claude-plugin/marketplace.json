@@ -10,9 +10,9 @@
   },
   "plugins": [
     {
-      "name": "arch-guild",
-      "source": "./plugins/arch-guild",
-      "description": "Architectural reasoning with The Guild. 13 specialized agents with orthogonal perspectives for multi-viewpoint architecture review.",
+      "name": "guild-arch",
+      "source": "./plugins/guild-arch",
+      "description": "Multi-perspective architecture review. Get deliberate pushback on design decisions before they become expensive.",
       "version": "0.1.0",
       "author": {
         "name": "Mox Labs",
@@ -23,22 +23,9 @@
       "category": "architecture"
     },
     {
-      "name": "craft-evals",
-      "source": "./plugins/craft-evals",
-      "description": "Eval methodology for AI systems. Use when: writing evals for agents, skills, MCP servers, prompts, or measuring AI behavior.",
-      "version": "0.3.0",
-      "author": {
-        "name": "Mox Labs",
-        "email": "mox.rnd@gmail.com"
-      },
-      "license": "MIT",
-      "keywords": ["evals", "evaluation", "testing", "agents", "skills", "mcp"],
-      "category": "testing"
-    },
-    {
-      "name": "collab-scaffolds",
-      "source": "./plugins/collab-scaffolds",
-      "description": "Research-grounded scaffolds for effective human-AI collaboration. Use when: making decisions, verifying claims, calibrating trust, metacognitive reflection, building with transparency and control.",
+      "name": "ci-scaffolds",
+      "source": "./plugins/ci-scaffolds",
+      "description": "Collaboration scaffolds that keep you sharp when working with AI. Verify claims, calibrate trust, stay in the driver's seat.",
       "version": "0.5.0",
       "author": {
         "name": "Mox Labs",
@@ -49,35 +36,61 @@
       "category": "foundation"
     },
     {
-      "name": "data-store",
-      "source": "./plugins/data-store",
-      "description": "Data storage and retrieval patterns. Use when: choosing databases, implementing search, designing hybrid retrieval, selecting embedding models, building RAG systems.",
+      "name": "craft-research",
+      "source": "./plugins/craft-research",
+      "description": "Deep research and literature synthesis. Analyze papers, ground claims in evidence, build citation-accurate knowledge.",
       "version": "0.1.0",
       "author": {
         "name": "Mox Labs",
         "email": "mox.rnd@gmail.com"
       },
       "license": "MIT",
-      "keywords": ["storage", "retrieval", "search", "embeddings", "vector-db", "rag"],
-      "category": "data"
+      "keywords": ["research", "synthesis", "papers", "citations", "literature-review", "deep-research"],
+      "category": "methodology"
+    },
+    {
+      "name": "craft-rhetoric",
+      "source": "./plugins/craft-rhetoric",
+      "description": "Write content that lands — docs, presentations, tutorials, research papers. Sharpens your thinking while handling the delivery craft.",
+      "version": "0.3.0",
+      "author": {
+        "name": "Mox Labs",
+        "email": "mox.rnd@gmail.com"
+      },
+      "license": "MIT",
+      "keywords": ["rhetoric", "explanations", "documentation", "teaching", "diagrams", "dataviz", "animation", "staging", "comprehension", "pedagogy"],
+      "category": "communication"
     },
     {
       "name": "craft-extensions",
       "source": "./plugins/craft-extensions",
-      "description": "Build extensions that enable effective human-AI collaboration. Use when: creating skills, agents, hooks, commands, MCPs, or tools/APIs. Patterns for transparency, control, observability, diversity.",
+      "description": "Build Claude Code extensions and developer tools — skills, agents, hooks, commands, MCP servers, and the data layers behind them.",
       "version": "0.1.0",
       "author": {
         "name": "Mox Labs",
         "email": "mox.rnd@gmail.com"
       },
       "license": "MIT",
-      "keywords": ["extensions", "skills", "agents", "hooks", "commands", "mcp", "collaborative-intelligence"],
+      "keywords": ["extensions", "skills", "agents", "hooks", "commands", "mcp", "data-store", "reasoning", "collaborative-intelligence"],
       "category": "meta"
+    },
+    {
+      "name": "craft-evals",
+      "source": "./plugins/craft-evals",
+      "description": "Write evals that measure what matters — for agents, skills, MCP servers, and prompts.",
+      "version": "0.3.0",
+      "author": {
+        "name": "Mox Labs",
+        "email": "mox.rnd@gmail.com"
+      },
+      "license": "MIT",
+      "keywords": ["evals", "evaluation", "testing", "agents", "skills", "mcp"],
+      "category": "testing"
     },
     {
       "name": "run-openclaw-seatbelt",
       "source": "./plugins/run-openclaw-seatbelt",
-      "description": "Set up OpenClaw with macOS Seatbelt sandbox for secure AI assistant operation. Use when: installing OpenClaw, configuring filesystem sandboxing, securing personal AI assistants.",
+      "description": "Run OpenClaw with macOS Seatbelt sandboxing for secure AI assistant operation.",
       "version": "0.2.0",
       "author": {
         "name": "Mox Labs",
@@ -86,32 +99,6 @@
       "license": "MIT",
       "keywords": ["openclaw", "srt", "sandbox", "security", "telegram"],
       "category": "security"
-    },
-    {
-      "name": "craft-prompts",
-      "source": "./plugins/craft-prompts",
-      "description": "Prompt engineering for reasoning models, deep research, and paper synthesis. Evidence-backed techniques for different model architectures.",
-      "version": "0.1.0",
-      "author": {
-        "name": "Mox Labs",
-        "email": "mox.rnd@gmail.com"
-      },
-      "license": "MIT",
-      "keywords": ["prompt-engineering", "reasoning", "research", "synthesis"],
-      "category": "methodology"
-    },
-    {
-      "name": "craft-rhetoric",
-      "source": "./plugins/craft-rhetoric",
-      "description": "Explanation craft organized by the Five Canons of Classical Rhetoric. Use when: writing docs, explaining concepts, creating tutorials, curating collections, making diagrams and cinematic animation, designing staged experiences, reviewing content for propagation and human authorship.",
-      "version": "0.1.1",
-      "author": {
-        "name": "Mox Labs",
-        "email": "mox.rnd@gmail.com"
-      },
-      "license": "MIT",
-      "keywords": ["rhetoric", "explanations", "documentation", "teaching", "diagrams", "dataviz", "animation", "staging", "comprehension", "pedagogy"],
-      "category": "communication"
     }
   ]
 }

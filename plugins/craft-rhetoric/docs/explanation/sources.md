@@ -60,15 +60,37 @@ Research informing the craft-rhetoric plugin design.
 - Procida, D. (2017). Diataxis: A systematic framework for technical documentation.
   - Tutorial / How-to / Explanation / Reference. Don't mix types.
 
-## AI Writing
+## AI Writing and Voice Preservation
 
-- Wikipedia: Signs of AI Writing.
-  - Vocabulary tells: delve, leverage, robust. Structural tells: uniform paragraphs, rule-of-three.
+- Reinhart, A. et al. (2025). Do LLMs write like humans? Variation in grammatical and rhetorical styles. *PNAS*.
+  - Biber MDA: instruction-tuned LLMs 2-5x participial clauses, 1.5-2x nominalizations, 0.5x agentless passive.
 
-- Shankar, S. (2025). Writing in the Age of LLMs.
-  - Stylometric analysis shows LLM text clusters tightly vs human variation.
+- Chakrabarty, T., Laban, P. & Wu, C.-S. (2025). Can AI writing be salvaged? *CHI 2025* (Best Paper HM).
+  - LAMP taxonomy: 7 LLM idiosyncrasies. Writer-edited > LLM-edited > LLM-generated.
 
-- arXiv:2509.19163. Measuring AI "Slop" in Text.
+- Kobak, D. & Gonzalez-Marquez, R. (2025). Delving into ChatGPT usage in academic writing. *Science Advances*.
+  - 379 excess words from 14M PubMed abstracts.
+
+- Shaib, C. et al. (2025). Measuring AI "Slop" in Text. *arXiv*.
+  - 76% syntactic template re-use in LLM vs 35% human.
+
+- Padmakumar, V. & He, H. (2024). Does Writing with Language Models Reduce Content Diversity? *ICLR 2024*.
+  - RLHF causes homogenization (diversity 0.792 → 0.738), not base models.
+
+- Reza, M. et al. (2025). Co-Writing with AI, on Human Terms. *PACM HCI (CSCW)*.
+  - Metacognitive monitoring underexplored. Form-centric writers resist AI at expression layer.
+
+- Draxler, F. et al. (2024). The AI Ghostwriter Effect. *ACM TOCHI*.
+  - Users don't feel ownership of AI text but declare authorship. Ownership tracks voice engagement.
+
+- Doshi, V. & Li, M. (2025). Writing in Symbiosis. *NeurIPS 2025 Creative AI Track*.
+  - Three archetypes: Adopters (converge), Resistors (diverge), Pragmatists (maintain voice).
+
+- Doshi, A.R. & Hauser, O.P. (2024). Generative AI enhances individual creativity but reduces collective diversity. *Science Advances*.
+  - 8.1% individual novelty gain, 5% cross-writer similarity increase.
+
+- Wenger, Y. & Kenett, Y.N. (2025). Creative Homogeneity Across LLMs. *arXiv*.
+  - Cross-model convergence: LLM outputs more similar to each other than human outputs are.
 
 ## Philosophy
 

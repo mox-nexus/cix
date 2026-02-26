@@ -1,6 +1,6 @@
 ---
 name: figures
-description: "Visual explanation — diagrams, dataviz, cinematic animation, medium selection."
+description: "This skill should be used when the user asks to 'make a diagram', 'create a visualization', 'design an animation', 'choose the right diagram type', or needs visual explanations using Mermaid, D2, C4, dataviz, or cinematic animation."
 version: 0.1.0
 ---
 

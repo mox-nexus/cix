@@ -1,0 +1,145 @@
+; OpenClaw Gateway Seatbelt Profile
+; Filesystem restrictions with unrestricted network.
+; Network sandboxing disabled pending openclaw/openclaw#13567
+; (OpenClaw doesn't pass proxyFetch to grammy's polling runner).
+;
+; Threat model:
+;   - Block reading secrets (~/.ssh, ~/.aws, ~/.gnupg, etc.)
+;   - Restrict writes to ~/.openclaw, /tmp, /var/folders only
+;   - Block persistence vectors (~/.bashrc, ~/.zshrc, ~/.gitconfig, .git/hooks)
+;   - Allow all network (Telegram polling needs direct outbound)
+
+(version 1)
+(deny default (with message "OPENCLAW_SANDBOX"))
+
+;; ─── Process ───────────────────────────────────────────
+(allow process-exec)
+(allow process-fork)
+(allow process-info* (target same-sandbox))
+(allow process-info-pidinfo)
+(allow signal (target same-sandbox))
+(allow mach-priv-task-port (target same-sandbox))
+
+;; ─── Mach IPC (system services) ───────────────────────
+(allow mach-lookup
+  (global-name "com.apple.logd")
+  (global-name "com.apple.system.logger")
+  (global-name "com.apple.system.notification_center")
+  (global-name "com.apple.system.opendirectoryd.libinfo")
+  (global-name "com.apple.bsd.dirhelper")
+  (global-name "com.apple.lsd.mapdb")
+  (global-name "com.apple.fonts")
+  (global-name "com.apple.coreservices.launchservicesd")
+  (global-name "com.apple.SecurityServer")
+  (global-name "com.apple.cfprefsd.daemon")
+  (global-name "com.apple.cfprefsd.agent")
+  (global-name "com.apple.distributed_notifications@1v3")
+  (global-name "com.apple.CoreServices.coreservicesd")
+  (global-name "com.apple.DiskArbitration.diskarbitrationd")
+  (global-name "com.apple.systemstatus.activityattribution")
+)
+
+;; ─── IPC ──────────────────────────────────────────────
+(allow ipc-posix-shm)
+(allow ipc-posix-sem)
+
+;; ─── IOKit ────────────────────────────────────────────
+(allow iokit-open
+  (iokit-registry-entry-class "IOSurfaceRootUserClient")
+  (iokit-registry-entry-class "RootDomainUserClient")
+)
+(allow iokit-get-properties)
+
+;; ─── System ───────────────────────────────────────────
+(allow system-socket
+  (require-all (socket-domain AF_SYSTEM) (socket-protocol 2)))
+(allow sysctl-read)
+(allow distributed-notification-post)
+(allow user-preference-read)
+
+;; ─── Device files ─────────────────────────────────────
+(allow file-ioctl file-read-data file-write-data
+  (require-all (literal "/dev/null")    (vnode-type CHARACTER-DEVICE)))
+(allow file-ioctl file-read-data file-write-data
+  (require-all (literal "/dev/zero")    (vnode-type CHARACTER-DEVICE)))
+(allow file-ioctl file-read-data file-write-data
+  (require-all (literal "/dev/random")  (vnode-type CHARACTER-DEVICE)))
+(allow file-ioctl file-read-data file-write-data
+  (require-all (literal "/dev/urandom") (vnode-type CHARACTER-DEVICE)))
+(allow file-ioctl (literal "/dev/tty"))
+
+;; ─── Network: FULLY OPEN ─────────────────────────────
+;; Cannot use proxy-based domain filtering until openclaw/openclaw#13567
+;; is resolved (proxyFetch not passed to grammy runner for polling).
+(allow network*)
+
+;; ─── Filesystem READ: allow all, deny secrets ────────
+(allow file-read*)
+
+; Credential stores
+(deny file-read* (subpath "/Users/yza.vyas/.ssh")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+(deny file-read* (subpath "/Users/yza.vyas/.gnupg")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+(deny file-read* (subpath "/Users/yza.vyas/.aws")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+(deny file-read* (subpath "/Users/yza.vyas/.config/gcloud")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+(deny file-read* (subpath "/Users/yza.vyas/.azure")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+
+; Keychain and password stores
+(deny file-read* (subpath "/Users/yza.vyas/Library/Keychains")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+(deny file-read* (subpath "/Users/yza.vyas/.local/share/keyrings")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+(deny file-read* (subpath "/Users/yza.vyas/.password-store")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+(deny file-read* (subpath "/Users/yza.vyas/.1password")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+
+; Infrastructure credentials
+(deny file-read* (subpath "/Users/yza.vyas/.kube")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+(deny file-read* (subpath "/Users/yza.vyas/.docker")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+(deny file-read* (literal "/Users/yza.vyas/.npmrc")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+(deny file-read* (literal "/Users/yza.vyas/.netrc")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+(deny file-read* (subpath "/Users/yza.vyas/.config/gh")
+  (with message "OPENCLAW_SANDBOX: secrets"))
+
+;; ─── Filesystem WRITE: allow-only ────────────────────
+; OpenClaw data directory (config, logs, agents, workspace)
+(allow file-write* (subpath "/Users/yza.vyas/.openclaw"))
+
+; Temp directories (macOS real paths — /tmp → /private/tmp)
+(allow file-write* (subpath "/private/tmp"))
+(allow file-write* (subpath "/private/var/folders"))
+
+; Standard streams
+(allow file-write* (literal "/dev/null"))
+
+;; ─── Filesystem WRITE: deny persistence vectors ──────
+;; Belt-and-suspenders: these paths are outside allowWrite,
+;; so already denied by (deny default). Explicit denies ensure
+;; they stay blocked even if allowWrite rules are broadened later.
+(deny file-write* (literal "/Users/yza.vyas/.bashrc")
+  (with message "OPENCLAW_SANDBOX: persistence"))
+(deny file-write* (literal "/Users/yza.vyas/.bash_profile")
+  (with message "OPENCLAW_SANDBOX: persistence"))
+(deny file-write* (literal "/Users/yza.vyas/.zshrc")
+  (with message "OPENCLAW_SANDBOX: persistence"))
+(deny file-write* (literal "/Users/yza.vyas/.zshenv")
+  (with message "OPENCLAW_SANDBOX: persistence"))
+(deny file-write* (literal "/Users/yza.vyas/.zprofile")
+  (with message "OPENCLAW_SANDBOX: persistence"))
+(deny file-write* (literal "/Users/yza.vyas/.profile")
+  (with message "OPENCLAW_SANDBOX: persistence"))
+(deny file-write* (literal "/Users/yza.vyas/.gitconfig")
+  (with message "OPENCLAW_SANDBOX: persistence"))
+; Block .git/hooks anywhere under the openclaw workspace
+(deny file-write*
+  (regex "^/Users/yza\\.vyas/\\.openclaw/.*/\\.git/hooks(/.*)?$")
+  (with message "OPENCLAW_SANDBOX: persistence"))

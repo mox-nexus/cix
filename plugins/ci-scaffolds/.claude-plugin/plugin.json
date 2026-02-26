@@ -1,0 +1,17 @@
+{
+  "name": "ci-scaffolds",
+  "version": "0.5.0",
+  "description": "Provides research-grounded scaffolds for effective human-AI collaboration. Use when: user asks to 'verify this', 'check my reasoning', 'calibrate trust', or needs decision frameworks, claim verification, or transparency in AI-assisted work.",
+  "author": {
+    "name": "Mox Labs",
+    "email": "mox.rnd@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "collaborative-intelligence",
+    "reasoning",
+    "verification",
+    "transparency",
+    "control"
+  ]
+}

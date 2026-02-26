@@ -1,6 +1,6 @@
 ---
 name: craft-plugins
-description: "Crafts Claude Code extensions (skills, commands, agents, hooks, MCP servers). Use when: creating any Claude Code extension component, authoring skill content, deciding between component types, or combining components into a plugin."
+description: "This skill should be used when the user asks to 'build a plugin', 'create an extension', 'add a skill', 'design an agent', 'orchestrate multiple agents', or needs quality methodology for Claude Code extension components (skills, commands, agents, hooks, MCP servers)."
 ---
 
 # Build Plugin
@@ -76,35 +76,24 @@ Context window is a public good. Every token must justify its presence.
 
 ### Description Writing
 
-Write for Claude's pattern matching. Third person. Include triggers.
+**Defer to `plugin-dev:skill-development` for the authoritative pattern.** The canonical format:
 
 ```yaml
-# Good
-description: "Analyzes CSV files for statistical patterns. Use when: user asks to 'analyze data', 'find patterns', 'run stats', or uploads .csv files."
-
-# Bad - too vague
-description: "Helps with data."
-
-# Bad - missing triggers  
-description: "Sophisticated statistical analysis system."
-
-# Bad - wrong voice
-description: "I can help you analyze your data."
+description: This skill should be used when the user asks to "specific phrase 1",
+  "specific phrase 2", or mentions [domain context].
 ```
 
-### Intent-Driven Activation
+Third person. Specific quoted trigger phrases. Concrete scenarios.
 
-Trigger on **user goals**, not tool names.
+**One addition:** trigger on **user goals**, not tool names.
 
 | Wrong | Right |
 |-------|-------|
-| "Use when: Midjourney prompting" | "Use when: creating artwork, images, visual assets" |
-| "Use when: using pytest" | "Use when: writing tests, test-driven development" |
-| "Use when: running kubectl" | "Use when: deploying to Kubernetes, managing clusters" |
+| "...asks to 'use Midjourney'" | "...asks to 'create artwork', 'generate images'" |
+| "...asks to 'run pytest'" | "...asks to 'write tests', 'add test coverage'" |
+| "...asks to 'run kubectl'" | "...asks to 'deploy to Kubernetes', 'manage clusters'" |
 
-**The pattern:** `[Domain/activity] + [user goals/outcomes]`, NOT `[Tool name] + [tool-specific actions]`.
-
-Users think in goals ("I need an image"), not tools ("I need Midjourney"). Intent-driven activation catches synonyms and related tasks that tool-specific descriptions miss.
+Users think in goals ("I need an image"), not tools ("I need Midjourney").
 
 ### Naming Conventions
 
@@ -222,16 +211,12 @@ For complex multi-step workflows where steps matter:
 
 ### Skills
 
-**Activation:** Description determines when skill loads.
-
-```yaml
-description: "Analyzes Figma files and generates handoff docs. Use when: user uploads .fig files, asks for 'design specs', 'component documentation', or 'design-to-code handoff'."
-```
+**Activation:** Description determines when skill loads. See `plugin-dev:skill-development` for the authoritative description format.
 
 **Debugging activation:** Ask Claude "When would you use the [skill name] skill?" It will quote the description.
 
 **Gotchas:**
-- Description missing "Use when:" = poor activation
+- Vague description without trigger phrases = poor activation
 - SKILL.md > 500 lines = context bloat
 - No TOC on files > 100 lines = Claude skips content
 
@@ -250,22 +235,26 @@ What this agent accomplishes.
 ## Approach
 How it reasons through the task.
 
-## Tools Available
-What it can use.
-
 ## Constraints
 Boundaries and limits.
+
+## Collaboration
+Who provides input, who consumes output.
+
+## Output Format
+What the output looks like — enables structured handoffs.
 ```
 
 **Patterns:** Single-shot | Loop | Pipeline | Orchestrator
 
-**Observability:**
-```
-Observation: [what I see]
-Conclusion: [what I infer]
-Reasoning: [why]
-Next: [what I'll do]
-```
+**The isolation principle:** Subagents do NOT inherit the parent conversation. Each agent gets only its system prompt, preloaded skills, the task prompt, and its allowed tools. Every piece of context the agent needs must be explicitly provided.
+
+**Multi-agent orchestration:** When your plugin has multiple agents that work together (like guild-arch's 13 agents or craft-rhetoric's 9-agent pipeline), see `references/orchestration.md` for:
+- Sequential pipelines, parallel fan-out, checkpoint aggregation, conditional routing
+- Context passing templates between agents
+- Background vs foreground execution tradeoffs
+- Agent observability (JSONL log paths, verification, instrumentation)
+- Debugging activation, silent-block failures, and common anti-patterns
 
 ### Hooks
 
@@ -460,4 +449,6 @@ Runs eval → optimize → re-eval cycles (max 3 iterations) until passing or es
 | Degrees of freedom guidance | [degrees-of-freedom.md](references/degrees-of-freedom.md) |
 | Anti-patterns in depth | [anti-patterns.md](references/anti-patterns.md) |
 | OTel instrumentation for extensions | [observability.md](references/observability.md) |
+| Multi-agent orchestration patterns | [orchestration.md](references/orchestration.md) |
 | Evidence-based skill research | [evidence-workflow.md](references/evidence-workflow.md) |
+| Extension design principles (5 principles + research) | [design-principles.md](references/design-principles.md) |

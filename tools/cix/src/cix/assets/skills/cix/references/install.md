@@ -5,14 +5,14 @@
 ### From default source
 
 ```bash
-cix add arch-guild
+cix add guild-arch
 cix add core-ci
 ```
 
 ### From specific source
 
 ```bash
-cix add cix/arch-guild
+cix add cix/guild-arch
 cix add my-local/test-plugin
 ```
 
@@ -21,7 +21,7 @@ cix add my-local/test-plugin
 Default target is `claude-code` (installs to `~/.claude/plugins/`).
 
 ```bash
-cix add arch-guild --target claude-code  # Explicit (same as default)
+cix add guild-arch --target claude-code  # Explicit (same as default)
 ```
 
 ## Managing Installations
@@ -29,9 +29,9 @@ cix add arch-guild --target claude-code  # Explicit (same as default)
 ```bash
 cix list                    # Show installed packages
 cix list -v                 # Verbose (show commit hash)
-cix rm arch-guild           # Remove by name
+cix rm guild-arch           # Remove by name
 cix update                  # Update all
-cix update arch-guild       # Update specific package
+cix update guild-arch       # Update specific package
 ```
 
 ## Installation Location
@@ -53,7 +53,7 @@ By default, cix pins installations to the commit at install time:
 
 ```bash
 cix list -v                 # Shows commit hash
-cix update arch-guild       # Updates to latest
+cix update guild-arch       # Updates to latest
 ```
 
 ## Troubleshooting

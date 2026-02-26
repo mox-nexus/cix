@@ -1,16 +1,17 @@
 ---
 name: discovering
-description: "Inventio — discourse to draw out human ground truth, then comprehension transform on source material. Use when: starting any content workflow, establishing what is true before writing, comprehending research or code."
-version: 0.1.1
+description: "This skill should be used when the user asks to 'comprehend this source material', 'understand this research before writing', 'analyze this before documenting', or needs deep comprehension of source material before creating content."
+version: 0.2.0
 ---
 
 # Discovering
 
-> The methodology for going from raw source + human discourse to genuine understanding. Content production is the OUTPUT.
+> Comprehend before you produce. Pattern-matching a source and generating plausible prose is the cardinal sin.
+
+Discourse (skill 0) has already drawn out the human's ground truth. Now the agent must verify its own understanding of the source material before writing anything. The comprehension transform prevents failure mode #4 — the generated.
 
 ## Contents
 
-- [Discourse](#discourse)
 - [The Comprehension Transform](#the-comprehension-transform)
 - [The Four-Pass Reading Protocol](#the-four-pass-reading-protocol)
 - [Gap-State Tracking](#gap-state-tracking)
@@ -18,68 +19,6 @@ version: 0.1.1
 - [The Explain-Back Pattern](#the-explain-back-pattern)
 - [Confidence-Gated Progression](#confidence-gated-progression)
 - [Production Formats](#production-formats)
-
-## Discourse
-
-> The agent asks. The human generates. The human's generation IS the ground truth.
-
-Discourse is the first move in every workflow. Three movements draw out everything downstream agents need: what the human wants to communicate, the context it lives in, and the substance itself.
-
-**Why discourse comes first**: Without it, the agent pattern-matches source material and produces plausible content that was never grounded in human understanding. That's failure mode #4 — the generated. Discourse prevents it by making the human articulate the substance before any agent touches it.
-
-**Why the agent asks and the human generates**: This is the interaction design principle the cix project itself is built on. When the agent generates and the human evaluates, the human is verifying — not thinking. When the agent asks and the human generates, the human activates their own understanding. The ground truth emerges from the human's generation, not from their approval of the agent's generation.
-
-### The Three Movements
-
-**Movement 1 — Communicate**: What are you trying to communicate?
-
-Ask: *What is this about? What's the core thing? Why does it matter?*
-
-The human articulates purpose and thesis. Not features, not structure — the thing itself. Listen for what they say unprompted. That's where the weight is.
-
-**Movement 2 — Setup**: What's the context?
-
-Ask: *Who is this for? Where does it live? What medium? What constraints?*
-
-The human names audience, presentation context, and boundaries. A library article has different setup than an experience page or a one-time presentation. Understanding the container early informs every downstream decision.
-
-**Movement 3 — Substance**: What do you know about it?
-
-This movement adapts to the project type. The agent follows the human's energy:
-
-| Project type | Draw out |
-|-------------|----------|
-| Research synthesis | Claims with evidence levels, what studies establish, where evidence conflicts, tensions, bets |
-| Experience page | Story arc, emotional journey, what the reader should feel, key moments |
-| Project docs | Architecture, audience entry points, what users need to do, what's tricky |
-| Presentation | Key takeaways, narrative structure, what needs to land, what's surprising |
-
-The agent does not suggest substance. The agent asks, clarifies, deepens — but the substance originates with the human.
-
-### Deepening Questions
-
-Within each movement, use the Paul-Elder categories to deepen:
-
-| Category | Purpose | Example |
-|----------|---------|---------|
-| **Clarification** | Surface what they mean | "What do you mean by X?" |
-| **Assumptions** | Expose what must be true | "What has to hold for that claim?" |
-| **Evidence** | Ground in measurement | "What was actually measured? By whom?" |
-| **Viewpoints** | Test from other angles | "How would a skeptic see this?" |
-| **Implications** | Follow the thread forward | "If that's true, what else follows?" |
-| **Meta** | Check the framing itself | "Why this question and not another?" |
-
-Don't run through all categories mechanically. Follow the human's energy. When they say something with weight, go deeper there. When they're vague, clarify. When they're certain, probe assumptions.
-
-### Discourse Is Complete When
-
-The agent can state back — in its own words, not the human's phrasing — what the human wants to communicate, the setup, and the substance. The human confirms or corrects. Iterate until the human says: "yes, that's what I mean."
-
-**Output**: Ground truth written to `ground-truth.md` in the workspace. The format adapts to the project — what matters is that the human's communicate, setup, and substance are captured faithfully. This is the only human-authored input document for the entire pipeline.
-
-This output feeds the comprehension transform. The agent now has human-generated ground truth to check its comprehension against — not just source material.
-
----
 
 ## The Comprehension Transform
 

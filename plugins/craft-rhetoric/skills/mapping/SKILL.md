@@ -1,6 +1,6 @@
 ---
 name: mapping
-description: "Source landscape mapping — survey, synthesis, and map of contents. Use when: surveying sources (papers, code, docs), synthesizing research, extracting verified claims, building source inventories, creating maps of contents, or any work that needs to know what exists before going deep."
+description: "This skill should be used when the user asks to 'survey these sources', 'map what we have', 'create a map of contents', 'inventory these papers', or needs to understand what sources exist before going deep."
 version: 0.1.0
 ---
 

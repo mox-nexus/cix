@@ -4,11 +4,12 @@
 
 	const allLinks = [
 		{ path: '/catalog', label: 'catalog', description: 'explore extensions', variant: 'emergence' as const },
-		{ path: '/docs', label: 'docs', description: 'deep research', variant: 'constraint' as const }
+		{ path: '/docs', label: 'docs', description: 'deep research', variant: 'constraint' as const },
+		{ path: '/docs/bibliography', label: 'bibliography', description: 'full citations', variant: 'spark' as const }
 	];
 
 	let currentPath = $derived(page.url.pathname.slice(base.length) || '/');
-	let links = $derived(allLinks.filter((l) => !currentPath.startsWith(l.path)));
+	let links = $derived(allLinks.filter((l) => currentPath !== l.path && !currentPath.startsWith(l.path + '/')));
 </script>
 
 <nav class="cross-links" aria-label="Explore other sections">

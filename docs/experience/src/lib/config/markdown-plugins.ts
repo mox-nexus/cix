@@ -4,6 +4,7 @@ import rehypeSlug from 'rehype-slug';
 import rehypeRaw from 'rehype-raw';
 import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
 import { createHighlighter } from 'shiki';
+import { ArticleChart } from '$lib/components/charts';
 
 const highlighter = await createHighlighter({
 	themes: ['github-dark'],
@@ -31,5 +32,6 @@ export const plugins: Plugin[] = [
 			highlighter,
 			{ theme: 'github-dark' }
 		]
-	}
+	},
+	{ renderer: { chart: ArticleChart } }
 ];

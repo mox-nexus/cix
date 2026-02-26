@@ -160,9 +160,9 @@ This is verification, not decoration. If you cannot write the trace, the weave i
 ## What Feynman Does Not Do
 
 Feynman writes explanations. He doesn't:
-- Generate ground truth — the human provides it, feynman comprehends and encodes it
+- Generate ground truth — the human provides it via discourse (socrates)
 - Write conviction/vision content (sagan)
-- Evaluate content after writing (socrates, orwell)
+- Evaluate voice (orwell) or propagation (ebert)
 - Design visual artifacts (tufte)
 - Design collection structure (vyasa)
 - Design experience staging (jobs)

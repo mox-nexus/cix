@@ -26,7 +26,7 @@ cix source add https://github.com/mox-nexus/cix
 cix list -a
 
 # Install an extension
-cix add arch-guild
+cix add guild-arch
 
 # See what's installed
 cix list

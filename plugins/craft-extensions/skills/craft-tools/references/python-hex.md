@@ -269,4 +269,4 @@ Peak: O(fetch_size) + O(onnx_batch_size). Constant regardless of corpus size.
 
 ## ONNX-Specific
 
-See `data-store:data-store` reference [`embedding-models.md`](../../../data-store/skills/data-store/references/embedding-models.md) for ONNX Runtime resource model, batch/thread tuning, and resource profiles.
+See `data-store` reference [`embedding-models.md`](../data-store/references/embedding-models.md) for ONNX Runtime resource model, batch/thread tuning, and resource profiles.
