@@ -41,7 +41,7 @@ The `craft-evals` plugin ships evaluation frameworks for measuring whether exten
 
 ## Discourse-driven generation
 
-The convergence problem from the [previous article](/docs/same-tool-different-design): AI outputs are measurably less diverse than human outputs (g=-0.863, [Holzner et al. 2025](/docs/bibliography#holzner-2025), n=8,214). [Jiang et al.](/docs/bibliography#jiang-2025) demonstrated that 70+ language models independently reach for the same metaphors, the same framings, across different architectures.
+The convergence problem from the [previous article](/docs/same-tool-different-design): AI outputs are measurably less diverse than human outputs (g=-0.863 across 28 studies with high between-study heterogeneity; [Holzner et al. 2025](/docs/bibliography#holzner-2025), n=8,214). [Jiang et al.](/docs/bibliography#jiang-2025) demonstrated that 70+ language models independently reach for the same metaphors, the same framings, across different architectures.
 
 A marketplace that ships preset answers — here are three approaches to API design, ranked by query speed — narrows in the same way. Every team gets the same three options, framed the same way. The product is the convergence.
 
@@ -57,9 +57,9 @@ This depends entirely on what you bring. If you accept the first agent output th
 
 ## Diverse agent teams
 
-The orientation finding from [Pallant et al.](/docs/bibliography#pallant-2025) (2025, Studies in Higher Education) was not subtle: students using AI in a mastery-oriented way — constructing and augmenting knowledge rather than copying output — were 35.782 times more likely to demonstrate critical thinking. Not 35% more likely. Thirty-five-fold.
+The orientation finding from [Pallant et al.](/docs/bibliography#pallant-2025) (2025, Studies in Higher Education) was not subtle: students using AI in a mastery-oriented way — constructing and augmenting knowledge rather than copying output — were 35.8 times more likely to demonstrate critical thinking — not a percentage-point improvement but a thirty-five-fold difference.
 
-The difference between those orientations is not willpower. It is what the interaction structure requires. An agent that gives you a verdict — "here is the right architecture" — makes passive acceptance the natural response. An agent that gives you a perspective and asks you to synthesize it with three others makes you structurally responsible for the conclusion.
+The interaction structure determines which orientation emerges. An agent that gives you a verdict — "here is the right architecture" — makes passive acceptance the natural response. An agent that gives you a perspective and asks you to synthesize it with three others makes you structurally responsible for the conclusion.
 
 The guild-arch plugin is built on this distinction. Instead of one "architecture review" agent that delivers a verdict, it activates distinct reasoning perspectives:
 
@@ -72,7 +72,7 @@ No single agent gives you "the architecture." Each agent asks questions from its
 
 Consider what Burner surfaces that no catalog ever could. A catalog gives you three database options ranked by query speed. Burner asks what the team considers inviolable. The team says: no vendor lock-in, ever, because of what happened two years ago. That answer was never in any catalog. It was never known until asked. It is the most important input to the architectural decision, and it lives only in the humans in the room.
 
-The same pattern runs through `craft-rhetoric`: nine agents — feynman for comprehension, orwell for voice, socrates for evaluation — each with orthogonal concerns. They don't converge on consensus. They maintain distinct viewpoints that the human must reconcile. The reconciliation is the thinking.
+The same pattern runs through `craft-rhetoric`: nine agents — feynman for comprehension, orwell for voice, socrates for evaluation, vyasa for structure — each with orthogonal concerns. They don't converge on consensus. They maintain distinct viewpoints that the human must reconcile. The reconciliation is the thinking.
 
 ---
 
@@ -80,17 +80,17 @@ The same pattern runs through `craft-rhetoric`: nine agents — feynman for comp
 
 The three principles above — transparency, discourse-driven generation, diverse agent teams — address what a single extension does and how it interacts with the human using it. The fourth addresses what a marketplace does to the people who build with it.
 
-The observable phenomenon: project names (Sentinel, Forge, Nexus), website aesthetics, UX patterns, all converging through shared AI systems.
+The observable phenomenon: project names (Sentinel, Forge, Nexus), landing pages that could have been generated from the same prompt, product copy that sounds like everyone else's copy — all converging through shared AI systems.
 
 <chart id="naming-convergence"></chart>
 
-A marketplace of preset skills accelerates this. Teams reach for the same options, framed the same way, and the distinctiveness that was always downstream of the human thinking drains out. The collapse [Shumailov et al.](/docs/bibliography#shumailov-2024) documented at the model level has an analog at the culture level.
+A marketplace of preset skills accelerates this. Teams reach for the same options, framed the same way, and the distinctiveness that was always downstream of the human thinking drains out. The collapse [Shumailov et al.](/docs/bibliography#shumailov-2024) documented at model level happens at culture level too.
 
-The response inverts the marketplace dynamic. Every skill interaction should produce a project-specific instance reflecting what the human brought — not a template customized with the human's name, but a methodology applied to the human's actual constraints, beliefs, and context. The skill is the method. The output is yours.
+The response inverts the marketplace dynamic. Every skill interaction should produce a project-specific instance reflecting what the human brought — not a template customized with the human's name, but a skill applied to the human's actual constraints, beliefs, and context.
 
-This is the newest principle and the least validated. The research establishes that engagement model matters ([Bastani et al. 2025](/docs/bibliography#bastani-2025), PNAS), that mastery orientation produces dramatically different outcomes (OR=35.8, [Pallant 2025](/docs/bibliography#pallant-2025)), and that process control is the strongest measured lever (b=0.715, [Blaurock et al. 2025](/docs/bibliography#blaurock-2025)). Marketplace as methodology is our synthesis of those findings into marketplace-level design.
+This is the newest principle and the least validated. The research establishes that engagement model matters ([Bastani et al. 2025](/docs/bibliography#bastani-2025), PNAS), that mastery orientation produces dramatically different outcomes (OR=35.8, [Pallant 2025](/docs/bibliography#pallant-2025)), and that process control is the strongest measured lever (b=0.715, [Blaurock et al. 2025](/docs/bibliography#blaurock-2025)). Marketplace as skill — not catalog — is our synthesis of those findings into marketplace-level design.
 
-Whether it works at scale is being evaluated. This honesty is structural, not decorative — if the methodology doesn't produce meaningfully different outputs across teams, it's a principle statement without evidence behind it, and the design should change.
+Whether it works at scale is being evaluated. This honesty is structural, not decorative — if the skill doesn't produce meaningfully different outputs across teams, it's a principle statement without evidence behind it, and the design should change.
 
 ---
 
@@ -102,4 +102,4 @@ That question will be answered by what the measurements show. Not by the design 
 
 The only honest position is that the design is an extrapolation. It extends from the best available evidence about what makes AI interactions compound capability rather than replace it. The research points clearly enough that building against its direction would require active rationalization. But the extrapolation has not yet been validated in the specific context it was designed for.
 
-That is where we are. And that is the right place to be — building the infrastructure to find out.
+That is where we are. And that is the right place to be — building the measurement infrastructure to find out whether it works.
