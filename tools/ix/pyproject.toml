@@ -15,6 +15,8 @@ dependencies = [
     "pyyaml>=6.0",
     "python-frontmatter>=1.0",
     "matrix",
+    "anthropic>=0.84.0",
+    "claude-agent-sdk>=0.1.36",
 ]
 
 [project.optional-dependencies]

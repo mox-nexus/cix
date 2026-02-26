@@ -37,7 +37,7 @@ def service(tmp_path: Path) -> Experiment:
 
 class TestExperiment:
     async def test_produces_metrics_shape(self, service: Experiment):
-        """End-to-end: dry-run produces precision/recall/F1/confusion matrix."""
+        """End-to-end: dry-run produces mean_score/std_dev/min/max."""
         exp = _config(
             probes=(
                 _probe("must-001", "How do I write evals?", "must_trigger"),
@@ -48,11 +48,10 @@ class TestExperiment:
         )
         results = await service.run(exp)
 
-        assert 0.0 <= results.precision <= 1.0
-        assert 0.0 <= results.recall <= 1.0
-        assert 0.0 <= results.f1 <= 1.0
-        assert results.tp + results.fn == 2
-        assert results.fp + results.tn == 1
+        assert 0.0 <= results.mean_score <= 1.0
+        assert results.std_dev >= 0.0
+        assert results.min_score <= results.max_score
+        assert len(results.probe_results) == 3
 
     async def test_interpretation_shape(self, service: Experiment):
         exp = _config(
@@ -68,7 +67,8 @@ class TestExperiment:
         assert isinstance(results.issues, tuple)
         assert isinstance(results.suggestions, tuple)
 
-    async def test_skips_acceptable_probes(self, service: Experiment):
+    async def test_runs_all_probes(self, service: Experiment):
+        """Service no longer filters — all probes run regardless of metadata."""
         exp = _config(
             probes=(
                 _probe("must-001", "evals?", "must_trigger"),
@@ -78,10 +78,11 @@ class TestExperiment:
         )
         results = await service.run(exp)
         probe_ids = [pr.probe_id for pr in results.probe_results]
-        assert "edge-001" not in probe_ids
-        assert len(results.probe_results) == 2
+        assert "edge-001" in probe_ids
+        assert len(results.probe_results) == 3
 
-    async def test_dry_run_high_f1(self, service: Experiment):
+    async def test_dry_run_high_mean_score(self, service: Experiment):
+        """Seed=42 with mock agent -> high mean score."""
         exp = _config(
             probes=tuple(
                 _probe(f"must-{i:03d}", f"eval question {i}", "must_trigger") for i in range(1, 11)
@@ -93,7 +94,7 @@ class TestExperiment:
             trials=5,
         )
         results = await service.run(exp)
-        assert results.f1 >= 0.7
+        assert results.mean_score >= 0.5
 
     async def test_callback_fires(self, service: Experiment):
         completed = []
@@ -121,37 +122,39 @@ class TestExperiment:
 class TestMetricsComputation:
     def test_perfect_metrics(self):
         results = [
-            ProbeResult(probe_id="m1", expectation="must_trigger", score=0.8, correct=True),
-            ProbeResult(probe_id="m2", expectation="must_trigger", score=1.0, correct=True),
-            ProbeResult(probe_id="n1", expectation="should_not_trigger", score=0.0, correct=True),
+            ProbeResult(probe_id="m1", score=1.0, passed=True, trial_scores=(1.0, 1.0)),
+            ProbeResult(probe_id="m2", score=0.8, passed=True, trial_scores=(0.8, 0.8)),
+            ProbeResult(probe_id="n1", score=0.9, passed=True, trial_scores=(0.9, 0.9)),
         ]
         metrics = compute_metrics(results)
-        assert metrics["precision"] == 1.0
-        assert metrics["recall"] == 1.0
-        assert metrics["f1"] == 1.0
+        assert metrics["mean_score"] == pytest.approx(0.9, abs=0.01)
+        assert metrics["min_score"] == 0.8
+        assert metrics["max_score"] == 1.0
 
     def test_all_wrong(self):
         results = [
-            ProbeResult(probe_id="m1", expectation="must_trigger", score=0.2, correct=False),
-            ProbeResult(probe_id="n1", expectation="should_not_trigger", score=0.8, correct=False),
+            ProbeResult(probe_id="m1", score=0.2, passed=False, trial_scores=(0.2, 0.2)),
+            ProbeResult(probe_id="n1", score=0.1, passed=False, trial_scores=(0.1, 0.1)),
         ]
         metrics = compute_metrics(results)
-        assert metrics["f1"] == 0.0
+        assert metrics["mean_score"] == pytest.approx(0.15, abs=0.01)
+        assert metrics["min_score"] == 0.1
+        assert metrics["max_score"] == 0.2
 
 
 class TestInterpretation:
     def test_excellent(self):
-        metrics = dict(precision=0.95, recall=0.93, f1=0.94, tp=14, fp=1, fn=1, tn=9)
+        metrics = dict(mean_score=0.94, std_dev=0.05)
         interp = interpret(metrics)
         assert interp["status"] == "excellent"
 
-    def test_low_recall(self):
-        metrics = dict(precision=0.9, recall=0.6, f1=0.72, tp=9, fp=1, fn=6, tn=9)
+    def test_good_with_high_variance(self):
+        metrics = dict(mean_score=0.75, std_dev=0.30)
         interp = interpret(metrics)
         assert interp["status"] == "good"
-        assert any("recall" in i.lower() for i in interp["issues"])
+        assert any("variance" in i.lower() for i in interp["issues"])
 
     def test_poor(self):
-        metrics = dict(precision=0.3, recall=0.4, f1=0.34, tp=4, fp=9, fn=6, tn=1)
+        metrics = dict(mean_score=0.34, std_dev=0.15)
         interp = interpret(metrics)
         assert interp["status"] == "poor"

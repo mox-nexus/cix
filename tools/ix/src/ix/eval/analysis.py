@@ -1,17 +1,17 @@
 """Post-DAG analysis — aggregate, metrics, interpret.
 
 Pure functions operating on Reading types.
-Groups by probe_id from the DAG artifacts.
-Scoring (comparing readings against ground truth) happens here.
+Generic — works with any sensor. The Reading is the contract.
 """
 
 from __future__ import annotations
 
+import statistics
 from collections import defaultdict
 from collections.abc import Callable
 
 from ix.domain.types import Probe, Reading
-from ix.eval.models import MUST_TRIGGER, SHOULD_NOT_TRIGGER, ProbeResult
+from ix.eval.models import ProbeResult
 
 
 def aggregate_readings(
@@ -19,12 +19,10 @@ def aggregate_readings(
     probes: dict[str, Probe],
     on_probe_complete: Callable[[ProbeResult], None] | None = None,
 ) -> list[ProbeResult]:
-    """Group readings by probe_id, majority vote across trials.
+    """Group readings by probe_id, average scores across trials.
 
-    Scoring: compares sensor readings against probe ground truth
-    (probe.metadata["expectation"]).
-
-    Readings already carry probe_id + trial_index — no join needed.
+    Sensor-agnostic. Uses Reading.score (continuous) when available,
+    falls back to Reading.passed (binary).
     """
     by_probe: dict[str, list[Reading]] = defaultdict(list)
     for reading in readings:
@@ -32,17 +30,19 @@ def aggregate_readings(
 
     probe_results: list[ProbeResult] = []
     for probe_id, probe_readings in by_probe.items():
-        score = sum(1 for r in probe_readings if r.passed) / len(probe_readings)
-        activated = score > 0.5
-        probe = probes[probe_id]
-        expectation = probe.metadata.get("expectation", MUST_TRIGGER)
-        correct = activated == (expectation == MUST_TRIGGER)
+        if any(r.score is not None for r in probe_readings):
+            score = sum(r.score for r in probe_readings if r.score is not None) / len(
+                probe_readings
+            )
+        else:
+            score = sum(1 for r in probe_readings if r.passed) / len(probe_readings)
 
         probe_result = ProbeResult(
             probe_id=probe_id,
-            expectation=expectation,
             score=score,
-            correct=correct,
+            passed=score > 0.5,
+            trial_scores=tuple(r.score or (1.0 if r.passed else 0.0) for r in probe_readings),
+            details=tuple(r.details for r in probe_readings if r.details),
         )
         probe_results.append(probe_result)
 
@@ -53,62 +53,52 @@ def aggregate_readings(
 
 
 def compute_metrics(results: list[ProbeResult]) -> dict:
-    """Compute confusion matrix and F1.
+    """Compute summary metrics from probe results.
 
-    Returns a dict suitable for spreading into ExperimentResults(**metrics).
+    Generic — computes mean score, std dev, min/max.
     """
-    must = [r for r in results if r.expectation == MUST_TRIGGER]
-    should_not = [r for r in results if r.expectation == SHOULD_NOT_TRIGGER]
+    if not results:
+        return {"mean_score": 0.0, "std_dev": 0.0, "min_score": 0.0, "max_score": 0.0}
 
-    tp = sum(1 for r in must if r.score > 0.5)
-    fn = sum(1 for r in must if r.score <= 0.5)
-    fp = sum(1 for r in should_not if r.score > 0.5)
-    tn = sum(1 for r in should_not if r.score <= 0.5)
+    scores = [r.score for r in results]
+    all_trial_scores = [s for r in results for s in r.trial_scores]
 
-    precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
-    recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
-    f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
-
-    return dict(
-        precision=precision,
-        recall=recall,
-        f1=f1,
-        tp=tp,
-        fp=fp,
-        fn=fn,
-        tn=tn,
-    )
+    return {
+        "mean_score": statistics.mean(scores),
+        "std_dev": statistics.stdev(all_trial_scores) if len(all_trial_scores) > 1 else 0.0,
+        "min_score": min(all_trial_scores) if all_trial_scores else 0.0,
+        "max_score": max(all_trial_scores) if all_trial_scores else 0.0,
+    }
 
 
 def interpret(metrics: dict) -> dict:
-    """Interpret metrics and suggest tuning.
+    """Interpret metrics."""
+    mean = metrics.get("mean_score", 0.0)
+    std = metrics.get("std_dev", 0.0)
 
-    Returns a dict suitable for spreading into ExperimentResults(**interp).
-    """
     issues: list[str] = []
     suggestions: list[str] = []
 
-    if metrics["recall"] < 0.8:
-        issues.append("Low recall - skill not activating enough")
-        suggestions.append("Broaden skill description keywords")
-        suggestions.append("Add more trigger phrases to description")
+    if mean < 0.10:
+        issues.append(f"Floor effect — mean={mean:.1%}, task may be too hard")
+    elif mean > 0.90:
+        issues.append(f"Ceiling effect — mean={mean:.1%}, task may be too easy")
 
-    if metrics["precision"] < 0.8:
-        issues.append("Low precision - skill activating too much")
-        suggestions.append("Tighten skill description to be more specific")
-        suggestions.append("Add exclusion phrases")
+    if std > 0.25:
+        issues.append(f"High variance — std={std:.3f}, results may be noisy")
+        suggestions.append("Increase trial count or simplify task")
 
-    if metrics["f1"] >= 0.85:
+    if mean >= 0.85:
         status = "excellent"
-    elif metrics["f1"] >= 0.70:
+    elif mean >= 0.70:
         status = "good"
-    elif metrics["f1"] >= 0.50:
+    elif mean >= 0.50:
         status = "needs_work"
     else:
         status = "poor"
 
-    return dict(
-        status=status,
-        issues=tuple(issues),
-        suggestions=tuple(suggestions),
-    )
+    return {
+        "status": status,
+        "issues": tuple(issues),
+        "suggestions": tuple(suggestions),
+    }

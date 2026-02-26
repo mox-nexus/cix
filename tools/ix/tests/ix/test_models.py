@@ -144,36 +144,30 @@ class TestExperimentResults:
     def test_with_metrics(self):
         results = ExperimentResults(
             experiment_name="skill-activation",
-            precision=0.9,
-            recall=0.8,
-            f1=0.85,
-            tp=12,
-            fp=1,
-            fn=3,
-            tn=9,
+            mean_score=0.85,
+            std_dev=0.12,
+            min_score=0.6,
+            max_score=1.0,
             status="good",
-            issues=("Low recall",),
-            suggestions=("Broaden triggers",),
+            issues=("High variance — std=0.120, results may be noisy",),
+            suggestions=("Increase trial count or simplify task",),
         )
-        assert results.f1 == 0.85
+        assert results.mean_score == 0.85
         assert results.status == "good"
 
     def test_defaults(self):
         results = ExperimentResults(experiment_name="test")
-        assert results.precision == 0.0
+        assert results.mean_score == 0.0
         assert results.status == "pending"
         assert results.issues == ()
 
     def test_serialization_roundtrip(self):
         results = ExperimentResults(
             experiment_name="test",
-            precision=0.9,
-            recall=0.8,
-            f1=0.85,
-            tp=12,
-            fp=1,
-            fn=3,
-            tn=9,
+            mean_score=0.85,
+            std_dev=0.12,
+            min_score=0.6,
+            max_score=1.0,
             status="good",
         )
         data = results.model_dump()
