@@ -74,7 +74,7 @@ class Experiment:
         orchestrator = Orchestrator([trial_node])
         construct = await orchestrator.run()
 
-        readings: list[Reading] = construct["experiment.readings"]
+        readings: list[Reading] = construct["ix.v1/experiment.readings"]
 
         probe_map = {p.id: p for p in active_probes}
         probe_results = aggregate_readings(readings, probe_map, on_probe_complete)

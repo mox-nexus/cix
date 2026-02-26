@@ -16,16 +16,16 @@ class StubClientConfig(BaseModel):
 def make_probe(**config):
     return FakeComponent(
         name=config.get("name", "probe"),
-        requires=frozenset(),
-        provides="probe.response",
+        consumes=frozenset(),
+        produces="probe.response",
     )
 
 
 def make_sensor(**config):
     return FakeComponent(
         name=config.get("name", "sensor"),
-        requires=frozenset({"probe.response"}),
-        provides="sensor.grade",
+        consumes=frozenset({"probe.response"}),
+        produces="sensor.grade",
     )
 
 
@@ -64,7 +64,7 @@ class TestContainer:
     def test_create_component(self, container):
         component = container.create_component("test.probe")
         assert component.name == "probe"
-        assert component.provides == "probe.response"
+        assert component.produces == "probe.response"
 
     def test_create_component_with_config(self, container):
         component = container.create_component("test.probe", {"name": "custom-probe"})
@@ -126,8 +126,8 @@ class TestDIPattern:
         def make_runtime_probe(**kw):
             return FakeComponent(
                 name=kw.get("name", "runtime-probe"),
-                requires=frozenset(),
-                provides="probe.response",
+                consumes=frozenset(),
+                produces="probe.response",
                 data=f"used-runtime-{id(captured_runtime)}",
             )
 

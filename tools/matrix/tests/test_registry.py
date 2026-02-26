@@ -9,8 +9,8 @@ def make_probe(**config):
     """Factory that creates a FakeComponent probe."""
     return FakeComponent(
         name=config.get("name", "probe"),
-        requires=frozenset(),
-        provides="probe.response",
+        consumes=frozenset(),
+        produces="probe.response",
     )
 
 
@@ -18,8 +18,8 @@ def make_sensor(**config):
     """Factory that creates a FakeComponent sensor."""
     return FakeComponent(
         name=config.get("name", "sensor"),
-        requires=frozenset({"probe.response"}),
-        provides="sensor.grade",
+        consumes=frozenset({"probe.response"}),
+        produces="sensor.grade",
     )
 
 
@@ -28,7 +28,7 @@ class TestRegistration:
         registry = ComponentRegistry().register("test.probe", make_probe)
         component = registry.create("test.probe")
         assert component.name == "probe"
-        assert component.provides == "probe.response"
+        assert component.produces == "probe.response"
 
     def test_chaining(self):
         registry = (
@@ -49,8 +49,8 @@ class TestRegistration:
             "test.fake",
             lambda **kw: FakeComponent(
                 name=kw.get("name", "direct"),
-                requires=frozenset(),
-                provides="fake.output",
+                consumes=frozenset(),
+                produces="fake.output",
             ),
         )
         component = registry.create("test.fake", {"name": "custom"})

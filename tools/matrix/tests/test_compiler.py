@@ -1,4 +1,4 @@
-"""Tests for DagCompiler — topology validation from requires/provides."""
+"""Tests for DagCompiler — topology validation from consumes/produces."""
 
 import pytest
 from matrix import CompilationError, DagCompiler
@@ -8,7 +8,7 @@ from matrix_helpers import FakeComponent
 
 
 def _probe(name: str = "probe", output: str = "probe.response") -> FakeComponent:
-    return FakeComponent(name=name, requires=frozenset(), provides=output)
+    return FakeComponent(name=name, consumes=frozenset(), produces=output)
 
 
 def _sensor(
@@ -18,8 +18,8 @@ def _sensor(
 ) -> FakeComponent:
     return FakeComponent(
         name=name,
-        requires=inputs or frozenset({"probe.response"}),
-        provides=output,
+        consumes=inputs or frozenset({"probe.response"}),
+        produces=output,
     )
 
 
@@ -30,8 +30,8 @@ def _scorer(
 ) -> FakeComponent:
     return FakeComponent(
         name=name,
-        requires=inputs or frozenset({"sensor.grade"}),
-        provides=output,
+        consumes=inputs or frozenset({"sensor.grade"}),
+        produces=output,
     )
 
 
@@ -90,26 +90,26 @@ class TestDagCompiler:
         """A -> B -> A -> CycleError."""
         a = FakeComponent(
             name="a",
-            requires=frozenset({"b.output"}),
-            provides="a.output",
+            consumes=frozenset({"b.output"}),
+            produces="a.output",
         )
         b = FakeComponent(
             name="b",
-            requires=frozenset({"a.output"}),
-            provides="b.output",
+            consumes=frozenset({"a.output"}),
+            produces="b.output",
         )
 
         with pytest.raises(CompilationError, match="[Cc]ycle"):
             DagCompiler.compile([a, b])
 
     def test_root_nodes(self):
-        """Component with empty requires has no dependencies."""
+        """Component with empty consumes has no dependencies."""
         root = _probe()
         _, edges = DagCompiler.compile([root])
         assert edges["probe"] == set()
 
-    def test_duplicate_provides(self):
-        """Two components provide same kind -> CompilationError."""
+    def test_duplicate_produces(self):
+        """Two components produce same kind -> CompilationError."""
         a = _probe(name="probe-a", output="probe.response")
         b = _probe(name="probe-b", output="probe.response")
 
@@ -121,8 +121,8 @@ class TestDagCompiler:
         a = _probe(name="probe")
         b = FakeComponent(
             name="probe",
-            requires=frozenset(),
-            provides="other.kind",
+            consumes=frozenset(),
+            produces="other.kind",
         )
 
         with pytest.raises(CompilationError, match="Duplicate component name"):

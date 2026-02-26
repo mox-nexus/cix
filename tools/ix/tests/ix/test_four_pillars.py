@@ -87,10 +87,11 @@ class TestTrialNode:
             trials=2,
         )
         construct = Construct()
-        results = await node.run(construct)
+        result = await node.run(construct)
 
-        assert len(results) == 6  # 3 probes x 2 trials
-        assert all(isinstance(r, Reading) for r in results)
+        assert result.type_url == "ix.v1/experiment.readings"
+        assert len(result.value) == 6  # 3 probes x 2 trials
+        assert all(isinstance(r, Reading) for r in result.value)
 
     async def test_readings_reflect_sensor_logic(self):
         """ThresholdSensor: resp > threshold → pass."""
@@ -101,14 +102,15 @@ class TestTrialNode:
             trials=1,
         )
         construct = Construct()
-        results = await node.run(construct)
+        result = await node.run(construct)
+        readings = result.value
 
         # probe "1" → resp=10 (fail, 10 < 15)
         # probe "5" → resp=50 (pass, 50 > 15)
-        assert results[0].passed is False
-        assert results[0].score == 10.0
-        assert results[1].passed is True
-        assert results[1].score == 50.0
+        assert readings[0].passed is False
+        assert readings[0].score == 10.0
+        assert readings[1].passed is True
+        assert readings[1].score == 50.0
 
     async def test_trial_indices_are_correct(self):
         node = TrialNode(
@@ -118,9 +120,9 @@ class TestTrialNode:
             trials=3,
         )
         construct = Construct()
-        results = await node.run(construct)
+        result = await node.run(construct)
 
-        assert [r.trial_index for r in results] == [0, 1, 2]
+        assert [r.trial_index for r in result.value] == [0, 1, 2]
 
     async def test_captures_errors_as_failed_readings(self):
         """Runtime errors are captured as failed readings, not raised."""
@@ -130,10 +132,10 @@ class TestTrialNode:
             sensor=ThresholdSensor(),
         )
         construct = Construct()
-        results = await node.run(construct)
+        result = await node.run(construct)
 
-        assert len(results) == 2
-        for r in results:
+        assert len(result.value) == 2
+        for r in result.value:
             assert r.passed is False
             assert "SUT crashed" in r.details
 
@@ -144,9 +146,9 @@ class TestTrialNode:
             sensor=ThresholdSensor(),
         )
         construct = Construct()
-        results = await node.run(construct)
+        result = await node.run(construct)
 
-        assert results[0].probe_id == "42"
+        assert result.value[0].probe_id == "42"
 
 
 # --- Full DAG integration ---
@@ -165,7 +167,7 @@ class TestFullDag:
         orchestrator = Orchestrator([trial_node])
         construct = await orchestrator.run()
 
-        readings = construct["experiment.readings"]
+        readings = construct["ix.v1/experiment.readings"]
 
         assert len(readings) == 6  # 3 probes x 2 trials
 

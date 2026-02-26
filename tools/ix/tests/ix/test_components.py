@@ -38,17 +38,18 @@ class TestProtocol:
 
 class TestTrialNode:
     async def test_produces_readings(self):
-        """TrialNode returns one Reading per (probe x trial x sensor)."""
+        """TrialNode returns TypedStruct with one Reading per (probe x trial x sensor)."""
         agent = MockAgent(expected_skill="build-eval", seed=42)
         sensor = ActivationSensor(expected_skill="build-eval")
         node = TrialNode(_probes(), agent, sensor, trials=3)
 
         construct = Construct()
-        results = await node.run(construct)
+        result = await node.run(construct)
 
+        assert result.type_url == "ix.v1/experiment.readings"
         # 2 probes x 3 trials = 6 readings (one sensor per trial)
-        assert len(results) == 6
-        assert all(isinstance(r, Reading) for r in results)
+        assert len(result.value) == 6
+        assert all(isinstance(r, Reading) for r in result.value)
 
     async def test_readings_have_identity(self):
         """Each reading traces back to its probe and trial."""
@@ -57,13 +58,14 @@ class TestTrialNode:
         node = TrialNode(_probes(), agent, sensor, trials=1)
 
         construct = Construct()
-        results = await node.run(construct)
+        result = await node.run(construct)
+        readings = result.value
 
-        assert len(results) == 2
-        probe_ids = {r.probe_id for r in results}
+        assert len(readings) == 2
+        probe_ids = {r.probe_id for r in readings}
         assert probe_ids == {"must-001", "not-001"}
-        assert all(r.trial_index == 0 for r in results)
-        assert all(r.sensor_name == "activation" for r in results)
+        assert all(r.trial_index == 0 for r in readings)
+        assert all(r.sensor_name == "activation" for r in readings)
 
     async def test_error_trial_produces_failed_reading(self):
         """Runtime errors produce failed readings, not exceptions."""
@@ -80,9 +82,10 @@ class TestTrialNode:
         )
 
         construct = Construct()
-        results = await node.run(construct)
+        result = await node.run(construct)
+        readings = result.value
 
-        assert len(results) == 1
-        assert results[0].passed is False
-        assert results[0].probe_id == "err-001"
-        assert "timeout" in results[0].details
+        assert len(readings) == 1
+        assert readings[0].passed is False
+        assert readings[0].probe_id == "err-001"
+        assert "timeout" in readings[0].details
