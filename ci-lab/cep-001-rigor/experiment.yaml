@@ -1,4 +1,4 @@
-name: rep-001-rigor
+name: cep-001-rigor
 description: |
   Does iteration improve code generation outcomes?
   Hypothesis: Multiple self-review iterations produce more correct code than single-shot generation.

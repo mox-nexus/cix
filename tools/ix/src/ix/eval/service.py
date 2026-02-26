@@ -17,7 +17,6 @@ from ix.domain.ports import ExperimentRuntime, Sensor
 from ix.domain.types import Reading
 from ix.eval.analysis import aggregate_readings, compute_metrics, interpret
 from ix.eval.models import (
-    ACCEPTABLE,
     ExperimentConfig,
     ExperimentResults,
     ProbeResult,
@@ -61,8 +60,7 @@ class Experiment:
         on_probe_complete: Callable[[ProbeResult], None] | None = None,
     ) -> ExperimentResults:
         """Execute the experiment: DAG phase then post-DAG aggregation."""
-        # Filter probes — skip "acceptable" expectations (scoring concern)
-        active_probes = [p for p in config.probes if p.metadata.get("expectation") != ACCEPTABLE]
+        active_probes = list(config.probes)
 
         trial_node = TrialNode(
             probes=active_probes,

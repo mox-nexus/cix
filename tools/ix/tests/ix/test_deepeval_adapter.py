@@ -72,7 +72,7 @@ class TestDeepEvalSensorWithJudge:
 
     @pytest.mark.skipif(
         not os.environ.get("OPENAI_API_KEY"),
-        reason="DeepEval default model requires OPENAI_API_KEY",
+        reason="DeepEval default model uses GPTModel — needs OPENAI_API_KEY",
     )
     def test_from_config_without_judge(self):
         """from_config works without judge (DeepEval default model)."""
