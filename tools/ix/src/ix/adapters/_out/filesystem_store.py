@@ -50,6 +50,7 @@ class FilesystemStore:
             name=config.get("name", path.name),
             description=config.get("description", ""),
             subjects=tuple(subjects),
+            agent=config.get("agent", {}),
             sensor=sensor_config,
             trials=config.get("trials", 5),
             probes=tuple(probes),

@@ -109,27 +109,51 @@ def create_sensor(experiment: ExperimentConfig) -> Sensor:
 # --- Service Wiring ---
 
 
+def _create_agent(
+    experiment: ExperimentConfig | None,
+    subject: Any = None,
+    mock: bool = False,
+    skill: str = "build-eval",
+    seed: int | None = None,
+):
+    """Create the right agent from experiment config.
+
+    Agent runtime is determined by experiment.agent config, not CLI flags.
+    --mock is only for dry-run testing (overrides config with MockAgent).
+    """
+    if mock:
+        expectations = _build_expectations(experiment) if experiment else {}
+        return MockAgent(expected_skill=skill, seed=seed, expectations=expectations)
+
+    system_prompt = subject.config.get("system_prompt") if subject else None
+    agent_config = experiment.agent if experiment else {}
+    model = agent_config.get("model", "claude-sonnet-4-20250514")
+    max_tokens = agent_config.get("max_tokens", 4096)
+
+    from matrix.adapters._out.runtime.anthropic_agent import AnthropicAgent
+
+    return AnthropicAgent(
+        system_prompt=system_prompt,
+        model=model,
+        max_tokens=max_tokens,
+    )
+
+
 def create_service(
     mock: bool = False,
     skill: str = "build-eval",
     lab: Path | None = None,
     seed: int | None = None,
     experiment: ExperimentConfig | None = None,
+    subject: Any = None,
 ) -> Experiment:
     """Wire up the experiment service with adapters.
 
-    In mock mode, MockAgent produces structured AgentResponse directly.
-    In live mode, ClaudeAgent extracts structured data from the SDK.
-    No EvalRuntime shim needed — agents return AgentResponse natively.
+    Agent runtime comes from experiment.agent config.
+    --mock overrides with MockAgent for dry-run testing.
+    Subject's system_prompt is injected into the agent.
     """
-    if mock:
-        expectations = _build_expectations(experiment) if experiment else {}
-        agent = MockAgent(expected_skill=skill, seed=seed, expectations=expectations)
-    else:
-        from matrix.adapters._out.runtime.claude import ClaudeAgent
-
-        agent = ClaudeAgent(max_turns=1)
-
+    agent = _create_agent(experiment, subject, mock, skill, seed)
     sensor = create_sensor(experiment) if experiment else ActivationSensor(expected_skill=skill)
     store = FilesystemStore(lab or find_lab())
 

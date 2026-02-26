@@ -30,7 +30,7 @@ def _status_style(status: str) -> str:
 
 
 def _print_metrics(results) -> None:
-    """Print experiment results — metrics, confusion matrix, interpretation."""
+    """Print experiment results."""
     console.print()
     console.rule("[bold]Results[/bold]")
     console.print()
@@ -38,28 +38,38 @@ def _print_metrics(results) -> None:
     table = Table(show_header=False, box=None, padding=(0, 2))
     table.add_column("Metric", style="bold")
     table.add_column("Value")
-    table.add_row("Precision", f"{results.precision:.1%}")
-    table.add_row("Recall", f"{results.recall:.1%}")
-    table.add_row("F1", f"{results.f1:.1%}")
+    table.add_row("Mean Score", f"{results.mean_score:.1%}")
+    table.add_row("Std Dev", f"{results.std_dev:.3f}")
+    table.add_row("Min / Max", f"{results.min_score:.1%} / {results.max_score:.1%}")
     console.print(table)
 
-    console.print()
-    console.print("[bold]Confusion Matrix:[/bold]")
-    console.print(f"  TP={results.tp}  FP={results.fp}")
-    console.print(f"  FN={results.fn}  TN={results.tn}")
+    if results.probe_results:
+        console.print()
+        probe_table = Table(show_header=True, header_style="bold")
+        probe_table.add_column("Probe")
+        probe_table.add_column("Score")
+        probe_table.add_column("Trials")
+        probe_table.add_column("Details")
+
+        for pr in results.probe_results:
+            trial_str = ", ".join(f"{s:.0%}" for s in pr.trial_scores)
+            detail = pr.details[0][:60] if pr.details else ""
+            probe_table.add_row(
+                pr.probe_id,
+                f"{pr.score:.1%}",
+                trial_str,
+                detail,
+            )
+        console.print(probe_table)
 
     console.print()
     console.print(f"Status: {_status_style(results.status)}")
 
     if results.issues:
-        console.print()
-        console.print("[bold]Issues:[/bold]")
         for issue in results.issues:
             console.print(f"  [yellow]-[/yellow] {issue}")
 
     if results.suggestions:
-        console.print()
-        console.print("[bold]Suggestions:[/bold]")
         for sug in results.suggestions:
             console.print(f"  [cyan]-[/cyan] {sug}")
 
@@ -169,13 +179,15 @@ def lab_list() -> None:
 @main.command()
 @click.argument("name")
 @click.option("--lab", "lab_name", help="Lab name (auto-detected if omitted)")
+@click.option("--subject", "subject_name", help="Subject to test (runs first subject if omitted)")
 @click.option("--trials", type=int, help="Override trial count")
-@click.option("--mock/--live", default=True, help="Mock mode (no API calls) or live mode")
+@click.option("--mock", is_flag=True, default=False, help="Dry-run with MockAgent (no API calls)")
 @click.option("--seed", type=int, help="Random seed for deterministic mock runs")
 @click.option("--format", "fmt", type=click.Choice(["table", "json"]), default="table")
 def run(
     name: str,
     lab_name: str | None,
+    subject_name: str | None,
     trials: int | None,
     mock: bool,
     seed: int | None,
@@ -187,7 +199,8 @@ def run(
 
     Examples:
         ix run skill-activation --lab ci-lab --mock
-        ix run skill-activation --mock          # auto-detect lab
+        ix run cep-002-mandates --subject baseline
+        ix run cep-002-mandates --subject motivation --trials 5
     """
     from ix.composition import create_service, create_store
 
@@ -206,7 +219,19 @@ def run(
     if trials:
         experiment = experiment.model_copy(update={"trials": trials})
 
-    skill = experiment.subjects[0].name if experiment.subjects else "build-eval"
+    # Resolve subject — by name or first in list
+    subject = None
+    if experiment.subjects:
+        if subject_name:
+            matches = [s for s in experiment.subjects if s.name == subject_name]
+            if not matches:
+                valid = ", ".join(s.name for s in experiment.subjects)
+                _cli_error(f"Subject not found: {subject_name}", f"Valid subjects: {valid}")
+            subject = matches[0]
+        else:
+            subject = experiment.subjects[0]
+
+    skill = subject.name if subject else "build-eval"
 
     try:
         service = create_service(
@@ -215,21 +240,24 @@ def run(
             lab=lab_path,
             seed=seed,
             experiment=experiment,
+            subject=subject,
         )
     except ValueError as e:
         _cli_error(str(e))
     except NotImplementedError as e:
-        _cli_error(str(e), "Use --mock until live mode is available (M2)")
+        _cli_error(str(e))
 
-    mode_label = "mock" if mock else "live"
+    subject_label = f", subject={subject.name}" if subject else ""
+    model_label = experiment.agent.get("model", "claude-sonnet-4-20250514") if not mock else "mock"
     console.print(
         f"Running [bold cyan]{experiment.name}[/bold cyan] "
         f"in lab [cyan]{lab_path.name}[/cyan] "
-        f"({len(experiment.probes)} probes, {experiment.trials} trials, {mode_label})"
+        f"({len(experiment.probes)} probes, {experiment.trials} trials, "
+        f"{model_label}{subject_label})"
     )
 
     def on_probe(probe_result) -> None:
-        status = "[green]OK[/green]" if probe_result.correct else "[red]FAIL[/red]"
+        status = "[green]PASS[/green]" if probe_result.passed else "[yellow]FAIL[/yellow]"
         console.print(f"  {probe_result.probe_id}: {status} (score={probe_result.score:.0%})")
 
     exp_results = asyncio.run(service.run(experiment, on_probe_complete=on_probe))

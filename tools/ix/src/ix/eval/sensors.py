@@ -8,6 +8,7 @@ Ground truth is injected at construction by the service layer.
 from __future__ import annotations
 
 import importlib.util
+import re
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -231,12 +232,33 @@ class FunctionTestSensor:
         )
 
     def _extract_code(self, response: Any) -> str | None:
-        """Extract code from response — handles str or AgentResponse."""
+        """Extract Python code from response.
+
+        Handles str or AgentResponse. If the content contains markdown
+        code blocks (```python ... ```), extracts the last one (usually
+        the final version). Otherwise returns the raw content.
+        """
+        text = None
         if isinstance(response, str):
-            return response
-        if hasattr(response, "content"):
-            return response.content
-        return None
+            text = response
+        elif hasattr(response, "content"):
+            text = response.content
+
+        if text is None:
+            return None
+
+        # Try ```python blocks first (last block = final version)
+        blocks = re.findall(r"```python\s*\n(.*?)```", text, re.DOTALL)
+        if blocks:
+            return blocks[-1].strip()
+
+        # Try any ``` blocks
+        blocks = re.findall(r"```\s*\n(.*?)```", text, re.DOTALL)
+        if blocks:
+            return blocks[-1].strip()
+
+        # No code blocks — return raw (might be pure code)
+        return text
 
     def _load_function(self, code: str, function_name: str):
         """Load code into isolated module, extract named function."""
