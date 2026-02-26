@@ -1,6 +1,6 @@
 ---
 name: craft-tools
-description: "Crafts software tools with great developer experience. Use when: creating a CLI tool, designing an API, building tools like memex/cix/radix, or when error messages are confusing, feedback is slow, output is hard to parse, or users ask 'what do I do next'."
+description: "This skill should be used when the user asks to 'create a CLI tool', 'design an API', 'improve error messages', 'build a developer tool', or needs great developer experience in tool design."
 ---
 
 # Craft Tools

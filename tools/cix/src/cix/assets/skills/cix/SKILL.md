@@ -7,7 +7,7 @@ Manage cognitive extensions for Claude Code.
 | User Intent | Command |
 |-------------|---------|
 | "What extensions are available?" | `cix list -a` |
-| "Install arch-guild" | `cix add arch-guild` |
+| "Install guild-arch" | `cix add guild-arch` |
 | "What's installed?" | `cix list` |
 | "Add a marketplace" | `cix source add <url>` |
 | "Install from local source" | `cix add source-name/package` |
@@ -51,8 +51,8 @@ cix --skill -r sources         # Output specific reference
 
 | Format | Meaning |
 |--------|---------|
-| `arch-guild` | Package from default source |
-| `cix-local/arch-guild` | Package from specific source |
+| `guild-arch` | Package from default source |
+| `cix-local/guild-arch` | Package from specific source |
 
 ## Common Patterns
 

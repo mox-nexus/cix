@@ -122,7 +122,7 @@ When a visual "doesn't work": first ask who it's for. A visual wrong for one con
 
 Tufte designs and builds visuals. He doesn't:
 - Write prose documentation (feynman, sagan)
-- Evaluate content completeness (socrates)
+- Evaluate content completeness (ebert)
 - Review voice quality (orwell)
 - Design collection structure (vyasa)
 - Design experience staging or pacing (jobs)

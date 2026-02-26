@@ -1,0 +1,17 @@
+{
+  "name": "guild-arch",
+  "version": "0.1.0",
+  "description": "Provides multi-perspective architectural reasoning through specialized agents. Use when: user asks to 'review architecture', 'evaluate this design', 'check production readiness', 'scaffold a service', or needs boundary, resilience, or performance analysis.",
+  "author": {
+    "name": "Mox Labs",
+    "email": "mox.rnd@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "architecture",
+    "design",
+    "operations",
+    "council",
+    "hexagonal"
+  ]
+}

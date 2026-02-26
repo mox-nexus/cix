@@ -21,8 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Reading progress tracking
   - Catalog with plugin detail modals and Mermaid diagrams
 - **Plugins**: 8 marketplace extensions
-  - `arch-guild` — 13 orthogonal architecture reasoning agents
-  - `collab-scaffolds` — Collaboration, problem-solving, and engineering craft scaffolds
+  - `guild-arch` — 13 orthogonal architecture reasoning agents
+  - `ci-scaffolds` — Collaboration, problem-solving, and engineering craft scaffolds
   - `craft-rhetoric` — Semantic Stack workflow with 7 agents (feynman, sagan, tufte, socrates, orwell, vyasa, jobs)
   - `craft-extensions` — Plugin creation: skills, agents, hooks, commands, MCPs, tools
   - `craft-evals` — Eval methodology for AI systems

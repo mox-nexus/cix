@@ -16,16 +16,15 @@ cix list -a
 
 Browse the [catalog](https://mox-nexus.github.io/cix/catalog). Read the [research](https://mox-nexus.github.io/cix/library).
 
-| Extension | Purpose |
-|-----------|---------|
-| **arch-guild** | 13 orthogonal architecture reasoning agents |
-| **collab-scaffolds** | Human-AI collaboration patterns, problem-solving, engineering craft |
-| **craft-rhetoric** | Explanation craft via the Five Canons — 7 agents, Semantic Stack workflow |
-| **craft-extensions** | Build extensions: skills, agents, hooks, commands, MCPs |
-| **craft-evals** | Eval methodology for AI systems |
-| **craft-prompts** | Prompt engineering for reasoning models and deep research |
-| **data-store** | Database selection, search, hybrid retrieval, RAG |
-| **run-openclaw-srt** | OpenClaw with SRT sandbox for secure AI assistants |
+| Extension | Phase | Purpose |
+|-----------|-------|---------|
+| **craft-research** | Research | Paper synthesis, deep research methodology |
+| **craft-rhetoric** | Understand | Explanation craft via the Five Canons — 9 agents |
+| **guild-arch** | Design | 13 orthogonal architecture reasoning agents |
+| **craft-extensions** | Craft | Build extensions, data layers, reasoning prompts |
+| **craft-evals** | Measure | Eval methodology for AI systems |
+| **ci-scaffolds** | Cross-cutting | Collaboration patterns, problem-solving, engineering craft |
+| **run-openclaw-seatbelt** | Security | OpenClaw with Seatbelt sandbox for secure AI assistants |
 
 ## Architecture
 

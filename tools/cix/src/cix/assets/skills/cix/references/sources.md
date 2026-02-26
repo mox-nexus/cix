@@ -38,8 +38,8 @@ cix source rm my-source          # Remove source
 The default source is used when no source is specified:
 
 ```bash
-cix add arch-guild               # Uses default source
-cix add other-source/arch-guild  # Uses specified source
+cix add guild-arch               # Uses default source
+cix add other-source/guild-arch  # Uses specified source
 ```
 
 ## Package Discovery

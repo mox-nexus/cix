@@ -1,6 +1,6 @@
 ---
 name: arranging
-description: "Collection architecture — layer model, reading paths, single source of truth."
+description: "This skill should be used when the user asks to 'organize these docs', 'structure this documentation site', 'design reading paths', 'audit content hierarchy', or needs collection architecture and single source of truth."
 version: 0.1.0
 ---
 

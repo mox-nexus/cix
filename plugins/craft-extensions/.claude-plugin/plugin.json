@@ -1,7 +1,7 @@
 {
   "name": "craft-extensions",
   "version": "0.1.0",
-  "description": "Build extensions that enable effective human-AI collaboration. Use when: creating skills, agents, hooks, commands, MCPs, or tools/APIs. Patterns for transparency, control, observability, diversity.",
+  "description": "Builds Claude Code extensions and developer tools with quality methodology. Use when: user asks to 'build a plugin', 'create an extension', 'add a skill', 'design a CLI tool', 'set up a data layer', or 'implement search'.",
   "author": {
     "name": "Mox Labs",
     "email": "mox.rnd@gmail.com"

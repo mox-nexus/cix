@@ -19,7 +19,7 @@ from deepeval.metrics import GEval
 methodology_metric = GEval(
     name="MethodologyAdherence",
     criteria="""
-    Score how well the response follows collab-scaffolds methodology:
+    Score how well the response follows ci-scaffolds methodology:
     1. Evidence: Does it cite sources? (production > blogs)
     2. WHY: Does it explain reasoning, not just answers?
     3. Verification: Does it check its own work?
@@ -48,7 +48,7 @@ methodology_metric = GEval(
 
 ```json
 {
-  "name": "collab-scaffolds-behavioral",
+  "name": "ci-scaffolds-behavioral",
   "test_cases": [
     {
       "prompt": "What database should I use for a real-time leaderboard?",
@@ -123,7 +123,7 @@ evaluate([test_case], metrics)
 ```typescript
 import { Eval } from "braintrust";
 
-Eval("collab-scaffolds-behavioral", {
+Eval("ci-scaffolds-behavioral", {
   data: () => testCases,
   task: async (input) => {
     return await claude.messages.create({
@@ -206,4 +206,4 @@ with tracer.start_as_current_span("methodology_eval") as span:
 
 - [DeepEval GEval](https://deepeval.com/docs/metrics-llm-evals) - Custom LLM-as-judge
 - [Braintrust Scorers](https://www.braintrust.dev/docs/guides/evals) - Custom evaluation
-- [collab-scaffolds SKILL.md](../../collab-scaffolds/SKILL.md) - Methodology definition
+- [ci-scaffolds SKILL.md](../../../../ci-scaffolds/skills/crafting/SKILL.md) - Methodology definition

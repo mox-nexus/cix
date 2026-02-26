@@ -1,6 +1,6 @@
 ---
 name: staging
-description: "Experience design — medium selection, pacing, beat structure, progressive disclosure."
+description: "This skill should be used when the user asks to 'design a scrollytelling experience', 'create staged reveals', 'pace this content', 'design progressive disclosure', or needs medium selection and experience design for content delivery."
 version: 0.1.0
 ---
 

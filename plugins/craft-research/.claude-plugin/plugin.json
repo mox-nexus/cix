@@ -1,0 +1,18 @@
+{
+  "name": "craft-research",
+  "version": "0.1.0",
+  "description": "Synthesizes research and analyzes academic literature. Use when: user asks to 'analyze this paper', 'synthesize these findings', 'do a literature review', 'verify citations', or needs evidence-grounded research.",
+  "author": {
+    "name": "Mox Labs",
+    "email": "mox.rnd@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "research",
+    "synthesis",
+    "papers",
+    "citations",
+    "literature-review",
+    "deep-research"
+  ]
+}
