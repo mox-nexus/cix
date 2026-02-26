@@ -1,6 +1,6 @@
 """Test helpers for matrix tests."""
 
-from matrix import Construct
+from matrix import Construct, TypedStruct
 
 
 class FakeComponent:
@@ -9,16 +9,15 @@ class FakeComponent:
     def __init__(
         self,
         name: str,
-        requires: frozenset[str],
-        provides: str,
+        consumes: frozenset[str],
+        produces: str,
         data=None,
     ):
         self.name = name
-        self.requires = requires
-        self.provides = provides
+        self.consumes = consumes
+        self.produces = produces
         self._data = data
 
-    async def run(self, construct: Construct) -> str:
-        if self._data is not None:
-            return self._data
-        return f"{self.name}-output"
+    async def run(self, construct: Construct) -> TypedStruct:
+        value = self._data if self._data is not None else f"{self.name}-output"
+        return TypedStruct(type_url=self.produces, value=value)

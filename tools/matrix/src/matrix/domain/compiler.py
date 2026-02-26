@@ -1,6 +1,6 @@
 """DagCompiler — static topology validation from Component declarations.
 
-Infers edges from requires/provides, detects cycles and missing producers.
+Infers edges from consumes/produces, detects cycles and missing producers.
 """
 
 from __future__ import annotations
@@ -18,8 +18,8 @@ class _Compilable(Protocol):
     """Minimal interface for compilation."""
 
     name: str
-    requires: frozenset[str]
-    provides: str
+    consumes: frozenset[str]
+    produces: str
 
 
 class DagCompiler:
@@ -42,7 +42,7 @@ class DagCompiler:
                 raise CompilationError(f"Duplicate component name: {name!r}")
             registry[name] = component
 
-            kind = component.provides
+            kind = component.produces
             if kind in kind_producers:
                 raise CompilationError(
                     f"Duplicate output kind {kind!r}: "
@@ -53,13 +53,13 @@ class DagCompiler:
         edges: dict[str, set[str]] = {}
         for component in components:
             deps: set[str] = set()
-            for required_kind in component.requires:
-                if required_kind not in kind_producers:
+            for consumed_kind in component.consumes:
+                if consumed_kind not in kind_producers:
                     raise CompilationError(
-                        f"Component {component.name!r} requires kind "
-                        f"{required_kind!r}, but no component provides it"
+                        f"Component {component.name!r} consumes kind "
+                        f"{consumed_kind!r}, but no component produces it"
                     )
-                deps.add(kind_producers[required_kind])
+                deps.add(kind_producers[consumed_kind])
             edges[component.name] = deps
 
         sorter = graphlib.TopologicalSorter(edges)

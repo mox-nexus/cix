@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import logging
 
-from matrix import Construct
+from matrix import Construct, TypedStruct
 
 from ix.domain.ports import ExperimentRuntime, Sensor
 from ix.domain.types import Probe, Reading, Trial
@@ -26,13 +26,13 @@ class TrialNode:
     TrialNode sends probe.prompt, collects responses, and runs the
     sensor inline — no separate SensorNode needed.
 
-    requires: frozenset() — root node
-    provides: "experiment.readings"
+    consumes: frozenset() — root node
+    produces: "ix.v1/experiment.readings"
     """
 
     name = "trial"
-    requires: frozenset[str] = frozenset()
-    provides = "experiment.readings"
+    consumes: frozenset[str] = frozenset()
+    produces = "ix.v1/experiment.readings"
 
     def __init__(
         self,
@@ -46,7 +46,7 @@ class TrialNode:
         self._sensor = sensor
         self._trials = trials
 
-    async def run(self, construct: Construct) -> list[Reading]:
+    async def run(self, construct: Construct) -> TypedStruct:
         """Fire all probes across all trials, sense each immediately."""
         readings: list[Reading] = []
 
@@ -55,7 +55,10 @@ class TrialNode:
                 trial = await self._execute(probe, trial_idx)
                 readings.extend(self._sense(trial))
 
-        return readings
+        return TypedStruct(
+            type_url="ix.v1/experiment.readings",
+            value=readings,
+        )
 
     async def _execute(self, probe: Probe, trial_idx: int) -> Trial:
         """Run one probe, return Trial (success or error)."""

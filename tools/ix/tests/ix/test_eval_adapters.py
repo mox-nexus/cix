@@ -155,7 +155,7 @@ class TestEvalDagIntegration:
         orchestrator = Orchestrator([trial_node])
         construct = await orchestrator.run()
 
-        readings = construct["experiment.readings"]
+        readings = construct["ix.v1/experiment.readings"]
 
         assert len(readings) == 4  # 2 probes x 2 trials
 
