@@ -41,7 +41,7 @@ The `craft-evals` plugin ships evaluation frameworks for measuring whether exten
 
 ## Discourse-driven generation
 
-The convergence problem from the [previous article](/docs/same-tool-different-design): AI outputs are measurably less diverse than human outputs (g=-0.863 across 28 studies with high between-study heterogeneity; [Holzner et al. 2025](/docs/bibliography#holzner-2025), n=8,214). [Jiang et al.](/docs/bibliography#jiang-2025) demonstrated that 70+ language models independently reach for the same metaphors, the same framings, across different architectures.
+The convergence problem from the [previous article](/docs/same-tool-different-design): AI outputs are measurably less diverse than human outputs (g=-0.863 from 4 studies, n=1,017, within a broader 28-study meta-analysis; [Holzner et al. 2025](/docs/bibliography#holzner-2025)). [Jiang et al.](/docs/bibliography#jiang-2025) demonstrated that 70+ language models independently reach for the same metaphors, the same framings, across different architectures.
 
 A marketplace that ships preset answers — here are three approaches to API design, ranked by query speed — narrows in the same way. Every team gets the same three options, framed the same way. The product is the convergence.
 

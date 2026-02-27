@@ -1,6 +1,6 @@
 # The Productivity Trap
 
-Before the study ended, METR researchers asked the 16 developers to estimate how much AI had affected their completion time. They said it made them 20% faster.
+After the study was over, METR researchers asked the 16 developers to estimate how much AI had affected their completion time. They said it made them 20% faster.
 
 It had actually made them 19% slower.
 

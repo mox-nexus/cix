@@ -85,7 +85,7 @@ A Socratic AI — explicitly designed to ask questions rather than give answers 
 
 The individual cannot solve this part.
 
-Anil [Doshi and Oliver Hauser](/docs/bibliography#doshi-2024) ran a preregistered experiment in 2024 with 893 short story writers. Writers given access to generative AI ideas produced stories rated 8.1% more novel than writers without AI (b=0.311, p<0.001). The AI helped. Individually, measurably ([Doshi & Hauser 2024](/docs/bibliography#doshi-2024), Science Advances).
+Anil [Doshi and Oliver Hauser](/docs/bibliography#doshi-2024) ran a preregistered experiment in 2024 with 293 short story writers (and 600 evaluators who rated the results). Writers given access to generative AI ideas produced stories rated 8.1% more novel than writers without AI (b=0.311, p<0.001). The AI helped. Individually, measurably ([Doshi & Hauser 2024](/docs/bibliography#doshi-2024), Science Advances).
 
 Then they measured something else: how similar were the AI-assisted stories to each other, compared to how similar the unaided stories were to each other?
 
@@ -97,7 +97,7 @@ Consider what this looks like from the inside. Someone at Microsoft Research gav
 
 Each writer in the Doshi and Hauser experiment made a rational decision. Each writer's story improved. No one chose convergence. It emerged from individually rational choices.
 
-This pattern holds at larger scale. Niklas [Holzner, Sebastian Maier, and Stefan Feuerriegel](/docs/bibliography#holzner-2025) aggregated 28 studies measuring this effect across 8,214 participants. Individual creative performance: Hedges' g=+0.273 (95% CI: [0.018, 0.528], p=0.036). Idea diversity: Hedges' g=-0.863 (95% CI: [-1.328, -0.398], p<0.001). The leave-one-out sensitivity analysis kept the diversity estimate between g=-0.655 and g=-0.952 across all iterations — every confidence interval excluded zero ([Holzner et al. 2025](/docs/bibliography#holzner-2025), arXiv).
+This pattern holds at larger scale. Niklas [Holzner, Sebastian Maier, and Stefan Feuerriegel](/docs/bibliography#holzner-2025) aggregated 28 studies across 8,214 participants. Individual creative performance (28 studies, n=8,214): Hedges' g=+0.273 (95% CI: [0.018, 0.528], p=0.036). Idea diversity (4 studies, n=1,017): Hedges' g=-0.863 (95% CI: [-1.328, -0.398], p<0.001). The leave-one-out sensitivity analysis kept the diversity estimate between g=-0.655 and g=-0.952 across all iterations — every confidence interval excluded zero ([Holzner et al. 2025](/docs/bibliography#holzner-2025), arXiv).
 
 Better writers. Fewer distinct ideas. Both at once, across every study in the meta-analysis.
 
