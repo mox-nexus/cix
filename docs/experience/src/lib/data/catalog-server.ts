@@ -1,11 +1,27 @@
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import type { CatalogExtension, PluginManifest, PluginComponents } from '$lib/types/catalog';
+import type {
+	CatalogExtension,
+	PluginManifest,
+	PluginComponents,
+	LifecyclePhase
+} from '$lib/types/catalog';
 
 const ROOT_DIR = resolve(process.cwd(), '../..');
 const PLUGINS_DIR = join(ROOT_DIR, 'plugins');
 const TOOLS_DIR = join(ROOT_DIR, 'tools');
 const VARIANTS = ['spark', 'emergence', 'constraint'] as const;
+
+/** Map marketplace categories to lifecycle phases */
+const CATEGORY_TO_PHASE: Record<string, LifecyclePhase> = {
+	methodology: 'research',
+	communication: 'understand',
+	architecture: 'design',
+	meta: 'craft',
+	testing: 'measure',
+	foundation: 'foundation',
+	security: 'foundation'
+};
 
 function countFiles(dir: string, extension = '.md'): number {
 	if (!existsSync(dir)) return 0;
@@ -55,6 +71,9 @@ function loadPlugins(): CatalogExtension[] {
 	const catalogDescriptions = new Map(
 		marketplace.plugins.map((p: { name: string; description: string }) => [p.name, p.description])
 	);
+	const catalogCategories = new Map(
+		marketplace.plugins.map((p: { name: string; category?: string }) => [p.name, p.category])
+	);
 
 	const extensions: CatalogExtension[] = [];
 
@@ -76,6 +95,7 @@ function loadPlugins(): CatalogExtension[] {
 			? { ...manifest, description: catalogDesc }
 			: manifest;
 
+		const category = catalogCategories.get(manifest.name) ?? '';
 		extensions.push({
 			slug: manifest.name,
 			kind: 'plugin',
@@ -84,7 +104,8 @@ function loadPlugins(): CatalogExtension[] {
 			readme,
 			components: discoverComponents(pluginDir),
 			variant: VARIANTS[extensions.length % VARIANTS.length],
-			tags: manifest.keywords ?? []
+			tags: manifest.keywords ?? [],
+			phase: CATEGORY_TO_PHASE[category] ?? 'craft'
 		});
 	}
 
@@ -129,7 +150,8 @@ function loadTools(): CatalogExtension[] {
 			readme,
 			components: discoverComponents(toolDir),
 			variant: VARIANTS[extensions.length % VARIANTS.length],
-			tags: ['tool', 'cli']
+			tags: ['tool', 'cli'],
+			phase: 'tools'
 		});
 	}
 

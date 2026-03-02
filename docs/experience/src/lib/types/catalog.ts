@@ -14,6 +14,15 @@ export interface PluginManifest {
 	license?: string;
 }
 
+export type LifecyclePhase =
+	| 'research'
+	| 'understand'
+	| 'design'
+	| 'craft'
+	| 'measure'
+	| 'foundation'
+	| 'tools';
+
 export interface CatalogExtension {
 	slug: string;
 	kind: 'plugin' | 'tool';
@@ -23,4 +32,5 @@ export interface CatalogExtension {
 	components: PluginComponents;
 	variant: 'spark' | 'emergence' | 'constraint';
 	tags: string[];
+	phase: LifecyclePhase;
 }
