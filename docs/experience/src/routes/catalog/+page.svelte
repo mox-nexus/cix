@@ -1,11 +1,42 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import type { LifecyclePhase, CatalogExtension } from '$lib/types/catalog';
 	import { CatalogEntry } from '$lib/components/catalog';
 	import { CrossLinks } from '$lib/components/nav';
 
 	let { data }: { data: PageData } = $props();
 
 	let query = $state('');
+
+	const PHASE_ORDER: LifecyclePhase[] = [
+		'research',
+		'understand',
+		'design',
+		'craft',
+		'measure',
+		'foundation',
+		'tools'
+	];
+
+	const PHASE_LABELS: Record<LifecyclePhase, string> = {
+		research: 'Research',
+		understand: 'Understand',
+		design: 'Design',
+		craft: 'Craft',
+		measure: 'Measure',
+		foundation: 'Foundation',
+		tools: 'Tools'
+	};
+
+	const PHASE_DESCRIPTIONS: Record<LifecyclePhase, string> = {
+		research: 'Literature review, evidence synthesis, citation-grounded knowledge.',
+		understand: 'Explanation, documentation, content that lands.',
+		design: 'Architecture deliberation, multi-perspective review.',
+		craft: 'Build extensions, tools, and the systems behind them.',
+		measure: 'Evaluation methodology — write evals that measure what matters.',
+		foundation: 'Cross-cutting scaffolds for collaboration and security.',
+		tools: 'Infrastructure for the ecosystem.'
+	};
 
 	let filtered = $derived(() => {
 		const q = query.toLowerCase().trim();
@@ -18,6 +49,18 @@
 				ext.kind.includes(q) ||
 				ext.tags.some((t) => t.toLowerCase().includes(q))
 		);
+	});
+
+	let grouped = $derived(() => {
+		const exts = filtered();
+		const groups: { phase: LifecyclePhase; extensions: CatalogExtension[] }[] = [];
+		for (const phase of PHASE_ORDER) {
+			const matching = exts.filter((ext) => ext.phase === phase);
+			if (matching.length > 0) {
+				groups.push({ phase, extensions: matching });
+			}
+		}
+		return groups;
 	});
 </script>
 
@@ -48,9 +91,19 @@
 		/>
 	</div>
 
-	<div class="catalog-stack">
-		{#each filtered() as ext, i (ext.slug)}
-			<CatalogEntry extension={ext} delay={i * 80} />
+	<div class="catalog-groups">
+		{#each grouped() as group, gi}
+			<section class="phase-group">
+				<header class="phase-header">
+					<h2 class="phase-label">{PHASE_LABELS[group.phase]}</h2>
+					<p class="phase-description">{PHASE_DESCRIPTIONS[group.phase]}</p>
+				</header>
+				<div class="phase-entries">
+					{#each group.extensions as ext, i (ext.slug)}
+						<CatalogEntry extension={ext} delay={(gi * 3 + i) * 60} />
+					{/each}
+				</div>
+			</section>
 		{/each}
 		{#if filtered().length === 0}
 			<p class="no-results">No extensions match "{query}"</p>
@@ -111,12 +164,46 @@
 		border-color: var(--spark-core);
 	}
 
-	.catalog-stack {
+	.catalog-groups {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+		max-width: 72ch;
+		margin: 0 auto;
+	}
+
+	.phase-group {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-2);
-		max-width: 72ch;
-		margin: 0 auto;
+	}
+
+	.phase-header {
+		border-bottom: 1px solid var(--dao-border);
+		padding-bottom: var(--space-1);
+	}
+
+	.phase-label {
+		font-family: var(--font-sans);
+		font-size: var(--type-base);
+		font-weight: 600;
+		color: var(--dao-text);
+		margin: 0;
+		text-transform: lowercase;
+	}
+
+	.phase-description {
+		font-family: var(--font-mono);
+		font-size: var(--type-xs);
+		color: var(--dao-muted);
+		margin: var(--space-0-5) 0 0 0;
+		line-height: var(--leading-relaxed);
+	}
+
+	.phase-entries {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
 	}
 
 	.no-results {

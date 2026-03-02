@@ -6,8 +6,10 @@
 
 	let { children } = $props();
 
-	let isLanding = $derived(
-		page.url.pathname === `${base}/` || page.url.pathname === base || page.url.pathname === '/'
+	let isImmersive = $derived(
+		page.url.pathname === `${base}/` ||
+			page.url.pathname === base ||
+			page.url.pathname === '/'
 	);
 </script>
 
@@ -18,11 +20,11 @@
 
 <a href="#main" class="skip-link">Skip to content</a>
 
-{#if !isLanding}
+{#if !isImmersive}
 	<SiteNav />
 {/if}
 
-<div class="page" class:has-nav={!isLanding}>
+<div class="page" class:has-nav={!isImmersive}>
 	{@render children()}
 </div>
 
