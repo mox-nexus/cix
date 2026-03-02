@@ -1,6 +1,6 @@
 # The Productivity Trap
 
-Before the study ended, METR researchers asked the 16 developers to estimate how much AI had affected their completion time. They said it made them 20% faster.
+After the study was over, METR researchers asked the 16 developers to estimate how much AI had affected their completion time. They said it made them 20% faster.
 
 It had actually made them 19% slower.
 
@@ -10,11 +10,11 @@ That perception gap is the first part of the problem. The second part lives one 
 
 ---
 
-Three randomized controlled trials at Microsoft, Accenture, and an anonymous Fortune 100 electronics company. Combined sample: 4,867 software developers. Result: developers using GitHub Copilot completed 26% more tasks per week than those without it. Less experienced developers benefited more, in both adoption rate and magnitude of gain ([Cui et al. 2024](/docs/bibliography#cui-2024), SSRN). These are not estimates or surveys. Random assignment, measured task completion.
+Three randomized controlled trials at Microsoft, Accenture, and an anonymous Fortune 100 electronics company. Combined sample: 4,867 software developers. Result: developers who adopted GitHub Copilot completed 26% more tasks per week than those without it — a local average treatment effect, measuring the gain among those who actually used the tool. Less experienced developers benefited more, in both adoption rate and magnitude of gain ([Cui et al. 2024](/docs/bibliography#cui-2024), SSRN). These are not estimates or surveys. Random assignment, measured task completion.
 
 So: one study shows +26%. Another shows -19%. Both are RCTs. They are not measuring the same thing in the same population — the Cui study used corporate settings with mixed-experience teams on assigned tasks; the METR study used experienced contributors working on their own mature codebases, with frontier agentic AI. Both found the same directional pattern: AI benefits less experienced workers more. The most plausible reconciliation is also the most important thing to understand about this technology: **AI helps on unfamiliar ground, hurts on familiar ground.**
 
-That reconciliation holds the tension in place without resolving it. Because the harm has its own evidence.
+The harm has its own evidence.
 
 ---
 
@@ -51,13 +51,13 @@ The Shen/Tamkin control group scored higher not because they were smarter, or mo
 
 Here is what the METR screen recordings showed: when AI was allowed, developers spent less time actively coding and more time prompting AI, waiting on and reviewing AI outputs. They were still working. They just weren't doing the work that builds understanding.
 
-The AI is functioning correctly.
+The AI is functioning correctly. If you've spent an afternoon prompting and reviewing AI output — productive, efficient, done by five — and realized the next morning you can't reconstruct how the solution works, you've already met the mechanism.
 
-When a developer hits an unfamiliar async pattern and has to figure out why their code is hanging — consult the docs, form a hypothesis, test it, fail, form another — that sequence of error and resolution is the encoding event. The concept enters memory because the brain had to work to construct it. [Slamecka and Graf](/docs/bibliography#slamecka-1978) documented this: self-generated information is retained approximately 22% better than passively received information ([Slamecka & Graf 1978](/docs/bibliography#slamecka-1978)).
+When a developer hits an unfamiliar async pattern and has to figure out why their code is hanging — consult the docs, form a hypothesis, test it, fail, form another — that sequence of error and resolution is the encoding event. The concept enters memory because the brain had to work to construct it. [Slamecka and Graf](/docs/bibliography#slamecka-1978) documented this: people retain self-generated information roughly 22% better than information they receive passively ([Slamecka & Graf 1978](/docs/bibliography#slamecka-1978)).
 
 AI gives the resolution before the error has had time to encode anything. The answer arrives before the question has finished forming. The cognitive gap — the space between encountering a problem and resolving it — is where learning lives. **AI closes the gap. That is the mechanism.**
 
-The note-taking study makes this concrete. [Chen et al.](/docs/bibliography#chen-2025) at PACMHCI 2025 asked 30 people to take notes on a lecture video: ten with full automation (AI organized and formatted the content), ten with a transcript and no help, ten with moderate real-time summaries. The automated group found the experience easiest. When asked which setup they preferred, they chose the AI-organized notes. They also scored lowest on the post-test.
+The note-taking study makes this concrete. [Chen et al.](/docs/bibliography#chen-2025) at PACMHCI 2025 asked 30 people to take notes on lecture videos under three conditions each (within-subject, counterbalanced): full automation (AI organized and formatted the content), intermediate assistance (real-time AI summaries), and minimal assistance (transcript only). The automated group found the experience easiest. When asked which setup they preferred, they chose the AI-organized notes. They also scored lowest on the post-test.
 
 Note-taking has two functions. The obvious one is storage — you're creating a reference. The less obvious one is encoding: selecting what to write down, deciding how to frame it, connecting it to what you already know — that *is* the comprehension process. You don't take notes to capture what you understand; you take notes in order to understand. When AI takes the notes for you, the storage function is served. The encoding function is not. The quality of the artifact and the quality of the learning are inversely related when the AI provides the artifact.
 
@@ -81,9 +81,9 @@ Then there is what [Bansal et al.](/docs/bibliography#bansal-2021) found at CHI 
 
 The intuition behind explainable AI is that if the AI shows its reasoning, humans can catch when the reasoning is wrong. The data says something different. When an AI shows you a clear and internally consistent explanation of its recommendation, you tend to accept the recommendation. The explanation substitutes for checking rather than enabling it. A wrong AI that explains itself confidently is more dangerous than a wrong AI that presents output without explanation. The explanation short-circuits the doubt that would otherwise trigger examination.
 
-**Explanations built to produce transparency are producing trust. These are not the same thing.**
+**Explanations built to produce transparency are producing trust.**
 
-Plausible AI output arrives. An explanation makes it feel verified. Trust in the AI removes the motivation to check. The checking doesn't happen. The generative step — the cognitive work that would have encoded understanding — is skipped. The output is accepted. The skill is not formed. The person does not notice, because the task is done.
+Plausible AI output arrives. An explanation makes it feel verified. Trust in the AI removes the motivation to check. The checking doesn't happen. The cognitive gap — the space where understanding would have formed — is closed. The skill is not formed. The person does not notice, because the task is done.
 
 The generation effect — [Slamecka & Graf 1978](/docs/bibliography#slamecka-1978), replicated across decades — is the root. The brain does not store what it did not have to work to construct. Trust, transparency, and fluent output are three different paths to the same bypass.
 
@@ -93,11 +93,11 @@ The generation effect — [Slamecka & Graf 1978](/docs/bibliography#slamecka-197
 
 There is no longitudinal study measuring developer capability — not task performance, but underlying capability — after extended AI use without AI access. The Shen/Tamkin study is 35 minutes. The Bastani study is the most rigorous evidence on the learning mechanism but involves high school students learning math, not professional developers working on production systems over months and years.
 
-This gap matters and should be stated plainly. The research establishes the mechanism: cognitive offloading reduces skill formation in controlled settings. It establishes a parallel-domain pattern: observational evidence from medicine suggests real-world skill decline following AI adoption ([Budzyń et al. 2025](/docs/bibliography#budzyn-2025), Lancet). It does not establish what happens to a software developer's fundamental capability after two years of AI-assisted work.
+This gap matters and should be stated plainly. The research establishes the mechanism: closing the cognitive gap reduces skill formation in controlled settings. It establishes a parallel-domain pattern: observational evidence from medicine suggests real-world skill decline following AI adoption ([Budzyń et al. 2025](/docs/bibliography#budzyn-2025), Lancet). It does not establish what happens to a software developer's fundamental capability after two years of AI-assisted work.
 
 The honest claim is not "we know developer capability declines." The honest claim is: every mechanism the research documents, and every parallel domain studied, points the same direction. And the METR perception data suggests that if decline is happening, we would not detect it from inside our own experience. The developers who couldn't sense a 43-point gap between their prediction and measured reality are the same developers evaluating whether their own capability is intact.
 
 What the research does establish is the shape of the interaction that determines which outcome you get. Shen and Tamkin's data makes this precise. Developers who received AI-generated code and then asked understanding-focused questions about it — what does this do, why this approach, how does it handle the async case — scored 86% on the knowledge quiz. Developers who delegated to AI without engaging afterward scored 39%. The code was identical. The AI's contribution was identical. The difference was what the developer did after the AI finished.
 
-The productivity gain and the learning harm are produced by the same engagement model. Using AI to handle what you would otherwise have had to figure out is exactly what delivers the +26% and exactly what atrophies the capability you would have built by figuring it out. The default design — give me the answer — optimizes for the gain and produces the harm. The question of what that interaction pattern means for a developer's capability a year from now is the question the research has not yet answered. The mechanism it has measured is precise enough to see which direction the answer points.
+The productivity gain and the learning harm come from the same behavior: handing the problem to AI instead of working through it. Using AI to handle what you would otherwise have had to figure out is exactly what delivers the +26% and exactly what atrophies the capability you would have built by figuring it out. The default design — give me the answer — optimizes for the gain and produces the harm. The question of what that interaction pattern means for a developer's capability a year from now is the question the research has not yet answered. The mechanism it has measured is precise enough to see which direction the answer points.
 

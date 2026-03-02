@@ -162,6 +162,8 @@
 		.landing-grid {
 			display: flex;
 			flex-direction: column;
+			height: auto;
+			overflow: visible;
 			gap: 0;
 			padding: 0;
 			min-height: auto;
@@ -201,10 +203,12 @@
 			min-height: 50dvh;
 		}
 
-		/* Hide empty margin */
+		/* Hide empty margins */
+		.pos-margin-sw:empty,
 		.pos-margin-se:empty {
 			display: none;
 			min-height: 0;
+			padding: 0;
 		}
 	}
 

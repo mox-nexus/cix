@@ -16,6 +16,8 @@ Harm is a design variable.
 
 ([Bastani et al. 2025](/docs/bibliography#bastani-2025), PNAS)
 
+<chart id="bastani-split"></chart>
+
 ---
 
 ## Keeping the Gap Open
@@ -45,6 +47,8 @@ Their Study 2 results on perceived outcome responsibility — the degree to whic
 - Transparency: b=0.511 (p<.001)
 - Engagement: b=0.090 (not significant)
 
+<chart id="design-lever-hierarchy"></chart>
+
 Process control means the user can influence what data the system considers and the rules by which it generates output. Outcome control means the user can appeal or modify the final decision after it's produced. Together they say: the human's judgment is indispensable by design, not just consulted.
 
 The engagement feature — proactive prompting, soliciting feedback at decision points, asking for the user's opinion — produced no significant effect on any of the four outcomes measured. Not on perceived service improvement. Not on outcome responsibility. Not on threat to meaning of work. Not on adherence to the system. All four engagement hypotheses were rejected.
@@ -53,7 +57,7 @@ This follows from the mechanism. A system that asks "do you agree with this reco
 
 Process control and outcome control work differently. When you can modify the parameters and override the decision, the recommendation is not the endpoint — it's the input to your judgment. The authority to override is also the responsibility to evaluate. These features make passive acceptance structurally harder.
 
-The engagement feature prompts. The control features require.
+Control features require evaluation. Engagement features only prompt for it.
 
 Transparency ranked third at b=0.511, a real effect. But [Bansal et al.'s](/docs/bibliography#bansal-2021) work (CHI 2021) documented a complication — AI explanations increase acceptance of recommendations regardless of whether those recommendations are correct, improving accuracy when the AI is right and decreasing it when the AI errs. Transparency that surfaces what the system considered creates an entry point for evaluation. Transparency that presents a polished rationale for a conclusion already reached can substitute for evaluation. The Blaurock number doesn't distinguish between them.
 
@@ -65,7 +69,7 @@ Blaurock isolates what system features do. [Pallant et al.](/docs/bibliography#p
 
 In a qualitative content analysis of 192 student reflections, students using GenAI in a mastery-oriented way — constructing and augmenting knowledge rather than asking for and copying output — were 35.782 times more likely to demonstrate critical thinking (OR=35.782, p<0.001) ([Pallant et al. 2025](/docs/bibliography#pallant-2025), Studies in Higher Education).
 
-35.782 is not a 20% improvement. It is not a one-standard-deviation shift. It is odds-ratio territory, which means the gap between the two groups is categorical. Students who used AI to figure things out were not slightly more likely to think critically. They were in a qualitatively different relationship with the work.
+35.782 is odds-ratio territory — the gap between the two groups is categorical. Students who used AI to figure things out were not slightly more likely to think critically. They were in a qualitatively different relationship with the work.
 
 Same tool. Different orientation. A 35-fold difference in the probability of critical thinking.
 
@@ -77,11 +81,11 @@ A Socratic AI — explicitly designed to ask questions rather than give answers 
 
 ---
 
-## The Collective Problem
+## No One Chose This
 
 The individual cannot solve this part.
 
-Anil [Doshi and Oliver Hauser](/docs/bibliography#doshi-2024) ran a preregistered experiment in 2024 with 893 short story writers. Writers given access to generative AI ideas produced stories rated 8.1% more novel than writers without AI (b=0.311, p<0.001). The AI helped. Individually, measurably ([Doshi & Hauser 2024](/docs/bibliography#doshi-2024), Science Advances).
+Anil [Doshi and Oliver Hauser](/docs/bibliography#doshi-2024) ran a preregistered experiment in 2024 with 293 short story writers (and 600 evaluators who rated the results). Writers given access to generative AI ideas produced stories rated 8.1% more novel than writers without AI (b=0.311, p<0.001). The AI helped. Individually, measurably ([Doshi & Hauser 2024](/docs/bibliography#doshi-2024), Science Advances).
 
 Then they measured something else: how similar were the AI-assisted stories to each other, compared to how similar the unaided stories were to each other?
 
@@ -93,9 +97,11 @@ Consider what this looks like from the inside. Someone at Microsoft Research gav
 
 Each writer in the Doshi and Hauser experiment made a rational decision. Each writer's story improved. No one chose convergence. It emerged from individually rational choices.
 
-This pattern holds at larger scale. Niklas [Holzner, Sebastian Maier, and Stefan Feuerriegel](/docs/bibliography#holzner-2025) aggregated 28 studies measuring this effect across 8,214 participants. Individual creative performance: Hedges' g=+0.273 (95% CI: [0.018, 0.528], p=0.036). Idea diversity: Hedges' g=-0.863 (95% CI: [-1.328, -0.398], p<0.001). The leave-one-out sensitivity analysis kept the diversity estimate between g=-0.655 and g=-0.952 across all iterations — every confidence interval excluded zero ([Holzner et al. 2025](/docs/bibliography#holzner-2025), arXiv).
+This pattern holds at larger scale. Niklas [Holzner, Sebastian Maier, and Stefan Feuerriegel](/docs/bibliography#holzner-2025) aggregated 28 studies across 8,214 participants. Individual creative performance (28 studies, n=8,214): Hedges' g=+0.273 (95% CI: [0.018, 0.528], p=0.036). Idea diversity (4 studies, n=1,017): Hedges' g=-0.863 (95% CI: [-1.328, -0.398], p<0.001). The leave-one-out sensitivity analysis kept the diversity estimate between g=-0.655 and g=-0.952 across all iterations — every confidence interval excluded zero ([Holzner et al. 2025](/docs/bibliography#holzner-2025), arXiv).
 
 Better writers. Fewer distinct ideas. Both at once, across every study in the meta-analysis.
+
+<chart id="diversity-paradox"></chart>
 
 The homogenization is structural. Give 70+ language models the same prompt — "Write a metaphor about time" — and they form two clusters. Almost every model produces some version of "time is a river." Many produce "time is a weaver." GPT-4o, Qwen2.5, phi-4, GPT-4o-mini, and Mixtral all reached for the river independently. Sentence embedding similarities between responses from different models: 71–82% ([Jiang et al. 2025](/docs/bibliography#jiang-2025), NeurIPS).
 
@@ -115,9 +121,9 @@ There is an escape condition. [Gerstgrasser et al.](/docs/bibliography#gerstgras
 
 The collapse mechanism is not that human output degrades in quality. It is that human output is replaced by AI output. Degradation would still leave human-generated content in the training pool. Replacement removes it. The Gerstgrasser escape condition depends on real human data continuing to accumulate — which it cannot do if substitutive AI use is replacing human generation, not supplementing it.
 
-Each developer using AI to explore an architectural question, each writer asking AI to generate options, each analyst handing off the reasoning: all are making individually rational choices. The aggregate produces a corpus of AI-shaped outputs. That corpus re-enters training data. The next generation of models trains on it. The tails disappear. Each generation amplifies the loss.
+If you use AI to explore an architectural question, draft options for a design decision, or hand off analysis you could have done yourself — you are making the individually rational choice. So is every other developer on your team and every team using the same tools. The aggregate produces a corpus of AI-shaped outputs. That corpus re-enters training data. The next generation of models trains on it. The tails disappear. Each generation amplifies the loss.
 
-No one is doing anything wrong. The convergence emerges from individually rational behavior. That is what makes it a design problem, not a personal one.
+No one is doing anything wrong. The convergence emerges from individually rational behavior across an industry. That is what makes it a design problem — not a discipline problem, not a personal failing, but a question of what the tools are structured to produce.
 
 ---
 

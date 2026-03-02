@@ -96,4 +96,11 @@
 	.spark-fill {
 		fill: oklch(80% 0.22 245);
 	}
+
+	@media (max-width: 768px) {
+		.mark {
+			width: min(50vw, 40vh);
+			height: min(50vw, 40vh);
+		}
+	}
 </style>

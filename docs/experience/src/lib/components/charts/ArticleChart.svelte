@@ -1,8 +1,14 @@
 <script lang="ts">
 	import NamingConvergence from './NamingConvergence.svelte';
+	import BastaniSplit from './BastaniSplit.svelte';
+	import DesignLeverHierarchy from './DesignLeverHierarchy.svelte';
+	import DiversityParadox from './DiversityParadox.svelte';
 
 	const charts: Record<string, typeof NamingConvergence> = {
-		'naming-convergence': NamingConvergence
+		'naming-convergence': NamingConvergence,
+		'bastani-split': BastaniSplit,
+		'design-lever-hierarchy': DesignLeverHierarchy,
+		'diversity-paradox': DiversityParadox
 	};
 
 	let { id = '', ...rest }: { id?: string } = $props();
