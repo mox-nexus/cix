@@ -309,6 +309,8 @@
 		border-collapse: collapse;
 		width: 100%;
 		margin: 0 0 var(--space-1);
+		display: block;
+		overflow-x: auto;
 	}
 
 	.plugin-readme :global(th),

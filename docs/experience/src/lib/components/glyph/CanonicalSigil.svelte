@@ -31,11 +31,4 @@
 		<QuickStart />
 	{/snippet}
 
-	{#snippet marginSW()}
-		<!-- TypewriterManifesto available but not wired -->
-	{/snippet}
-
-	{#snippet marginSE()}
-		<!-- Reserved for future use -->
-	{/snippet}
 </LandingComposition>
