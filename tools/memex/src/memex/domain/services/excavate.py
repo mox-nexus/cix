@@ -1,25 +1,27 @@
 """Excavation service - use case orchestration.
 
-Orchestrates ingestion and search through ports (Burner).
-Uses domain types only, no infrastructure leakage.
+Orchestrates ingestion and search through ports.
+Pass-through methods removed — callers access ports directly:
+  service.corpus.stats(), service.graph.edge_stats(), service.trails.list_trails()
 """
 
 from collections.abc import Callable
 from pathlib import Path
 
-from memex.domain.models import Fragment
+from memex.domain.models import EmbeddingCoverage, Fragment
 from memex.domain.ports._out.corpus import CorpusPort
 from memex.domain.ports._out.embedding import EmbeddingPort
+from memex.domain.ports._out.graph import GraphPort
 from memex.domain.ports._out.reranker import RerankerPort
 from memex.domain.ports._out.source import SourceAdapterPort
+from memex.domain.ports._out.trail import TrailPort
 
 
 class ExcavationService:
     """Orchestrates excavation use cases.
 
     Connects source adapters to corpus storage through ports.
-    Supports semantic search when embedder is provided.
-    Supports cross-encoder reranking when reranker is provided.
+    For direct port access: service.corpus, service.graph, service.trails.
     """
 
     def __init__(
@@ -28,11 +30,15 @@ class ExcavationService:
         source_adapters: list[SourceAdapterPort],
         embedder: EmbeddingPort | None = None,
         reranker: RerankerPort | None = None,
+        graph: GraphPort | None = None,
+        trails: TrailPort | None = None,
     ):
         self.corpus = corpus
         self.source_adapters = source_adapters
         self.embedder = embedder
         self.reranker = reranker
+        self.graph = graph or corpus  # type: ignore[assignment]
+        self.trails = trails or corpus  # type: ignore[assignment]
 
     def ingest(self, path: Path) -> tuple[int, int]:
         """Ingest a file into the corpus.
@@ -56,24 +62,9 @@ class ExcavationService:
 
         # Auto-compute FOLLOWS edges for new fragments
         if stored > 0:
-            self.corpus.build_follows_edges()
+            self.graph.build_follows_edges()
 
         return (parsed, stored)
-
-    def keyword_search(
-        self,
-        query: str,
-        limit: int = 20,
-        source_kind: str | None = None,
-    ) -> list[Fragment]:
-        """Search the corpus (keyword-based).
-
-        Args:
-            query: Search terms (space-separated, all must match)
-            limit: Maximum results
-            source_kind: Optional filter by source type
-        """
-        return self.corpus.search(query, limit, source_kind)
 
     def semantic_search(
         self,
@@ -82,18 +73,7 @@ class ExcavationService:
         source_kind: str | None = None,
         min_score: float = 0.3,
     ) -> list[tuple[Fragment, float]]:
-        """Search the corpus by semantic similarity.
-
-        Args:
-            query: Natural language query
-            limit: Maximum results
-            source_kind: Optional filter by source type
-            min_score: Minimum similarity threshold (0-1)
-
-        Returns:
-            List of (Fragment, score) tuples.
-            Empty list if embedder not available.
-        """
+        """Search by semantic similarity. Orchestrates embedder + corpus."""
         if not self.embedder:
             return []
 
@@ -111,18 +91,7 @@ class ExcavationService:
         """Search using Reciprocal Rank Fusion (RRF).
 
         Combines keyword and semantic results using rank-based fusion,
-        avoiding score normalization issues. Optionally applies cross-encoder
-        reranking for improved precision.
-
-        Args:
-            query: Search query
-            limit: Maximum results
-            source_kind: Optional filter by source type
-            semantic_weight: Weight for semantic ranks (0-1)
-            use_reranker: Whether to apply reranking if available
-
-        Returns:
-            List of (Fragment, score) tuples sorted by RRF/reranker score.
+        optionally applies cross-encoder reranking for improved precision.
         """
         k = 60  # RRF constant (Elasticsearch/Azure/OpenSearch standard)
         keyword_weight = 1.0 - semantic_weight
@@ -157,79 +126,30 @@ class ExcavationService:
 
         # Apply reranking if available
         if self.reranker and use_reranker:
-            # Take top candidates for reranking (50-100 is typical)
             rerank_candidates = [frag for frag, _ in combined[: min(50, len(combined))]]
             return self.reranker.rerank(query, rerank_candidates, limit)
 
         return combined[:limit]
-
-    def find_conversation(self, conversation_id: str) -> list[Fragment]:
-        """Get all fragments in a conversation."""
-        return self.corpus.find_by_conversation(conversation_id)
-
-    def list_conversations(
-        self,
-        limit: int = 50,
-        offset: int = 0,
-        source_kind: str | None = None,
-    ) -> list[dict]:
-        """List conversations with summary info, most recent first."""
-        return self.corpus.list_conversations(limit, offset, source_kind)
-
-    def stats(self) -> dict:
-        """Get corpus statistics."""
-        return self.corpus.stats()
-
-    def schema(self) -> dict:
-        """Get corpus schema."""
-        return self.corpus.schema()
-
-    def available_sources(self) -> list[str]:
-        """List available source adapters."""
-        return [adapter.source_kind() for adapter in self.source_adapters]
-
-    def get_source_skill(self, source_kind: str) -> str | None:
-        """Get skill documentation for a source adapter."""
-        for adapter in self.source_adapters:
-            if adapter.source_kind() == source_kind:
-                return adapter.skill()
-        return None
-
-    def get_corpus_skill(self) -> str:
-        """Get skill documentation for the corpus."""
-        return self.corpus.skill()
 
     def backfill_embeddings(
         self,
         batch_size: int = 100,
         on_progress: Callable[[int, int], None] | None = None,
     ) -> int:
-        """Backfill embeddings for existing fragments.
-
-        Args:
-            batch_size: Fragments per batch
-            on_progress: Callback(processed, total)
-
-        Returns:
-            Number of fragments updated.
-        """
+        """Backfill embeddings for existing fragments. Orchestrates embedder + corpus."""
         if not self.embedder:
             return 0
         return self.corpus.backfill_embeddings(self.embedder.embed_stream, batch_size, on_progress)
 
-    def embedding_coverage(self) -> tuple[int, int]:
-        """Get embedding coverage stats.
-
-        Returns:
-            (fragments_with_embeddings, total_fragments)
-        """
+    def embedding_coverage(self) -> EmbeddingCoverage:
+        """Get embedding coverage."""
         stats = self.corpus.stats()
-        total = stats.get("total_fragments", 0)
+        total = stats.total_fragments
         without = self.corpus.count_without_embeddings()
-        return (total - without, total)
+        return EmbeddingCoverage(with_embeddings=total - without, total=total)
 
     def has_semantic_search(self) -> bool:
-        """Check if semantic search is available."""
+        """Check if semantic search is available (embedder + corpus support)."""
         return self.embedder is not None and self.corpus.has_semantic_search()
 
     def has_reranker(self) -> bool:
@@ -238,54 +158,18 @@ class ExcavationService:
 
     def reranker_model_name(self) -> str | None:
         """Get reranker model name for display."""
-        if self.reranker:
-            return self.reranker.model_name
+        return self.reranker.model_name if self.reranker else None
+
+    def available_sources(self) -> list[str]:
+        """List available source adapter kinds."""
+        return [adapter.source_kind() for adapter in self.source_adapters]
+
+    def get_source_skill(self, source_kind: str) -> str | None:
+        """Get skill documentation for a source adapter."""
+        for adapter in self.source_adapters:
+            if adapter.source_kind() == source_kind:
+                return adapter.skill()
         return None
-
-    def rebuild_search_index(self) -> None:
-        """Rebuild search indexes after data changes."""
-        self.corpus.rebuild_fts_index()
-
-    def find_similar(self, fragment_id: str, limit: int = 10) -> list[tuple[Fragment, float]]:
-        """Find similar fragments via SIMILAR_TO edges."""
-        return self.corpus.find_similar(fragment_id, limit)
-
-    def build_follows_edges(self) -> int:
-        """Materialize FOLLOWS edges from conversation ordering."""
-        return self.corpus.build_follows_edges()
-
-    def build_similar_edges(
-        self,
-        threshold: float = 0.8,
-        k: int = 5,
-        on_progress: Callable[[int, int], None] | None = None,
-    ) -> int:
-        """Build SIMILAR_TO edges from embedding similarity."""
-        return self.corpus.build_similar_edges(threshold, k, on_progress)
-
-    def edge_stats(self) -> dict:
-        """Get edge statistics by type."""
-        return self.corpus.edge_stats()
-
-    def create_trail(self, name: str, description: str = "") -> str:
-        """Create a named trail. Returns trail ID."""
-        return self.corpus.create_trail(name, description)
-
-    def add_to_trail(self, trail_name: str, fragment_id: str, note: str = "") -> int:
-        """Add fragment to trail. Returns position."""
-        return self.corpus.add_to_trail(trail_name, fragment_id, note)
-
-    def get_trail(self, trail_name: str) -> list[tuple[Fragment, str]]:
-        """Get trail entries in order. Returns (Fragment, note) tuples."""
-        return self.corpus.get_trail(trail_name)
-
-    def list_trails(self) -> list[dict]:
-        """List all trails."""
-        return self.corpus.list_trails()
-
-    def delete_trail(self, trail_name: str) -> bool:
-        """Delete a trail."""
-        return self.corpus.delete_trail(trail_name)
 
     def close(self) -> None:
         """Release resources."""

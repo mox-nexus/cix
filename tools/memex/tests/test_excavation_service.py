@@ -20,7 +20,7 @@ class TestExcavationServiceReranking:
             corpus_path = Path(tmpdir) / "test.duckdb"
             corpus = DuckDBCorpus(corpus_path)
             corpus.store(sample_fragments)
-            corpus.rebuild_fts_index()
+            corpus.rebuild_search_index()
             yield corpus
             corpus.close()
 
@@ -88,52 +88,3 @@ class TestExcavationServiceReranking:
     def test_reranker_model_name_none(self, service_no_reranker):
         """Service returns None when no reranker."""
         assert service_no_reranker.reranker_model_name() is None
-
-
-class TestExcavationServiceKeywordSearch:
-    """Tests for keyword search (baseline without embeddings)."""
-
-    @pytest.fixture
-    def temp_corpus(self, sample_fragments):
-        """Create a temporary corpus with sample data."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            corpus_path = Path(tmpdir) / "test.duckdb"
-            corpus = DuckDBCorpus(corpus_path)
-            corpus.store(sample_fragments)
-            # Rebuild FTS index after store
-            corpus.rebuild_fts_index()
-            yield corpus
-            corpus.close()
-
-    @pytest.fixture
-    def service(self, temp_corpus):
-        """Service for keyword search."""
-        return ExcavationService(
-            corpus=temp_corpus,
-            source_adapters=[],
-        )
-
-    def test_keyword_search_finds_matches(self, service):
-        """Keyword search finds fragments containing query terms."""
-        results = service.keyword_search("authentication")
-
-        assert len(results) > 0
-        for frag in results:
-            assert isinstance(frag, Fragment)
-
-    def test_keyword_search_no_matches(self, service):
-        """Keyword search returns empty for no matches."""
-        results = service.keyword_search("xyznonexistentterm")
-        assert results == []
-
-    def test_keyword_search_respects_limit(self, service):
-        """Keyword search respects limit parameter."""
-        results = service.keyword_search("the", limit=2)
-        assert len(results) <= 2
-
-    def test_keyword_search_source_filter(self, service):
-        """Keyword search filters by source_kind."""
-        results = service.keyword_search("API", source_kind="openai")
-
-        for frag in results:
-            assert frag.source_kind == "openai"

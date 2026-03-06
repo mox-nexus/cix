@@ -6,6 +6,7 @@ Supports:
 - Full-text search via FTS extension (BM25 scoring)
 """
 
+import logging
 from collections.abc import Callable, Iterable, Iterator
 from importlib.resources import files
 from itertools import batched, chain, count
@@ -14,8 +15,19 @@ from typing import TYPE_CHECKING
 
 import duckdb
 
-from memex.domain.models import Fragment, Provenance
+from memex.domain.models import (
+    ColumnInfo,
+    ConversationSummary,
+    CorpusStats,
+    EdgeTypeStats,
+    Fragment,
+    Provenance,
+    SchemaInfo,
+    TrailSummary,
+)
 from memex.domain.streaming import tap, tap_every
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from memex.domain.ports._out.corpus import ProgressCallback
@@ -205,7 +217,7 @@ class DuckDBCorpus:
                 # Index creation failed, fall back to ILIKE
                 self._fts_available = False
 
-    def rebuild_fts_index(self) -> None:
+    def rebuild_search_index(self) -> None:
         """Rebuild FTS index after data changes."""
         if not self._fts_available:
             return
@@ -288,33 +300,27 @@ class DuckDBCorpus:
                 )
             )
             if len(batch) >= batch_size:
-                self.con.executemany(
-                    f"""
-                    INSERT INTO fragments (
-                        id, conversation_id, role, content,
-                        timestamp, source_kind, source_id, embedding
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?::FLOAT[{self._embedding_dim}])
-                    ON CONFLICT (id) DO NOTHING
-                    """,
-                    batch,
-                )
+                self._insert_embedding_batch(batch)
                 batch = []
 
         if batch:
-            self.con.executemany(
-                f"""
-                INSERT INTO fragments (
-                    id, conversation_id, role, content,
-                    timestamp, source_kind, source_id, embedding
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?::FLOAT[{self._embedding_dim}])
-                ON CONFLICT (id) DO NOTHING
-                """,
-                batch,
-            )
+            self._insert_embedding_batch(batch)
 
         return self._fragment_count() - count_before
+
+    def _insert_embedding_batch(self, batch: list[tuple]) -> None:
+        """Insert a batch of fragment tuples with embeddings."""
+        self.con.executemany(
+            f"""
+            INSERT INTO fragments (
+                id, conversation_id, role, content,
+                timestamp, source_kind, source_id, embedding
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?::FLOAT[{self._embedding_dim}])
+            ON CONFLICT (id) DO NOTHING
+            """,
+            batch,
+        )
 
     def _escape_ilike(self, s: str) -> str:
         """Escape ILIKE wildcards in user input."""
@@ -452,7 +458,7 @@ class DuckDBCorpus:
         limit: int = 50,
         offset: int = 0,
         source_kind: str | None = None,
-    ) -> list[dict]:
+    ) -> list[ConversationSummary]:
         """List conversations with summary info, most recent first."""
         source_filter = "AND source_kind = ?" if source_kind else ""
         params = [source_kind] if source_kind else []
@@ -476,14 +482,14 @@ class DuckDBCorpus:
         ).fetchall()
 
         return [
-            {
-                "conversation_id": row[0],
-                "message_count": row[1],
-                "first_timestamp": row[2],
-                "last_timestamp": row[3],
-                "source_kind": row[4],
-                "preview": (row[5][:120] + "...") if row[5] and len(row[5]) > 120 else row[5],
-            }
+            ConversationSummary(
+                conversation_id=row[0],
+                message_count=row[1],
+                first_timestamp=row[2],
+                last_timestamp=row[3],
+                source_kind=row[4],
+                preview=(row[5][:120] + "...") if row[5] and len(row[5]) > 120 else row[5],
+            )
             for row in rows
         ]
 
@@ -691,8 +697,8 @@ class DuckDBCorpus:
         """Drop HNSW index for bulk write operations."""
         try:
             self.con.execute("DROP INDEX IF EXISTS idx_fragments_embedding")
-        except duckdb.Error:
-            pass
+        except duckdb.Error as e:
+            logger.debug("Failed to drop HNSW index: %s", e)
 
     def _create_hnsw_index(self) -> None:
         """Create HNSW index for semantic search.
@@ -710,8 +716,8 @@ class DuckDBCorpus:
                 ON fragments USING HNSW (embedding)
                 WITH (metric = 'cosine')
             """)
-        except duckdb.Error:
-            pass
+        except duckdb.Error as e:
+            logger.debug("Failed to create HNSW index: %s", e)
         finally:
             self.con.execute("SET memory_limit = '2GB'")
 
@@ -904,17 +910,25 @@ class DuckDBCorpus:
         batch_size = 500
 
         for i, (frag_id,) in enumerate(fragment_ids):
+            # Fetch embedding first, then query with literal vector
+            # so DuckDB can use the HNSW index (self-joins bypass it)
+            row = self.con.execute(
+                "SELECT embedding FROM fragments WHERE id = ?", [frag_id]
+            ).fetchone()
+            if row is None or row[0] is None:
+                continue
+            embedding = row[0]
+
             neighbors = self.con.execute(
                 f"""
-                SELECT f2.id, array_cosine_distance(f1.embedding, f2.embedding) as dist
-                FROM fragments f1, fragments f2
-                WHERE f1.id = ?
-                  AND f2.id != f1.id
-                  AND f2.embedding IS NOT NULL
-                ORDER BY array_cosine_distance(f1.embedding, f2.embedding)
+                SELECT id, array_cosine_distance(embedding, $1::FLOAT[{len(embedding)}]) as dist
+                FROM fragments
+                WHERE id != $2
+                  AND embedding IS NOT NULL
+                ORDER BY array_cosine_distance(embedding, $1::FLOAT[{len(embedding)}])
                 LIMIT {k}
                 """,
-                [frag_id],
+                [embedding, frag_id],
             ).fetchall()
 
             for neighbor_id, distance in neighbors:
@@ -936,14 +950,14 @@ class DuckDBCorpus:
 
         return edge_count
 
-    def edge_stats(self) -> dict:
+    def edge_stats(self) -> dict[str, EdgeTypeStats]:
         """Get edge statistics by type."""
         rows = self.con.execute("""
             SELECT edge_type, COUNT(*) as count, AVG(weight) as avg_weight
             FROM edges
             GROUP BY edge_type
         """).fetchall()
-        return {row[0]: {"count": row[1], "avg_weight": round(row[2], 4)} for row in rows}
+        return {row[0]: EdgeTypeStats(count=row[1], avg_weight=round(row[2], 4)) for row in rows}
 
     # --- Trail Methods ---
 
@@ -1006,7 +1020,7 @@ class DuckDBCorpus:
 
         return [(self._row_to_fragment(row[:7]), row[7] or "") for row in rows]
 
-    def list_trails(self) -> list[dict]:
+    def list_trails(self) -> list[TrailSummary]:
         """List all trails with entry counts."""
         rows = self.con.execute("""
             SELECT t.id, t.name, t.description, t.created_at,
@@ -1018,13 +1032,13 @@ class DuckDBCorpus:
         """).fetchall()
 
         return [
-            {
-                "id": row[0],
-                "name": row[1],
-                "description": row[2],
-                "created_at": row[3],
-                "entry_count": row[4],
-            }
+            TrailSummary(
+                id=row[0],
+                name=row[1],
+                description=row[2],
+                created_at=row[3],
+                entry_count=row[4],
+            )
             for row in rows
         ]
 
@@ -1047,7 +1061,7 @@ class DuckDBCorpus:
             return None
         return {"id": row[0], "name": row[1], "description": row[2], "created_at": row[3]}
 
-    def stats(self) -> dict:
+    def stats(self) -> CorpusStats:
         """Get corpus statistics."""
         result = self.con.execute("""
             SELECT
@@ -1059,15 +1073,15 @@ class DuckDBCorpus:
             FROM fragments
         """).fetchone()
 
-        return {
-            "total_fragments": result[0],
-            "conversations": result[1],
-            "earliest": result[2],
-            "latest": result[3],
-            "sources": result[4],
-        }
+        return CorpusStats(
+            total_fragments=result[0],
+            conversations=result[1],
+            earliest=result[2],
+            latest=result[3],
+            sources=result[4],
+        )
 
-    def schema(self) -> dict:
+    def schema(self) -> SchemaInfo:
         """Return schema information for introspection."""
         columns = self.con.execute("""
             SELECT column_name, data_type, is_nullable
@@ -1076,9 +1090,9 @@ class DuckDBCorpus:
             ORDER BY ordinal_position
         """).fetchall()
 
-        return {
-            "fragments": [{"name": c[0], "type": c[1], "nullable": c[2] == "YES"} for c in columns]
-        }
+        return SchemaInfo(
+            fragments=[ColumnInfo(name=c[0], type=c[1], nullable=c[2] == "YES") for c in columns]
+        )
 
     def skill(self) -> str:
         """Return skill documentation for DuckDB corpus."""

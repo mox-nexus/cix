@@ -11,7 +11,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 if TYPE_CHECKING:
-    from memex.domain.models import Fragment
+    from memex.domain.models import ConversationSummary, Fragment, TrailSummary
 
 
 def format_fragments(
@@ -80,7 +80,7 @@ def format_thread(
 
 
 def format_timeline(
-    conversations: list[dict],
+    conversations: list["ConversationSummary"],
     console: Console,
     offset: int = 0,
 ) -> None:
@@ -98,16 +98,15 @@ def format_timeline(
     table.add_column("Preview", ratio=1)
 
     for i, conv in enumerate(conversations, start=offset + 1):
-        ts = conv["last_timestamp"]
-        date_str = ts.strftime("%Y-%m-%d") if ts else "?"
-        preview = conv.get("preview") or "[dim]no user message[/dim]"
-        conv_id = conv["conversation_id"][:8] + "..." if conv["conversation_id"] else "?"
+        date_str = conv.last_timestamp.strftime("%Y-%m-%d") if conv.last_timestamp else "?"
+        preview = conv.preview or "[dim]no user message[/dim]"
+        conv_id = conv.conversation_id[:8] + "..." if conv.conversation_id else "?"
 
         table.add_row(
             str(i),
             date_str,
-            str(conv["message_count"]),
-            conv["source_kind"] or "?",
+            str(conv.message_count),
+            conv.source_kind or "?",
             conv_id,
             preview,
         )
@@ -229,7 +228,7 @@ def format_trail(
 
 
 def format_trail_list(
-    trails: list[dict],
+    trails: list["TrailSummary"],
     console: Console,
 ) -> None:
     """Format list of trails as a table."""
@@ -244,12 +243,12 @@ def format_trail_list(
     table.add_column("Description", ratio=1)
 
     for t in trails:
-        created = t["created_at"].strftime("%Y-%m-%d") if t["created_at"] else "?"
+        created = t.created_at.strftime("%Y-%m-%d") if t.created_at else "?"
         table.add_row(
-            t["name"],
-            str(t["entry_count"]),
+            t.name,
+            str(t.entry_count),
             created,
-            t.get("description") or "",
+            t.description or "",
         )
 
     console.print(table)
