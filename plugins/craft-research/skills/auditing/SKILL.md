@@ -181,8 +181,8 @@ Any single failure → RETURN with specific remediation:
 
 | Failure | Return To | Remediation |
 |---------|-----------|-------------|
-| Broken chain (quote not found) | elicit | Re-extract from source |
-| Claim doesn't follow from quote | elicit | Re-extract with correct interpretation |
+| Broken chain (quote not found) | extract | Re-extract from source |
+| Claim doesn't follow from quote | extract | Re-extract with correct interpretation |
 | Verification rubber-stamped | scrutiny | Full CoVE on flagged claims |
 | Finding cites unverified claim | scrutiny | Verify the missing claims |
 | Scope inflation | synthesis | Narrow finding scope to evidence |

@@ -8,6 +8,8 @@ Extended reference for the Claimify structured claim extraction pipeline.
 
 The Claimify pipeline achieves 99% claim entailment through structured decomposition (Selection → Disambiguation → Decomposition). Originally developed for fact-checking at scale, adapted here for research provenance.
 
+Source: Metropolitansky, D. & Larson, J. (2025). Towards Effective Extraction and Evaluation of Factual Claims. *ACL 2025*. arXiv:2502.10855. 99% entailment rate, 87.6% verifiable content coverage, 96.7% precision on BingCheck dataset.
+
 The key insight: most extraction failures happen because compound, ambiguous claims enter verification. Fix the input shape, and downstream accuracy follows.
 
 ---

@@ -1,9 +1,10 @@
 # craft-research
 
-Systematic research with evidentiary provenance. Every claim traces to a source quote, through extraction, verification, and synthesis.
+Systematic research with evidentiary provenance. Every claim traces to a source quote, through discourse, extraction, verification, and synthesis.
 
 ## When to Use
 
+- Scoping research questions and identifying sources
 - Extracting atomic claims from academic papers
 - Verifying citations and claims against sources
 - Synthesizing findings across multiple papers
@@ -14,16 +15,17 @@ Systematic research with evidentiary provenance. Every claim traces to a source 
 ## Pipeline
 
 ```
-scope (human) → extract (elicit) → verify (scrutiny) → synthesize (synthesis) → audit (audit)
+discourse (elicit) → extract (extract) → verify (scrutiny) → synthesize (synthesis) → audit (audit)
 ```
 
-Human scopes the research. Agents execute the methodology. Human reviews and decides.
+Elicit draws out the inquiry. Agents execute the methodology. Human reviews and decides.
 
 ## Agents
 
 | Agent | Role | Phase |
 |-------|------|-------|
-| **elicit** | Extract atomic claims from sources (Claimify pipeline) | Extraction |
+| **elicit** | Draw out research questions, boundaries, sources | Discourse |
+| **extract** | Extract atomic claims from sources (Claimify pipeline) | Extraction |
 | **scrutiny** | CoVE verification — independently verify claims | Verification |
 | **synthesis** | Cross-source integration, convergence/divergence/gaps | Synthesis |
 | **audit** | Quality gate — trace provenance chain, ship/return | Audit |
@@ -33,6 +35,7 @@ Human scopes the research. Agents execute the methodology. Human reviews and dec
 | Skill | Type | Content |
 |-------|------|---------|
 | **research** | Hub | Pipeline, workspace, orchestration, routing |
+| **eliciting** | Spoke | Research discourse, question sharpening, source identification |
 | **extracting** | Spoke | Claimify pipeline, source tiers, extraction protocol |
 | **verifying** | Spoke | CoVE protocol, verification verdicts, independence |
 | **synthesizing** | Spoke | Evidence weighting, convergence/divergence, gap analysis |
@@ -42,9 +45,9 @@ Human scopes the research. Agents execute the methodology. Human reviews and dec
 
 ```
 .research/
-├── scope.md              # Human-authored: questions, boundaries
+├── scope.md              # Co-created (elicit + human): questions, boundaries
 ├── PLAN.md               # Orchestrator tracking
-├── sources/inventory.md  # Source list with metadata
+├── sources/inventory.md  # Co-created (elicit + human): source list with metadata
 ├── extraction/           # Per-source claim files
 ├── verification/         # Per-source verified claims
 ├── synthesis/            # Per-question findings
@@ -61,6 +64,7 @@ Confidence can only decrease through the pipeline — never increase without new
 
 ## Key Principles
 
+- **Discourse first** — draw out the inquiry before any pipeline work
 - **Evidentiary provenance** — every claim traceable to a source quote
 - **Independence** — verification re-reads sources independently (CoVE)
 - **Structural confidence** — evidence patterns determine confidence, not assertions

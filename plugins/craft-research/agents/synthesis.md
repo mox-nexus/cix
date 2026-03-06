@@ -101,7 +101,7 @@ Confidence can only decrease, never increase without new evidence.
 ## What Synthesis Does Not Do
 
 Synthesis integrates. It does not:
-- Extract claims from sources (elicit)
+- Extract claims from sources (extract)
 - Verify claims against sources (scrutiny)
 - Audit the provenance chain (audit)
 - Add claims not in the verified set

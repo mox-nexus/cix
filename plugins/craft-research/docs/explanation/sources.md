@@ -24,16 +24,16 @@ Research informing the craft-research plugin design.
 - Min, S. et al. (2023). FActScore: Fine-grained Atomic Evaluation of Factual Precision in Long Form Text Generation.
   - Atomic fact decomposition for evaluation. Basis for the Claimify pipeline's decomposition stage.
 
-- Claimify Pipeline. Structured claim extraction.
-  - 99% claim entailment through Selection → Disambiguation → Decomposition. Most extraction failures trace to compound, ambiguous claims entering verification.
+- Metropolitansky, D. & Larson, J. (2025). Towards Effective Extraction and Evaluation of Factual Claims. *ACL 2025*. arXiv:2502.10855.
+  - Claimify pipeline: 99% claim entailment through Selection → Disambiguation → Decomposition. 87.6% verifiable content coverage, 96.7% precision. Most extraction failures trace to compound, ambiguous claims entering verification.
 
 - Dual-LLM Cross-Critique.
   - Two models extract independently. Concordance check: 0.94 accuracy on agreements. Cross-critique resolves 51% of disagreements. Remaining disagreements are genuine ambiguities for human review.
 
 ## Synthesis and Multi-Document Reasoning
 
-- LitLLMs. Plan-Based Synthesis.
-  - Structured outline before synthesis reduces hallucination vs direct generation. Gap-aware: marks missing coverage rather than filling with fabrication.
+- Agarwal, S. et al. (2024). LitLLMs, LLMs for Literature Review: Are we there yet? arXiv:2412.15249.
+  - Plan-based generation reduces hallucinated references by 18-26% vs direct generation. Hybrid retrieval + attribution-based re-ranking. Gap-aware: marks missing coverage rather than filling with fabrication.
 
 - Synthesis hallucination research (2024).
   - 75% of content in multi-document LLM summaries can be hallucinated. Position bias: LLMs weight information by position in prompt, not by importance.
@@ -46,8 +46,8 @@ Research informing the craft-research plugin design.
 - Sebastian Raschka (2025). State of LLMs 2025.
   - Platform comparison, capability overview.
 
-- Aakash Gupta. Meta-analysis of 1,500 papers on prompt engineering.
-  - Role prompting has "little to no effect on correctness." Over-detailed prompts counterproductive with sophisticated models.
+- Gupta, A. (2025). I Studied 1,500 Academic Papers on Prompt Engineering. *Substack/Medium*.
+  - Role prompting has "little to no effect on correctness." Over-detailed prompts counterproductive with sophisticated models. Note: practitioner synthesis of research, not peer-reviewed.
 
 - Lenny's Newsletter (2025). Prompt engineering 2025.
   - o1 performs worse with examples. Advanced models need different prompting strategies.
