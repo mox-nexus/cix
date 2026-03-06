@@ -16,7 +16,6 @@ from pydantic_settings import BaseSettings
 # Shared key map for TOML → flat settings translation
 _CONFIG_KEY_MAP = {
     ("corpus", "path"): "corpus_path",
-    ("embedding", "model"): "embedding_model",
     ("embedding", "onnx_batch_size"): "onnx_batch_size",
     ("embedding", "onnx_threads"): "onnx_threads",
     ("ingest", "embed_by_default"): "embed_by_default",
@@ -47,7 +46,10 @@ def _parse_toml(path: Path) -> dict[str, Any]:
             else:
                 flat[section] = values
         return flat
-    except Exception:
+    except Exception as e:
+        import logging
+
+        logging.getLogger("memex.config").debug("Failed to parse %s: %s", path, e)
         return {}
 
 
@@ -120,7 +122,6 @@ class Settings(BaseSettings):
     batch_size: int = 100
 
     # Embedding
-    embedding_model: str = "nomic"  # "minilm" (384-dim) or "nomic" (768-dim)
     onnx_batch_size: int = 4  # Documents per ONNX inference call (lower = less RAM)
     onnx_threads: int = 2  # ONNX inter-op threads (lower = less RAM)
     onnx_provider: str = "auto"  # "auto", "coreml", "cuda", or "cpu"
@@ -143,25 +144,14 @@ class Settings(BaseSettings):
         return {**global_config, **local_config, **values}
 
 
-_settings: Settings | None = None
-
-
 def get_settings() -> Settings:
-    """Get or create settings (lazy — defers construction until first access).
+    """Construct a fresh Settings instance.
 
-    This allows CLI flags (like --global) to set env vars before settings
-    are constructed, respecting the precedence chain properly.
+    Each call produces a new instance from current env vars / config.
+    No caching — callers that need to share settings should construct once
+    and pass through composition.
     """
-    global _settings
-    if _settings is None:
-        _settings = Settings()
-    return _settings
-
-
-def reset_settings() -> None:
-    """Reset the cached settings instance (for testing)."""
-    global _settings
-    _settings = None
+    return Settings()
 
 
 def find_local_memex_dir() -> Path | None:
@@ -212,8 +202,6 @@ def create_default_config(corpus_path: Path | None = None) -> str:
 path = "{path}"
 
 [embedding]
-# "minilm" (384-dim, fast) or "nomic" (768-dim, higher quality)
-model = "nomic"
 # ONNX execution provider: "auto" (detect GPU), "coreml", "cuda", "cpu"
 # provider = "auto"
 # ONNX runtime resource controls (lower = less RAM, slower)

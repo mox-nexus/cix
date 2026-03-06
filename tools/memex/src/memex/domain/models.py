@@ -9,10 +9,6 @@ from enum import StrEnum
 
 from pydantic import BaseModel
 
-# SourceKind as string type for extensibility (Ace recommendation)
-# Third-party adapters can use any string, not limited to enum
-SourceKind = str
-
 
 class EmbeddingConfig(BaseModel):
     """Captures the embedding contract for a corpus.
@@ -23,14 +19,6 @@ class EmbeddingConfig(BaseModel):
 
     model_name: str
     dimensions: int
-
-    def is_compatible_with(self, other: "EmbeddingConfig") -> bool:
-        """Check if two embedding configs are compatible.
-
-        Checks both model identity and dimensions (Dijkstra).
-        Same dimensions from different models produce incompatible spaces.
-        """
-        return self.model_name == other.model_name and self.dimensions == other.dimensions
 
 
 # Common source kinds (not exhaustive)
@@ -78,3 +66,65 @@ class Fragment(BaseModel):
     @property
     def source_kind(self) -> str:
         return self.provenance.source_kind
+
+
+# --- Typed return models (Step 0: eliminate -> dict from ports) ---
+
+
+class CorpusStats(BaseModel):
+    """Corpus-level statistics."""
+
+    total_fragments: int
+    conversations: int
+    earliest: datetime | None = None
+    latest: datetime | None = None
+    sources: int
+
+
+class ConversationSummary(BaseModel):
+    """Summary of a conversation for listing."""
+
+    conversation_id: str
+    message_count: int
+    first_timestamp: datetime | None = None
+    last_timestamp: datetime | None = None
+    source_kind: str | None = None
+    preview: str | None = None
+
+
+class ColumnInfo(BaseModel):
+    """Schema column metadata."""
+
+    name: str
+    type: str
+    nullable: bool
+
+
+class SchemaInfo(BaseModel):
+    """Corpus schema for introspection."""
+
+    fragments: list[ColumnInfo]
+
+
+class EdgeTypeStats(BaseModel):
+    """Statistics for a single edge type."""
+
+    count: int
+    avg_weight: float
+
+
+class EmbeddingCoverage(BaseModel):
+    """Embedding coverage statistics."""
+
+    with_embeddings: int
+    total: int
+
+
+class TrailSummary(BaseModel):
+    """Summary of a trail for listing."""
+
+    id: str
+    name: str
+    description: str
+    created_at: datetime | None = None
+    entry_count: int

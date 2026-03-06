@@ -8,8 +8,6 @@ Memex retrieves and connects historical human-AI collaboration artifacts across 
 
 ## Tooling
 
-Best-in-class, modern tooling only. No legacy.
-
 | Task | Use | Never |
 |------|-----|-------|
 | Python | `uv` | pip, conda, poetry, raw python |
@@ -17,31 +15,22 @@ Best-in-class, modern tooling only. No legacy.
 | Add deps | `uv add` | pip install |
 | JS (if needed) | `bun` | npm, yarn, node |
 
-```bash
-# YES
-uv run pytest
-uv add rich
-
-# NO
-python -m pytest
-pip install rich
-```
-
 ---
 
 ## What Memex Is
 
-**Excavating**, not observing. Historical artifacts, not live streams.
+Historical artifacts, not live streams. Excavation, not observation.
 
 - Query conversations from Claude, OpenAI
 - Hybrid search: BM25 keyword + semantic (embeddings) + cross-encoder reranking
+- Graph: FOLLOWS (temporal) + SIMILAR_TO (semantic) edges between fragments
+- Trails: curated, annotated paths through fragments
 - Power-user SQL (20%): escape hatch for complex queries
 
 ## What Memex Is NOT
 
-- Not live observability
-- Not a log viewer
-- Not Claude-specific (source-agnostic)
+- Not live observability or log viewing
+- Not Claude-specific (source-agnostic via adapters)
 
 ## Design Principles
 
@@ -57,7 +46,7 @@ Follows cix Design Principles (see root CLAUDE.md):
 
 ## Configuration Resolution
 
-Memex uses convention-over-config (like `.git/`). A local `.memex/` directory in or above the CWD becomes the active workspace.
+Convention-over-config (like `.git/`). A local `.memex/` directory in or above the CWD becomes the active workspace.
 
 ### Precedence (highest wins)
 
@@ -74,23 +63,13 @@ Memex uses convention-over-config (like `.git/`). A local `.memex/` directory in
 memex init            # Global store at ~/.memex/
 memex init --local    # Project-local store at ./.memex/
 
-# In a project with .memex/:
 cd myproject/
 memex dig "auth"      # Searches local .memex/corpus.duckdb
 cd myproject/src/     # Walk-up finds ../myproject/.memex/
 memex dig "auth"      # Still uses myproject's local store
 
-# Outside any .memex/:
 cd ~
 memex dig "auth"      # Falls back to ~/.memex/corpus.duckdb
-```
-
-### Local `.memex/` Structure
-
-```
-.memex/                    # Project-local workspace (add to .gitignore)
-├── config.toml            # Optional local config overrides
-└── corpus.duckdb          # Project-local corpus
 ```
 
 Resolution happens in `config/settings.py`. The rest of the stack receives a `Path` and is workspace-agnostic.
@@ -99,13 +78,17 @@ Resolution happens in `config/settings.py`. The rest of the stack receives a `Pa
 
 ## Domain Ontology
 
-### Implemented Entities
+### Entities
 
 | Entity | What It Is |
 |--------|------------|
-| **Fragment** | Recovered unit of CI (right granularity) — THE canonical entity |
+| **Fragment** | Recovered unit of CI — THE canonical entity |
 | **Provenance** | Source-agnostic origin (source_kind, source_id, timestamp) |
 | **EmbeddingConfig** | Embedding contract (model_name, dimensions) — domain invariant |
+| **EmbeddingCoverage** | Coverage stats (with_embeddings, total) |
+| **TrailSummary** | Trail metadata (name, description, entry_count) |
+| **CorpusStats** | Corpus-level aggregate (fragments, conversations, time range) |
+| **EdgeTypeStats** | Per-edge-type count and average weight |
 
 ### Source Kinds
 
@@ -118,15 +101,6 @@ SOURCE_GEMINI = "gemini"  # adapter not yet implemented
 SOURCE_CUSTOM = "custom"
 ```
 
-### Future (Not Yet Implemented)
-
-These entities appeared in the original guild deliberation but are deferred:
-
-- **Intent** — Parsed user request (NL → structured). Requires IntentInterpreterPort.
-- **Trail** — Connected fragments (discovered, not declared). Deferred per K's recommendation.
-- **Goal** — User intent classification. Depends on Intent.
-- **ExcavationScope** — Domain predicate for search scoping. Currently handled by CLI options.
-
 ---
 
 ## Hexagonal Architecture
@@ -134,54 +108,72 @@ These entities appeared in the original guild deliberation but are deferred:
 ```
 ┌─────────────────────────────────────────────────────┐
 │ DRIVING (_in)                                       │
-│ └── CLI: memex dig, memex keyword, memex ingest     │
+│ ├── CLI: memex dig, memex ingest, memexd start      │
+│ └── API: from memex.api import Memex                │
 └─────────────────────────────────────────────────────┘
                         ↓
 ┌─────────────────────────────────────────────────────┐
 │ DOMAIN (Pure, No Dependencies)                      │
-│ ├── Fragment, Provenance, EmbeddingConfig           │
+│ ├── Fragment, Provenance, EmbeddingConfig, ...      │
 │ └── ExcavationService (use case orchestration)      │
 └─────────────────────────────────────────────────────┘
                         ↓
 ┌─────────────────────────────────────────────────────┐
 │ DRIVEN (_out)                                       │
-│ ├── CorpusPort → DuckDB (FTS + VSS)                │
-│ ├── EmbeddingPort → nomic-embed-text-v1.5 (fastembed)│
-│ ├── RerankerPort → MS MARCO cross-encoder (fastembed)│
+│ ├── CorpusPort   → DuckDB (local) / Remote (daemon) │
+│ ├── GraphPort    → DuckDB edges (FOLLOWS, SIMILAR)  │
+│ ├── TrailPort    → DuckDB trails                    │
+│ ├── EmbeddingPort → nomic-embed-text-v1.5 (ONNX)   │
+│ ├── RerankerPort  → MS MARCO cross-encoder (ONNX)   │
 │ └── SourceAdapterPort → Claude, OpenAI              │
 └─────────────────────────────────────────────────────┘
 ```
 
-### Key Ports
+### Port Split
 
-**CorpusPort** — Persistence + search:
+The original mega-port was split into three focused protocols:
+
+| Port | Responsibility | Methods |
+|------|---------------|---------|
+| **CorpusPort** | Storage, search, embeddings, metadata | `store`, `search`, `semantic_search`, `backfill_embeddings`, `rebuild_search_index`, ... |
+| **GraphPort** | Fragment relationships | `find_similar`, `build_follows_edges`, `build_similar_edges`, `edge_stats` |
+| **TrailPort** | Curated paths | `create_trail`, `add_to_trail`, `get_trail`, `list_trails`, `delete_trail` |
+
+`DuckDBCorpus` implements all three. `RemoteCorpusAdapter` (daemon client) also implements all three. The service holds them separately: `service.corpus`, `service.graph`, `service.trails`.
+
+### API Facade
+
+`memex.api.Memex` is the stable entry point for agents and libraries:
+
 ```python
-class CorpusPort(Protocol):
-    def store(self, fragments: Iterable[Fragment]) -> int: ...
-    def search(self, query: str, limit: int, source_kind: str | None) -> list[Fragment]: ...
-    def semantic_search(self, query_embedding: list[float], ...) -> list[tuple[Fragment, float]]: ...
-    def has_semantic_search(self) -> bool: ...
-    def has_keyword_search(self) -> bool: ...
-    def rebuild_fts_index(self) -> None: ...
-    def backfill_embeddings(self, embedder_batch, batch_size, on_progress) -> int: ...
+from memex.api import Memex
+
+with Memex() as m:
+    results = m.search("auth decisions")
+    trails = m.list_trails()
+    similar = m.find_similar("fragment-id")
 ```
 
-**EmbeddingPort** — Vector generation:
-```python
-class EmbeddingPort(Protocol):
-    def embed(self, text: str) -> list[float]: ...
-    def embed_batch(self, texts: list[str]) -> list[list[float]]: ...
-    model_name: str
-    dimensions: int
+Accepts `direct=True` to skip daemon auto-detect (for write-heavy operations).
+
+### Daemon (`memexd`)
+
+Solves DuckDB's single-process lock. One process owns the database, clients connect via Unix socket.
+
+```bash
+memexd start           # Double-fork daemon
+memexd start -f        # Foreground (debugging)
+memexd stop
+memexd status
 ```
 
-**SourceAdapterPort** — Ingest different formats:
-```python
-class SourceAdapterPort(Protocol):
-    def can_handle(self, path: Path) -> bool: ...
-    def ingest(self, path: Path) -> Iterator[Fragment]: ...
-    def source_kind(self) -> str: ...
-```
+- JSON-RPC over length-prefixed Unix socket
+- `ThreadPoolExecutor(max_workers=16)` for concurrent reads
+- `fcntl.flock` on PID file (no TOCTOU race)
+- `os.umask(0o077)` around socket bind (no chmod race)
+- `MEMEX_NO_DAEMON=1` kill switch
+
+Auto-detect: `create_service()` checks for running daemon. If found, returns `RemoteCorpusAdapter`. If not, direct DuckDB. Transparent to callers.
 
 ---
 
@@ -218,7 +210,7 @@ memex sources                  # Available source kinds
 memex ingest ~/Downloads/conversations.json
 memex ingest export.zip --no-embed
 memex backfill                 # Generate embeddings for existing fragments
-memex rebuild                  # Rebuild FTS index
+memex rebuild                  # Rebuild search index
 memex reset                    # Delete corpus, start fresh
 ```
 
@@ -238,23 +230,37 @@ tools/memex/
 ├── CLAUDE.md                              # This file
 ├── tests/
 │   ├── conftest.py                        # Shared fixtures (sample_fragments)
+│   ├── test_corpus.py                     # DuckDB corpus adapter tests
+│   ├── test_api.py                        # API facade tests
+│   ├── test_daemon.py                     # Daemon protocol + socket tests
 │   ├── test_excavation_service.py         # Service integration tests
+│   ├── test_models.py                     # Domain model tests
+│   ├── test_settings.py                   # Config resolution tests
 │   ├── test_reranker.py                   # Cross-encoder tests
-│   └── test_source_*.py                   # Source adapter tests
+│   └── test_source_adapters.py            # Source adapter tests
 └── src/memex/
-    ├── __init__.py                        # Version, status
+    ├── __init__.py                        # Version
+    ├── api.py                             # Public API facade (Memex class)
     ├── skill.py                           # Skill documentation loader
     ├── config/
-    │   └── settings.py                    # Pydantic settings (TOML + env vars + local walk-up)
+    │   └── settings.py                    # Pydantic settings (TOML + env vars + walk-up)
     ├── composition/
     │   └── __init__.py                    # Dependency injection root
+    ├── daemon/
+    │   ├── cli.py                         # memexd start/stop/status
+    │   ├── server.py                      # Unix socket server + thread pool
+    │   ├── protocol.py                    # JSON-RPC dispatcher
+    │   └── wire.py                        # Length-prefixed framing
     ├── domain/
-    │   ├── models.py                      # Fragment, Provenance, EmbeddingConfig
+    │   ├── __init__.py                    # Domain re-exports
+    │   ├── models.py                      # Fragment, Provenance, EmbeddingConfig, ...
     │   ├── services/
     │   │   └── excavate.py                # ExcavationService (use case orchestration)
     │   └── ports/
     │       └── _out/
-    │           ├── corpus.py              # CorpusPort
+    │           ├── corpus.py              # CorpusPort (storage + search)
+    │           ├── graph.py               # GraphPort (edges)
+    │           ├── trail.py               # TrailPort (curated paths)
     │           ├── embedding.py           # EmbeddingPort
     │           ├── reranker.py            # RerankerPort
     │           └── source.py              # SourceAdapterPort
@@ -266,9 +272,10 @@ tools/memex/
         │       └── observability.py       # Console output helpers
         └── _out/
             ├── corpus/
-            │   └── duckdb/
-            │       ├── adapter.py         # DuckDB + FTS + VSS
-            │       └── skill.md           # Corpus skill doc
+            │   ├── duckdb/
+            │   │   ├── adapter.py         # DuckDB + FTS + VSS
+            │   │   └── skill.md           # Corpus skill doc
+            │   └── remote.py              # Daemon client adapter
             ├── embedding/
             │   └── fastembed_embedder.py  # nomic-embed-text-v1.5 (768-dim, ONNX)
             ├── reranking/
@@ -286,11 +293,13 @@ tools/memex/
 Domain uses ports and protocols. DuckDB SQL is implementation detail in `adapters/_out/corpus/duckdb/`.
 
 ### Fragment Is the Atom
-Not too small (message), not too large (conversation).
-A meaningful, self-contained unit of collaborative work.
+Not too small (message), not too large (conversation). A meaningful, self-contained unit of collaborative work.
 
 ### CLI Delegates to Service
-The CLI is a thin driving adapter. It calls `ExcavationService` methods, never reaches through to infrastructure directly. Power-user commands (`query`, `sql`) use `create_corpus()` for direct access.
+The CLI is a thin driving adapter. It calls `ExcavationService` methods and accesses ports via `service.corpus`, `service.graph`, `service.trails`. Power-user commands (`query`, `sql`) use `create_corpus()` for direct access.
+
+### Port Names Are Implementation-Agnostic
+Port methods use domain language: `rebuild_search_index()` not `rebuild_fts_index()`, `has_semantic_search()` not `has_hnsw()`. Implementation details (BM25, HNSW, DuckDB) stay in adapters.
 
 ### Source-Agnostic Domain
 `source_kind` is an extensible string, not an enum. Adding a new source means one adapter, zero domain changes.
@@ -303,15 +312,19 @@ The CLI is a thin driving adapter. It calls `ExcavationService` methods, never r
 
 DuckDB's HNSW index grows O(n log n) in memory when maintained during bulk UPDATEs. For backfill operations (embedding 50K+ fragments), **always** drop the HNSW index first, write in batches with periodic `CHECKPOINT`, then rebuild.
 
-This is implemented in `DuckDBCorpus.backfill_embeddings()` — it calls `_drop_hnsw_index()` before the loop and `_create_hnsw_index()` in a `finally` block. The same principle applies to any future bulk write operation.
+Implemented in `DuckDBCorpus.backfill_embeddings()` — calls `_drop_hnsw_index()` before the loop and `_create_hnsw_index()` in a `finally` block.
 
 Also set `memory_limit = '2GB'` on the DuckDB connection to prevent contention with the host process (e.g., Claude Code).
 
 ### DuckDB Single-Process Lock
 
-DuckDB takes a **process-level exclusive lock** on disk-based files. When any process opens a read-write connection, no other process can connect — not even `read_only=True`. This is a [known limitation](https://github.com/duckdb/duckdb/discussions/14676); intra-process MVCC supports concurrent readers + single writer, but cross-process is fully exclusive.
+DuckDB takes a **process-level exclusive lock** on disk-based files. No other process can connect — not even `read_only=True`. This is why the daemon exists.
 
-During `backfill` or `ingest`, all other memex commands (including `status`, `dig`) will fail with `Conflicting lock is held`. Don't try to work around it — wait for the write operation to finish. Check with `ps aux | grep memex`.
+During `backfill` or `ingest`, all other memex commands fail with `Conflicting lock is held`. Don't try to work around it — wait for the write operation to finish. Check with `ps aux | grep memex`.
+
+### HNSW Index Activation
+
+`build_similar_edges` fetches each fragment's embedding, then queries with a literal vector parameter. This ensures DuckDB activates the HNSW index. A self-join (`FROM fragments f1, fragments f2`) bypasses it and falls to O(n²) brute force.
 
 ### Rich Progress Over Manual \\r
 
@@ -328,8 +341,6 @@ Two knobs control ONNX memory, exposed via `Settings` (env vars / config.toml):
 | `onnx_batch_size` | `MEMEX_ONNX_BATCH_SIZE` | 4 | Docs per inference call. Peak RAM scales linearly. |
 | `onnx_threads` | `MEMEX_ONNX_THREADS` | 2 | ONNX inter-op threads. Each thread allocates a memory arena. |
 
-Flow: `Settings` (Pydantic) → `composition/get_embedder()` → `FastEmbedEmbedder(onnx_batch_size=..., onnx_threads=...)`. The embedder is a plain adapter — it receives config through constructor injection, never reaches back to settings.
-
 Resource profiles (approximate peak during backfill):
 
 | Profile | batch_size | threads | Peak RAM | Target |
@@ -338,81 +349,14 @@ Resource profiles (approximate peak during backfill):
 | Default | 4 | 2 | ~5GB | 16-64GB machines |
 | Aggressive | 8 | 4 | ~10GB | 64GB+ with fast backfill |
 
-The SKILL.md documents these for Claude-as-operator to diagnose and tune.
-
----
-
-## Streaming Pipeline Pattern (Pending Refactor)
-
-The backfill pipeline currently works (OOM-safe, streaming writes) but uses imperative loops with mutable counters. Next step: refactor to functional composition per `craft-tools:python-hex` reference.
-
-### Target Shape
-
-```
-source → transform → sink → tap(side effects) → terminal
-```
-
-Each stage is a generator. Nothing materializes beyond its batch boundary.
-
-### Current → Target
-
-**Current** (`duckdb/adapter.py` — `backfill_embeddings`):
-```python
-for batch in self._unembedded_batches(batch_size):
-    ids, contents = zip(*batch)
-    for frag_id, embedding in zip(ids, embedder_stream(list(contents))):
-        self._write_embedding(frag_id, embedding)
-        updated += 1
-        if updated % 1000 == 0: ...
-        if on_progress: ...
-```
-
-**Target:**
-```python
-# Source: flat stream from DB via iter(callable, sentinel)
-rows = chain.from_iterable(iter(self._fetch_batch, []))
-
-# Transform: batch → unzip → embed → re-zip (zero accumulation)
-embedded = self._embed_rows(rows, embedder, batch_size)
-
-# Sink + side effects as stream operators
-pipeline = map(self._write_one, embedded)
-pipeline = tap_every(pipeline, 1000, lambda _: self._checkpoint())
-if on_progress:
-    c = count(1)
-    pipeline = tap(pipeline, lambda _: on_progress(next(c), total))
-
-# Terminal
-return sum(1 for _ in pipeline)
-```
-
-### Port Change Required
-
-`EmbeddingPort.embed_stream` should accept `Iterator[str]` (not `list[str]`). Stream is the primitive; single/batch are free functions derived from it. See `craft-tools:python-hex` port example.
-
-### Helpers Needed
-
-- `tap(iterator, fn)` — observe each element without consuming
-- `tap_every(iterator, n, fn)` — side effect every n-th element
-- Location: `domain/` or a small `streaming.py` util — these are domain-agnostic pipeline operators
-
-### When
-
-Apply after current backfill completes. Pure refactor — same behavior, different shape. Verify with test.
-
 ---
 
 ## Pre-1.0 TODO
 
-- [ ] **FP pipeline refactor** — Apply streaming pipeline pattern to backfill (see above). Includes port signature change (`Iterator[str]`).
-- [ ] **Wire `embedding_model` setting** — `settings.embedding_model` exists but composition root hardcodes nomic-embed-text-v1.5. Wire through or remove.
-- [ ] **Verify `build_similar_edges` index usage** — self-join may be O(N^2) if DuckDB doesn't use HNSW index. Run EXPLAIN to confirm.
-- [ ] **Trails** — persistence (separate file per trail in `.memex/trails/`), sharing (trail file IS the artifact), interactive visualization (HTML artifact).
-- [ ] **Config format migration path** — TOML works for single-tool config. When cix+memex share infrastructure, consider YAML with layered scoping.
-- [ ] **Test coverage** — backfill, ONNX resource paths, settings precedence, enhanced Claude adapter extraction.
+- [ ] **FP pipeline refactor** — Streaming pipeline pattern for backfill. Includes `EmbeddingPort.embed_stream` accepting `Iterator[str]`.
+- [ ] **Wire `embedding_model` setting** — composition root hardcodes nomic-embed-text-v1.5. Wire through or remove.
 - [ ] **Reranker resource controls** — similar ONNX knobs may be needed for the cross-encoder.
-- [ ] **Code quality pass** — Pydantic where appropriate (data models, port contracts), type annotations, docstring consistency across adapters.
-- [ ] **Clean up stale config** — `embedding_model: str = "minilm"` default is wrong (we use nomic). Reconcile settings with reality.
+- [ ] **Clean up stale config** — `embedding_model: str = "minilm"` default is wrong (we use nomic).
 
 ---
 

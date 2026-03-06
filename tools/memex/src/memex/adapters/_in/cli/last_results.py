@@ -78,7 +78,3 @@ def resolve_conversation_ref(ref: str) -> str | None:
         return ref
     entry = _resolve_entry(ref)
     return entry.get("conversation_id") if entry else None
-
-
-# Backward compat alias — use resolve_conversation_ref for new code
-resolve_reference = resolve_conversation_ref

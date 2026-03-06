@@ -31,9 +31,9 @@ from memex.adapters._in.cli.last_results import (
 )
 from memex.composition import (
     EmbeddingDimensionMismatchError,
-    _detect_providers,
     create_corpus,
     create_service,
+    detect_providers,
     get_embedder,
     reranker_available,
 )
@@ -412,7 +412,7 @@ def _do_ingest(path: Path, *, embed: bool = True, wizard: bool = False):
                 obs.info("Run 'memex backfill' to retry")
 
         with obs.status("Building search index..."):
-            service.rebuild_search_index()
+            service.corpus.rebuild_search_index()
 
         # Output: wizard gets friendly closing, CLI gets standard hints
         if wizard:
@@ -502,7 +502,7 @@ def dig(
         methods.append("semantic")
     else:
         coverage = service.embedding_coverage()
-        if coverage[0] == 0:
+        if coverage.with_embeddings == 0:
             obs.info("semantic unavailable: run 'memex backfill' first")
     if service.has_reranker():
         methods.append("reranking")
@@ -542,7 +542,7 @@ def keyword(query: str, limit: int, source: str | None, fmt: str):
         fmt = _default_format()
 
     service = create_service()
-    results = service.keyword_search(query, limit, source_kind=source)
+    results = service.corpus.search(query, limit, source_kind=source)
 
     if not results:
         _handle_no_results(query, service)
@@ -583,8 +583,8 @@ def semantic(query: str, limit: int, source: str | None, min_score: float, fmt: 
     if not results:
         coverage = service.embedding_coverage()
         obs.warning(f"No semantic matches for '{query}'")
-        obs.info(f"Embeddings: {coverage[0]:,}/{coverage[1]:,} fragments")
-        if coverage[0] < coverage[1]:
+        obs.info(f"Embeddings: {coverage.with_embeddings:,}/{coverage.total:,} fragments")
+        if coverage.with_embeddings < coverage.total:
             obs.info("Tip: Run 'memex backfill' to embed remaining fragments")
         return
 
@@ -619,7 +619,7 @@ def thread(conversation_id: str):
 
     service = create_service()
     try:
-        fragments = service.find_conversation(resolved_id)
+        fragments = service.corpus.find_by_conversation(resolved_id)
         if not fragments:
             obs.warning(f"No conversation found for '{conversation_id}'")
             obs.info("Tip: Use a longer ID prefix for exact matching")
@@ -646,7 +646,7 @@ def timeline(limit: int, offset: int, source: str | None):
     """
     service = create_service()
     try:
-        conversations = service.list_conversations(limit, offset, source)
+        conversations = service.corpus.list_conversations(limit, offset, source)
         if not conversations:
             obs.warning("No conversations found")
             if source:
@@ -655,8 +655,7 @@ def timeline(limit: int, offset: int, source: str | None):
 
         # Save to register for @N references
         register_entries = [
-            {"id": c["conversation_id"], "conversation_id": c["conversation_id"]}
-            for c in conversations
+            {"id": c.conversation_id, "conversation_id": c.conversation_id} for c in conversations
         ]
         save_results(register_entries)
 
@@ -690,7 +689,7 @@ def similar(fragment_ref: str, limit: int, fmt: str):
 
     service = create_service()
     try:
-        similar_frags = service.find_similar(fragment_id, limit)
+        similar_frags = service.graph.find_similar(fragment_id, limit)
         if not similar_frags:
             obs.warning(f"No similar fragments found for '{fragment_ref}'")
             obs.info("Run 'memex backfill' to enable similarity search")
@@ -737,7 +736,7 @@ def rebuild():
     service = create_service()
     try:
         with obs.status("Rebuilding FTS (BM25) index..."):
-            service.rebuild_search_index()
+            service.corpus.rebuild_search_index()
         obs.success("FTS index rebuilt")
     finally:
         service.close()
@@ -760,7 +759,7 @@ def backfill(batch_size: int):
 
     try:
         coverage = service.embedding_coverage()
-        without = coverage[1] - coverage[0]
+        without = coverage.total - coverage.with_embeddings
 
         if without == 0:
             obs.success("All fragments have embeddings")
@@ -792,7 +791,7 @@ def backfill(batch_size: int):
         obs.success(f"Generated embeddings for {updated:,} fragments")
         obs.hint('memex dig "your query" for semantic search')
     except MemoryError:
-        obs.error("Out of memory. Try: memex backfill --threads 2 --batch-size 50")
+        obs.error("Out of memory. Try: memex backfill --batch-size 2")
         raise SystemExit(137)
     finally:
         service.close()
@@ -826,7 +825,7 @@ def reset(yes: bool, backup: bool):
         stats = corpus.stats()
         corpus.close()
         obs.console.print(f"\n[bold]Corpus:[/bold] {corpus_path}")
-        obs.console.print(f"[bold]Fragments:[/bold] {stats['total_fragments']:,}")
+        obs.console.print(f"[bold]Fragments:[/bold] {stats.total_fragments:,}")
         obs.console.print()
     except Exception:
         obs.console.print(f"\n[bold]Corpus:[/bold] {corpus_path}")
@@ -872,7 +871,7 @@ def status():
     corpus_dims = None
     try:
         service = create_service(with_embedder=True, with_reranker=reranker_available())
-        stats = service.stats()
+        stats = service.corpus.stats()
         coverage = service.embedding_coverage()
         dimension_mismatch = False
     except EmbeddingDimensionMismatchError:
@@ -881,7 +880,9 @@ def status():
         corpus = create_corpus()  # FTS-only mode
         stats = corpus.stats()
         corpus_dims = corpus.embedding_dimensions()
-        coverage = (0, stats["total_fragments"])  # All need re-embedding
+        from memex.domain.models import EmbeddingCoverage
+
+        coverage = EmbeddingCoverage(with_embeddings=0, total=stats.total_fragments)
         corpus.close()
 
     from memex import __status__, __version__
@@ -906,10 +907,11 @@ def status():
 
     # Corpus info
     obs.console.print(f"[cyan]Corpus:[/cyan]     {get_settings().corpus_path}")
-    obs.console.print(f"[cyan]Fragments:[/cyan]  {stats['total_fragments']:,}")
-    if coverage[1] > 0:
-        pct = coverage[0] / coverage[1] * 100
-        obs.console.print(f"[cyan]Embeddings:[/cyan] {coverage[0]:,}/{coverage[1]:,} ({pct:.0f}%)")
+    obs.console.print(f"[cyan]Fragments:[/cyan]  {stats.total_fragments:,}")
+    if coverage.total > 0:
+        pct = coverage.with_embeddings / coverage.total * 100
+        emb = f"{coverage.with_embeddings:,}/{coverage.total:,} ({pct:.0f}%)"
+        obs.console.print(f"[cyan]Embeddings:[/cyan] {emb}")
     obs.console.print()
 
     # Capabilities
@@ -921,19 +923,22 @@ def status():
 
     # ONNX provider
     s = get_settings()
-    resolved = _detect_providers(s.onnx_provider)
+    resolved = detect_providers(s.onnx_provider)
     provider_name = resolved[0].replace("ExecutionProvider", "")
     suffix = " (auto-detected)" if s.onnx_provider == "auto" else ""
     obs.console.print(f"  ONNX Provider:   [green]{provider_name}[/green]{suffix}")
 
     # Keyword search
-    obs.console.print("  Keyword Search:  [green]BM25 via DuckDB FTS[/green]")
+    if service and service.corpus.has_keyword_search():
+        obs.console.print("  Keyword Search:  [green]Available[/green]")
+    else:
+        obs.console.print("  Keyword Search:  [yellow]Not available[/yellow]")
 
     # Semantic search
     if dimension_mismatch:
         obs.console.print("  Semantic Search: [red]Dimension mismatch[/red] (requires reset)")
     elif service and service.has_semantic_search():
-        obs.console.print("  Semantic Search: [green]HNSW via DuckDB VSS[/green]")
+        obs.console.print("  Semantic Search: [green]Available[/green]")
     else:
         obs.console.print("  Semantic Search: [yellow]Not available[/yellow] (VSS not loaded)")
 
@@ -958,12 +963,12 @@ def status():
 
     # Graph
     if not dimension_mismatch and service:
-        edge_data = service.edge_stats()
-        trail_data = service.list_trails()
+        edge_data = service.graph.edge_stats()
+        trail_data = service.trails.list_trails()
         if edge_data or trail_data:
             obs.console.print("[bold]Knowledge Graph[/bold]")
             for etype, info in edge_data.items():
-                obs.console.print(f"  {etype}: [green]{info['count']:,}[/green] edges")
+                obs.console.print(f"  {etype}: [green]{info.count:,}[/green] edges")
             if trail_data:
                 obs.console.print(f"  Trails:  [green]{len(trail_data)}[/green]")
             obs.console.print()
@@ -978,8 +983,8 @@ def status():
             f"    Run: [bold]memex reset[/bold] then re-ingest"
         )
         pending.append(msg)
-    elif coverage[0] < coverage[1]:
-        missing = coverage[1] - coverage[0]
+    elif coverage.with_embeddings < coverage.total:
+        missing = coverage.total - coverage.with_embeddings
         pending.append(f"{missing:,} fragments need embeddings. Run: [bold]memex backfill[/bold]")
 
     if pending:
@@ -995,20 +1000,20 @@ def corpus():
     from memex.config.settings import get_settings
 
     service = create_service()
-    stats = service.stats()
+    stats = service.corpus.stats()
 
     table = Table(title="Corpus Statistics", show_header=False)
     table.add_column("Metric", style="cyan")
     table.add_column("Value", style="bold")
 
-    table.add_row("Fragments", f"{stats['total_fragments']:,}")
-    table.add_row("Conversations", f"{stats['conversations']:,}")
-    table.add_row("Sources", str(stats["sources"]))
+    table.add_row("Fragments", f"{stats.total_fragments:,}")
+    table.add_row("Conversations", f"{stats.conversations:,}")
+    table.add_row("Sources", str(stats.sources))
     table.add_row("Corpus Path", str(get_settings().corpus_path))
-    if stats["earliest"]:
-        table.add_row("Earliest", stats["earliest"].strftime("%Y-%m-%d"))
-    if stats["latest"]:
-        table.add_row("Latest", stats["latest"].strftime("%Y-%m-%d"))
+    if stats.earliest:
+        table.add_row("Earliest", stats.earliest.strftime("%Y-%m-%d"))
+    if stats.latest:
+        table.add_row("Latest", stats.latest.strftime("%Y-%m-%d"))
 
     obs.console.print(table)
 
@@ -1017,17 +1022,16 @@ def corpus():
 def schema_cmd():
     """Show corpus schema."""
     service = create_service()
-    schema = service.schema()
+    schema = service.corpus.schema()
 
-    for table_name, columns in schema.items():
-        table = Table(title=f"[bold]{table_name}[/]", show_header=True)
-        table.add_column("Column", style="cyan")
-        table.add_column("Type", style="green")
-        table.add_column("Nullable")
+    table = Table(title="[bold]fragments[/]", show_header=True)
+    table.add_column("Column", style="cyan")
+    table.add_column("Type", style="green")
+    table.add_column("Nullable")
 
-        for col in columns:
-            table.add_row(col["name"], col["type"], "✓" if col["nullable"] else "✗")
-        obs.console.print(table)
+    for col in schema.fragments:
+        table.add_row(col.name, col.type, "✓" if col.nullable else "✗")
+    obs.console.print(table)
 
 
 @main.command()
@@ -1147,7 +1151,7 @@ def trail_create(name: str, description: str):
     """
     service = create_service()
     try:
-        service.create_trail(name, description)
+        service.trails.create_trail(name, description)
         obs.success(f"Created trail '{name}'")
         obs.hint(f'memex trail add "{name}" @N (search first, then add results)')
     except Exception as e:
@@ -1181,7 +1185,7 @@ def trail_add(trail_name: str, fragment_ref: str, note: str):
 
     service = create_service()
     try:
-        position = service.add_to_trail(trail_name, fragment_id, note)
+        position = service.trails.add_to_trail(trail_name, fragment_id, note)
         obs.success(f"Added to '{trail_name}' at position #{position + 1}")
     except ValueError as e:
         obs.error(str(e))
@@ -1199,7 +1203,7 @@ def trail_follow(trail_name: str):
     """
     service = create_service()
     try:
-        entries = service.get_trail(trail_name)
+        entries = service.trails.get_trail(trail_name)
         if not entries:
             obs.warning(f"Trail '{trail_name}' not found or empty")
             return
@@ -1217,7 +1221,7 @@ def trail_list():
     """
     service = create_service()
     try:
-        trails = service.list_trails()
+        trails = service.trails.list_trails()
         format_trail_list(trails, obs.console)
     finally:
         service.close()
@@ -1242,7 +1246,7 @@ def trail_delete(trail_name: str, yes: bool):
 
     service = create_service()
     try:
-        if service.delete_trail(trail_name):
+        if service.trails.delete_trail(trail_name):
             obs.success(f"Deleted trail '{trail_name}'")
         else:
             obs.warning(f"Trail '{trail_name}' not found")
@@ -1256,17 +1260,17 @@ def trail_delete(trail_name: str, yes: bool):
 def _handle_no_results(query: str, service):
     """Helpful guidance on no results."""
     try:
-        stats = service.stats()
-        if stats["total_fragments"] == 0:
+        stats = service.corpus.stats()
+        if stats.total_fragments == 0:
             obs.warning(f"No results for '{query}'")
             obs.info("Corpus is empty. Run 'memex ingest <file>' first.")
         else:
             obs.warning(f"No results for '{query}'")
-            obs.info(f"Corpus has {stats['total_fragments']:,} fragments.")
+            obs.info(f"Corpus has {stats.total_fragments:,} fragments.")
             obs.info("Tip: Try different terms or adjust --semantic-weight")
             coverage = service.embedding_coverage()
-            if coverage[0] < coverage[1]:
-                missing = coverage[1] - coverage[0]
+            if coverage.with_embeddings < coverage.total:
+                missing = coverage.total - coverage.with_embeddings
                 obs.info(f"Tip: Run 'memex backfill' ({missing:,} need embeddings)")
     except Exception:
         obs.warning(f"No results for '{query}'")
