@@ -8,12 +8,12 @@ Pass-through methods removed — callers access ports directly:
 from collections.abc import Callable
 from pathlib import Path
 
-from memex.domain.models import EmbeddingCoverage, Fragment
+from memex.domain.models import EmbeddingCoverage, Fragment, IngestResult
 from memex.domain.ports._out.corpus import CorpusPort
 from memex.domain.ports._out.embedding import EmbeddingPort
 from memex.domain.ports._out.graph import GraphPort
 from memex.domain.ports._out.reranker import RerankerPort
-from memex.domain.ports._out.source import SourceAdapterPort
+from memex.domain.ports._out.source import SourcePort
 from memex.domain.ports._out.trail import TrailPort
 
 
@@ -27,7 +27,7 @@ class ExcavationService:
     def __init__(
         self,
         corpus: CorpusPort,
-        source_adapters: list[SourceAdapterPort],
+        source_adapters: list[SourcePort],
         embedder: EmbeddingPort | None = None,
         reranker: RerankerPort | None = None,
         graph: GraphPort | None = None,
@@ -37,10 +37,12 @@ class ExcavationService:
         self.source_adapters = source_adapters
         self.embedder = embedder
         self.reranker = reranker
-        self.graph = graph or corpus  # type: ignore[assignment]
-        self.trails = trails or corpus  # type: ignore[assignment]
+        # DuckDBCorpus implements all three protocols.
+        # When graph/trails aren't provided separately, corpus is the backend.
+        self.graph: GraphPort = graph if graph is not None else corpus  # type: ignore[assignment]
+        self.trails: TrailPort = trails if trails is not None else corpus  # type: ignore[assignment]
 
-    def ingest(self, path: Path) -> tuple[int, int]:
+    def ingest(self, path: Path) -> IngestResult:
         """Ingest a file into the corpus.
 
         Returns:
@@ -64,7 +66,7 @@ class ExcavationService:
         if stored > 0:
             self.graph.build_follows_edges()
 
-        return (parsed, stored)
+        return IngestResult(parsed, stored)
 
     def semantic_search(
         self,
@@ -164,18 +166,11 @@ class ExcavationService:
         """List available source adapter kinds."""
         return [adapter.source_kind() for adapter in self.source_adapters]
 
-    def get_source_skill(self, source_kind: str) -> str | None:
-        """Get skill documentation for a source adapter."""
-        for adapter in self.source_adapters:
-            if adapter.source_kind() == source_kind:
-                return adapter.skill()
-        return None
-
     def close(self) -> None:
         """Release resources."""
         self.corpus.close()
 
-    def _find_adapter(self, path: Path) -> SourceAdapterPort | None:
+    def _find_adapter(self, path: Path) -> SourcePort | None:
         for adapter in self.source_adapters:
             if adapter.can_handle(path):
                 return adapter

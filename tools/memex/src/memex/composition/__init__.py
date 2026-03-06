@@ -225,9 +225,8 @@ def create_service(
                 f"{embedder.dimensions}-dim vectors. "
                 f"Run 'memex reset' to clear corpus and re-ingest with new model."
             )
-        # Record embedding provenance in meta
-        corpus.set_meta("embedding_model", embedder.model_name)
-        corpus.set_meta("embedding_dimensions", str(embedder.dimensions))
+        # Record embedding provenance
+        corpus.record_embedding_config(embedder.config)
 
     adapters = [
         ClaudeConversationsAdapter(),

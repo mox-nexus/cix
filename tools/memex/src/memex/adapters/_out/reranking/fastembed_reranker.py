@@ -21,9 +21,15 @@ class FastEmbedReranker:
 
     DEFAULT_MODEL = "Xenova/ms-marco-MiniLM-L-6-v2"
 
-    def __init__(self, model_name: str = DEFAULT_MODEL, providers: list[str] | None = None):
+    def __init__(
+        self,
+        model_name: str = DEFAULT_MODEL,
+        providers: list[str] | None = None,
+        batch_size: int = 64,
+    ):
         self._model_name = model_name
         self._providers = providers
+        self._batch_size = batch_size
 
     @cached_property
     def model(self):
@@ -52,7 +58,13 @@ class FastEmbedReranker:
             return []
 
         # fastembed 0.7+ returns floats in document order
-        scores = list(self.model.rerank(query, [frag.content for frag in candidates]))
+        scores = list(
+            self.model.rerank(
+                query,
+                [frag.content for frag in candidates],
+                batch_size=self._batch_size,
+            )
+        )
         scored = list(zip(candidates, scores))
         scored.sort(key=lambda x: x[1], reverse=True)
 

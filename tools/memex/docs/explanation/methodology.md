@@ -154,7 +154,7 @@ Memex follows hexagonal architecture (ports and adapters) to separate concerns:
 - `CorpusPort` -- persistence and search
 - `EmbeddingPort` -- vector generation
 - `RerankerPort` -- cross-encoder reranking
-- `SourceAdapterPort` -- format-specific ingestion
+- `SourcePort` -- format-specific ingestion
 
 **Adapters**: Concrete implementations. DuckDB for corpus, fastembed for embeddings, Rich+Click for CLI.
 

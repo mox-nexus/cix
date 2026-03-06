@@ -1,4 +1,4 @@
-"""Source adapter port - interface for ingesting different formats.
+"""Source port - interface for ingesting different formats.
 
 Adapters produce Iterator[Fragment], the canonical domain entity (Karman).
 No infrastructure types (DataFrame) in port contracts (Burner).
@@ -11,11 +11,10 @@ from typing import Protocol
 from memex.domain.models import Fragment
 
 
-class SourceAdapterPort(Protocol):
+class SourcePort(Protocol):
     """Protocol for source adapters.
 
     Produces Fragments from source-specific formats.
-    Each adapter is a self-contained package with code + skill.
     """
 
     def can_handle(self, path: Path) -> bool:
@@ -28,8 +27,4 @@ class SourceAdapterPort(Protocol):
 
     def source_kind(self) -> str:
         """Return the source kind this adapter handles."""
-        ...
-
-    def skill(self) -> str:
-        """Return skill documentation for this adapter."""
         ...

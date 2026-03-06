@@ -3,6 +3,6 @@
 from memex.domain.ports._out.corpus import CorpusPort
 from memex.domain.ports._out.embedding import EmbeddingPort
 from memex.domain.ports._out.reranker import RerankerPort
-from memex.domain.ports._out.source import SourceAdapterPort
+from memex.domain.ports._out.source import SourcePort
 
-__all__ = ["SourceAdapterPort", "CorpusPort", "EmbeddingPort", "RerankerPort"]
+__all__ = ["SourcePort", "CorpusPort", "EmbeddingPort", "RerankerPort"]

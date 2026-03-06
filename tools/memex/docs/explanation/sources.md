@@ -90,7 +90,7 @@ The original articulation of ports and adapters: domain logic depends on abstrac
 
 `typing.Protocol` enables structural subtyping -- any class implementing the right methods satisfies the protocol without inheritance. Combined with `@runtime_checkable`, provides interface enforcement without coupling.
 
-**Relevance to memex:** All four driven ports (CorpusPort, EmbeddingPort, RerankerPort, SourceAdapterPort) use Protocol. This was a deliberate guild-arch decision: Protocol over ABC for hexagonal ports in Python.
+**Relevance to memex:** All four driven ports (CorpusPort, EmbeddingPort, RerankerPort, SourcePort) use Protocol. This was a deliberate guild-arch decision: Protocol over ABC for hexagonal ports in Python.
 
 ---
 

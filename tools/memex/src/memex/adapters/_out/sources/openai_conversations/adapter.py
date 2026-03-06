@@ -7,7 +7,6 @@ import tempfile
 import zipfile
 from collections.abc import Iterator
 from datetime import UTC, datetime
-from importlib.resources import files
 from pathlib import Path
 
 import ijson
@@ -67,11 +66,6 @@ class OpenAIConversationsAdapter:
             yield from self._ingest_zip(path)
         else:
             yield from self._ingest_json(path)
-
-    def skill(self) -> str:
-        """Return skill documentation for this adapter."""
-        skill_file = files(__package__) / "skill.md"
-        return skill_file.read_text()
 
     def _ingest_json(self, path: Path) -> Iterator[Fragment]:
         """Stream parse JSON using ijson for O(1) memory regardless of file size."""
