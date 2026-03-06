@@ -4,3 +4,4 @@ export { default as ArticleNav } from './ArticleNav.svelte';
 export { default as ArticleFooter } from './ArticleFooter.svelte';
 export { default as EvidencePopover } from './EvidencePopover.svelte';
 export { default as TableOfContents } from './TableOfContents.svelte';
+export { default as DocsTabs } from './DocsTabs.svelte';

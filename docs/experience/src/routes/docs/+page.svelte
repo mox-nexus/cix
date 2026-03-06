@@ -1,9 +1,19 @@
 <script lang="ts">
-	import { getExplanationEntries } from '$lib/data/docs';
+	import { getEntriesByKind } from '$lib/data/docs';
+	import { DocsTabs } from '$lib/components/docs';
 	import { CrossLinks } from '$lib/components/nav';
 	import { base } from '$app/paths';
 
-	const entries = getExplanationEntries();
+	const tabs = [
+		{ id: 'explanation', label: 'Explanation' },
+		{ id: 'how-to', label: 'How-to' },
+		{ id: 'reference', label: 'Reference' }
+	];
+
+	let activeTab = $state('explanation');
+
+	const explanations = getEntriesByKind('explanation');
+	const references = getEntriesByKind('reference');
 </script>
 
 <svelte:head>
@@ -49,24 +59,48 @@
 		</p>
 	</header>
 
-	<nav class="articles" aria-label="Articles">
-		{#each entries as entry, i}
-			<a href="{base}/docs/{entry.slug}" class="article-card">
-				<span class="article-num">{String(i + 1).padStart(2, '0')}</span>
-				<div class="article-content">
-					<span class="article-title">{entry.title}</span>
-					<span class="article-desc">{entry.description}</span>
-				</div>
-				{#if i === 0}
-					<span class="article-start" aria-hidden="true">&rarr;</span>
+	<DocsTabs {tabs} active={activeTab} onchange={(id) => activeTab = id} />
+
+	{#if activeTab === 'explanation'}
+		<nav class="articles" aria-label="Articles">
+			{#each explanations as entry, i}
+				<a href="{base}/docs/{entry.slug}" class="article-card">
+					<span class="article-num">{String(i + 1).padStart(2, '0')}</span>
+					<div class="article-content">
+						<span class="article-title">{entry.title}</span>
+						<span class="article-desc">{entry.description}</span>
+					</div>
+					{#if i === 0}
+						<span class="article-start" aria-hidden="true">&rarr;</span>
+					{/if}
+				</a>
+				{#if i < explanations.length - 1}
+					<div class="article-connector" aria-hidden="true"></div>
 				{/if}
-			</a>
-			{#if i < entries.length - 1}
-				<div class="article-connector" aria-hidden="true"></div>
-			{/if}
-		{/each}
-		<p class="articles-meta">{entries.length} articles · ~30 min · full citations</p>
-	</nav>
+			{/each}
+			<p class="articles-meta">{explanations.length} articles · ~30 min · full citations</p>
+		</nav>
+	{:else if activeTab === 'how-to'}
+		<div class="tab-placeholder">
+			<p>Discourse-first collaboration guides coming soon.</p>
+		</div>
+	{:else if activeTab === 'reference'}
+		<nav class="articles" aria-label="Reference">
+			{#each references as entry, i}
+				<a href="{base}/docs/{entry.slug}" class="article-card">
+					<span class="article-num">{String(i + 1).padStart(2, '0')}</span>
+					<div class="article-content">
+						<span class="article-title">{entry.title}</span>
+						<span class="article-desc">{entry.description}</span>
+					</div>
+				</a>
+				{#if i < references.length - 1}
+					<div class="article-connector" aria-hidden="true"></div>
+				{/if}
+			{/each}
+			<p class="articles-meta">{references.length} {references.length === 1 ? 'entry' : 'entries'}</p>
+		</nav>
+	{/if}
 
 	<CrossLinks />
 </div>
@@ -211,6 +245,22 @@
 		color: var(--dao-muted);
 		margin: var(--space-2) 0 0 0;
 		padding-left: var(--space-1);
+	}
+
+	/* ===========================================
+	   TAB PLACEHOLDER
+	   =========================================== */
+
+	.tab-placeholder {
+		margin-bottom: var(--space-5);
+		padding: var(--space-4) var(--space-1);
+	}
+
+	.tab-placeholder p {
+		font-family: var(--font-mono);
+		font-size: var(--type-sm);
+		color: var(--dao-muted);
+		font-style: italic;
 	}
 
 	/* ===========================================

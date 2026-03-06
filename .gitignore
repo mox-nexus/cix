@@ -91,11 +91,15 @@ uv.lock
 
 # Claude local config
 .claude/agents/
+.claude/worktrees/
 .claude/settings.local.json
 tools/.claude/
 
 # Rhetoric workspace
 .rhet/
+
+# Research workspace
+.research/
 
 # Claude local state
 .claude/settings.local.json
