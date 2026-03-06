@@ -1,6 +1,6 @@
 # Research Methodology: Design Rationale
 
-This document explains WHY the craft-research plugin is designed the way it is — the decomposition into four agents, the provenance chain as the central abstraction, and the specific choices at each pipeline stage.
+This document explains WHY the craft-research plugin is designed the way it is — the decomposition into five agents, the provenance chain as the central abstraction, and the specific choices at each pipeline stage.
 
 ## The Core Problem: Research Hallucination
 
@@ -16,7 +16,7 @@ No single AI platform is reliable for academic-quality research. The failure mod
 
 The solution isn't better models. It's better pipeline design — decomposing research into stages where each stage is independently verifiable.
 
-## Why Four Agents
+## Why Five Agents
 
 ### The Monolith Problem
 
@@ -26,22 +26,29 @@ This mirrors how humans do sloppy research: read a paper, form an impression, "v
 
 ### The Decomposition
 
-The four-agent pipeline addresses this by separating concerns:
+The five-agent pipeline addresses this by separating concerns:
 
 | Agent | Concern | Independence |
 |-------|---------|-------------|
-| **elicit** | What does the source say? | Reads source, no synthesis context |
+| **elicit** | What does the human need to learn? | Draws out inquiry through dialogue |
+| **extract** | What does the source say? | Reads source, no synthesis context |
 | **scrutiny** | Did the extractor get it right? | Re-reads source independently |
 | **synthesis** | What do verified claims collectively say? | Works only from verified claims |
 | **audit** | Is the chain intact end-to-end? | Walks chains, doesn't transform |
 
-The key architectural choice: **scrutiny doesn't see elicit's output before re-reading the source.** This independence is the mechanism behind CoVE's +23% F1 improvement. Without it, verification degrades to confirmation.
+The key architectural choice: **scrutiny doesn't see extract's output before re-reading the source.** This independence is the mechanism behind CoVE's +23% F1 improvement. Without it, verification degrades to confirmation.
+
+### Why Discourse Justifies a Fifth Agent
+
+v0.2.0 had four agents and assumed the human writes `scope.md` alone. In practice, the human often needs help articulating specific, answerable research questions. Without discourse, the orchestrator writes scope from a one-line request — producing a plausible but ungrounded scope. This is the research equivalent of rhetoric's "the generated" — scope that looks right but wasn't thought through.
+
+Adding elicit as a discourse agent parallels how socrates functions in craft-rhetoric: it draws out what the human knows, what they need to learn, and where to look. The human generates; the agent asks and sharpens. The cost is one additional agent. The benefit is that every downstream step operates on a scope the human actually owns.
 
 ### Why Not More Agents?
 
-Each agent adds coordination cost. Four is the minimum for independent extraction, verification, synthesis, and quality gating. Fewer collapses independence (extraction + verification in one agent defeats CoVE). More adds overhead without clear benefit.
+Each agent adds coordination cost. Five is the decomposition for discourse, independent extraction, verification, synthesis, and quality gating. Fewer collapses independence (extraction + verification in one agent defeats CoVE) or skips discourse (scope becomes ungrounded). More adds overhead without clear benefit.
 
-The rhetoric plugin has 9 agents because prose transformation has more distinct concerns (comprehension, memory, arrangement, voice, visuals, staging, critique). Research has fewer: you extract, verify, integrate, and audit. The domain determines the decomposition.
+The rhetoric plugin has 9 agents because prose transformation has more distinct concerns (comprehension, memory, arrangement, voice, visuals, staging, critique). Research has fewer distinct concerns but adds discourse — which rhetoric also has (socrates). The domain determines the decomposition.
 
 ## Why Evidentiary Provenance
 
@@ -122,8 +129,8 @@ The `.research/` workspace serves the same function as `.rhet/` in craft-rhetori
 
 ```
 .research/
-├── scope.md              # Human-authored (immutable)
-├── extraction/           # elicit writes
+├── scope.md              # Co-created (elicit + human), immutable after discourse
+├── extraction/           # extract writes
 ├── verification/         # scrutiny writes
 ├── synthesis/            # synthesis writes
 └── audit/                # audit writes
@@ -133,7 +140,7 @@ The workspace makes the pipeline inspectable. A human can open `verification/bla
 
 ### Why scope.md Is Immutable
 
-`scope.md` is the human's generative step — defining what questions matter and what boundaries apply. No agent modifies it. This is the research equivalent of rhetoric's `ground-truth.md`.
+`scope.md` is the discourse output — co-created by elicit and the human, capturing what questions matter and what boundaries apply. No downstream agent modifies it after discourse. This is the research equivalent of rhetoric's `ground-truth.md`.
 
 The constraint prevents scope creep, where agents expand the research to answer questions the human didn't ask. A finding that answers an unasked question is noise, not signal. The scope constrains what counts as relevant.
 
@@ -143,7 +150,8 @@ craft-research and craft-rhetoric share architectural DNA:
 
 | Pattern | craft-rhetoric | craft-research |
 |---------|---------------|----------------|
-| Hub + spokes | rhetoric + 8 spokes | research + 4 spokes |
+| Discourse agent | socrates | elicit |
+| Hub + spokes | rhetoric + 8 spokes | research + 5 spokes |
 | Human input | ground-truth.md | scope.md |
 | Workspace | .rhet/ | .research/ |
 | Quality gate | ebert (ship/return) | audit (ship/return) |
@@ -151,7 +159,7 @@ craft-research and craft-rhetoric share architectural DNA:
 | Central constraint | Voice preservation | Evidentiary provenance |
 | Pipeline direction | Understanding → delivery | Evidence → findings |
 
-The key difference: rhetoric needs voice preservation (orwell running after every prose step) because each agent transforms prose. Research doesn't have prose transformation — extraction, verification, and synthesis produce structured output, not narrative. So there's no equivalent to orwell.
+The key difference: rhetoric needs voice preservation (orwell running after every prose step) because each agent transforms prose. Research doesn't have prose transformation — extraction, verification, and synthesis produce structured output, not narrative. So there's no equivalent to orwell. Both plugins share the discourse-first pattern — socrates for rhetoric, elicit for research.
 
 ## Sources
 
@@ -164,15 +172,15 @@ The key difference: rhetoric needs voice preservation (orwell running after ever
 ### Techniques
 - Dhuliawala, S. et al. (2023). Chain-of-Verification Reduces Hallucination in Large Language Models. *Meta Research*. arXiv:2309.11495. (+23% F1)
 - Min, S. et al. (2023). FActScore: Fine-grained Atomic Evaluation of Factual Precision in Long Form Text Generation.
-- Princeton/DeepMind. Tree-of-Thought study. (74% vs 49% CoT vs 33% standard)
+- Yao, S. et al. (2023). Tree of Thoughts: Deliberate Problem Solving with Large Language Models. *Princeton/DeepMind*. (74% vs 49% CoT vs 33% standard)
 
 ### Synthesis
-- LitLLMs. Plan-based synthesis reduces hallucination vs direct generation.
-- Claimify pipeline. 99% claim entailment through structured decomposition.
+- Agarwal, S. et al. (2024). LitLLMs, LLMs for Literature Review: Are we there yet? arXiv:2412.15249. (18-26% hallucination reduction)
+- Metropolitansky, D. & Larson, J. (2025). Towards Effective Extraction and Evaluation of Factual Claims. *ACL 2025*. arXiv:2502.10855. (99% entailment)
 - Dual-LLM cross-critique. 0.94 accuracy, 51% discordance resolution.
 
 ### Systematic Review
 - PRISMA-trAIce (2025). PMC12694947. 14-item extension for AI-assisted literature reviews.
 
 ### Meta-Analysis
-- Gupta, A. Analysis of 1,500 papers on prompt engineering.
+- Gupta, A. (2025). I Studied 1,500 Academic Papers on Prompt Engineering. *Substack/Medium*.

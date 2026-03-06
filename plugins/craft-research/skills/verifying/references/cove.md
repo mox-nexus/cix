@@ -16,7 +16,7 @@ The mechanism: when a model generates a claim and then verifies it in the same c
 
 ### Step 1: Draft (from extraction)
 
-The extracted claim from the elicit phase serves as the draft. The verifier receives:
+The extracted claim from the extract phase serves as the draft. The verifier receives:
 - The claim text
 - The source quote
 - The source metadata (author, title, venue, year)

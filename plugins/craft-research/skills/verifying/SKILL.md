@@ -26,7 +26,7 @@ Confidence can only decrease through verification, never increase without new ev
 
 The most validated hallucination reduction technique (+23% F1, Meta Research). Four steps:
 
-1. **Draft** — the extracted claim exists (from elicit)
+1. **Draft** — the extracted claim exists (from extract)
 2. **Plan verification** — generate questions that would confirm or refute the claim
 3. **Independent verification** — answer questions by re-reading the source, without seeing the extraction
 4. **Verdict** — compare independent findings against the extracted claim

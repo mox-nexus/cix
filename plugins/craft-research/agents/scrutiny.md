@@ -88,7 +88,7 @@ If a lighter-tier claim fails, escalate to full CoVE.
 ## What Scrutiny Does Not Do
 
 Scrutiny verifies. It does not:
-- Extract claims from sources (elicit)
+- Extract claims from sources (extract)
 - Synthesize across sources (synthesis)
 - Audit the full provenance chain (audit)
 - Add new claims not in the extraction

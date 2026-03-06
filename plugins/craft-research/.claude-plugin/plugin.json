@@ -1,7 +1,7 @@
 {
   "name": "craft-research",
-  "version": "0.2.0",
-  "description": "Systematic research with evidentiary provenance — extract, verify, synthesize, audit. Use when: user asks to 'research this topic', 'analyze these papers', 'extract claims', 'verify citations', 'synthesize findings', 'do a literature review', or needs citation-grounded research with traceable provenance chains.",
+  "version": "0.3.0",
+  "description": "Systematic research with evidentiary provenance — scope, extract, verify, synthesize, audit. Use when: user asks to 'research this topic', 'analyze these papers', 'extract claims', 'verify citations', 'synthesize findings', 'do a literature review', 'scope a research project', or needs citation-grounded research with traceable provenance chains.",
   "author": {
     "name": "Mox Labs",
     "email": "mox.rnd@gmail.com"
@@ -9,6 +9,8 @@
   "license": "MIT",
   "keywords": [
     "research",
+    "discourse",
+    "scoping",
     "synthesis",
     "papers",
     "citations",

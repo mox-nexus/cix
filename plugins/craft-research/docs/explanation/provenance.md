@@ -66,7 +66,7 @@ CoVE (Dhuliawala et al., 2023) demonstrated this empirically: independent verifi
 In practice, this means:
 1. Scrutiny reads the source paper
 2. Scrutiny forms its own understanding of what the source says
-3. *Only then* does scrutiny compare against elicit's extraction
+3. *Only then* does scrutiny compare against extract's extraction
 4. Discrepancies surface errors that same-context checking would miss
 
 ## Why Confidence Only Decreases

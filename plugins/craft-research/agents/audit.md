@@ -90,7 +90,7 @@ Write the audit report to `.research/audit/report.md` following the output forma
 ## What Audit Does Not Do
 
 Audit evaluates. It does not:
-- Extract claims (elicit)
+- Extract claims (extract)
 - Verify claims against sources (scrutiny)
 - Synthesize across sources (synthesis)
 - Rewrite or fix content — it returns to the appropriate agent
