@@ -28,6 +28,8 @@ Extended memory for you and your agents. Query AI conversations from Claude.ai, 
 | "Set up memex" | `memex init` | Guided wizard (first run, TTY) |
 | "Set up for this project" | `memex init --local` | Creates .memex/ in CWD |
 | "Import conversations" | `memex ingest <file>` or `memex init --import-file <path>` | |
+| "Import a directory" | `memex ingest <dir>` | Recurses, finds matching files |
+| "Connect related fragments" | `memex build-edges` | Builds SIMILAR_TO edges from embeddings |
 
 ## @N References
 
@@ -79,8 +81,11 @@ Tuning (rarely needed): `memex dig "query" --semantic-weight 0.8` (default: 0.6)
 | `memex trail delete "name"` | Delete a trail |
 | **Ingest** | |
 | `memex ingest <file>` | Import with embeddings (default) |
+| `memex ingest <dir>` | Recurse directory, import matching files |
 | `memex ingest <file> --no-embed` | Fast import, keyword search only |
 | `memex backfill` | Generate embeddings for existing fragments |
+| `memex build-edges` | Build SIMILAR_TO edges (requires embeddings) |
+| `memex build-edges -t 0.7 -k 10` | Custom threshold and max edges per fragment |
 | `memex rebuild` | Rebuild search indexes |
 | `memex reset` | Delete corpus and start fresh |
 | **Discovery** | |
@@ -176,6 +181,7 @@ onnx_threads = 1
 - **Full-text**: DuckDB FTS with BM25
 - **Vector search**: DuckDB VSS with HNSW
 - **FOLLOWS edges**: auto-computed on ingest (no manual step needed)
+- **SIMILAR_TO edges**: built via `memex build-edges` (requires `memex backfill` first)
 - **Fusion**: RRF (k=60)
 - **Backfill is idempotent**: `memex backfill` resumes from where it left off (`WHERE embedding IS NULL`). Safe to interrupt and restart.
 - **Backfill is memory-safe**: drops HNSW index before bulk writes, checkpoints periodically, rebuilds index after. DuckDB capped at 2GB.

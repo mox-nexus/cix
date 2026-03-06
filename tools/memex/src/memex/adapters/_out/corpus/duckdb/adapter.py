@@ -8,7 +8,6 @@ Supports:
 
 import logging
 from collections.abc import Callable, Iterable, Iterator
-from importlib.resources import files
 from itertools import batched, chain, count
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -16,13 +15,14 @@ from typing import TYPE_CHECKING
 import duckdb
 
 from memex.domain.models import (
-    ColumnInfo,
     ConversationSummary,
     CorpusStats,
     EdgeTypeStats,
+    EmbeddingConfig,
+    FieldInfo,
     Fragment,
+    FragmentSchema,
     Provenance,
-    SchemaInfo,
     TrailSummary,
 )
 from memex.domain.streaming import tap, tap_every
@@ -30,7 +30,7 @@ from memex.domain.streaming import tap, tap_every
 logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
-    from memex.domain.ports._out.corpus import ProgressCallback
+    from memex.domain.ports._out.graph import ProgressCallback
 
 
 class DuckDBCorpus:
@@ -1081,7 +1081,7 @@ class DuckDBCorpus:
             sources=result[4],
         )
 
-    def schema(self) -> SchemaInfo:
+    def schema(self) -> FragmentSchema:
         """Return schema information for introspection."""
         columns = self.con.execute("""
             SELECT column_name, data_type, is_nullable
@@ -1090,14 +1090,14 @@ class DuckDBCorpus:
             ORDER BY ordinal_position
         """).fetchall()
 
-        return SchemaInfo(
-            fragments=[ColumnInfo(name=c[0], type=c[1], nullable=c[2] == "YES") for c in columns]
+        return FragmentSchema(
+            fragments=[FieldInfo(name=c[0], type=c[1], nullable=c[2] == "YES") for c in columns]
         )
 
-    def skill(self) -> str:
-        """Return skill documentation for DuckDB corpus."""
-        skill_file = files(__package__) / "skill.md"
-        return skill_file.read_text()
+    def record_embedding_config(self, config: EmbeddingConfig) -> None:
+        """Record the embedding model used for this corpus."""
+        self.set_meta("embedding_model", config.model_name)
+        self.set_meta("embedding_dimensions", str(config.dimensions))
 
     def close(self) -> None:
         """Close connection."""

@@ -60,7 +60,7 @@ click.rich_click.COMMAND_GROUPS = {
         },
         {
             "name": "Ingest",
-            "commands": ["ingest", "backfill", "rebuild", "reset"],
+            "commands": ["ingest", "backfill", "rebuild", "build-edges", "reset"],
         },
         {
             "name": "Discovery",
@@ -440,6 +440,71 @@ def _do_ingest(path: Path, *, embed: bool = True, wizard: bool = False):
         service.close()
 
 
+def _ingest_directory(directory: Path, *, embed: bool = True):
+    """Ingest all matching files in a directory recursively."""
+    from memex.config.settings import get_settings
+
+    if embed:
+        with obs.status("Loading embedding model..."):
+            service = create_service(with_embedder=True)
+    else:
+        service = create_service()
+
+    try:
+        # Find all files that match any adapter
+        matching_files = []
+        for file_path in sorted(directory.rglob("*")):
+            if file_path.is_file():
+                for adapter in service.source_adapters:
+                    if adapter.can_handle(file_path):
+                        matching_files.append(file_path)
+                        break
+
+        if not matching_files:
+            obs.warning(f"No ingestible files found in {directory}")
+            obs.info("Supported formats: Claude export (.json, .zip), OpenAI export")
+            return
+
+        obs.info(f"Found {len(matching_files)} file(s) to ingest")
+        total_parsed = 0
+        total_stored = 0
+
+        for file_path in matching_files:
+            try:
+                parsed, stored = service.ingest(file_path)
+                total_parsed += parsed
+                total_stored += stored
+                obs.dim(f"  {file_path.name}: {parsed:,} parsed, {stored:,} new")
+            except Exception as e:
+                obs.warning(f"  {file_path.name}: {e}")
+
+        if total_stored > 0 and embed and service.embedder:
+            settings = get_settings()
+            with Progress(
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                BarColumn(),
+                TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                TextColumn("({task.completed:,}/{task.total:,})"),
+                TimeElapsedColumn(),
+                console=obs.console,
+                transient=True,
+            ) as progress_bar:
+                task = progress_bar.add_task("Embedding", total=total_stored)
+
+                def embed_progress(processed: int, total: int):
+                    progress_bar.update(task, completed=processed, total=total)
+
+                service.backfill_embeddings(settings.batch_size, embed_progress)
+
+            with obs.status("Building search index..."):
+                service.corpus.rebuild_search_index()
+
+        obs.success(f"Ingested {total_stored:,} fragments from {len(matching_files)} file(s)")
+    finally:
+        service.close()
+
+
 def _human_age(mtime: float) -> str:
     """Human-readable file age: 'today', 'yesterday', '3 days ago', or 'Feb 10'."""
     from datetime import UTC, datetime
@@ -709,19 +774,24 @@ def similar(fragment_ref: str, limit: int, fmt: str):
 @click.argument("path", type=click.Path(exists=True, path_type=Path))
 @click.option("--no-embed", is_flag=True, help="Skip embedding (faster, keyword search only)")
 def ingest(path: Path, no_embed: bool):
-    """Ingest a file into the corpus.
+    """Ingest a file or directory into the corpus.
 
+    For directories, recursively finds all files that match a known adapter.
     By default, generates embeddings for semantic search.
-    Use --no-embed for faster import (keyword search only).
 
     Example:
         memex ingest ~/Downloads/conversations.json
         memex ingest export.zip --no-embed
+        memex ingest ~/exports/           # Recurse directory
     """
     from memex.config.settings import get_settings
 
     should_embed = get_settings().embed_by_default and not no_embed
-    _do_ingest(path, embed=should_embed)
+
+    if path.is_dir():
+        _ingest_directory(path, embed=should_embed)
+    else:
+        _do_ingest(path, embed=should_embed)
 
 
 @main.command()
@@ -741,6 +811,48 @@ def rebuild():
     finally:
         service.close()
     obs.info("VSS (embedding) index is managed automatically")
+
+
+@main.command(name="build-edges")
+@click.option("--threshold", "-t", default=0.8, help="Minimum similarity (0-1)")
+@click.option("--k", "-k", default=5, help="Max edges per fragment")
+def build_edges(threshold: float, k: int):
+    """Build SIMILAR_TO edges between semantically related fragments.
+
+    Requires embeddings. Run 'memex backfill' first if needed.
+
+    Example:
+        memex build-edges
+        memex build-edges --threshold 0.7 --k 10
+    """
+    service = create_service()
+    try:
+        if not service.corpus.has_semantic_search():
+            obs.error("No embeddings found. Run 'memex backfill' first.")
+            return
+
+        stats = service.corpus.stats()
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            TextColumn("({task.completed:,}/{task.total:,})"),
+            TimeElapsedColumn(),
+            console=obs.console,
+            transient=False,
+        ) as progress_bar:
+            task = progress_bar.add_task("Building edges", total=stats.total_fragments)
+
+            def on_progress(processed: int, total: int):
+                progress_bar.update(task, completed=processed, total=total)
+
+            count = service.graph.build_similar_edges(threshold, k, on_progress)
+
+        obs.success(f"Built {count:,} SIMILAR_TO edges")
+        obs.hint("memex similar @N to find related fragments")
+    finally:
+        service.close()
 
 
 @main.command()
@@ -1151,14 +1263,14 @@ def trail_create(name: str, description: str):
     """
     service = create_service()
     try:
+        # Check if trail already exists
+        existing = service.trails.list_trails()
+        if any(t.name == name for t in existing):
+            obs.error(f"Trail '{name}' already exists")
+            return
         service.trails.create_trail(name, description)
         obs.success(f"Created trail '{name}'")
         obs.hint(f'memex trail add "{name}" @N (search first, then add results)')
-    except Exception as e:
-        if "UNIQUE" in str(e):
-            obs.error(f"Trail '{name}' already exists")
-        else:
-            raise
     finally:
         service.close()
 

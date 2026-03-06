@@ -25,8 +25,9 @@ from memex.domain.models import (
     ConversationSummary,
     CorpusStats,
     EdgeTypeStats,
+    EmbeddingConfig,
     Fragment,
-    SchemaInfo,
+    FragmentSchema,
     TrailSummary,
 )
 
@@ -149,7 +150,7 @@ class RemoteCorpusAdapter:
     def stats(self) -> CorpusStats:
         return parse_stats(self._call("corpus.stats"))
 
-    def schema(self) -> SchemaInfo:
+    def schema(self) -> FragmentSchema:
         return parse_schema(self._call("corpus.schema"))
 
     def count_without_embeddings(self) -> int:
@@ -175,11 +176,8 @@ class RemoteCorpusAdapter:
     ) -> int:
         raise NotImplementedError("backfill requires direct DuckDB + ONNX access — use CLI")
 
-    def skill(self) -> str:
-        return "Remote corpus (via memexd)"
-
-    def set_meta(self, key: str, value: str) -> None:
-        pass  # Meta is managed by the daemon's direct corpus
+    def record_embedding_config(self, config: EmbeddingConfig) -> None:
+        pass  # Embedding config is managed by the daemon's direct corpus
 
     def close(self) -> None:
         if self._conn:

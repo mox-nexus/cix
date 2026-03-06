@@ -21,6 +21,15 @@ This:
 3. Generates embeddings for semantic search
 4. Rebuilds FTS index
 
+### Directory ingest
+
+```bash
+memex ingest ~/exports/           # Recurse directory, find all matching files
+memex ingest ~/exports/ --no-embed
+```
+
+Recursively finds files matching any known adapter (Claude, OpenAI exports) and ingests them all.
+
 ### Fast: Ingest without embeddings
 
 ```bash
@@ -37,6 +46,15 @@ memex backfill --batch-size 50  # Smaller batches for memory
 ```
 
 Check coverage with `memex status`.
+
+### Build edges: Connect similar fragments
+
+```bash
+memex build-edges                    # Default: threshold=0.8, k=5
+memex build-edges -t 0.7 -k 10      # Custom threshold and max edges
+```
+
+Builds SIMILAR_TO edges between semantically similar fragments. Requires embeddings — run `memex backfill` first. Then use `memex similar @N` to explore connections.
 
 ### Rebuild: Fix broken indexes
 

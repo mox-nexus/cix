@@ -125,7 +125,7 @@ SOURCE_CUSTOM = "custom"
 │ ├── TrailPort    → DuckDB trails                    │
 │ ├── EmbeddingPort → nomic-embed-text-v1.5 (ONNX)   │
 │ ├── RerankerPort  → MS MARCO cross-encoder (ONNX)   │
-│ └── SourceAdapterPort → Claude, OpenAI              │
+│ └── SourcePort → Claude, OpenAI              │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -263,7 +263,7 @@ tools/memex/
     │           ├── trail.py               # TrailPort (curated paths)
     │           ├── embedding.py           # EmbeddingPort
     │           ├── reranker.py            # RerankerPort
-    │           └── source.py              # SourceAdapterPort
+    │           └── source.py              # SourcePort
     └── adapters/
         ├── _in/
         │   └── cli/
@@ -351,12 +351,9 @@ Resource profiles (approximate peak during backfill):
 
 ---
 
-## Pre-1.0 TODO
+## Post-1.0 Ideas
 
-- [ ] **FP pipeline refactor** — Streaming pipeline pattern for backfill. Includes `EmbeddingPort.embed_stream` accepting `Iterator[str]`.
-- [ ] **Wire `embedding_model` setting** — composition root hardcodes nomic-embed-text-v1.5. Wire through or remove.
-- [ ] **Reranker resource controls** — similar ONNX knobs may be needed for the cross-encoder.
-- [ ] **Clean up stale config** — `embedding_model: str = "minilm"` default is wrong (we use nomic).
+- [ ] **Config-driven source adapters** — TOML-based adapter config for JSONL/markdown without writing code.
 
 ---
 

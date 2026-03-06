@@ -6,8 +6,16 @@ Fragment is THE canonical entity (Karman recommendation).
 
 from datetime import datetime
 from enum import StrEnum
+from typing import NamedTuple
 
 from pydantic import BaseModel
+
+
+class IngestResult(NamedTuple):
+    """Result of ingesting a file into the corpus."""
+
+    parsed: int
+    stored: int
 
 
 class EmbeddingConfig(BaseModel):
@@ -29,7 +37,12 @@ SOURCE_CUSTOM = "custom"
 
 
 class Completeness(StrEnum):
-    """Fragment completeness."""
+    """Fragment completeness.
+
+    FULL: Complete content as exported.
+    TRUNCATED: Content was cut by export/API limits (e.g., max tokens).
+    PARTIAL: Content was intentionally sampled or summarized.
+    """
 
     FULL = "full"
     TRUNCATED = "truncated"
@@ -92,18 +105,18 @@ class ConversationSummary(BaseModel):
     preview: str | None = None
 
 
-class ColumnInfo(BaseModel):
-    """Schema column metadata."""
+class FieldInfo(BaseModel):
+    """Fragment field metadata."""
 
     name: str
     type: str
     nullable: bool
 
 
-class SchemaInfo(BaseModel):
-    """Corpus schema for introspection."""
+class FragmentSchema(BaseModel):
+    """Fragment schema for introspection."""
 
-    fragments: list[ColumnInfo]
+    fragments: list[FieldInfo]
 
 
 class EdgeTypeStats(BaseModel):

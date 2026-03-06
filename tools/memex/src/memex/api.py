@@ -18,6 +18,7 @@ from memex.domain.models import (
     ConversationSummary,
     CorpusStats,
     Fragment,
+    IngestResult,
     TrailSummary,
 )
 
@@ -86,14 +87,14 @@ class Memex:
             use_reranker=rerank,
         )
 
-    def ingest(self, path: Path | str) -> tuple[int, int]:
+    def ingest(self, path: Path | str) -> IngestResult:
         """Ingest a file into the corpus.
 
         Supports Claude exports (.json, .zip), OpenAI exports (.zip), and
         any format with a registered source adapter.
 
         Returns:
-            (parsed, stored) — fragments parsed and newly stored.
+            IngestResult(parsed, stored) — fragments parsed and newly stored.
         """
         return self._service.ingest(Path(path))
 
@@ -122,8 +123,8 @@ class Memex:
         """Create a named trail. Returns trail ID."""
         return self._service.trails.create_trail(name, description)
 
-    def get_trail(self, trail_name: str) -> list[tuple[Fragment, str]]:
-        """Get trail entries in order. Returns (Fragment, note) tuples."""
+    def follow_trail(self, trail_name: str) -> list[tuple[Fragment, str]]:
+        """Walk a trail — returns entries in order as (Fragment, note) tuples."""
         return self._service.trails.get_trail(trail_name)
 
     def list_trails(self) -> list[TrailSummary]:

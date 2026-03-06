@@ -13,8 +13,9 @@ from typing import Protocol
 from memex.domain.models import (
     ConversationSummary,
     CorpusStats,
+    EmbeddingConfig,
     Fragment,
-    SchemaInfo,
+    FragmentSchema,
 )
 
 
@@ -73,7 +74,7 @@ class CorpusPort(Protocol):
         """Get corpus statistics."""
         ...
 
-    def schema(self) -> SchemaInfo:
+    def schema(self) -> FragmentSchema:
         """Return schema information for introspection."""
         ...
 
@@ -106,8 +107,8 @@ class CorpusPort(Protocol):
         """Return stored embedding dimensions, or None if unknown."""
         ...
 
-    def set_meta(self, key: str, value: str) -> None:
-        """Store metadata key-value pair."""
+    def record_embedding_config(self, config: EmbeddingConfig) -> None:
+        """Record the embedding model used for this corpus."""
         ...
 
     def close(self) -> None:

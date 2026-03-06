@@ -14,7 +14,7 @@ from memex.domain.models import (
     CorpusStats,
     EdgeTypeStats,
     Fragment,
-    SchemaInfo,
+    FragmentSchema,
     TrailSummary,
 )
 
@@ -32,7 +32,9 @@ MAX_LIMIT = 500
 def _clamp_limit(params: dict, default: int = 20) -> dict:
     """Enforce server-side limit cap."""
     if "limit" in params:
-        params["limit"] = min(int(params["limit"]), MAX_LIMIT)
+        params["limit"] = max(1, min(int(params["limit"]), MAX_LIMIT))
+    if "offset" in params:
+        params["offset"] = max(0, int(params["offset"]))
     return params
 
 
@@ -174,6 +176,7 @@ class Dispatcher:
     # --- GraphPort handlers ---
 
     def _graph_find_similar(self, p: dict) -> list[dict]:
+        p = _clamp_limit(p)
         results = self._graph.find_similar(p["fragment_id"], p.get("limit", 10))
         return _scored_fragments(results)
 
@@ -244,8 +247,8 @@ def parse_stats(data: dict) -> CorpusStats:
     return CorpusStats.model_validate(data)
 
 
-def parse_schema(data: dict) -> SchemaInfo:
-    return SchemaInfo.model_validate(data)
+def parse_schema(data: dict) -> FragmentSchema:
+    return FragmentSchema.model_validate(data)
 
 
 def parse_conversations(data: list[dict]) -> list[ConversationSummary]:
