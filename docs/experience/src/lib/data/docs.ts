@@ -5,7 +5,7 @@ export interface DocsEntry {
 	/** Filename on disk if different from slug */
 	file?: string;
 	/** Content kind */
-	kind: 'explanation' | 'reference';
+	kind: 'explanation' | 'how-to' | 'reference';
 	/** Estimated read time in minutes */
 	readMinutes?: number;
 	/** Slugs of prerequisite articles */
@@ -111,6 +111,11 @@ export function getAllEntries(): DocsEntry[] {
 /** Get explanation entries only (ordered) */
 export function getExplanationEntries(): DocsEntry[] {
 	return DOCS_ENTRIES.filter((e) => e.kind === 'explanation');
+}
+
+/** Get entries filtered by kind */
+export function getEntriesByKind(kind: DocsEntry['kind']): DocsEntry[] {
+	return DOCS_ENTRIES.filter((e) => e.kind === kind);
 }
 
 /** Get prev/next navigation for an entry */
