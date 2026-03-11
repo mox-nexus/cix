@@ -39,7 +39,7 @@ class Artifact(BaseModel, frozen=True):
 
     type_url convention: <namespace>.v<version>/<resource>
       - matrix.v1/agent.response
-      - ix.v1/experiment.readings
+      - ix.v1/eval.readings
       - test.v1/...
     """
 

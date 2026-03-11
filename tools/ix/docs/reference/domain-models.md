@@ -20,15 +20,15 @@ A Subject Under Test — one variant being compared.
 | `description` | `str` | `""` | Human-readable description |
 | `config` | `dict` | `{}` | Adapter-specific configuration |
 
-### `Interaction`
+### `Trial`
 
-One stimulus–response pair. The Probe generates a stimulus, the ExperimentRuntime executes it against the Subject, and the result lands here.
+One execution of a probe against a subject. Pairs probe identity with the response (or error). The sensor gets `trial.response`; analysis uses `trial.probe_id` to look up ground truth.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `stimulus` | `Any` | required | The input sent to the SUT (eval: `EvalCase`) |
+| `probe_id` | `str` | required | Which probe was executed |
 | `trial_index` | `int` | required | Which trial this belongs to (0-indexed) |
-| `observation` | `Any \| None` | `None` | What the SUT returned (eval: `EvalObservation`) |
+| `response` | `Any \| None` | `None` | What the SUT returned |
 | `error` | `str \| None` | `None` | Error message if invocation failed |
 
 ### `Reading`
@@ -51,30 +51,16 @@ Result of a sensor evaluating a single interaction. Sensors produce readings lik
 
 All protocols are `@runtime_checkable`. Implement the methods — no base classes, no inheritance.
 
-### `Probe`
-
-Generates stimuli for an experiment.
-
-| Method | Signature | Description |
-|--------|-----------|-------------|
-| `generate` | `() -> Iterable[Any]` | Yields stimuli (eval: `EvalCase`; benchmark: load parameters) |
-
-### `ExperimentRuntime`
-
-Executes a stimulus against a Subject.
-
-| Method | Signature | Description |
-|--------|-----------|-------------|
-| `invoke` | `async (subject: Subject, stimulus: Any) -> Any` | Runs the stimulus, returns an observation |
-
 ### `Sensor`
 
-Evaluates an interaction and produces readings.
+Measures a trial and produces readings.
 
 | Member | Signature | Description |
 |--------|-----------|-------------|
 | `name` | `@property -> str` | Sensor identifier (appears in `Reading.sensor_name`) |
-| `sense` | `(interaction: Interaction) -> list[Reading]` | Evaluates one interaction |
+| `sense` | `(trial: Trial) -> list[Reading]` | Measures one trial |
+
+**Note:** Agent execution uses `matrix.Agent` protocol directly (`run(prompt) -> AgentResponse`). No separate `ExperimentRuntime` protocol — Matrix's Agent IS the runtime.
 
 ---
 
@@ -193,20 +179,41 @@ Persistence boundary for experiments and eval results.
 
 ---
 
+## DAG Topology
+
+Inner DAG (per probe × trial):
+
+```
+ProbeNode ──┐
+            ├──▶ TrialNode ──▶ SensorNode
+SubjectNode ┘
+
+ProbeNode:   consumes: ∅                              produces: "probe.stimulus"      (Probe)
+SubjectNode: consumes: ∅                              produces: "subject.config"       (dict)
+TrialNode:   consumes: {probe.stimulus, subject.config} produces: "trial.observation"  (Trial)
+SensorNode:  consumes: {trial.observation}             produces: "sensor.reading"      (list[Reading])
+```
+
+Experiment loops over probes × trials, runs the inner DAG each iteration. Post-loop: aggregate all readings → metrics. Status is derived from pass_rate via computed property.
+
+All components resolve through a unified `ComponentRegistry` via `type → type_url → factory`. Sensors, agent runtimes — same pattern, no special cases.
+
 ## Type Flow
 
 ```
-Probe.generate()          -> stimulus: Any (eval: EvalCase)
-ExperimentRuntime.invoke() -> observation: Any (eval: EvalObservation)
-
-Interaction(stimulus, trial_index, observation, error)
+Probe (stimulus) + Subject.config (identity + runtime)
     |
-Sensor.sense(interaction)  -> list[Reading]
+TrialNode: registry.create("matrix.agent.{type}", config) → Agent
+           Agent.run(prompt) → AgentResponse
+    |
+Trial(probe_id, trial_index, response, error)
+    |
+Sensor.measure(trial) → list[Reading]
 
-Reading(sensor_name, passed, score, metrics, details)
+Reading(sensor_name, probe_id, trial_index, passed, score, metrics, details)
     | aggregate_readings()
-ProbeResult(probe_id, expectation, score, correct, trials)
-    | compute_metrics() -> dict
-    | interpret() -> dict
-ExperimentResults(experiment_name, probe_results, precision, recall, f1, ..., status, issues, suggestions)
+ProbeResult(probe_id, score, passed, trial_scores)
+    | compute_metrics() → dict
+ExperimentResults(experiment_name, probe_results, pass_rate, mean_score, min_score, max_score)
+    .status → computed from pass_rate
 ```

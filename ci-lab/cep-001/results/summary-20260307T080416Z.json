@@ -1,0 +1,139 @@
+{
+  "experiment_name": "cep-003-skills-vs-references",
+  "probe_results": [
+    {
+      "probe_id": "out-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: dig(auth token storage database)",
+        "found: ['DuckDB', 'single-node', 'analytics', 'token usage']; turns=4, tools=3",
+        "correct: dig(auth tokens database storage)",
+        "found: ['DuckDB', 'single-node', 'analytics', 'token usage']; turns=4, tools=3",
+        "correct: dig(auth token storage database)",
+        "found: ['DuckDB', 'single-node', 'analytics', 'token usage']; turns=3, tools=2"
+      ]
+    },
+    {
+      "probe_id": "out-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: dig(rate limiting configuration tiers)",
+        "found: ['40', '10', 'token bucket', 'per-user']; turns=4, tools=3",
+        "correct: dig(rate limiting configuration tiers)",
+        "found: ['40', '10', 'token bucket', 'per-user']; turns=4, tools=3",
+        "correct: dig(rate limiting configuration tiers)",
+        "found: ['40', '10', 'token bucket', 'per-user']; turns=4, tools=3"
+      ]
+    },
+    {
+      "probe_id": "out-003",
+      "score": 0.8333333333333334,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: dig(embedding model selection)",
+        "missed: ['nomic', '768', 'local inference', 'CoreML']; turns=6, tools=5",
+        "correct: dig(embedding model selection)",
+        "found: ['nomic', '768', 'local inference', 'CoreML']; turns=5, tools=4",
+        "correct: dig(embedding model selection memex)",
+        "found: ['nomic', '768', 'local inference', 'CoreML']; turns=3, tools=2"
+      ]
+    },
+    {
+      "probe_id": "out-004",
+      "score": 0.75,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        0.25,
+        1.0,
+        1.0,
+        1.0,
+        0.25
+      ],
+      "details": [
+        "correct: dig(search results wrong order bug)",
+        "found: ['reranking']; missed: ['reverse', 'sort', 'a3f7e21']; turns=6, tools=5",
+        "correct: dig(search results wrong order bug root cause)",
+        "found: ['reverse', 'sort', 'reranking', 'a3f7e21']; turns=5, tools=4",
+        "correct: dig(search results wrong order bug)",
+        "found: ['reranking']; missed: ['reverse', 'sort', 'a3f7e21']; turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "out-005",
+      "score": 0.9166666666666666,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.5
+      ],
+      "details": [
+        "correct: dig(trails similar difference)",
+        "found: ['trail', 'similar', 'curate', 'algorithmic']; turns=6, tools=5",
+        "correct: dig(trails similar difference)",
+        "found: ['trail', 'similar', 'curate', 'algorithmic']; turns=6, tools=5",
+        "correct: dig(trails similar difference when to use)",
+        "found: ['trail', 'similar']; missed: ['curate', 'algorithmic']; turns=6, tools=6"
+      ]
+    },
+    {
+      "probe_id": "out-006",
+      "score": 0.8333333333333334,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "details": [
+        "correct: dig(cix hexagonal ports architecture)",
+        "found: ['Protocol', 'structural typing', 'runtime_checkable']; turns=5, tools=4",
+        "correct: dig(cix hexagonal ports architecture)",
+        "found: ['Protocol', 'structural typing', 'runtime_checkable']; turns=5, tools=4",
+        "correct: dig(hexagonal ports cix alternative)",
+        "missed: ['Protocol', 'structural typing', 'runtime_checkable']; turns=6, tools=5"
+      ]
+    }
+  ],
+  "pass_rate": 1.0,
+  "mean_score": 0.8888888888888888,
+  "min_score": 0.75,
+  "max_score": 1.0,
+  "config_hash": "c7d63eaca069172f",
+  "run_timestamp": "2026-03-07T08:04:16.295197Z",
+  "ix_version": "0.0.1-alpha",
+  "status": "excellent"
+}

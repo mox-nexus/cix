@@ -1,322 +1,250 @@
-# Eval Design: Methodology
+# Eval Methodology for LLM Agents
 
-Why these evaluation patterns exist and what they measure.
+You have an agent that writes code, calls tools, answers questions. It works. Sometimes. You ship it, users complain, you look at the output and think "why did it do that?" You tweak the prompt, things get better in one place, worse in another. You have no systematic way to know whether the last change was an improvement or a regression.
 
----
-
-## The Core Problem
-
-Single metrics mislead. Evaluation that doesn't match usage fails.
-
-A skill with 100% activation rate sounds impressive until you realize it activates on every prompt—including when it shouldn't. A test suite that passes 95% of the time tells you nothing about the 5% of failures that corrupt production data.
-
-**The failure mode:** Measuring what's easy instead of what matters.
-
-This is why eval design centers on two questions:
-1. What can go wrong?
-2. How do we detect it before users do?
-
-## Who This Is For
-
-You're shipping an agent or skill and want to know if it actually works — not "seems good in testing" but measurably performs. If you've ever shipped an extension that silently failed for 80% of cases, or spent weeks optimizing something that was already at its ceiling, this methodology prevents that.
-
-If you already believe measurement matters, skip to the metrics. If you're not sure evals are worth the investment, start with [The Deeper Why](#the-deeper-why).
+This is the problem build-eval solves: a methodology for measuring AI systems so you make informed decisions instead of guessing.
 
 ---
 
-## Measurement Fundamentals
+## Why Agent Eval is Harder Than Software Testing
 
-### The Two-Sided Test
+Software tests have deterministic inputs and outputs. Call a function twice, get the same result. Agent eval breaks this contract in three ways.
 
-Every capability has two failure modes:
+**Non-determinism.** The same prompt produces different outputs on different runs. An agent that succeeds 7 out of 10 times looks like it "works" on a single run and looks like it "fails" on a single run. Neither observation is meaningful. You need multiple trials to see the real distribution. (Evidence: Strong -- Anthropic 2026 agent eval guide, SWE-bench methodology)
 
-| Failure Mode | Example | Detection |
-|--------------|---------|-----------|
-| **False negative** | Should trigger, doesn't | Recall metric |
-| **False positive** | Shouldn't trigger, does | Precision metric |
+**Multi-dimensional quality.** An agent that produces correct output in 50,000 tokens is worse than one that produces correct output in 5,000 tokens. Correctness alone doesn't capture quality -- you also care about cost, latency, tool usage efficiency, and whether the agent stays within its role. Single metrics collapse this into a number that hides the tradeoffs. (Evidence: Strong -- KDD 2025 agent eval survey)
 
-Testing only one side creates blind spots.
-
-**Example from skill evaluation:**
-
-A Rust skill that activates on every coding question has perfect recall (never misses a valid case) but terrible precision (fires when writing Python, discussing architecture, writing docs).
-
-The F1 metric forces you to balance both:
-```
-F1 = 2 × (Precision × Recall) / (Precision + Recall)
-```
-
-You can't game it by optimizing one side.
-
-## Reading Your Metrics
-
-When you see these patterns, here's what they mean and what to do:
-
-| You See | It Means | Do This |
-|---------|----------|---------|
-| F1 = 0.95, pass rate = 100% | Eval is saturated — only catches regressions | Add harder test cases or new failure dimensions |
-| Recall = 0.95, Precision = 0.40 | Skill fires on everything (noise) | Tighten trigger description with explicit exclusions |
-| Precision = 0.95, Recall = 0.30 | Skill barely fires (invisible) | Broaden trigger with more intent variations |
-| pass@1 = 0.60, pass@5 = 0.90 | Agent can solve it but needs exploration | Deploy with retry logic, not better prompts |
-| pass@1 = 0.60, pass@5 = 0.63 | Agent is at capability ceiling | Need better model or different approach |
-
-These patterns are your diagnostic toolkit. Every eval run should end with: "Which row am I in?"
-
-### Why pass@k Exists
-
-LLMs are stochastic. Single-run metrics lie about capability.
-
-**The pattern:**
-- 75% success rate per attempt
-- pass@3 (any success in 3 tries): ~98%
-- pass^3 (all 3 succeed): ~42%
-
-Same model, radically different reliability depending on whether you need "works once" or "works every time."
-
-This matters for deployment decisions:
-
-| Use Case | Metric | Why |
-|----------|--------|-----|
-| Exploration | pass@k | One good solution is enough |
-| Production | pass^k | Every execution must work |
+**The judge problem.** Open-ended outputs can't always be verified by code. You need a judge. But the best judges available are also LLMs, which brings their own biases: position bias, verbosity bias, self-preference. You're using the thing you're evaluating to evaluate the thing you're evaluating. The escape hatch is layering multiple judge types and calibrating against human ground truth. (Evidence: Strong -- NeurIPS 2023, "Judging LLM-as-a-Judge")
 
 ---
 
-## The Iterative Pattern (Ralph Discovery)
+## The Three Grader Types
 
-Traditional pass@k assumes independent trials. Real agents learn from feedback.
+Every eval needs a grader -- something that looks at agent output and produces a score. There are exactly three kinds, and each has a clear use case.
 
-**The insight:** An agent with 60% first-try success might reach 95% with error feedback. That's a fundamentally different capability profile.
+### Code Graders
 
-| Metric | Question Answered |
-|--------|-------------------|
-| **pass@1** | How good is the first attempt? |
-| **pass@k (iterative)** | Can it recover from failures? |
-| **recovery_rate** | What percentage of failures become successes? |
-| **iterations_to_pass** | How fast does it learn? |
+Deterministic checks: test suites pass, expected string appears, file system state matches, regex matches output format.
 
-This changes deployment strategy:
+**Strengths:** Fast, free, objective, reproducible. No API calls, no token cost, no judge bias.
+**Weakness:** Can only verify what you can specify exactly. Rejects valid alternative solutions unless you enumerate them.
 
-```
-Agent A: pass@1 = 80%, recovery_rate = 20%
-→ Deploy with better prompts
+Use code graders when you can define the expected outcome precisely. This is the default -- reach for code graders first. SWE-bench uses test suites as ground truth: the generated patch either makes the tests pass or it doesn't. No judgment call required.
 
-Agent B: pass@1 = 60%, recovery_rate = 85%
-→ Deploy with retry loop + feedback
-```
+### Model Graders
 
-Same apparent capability (both can hit 90%+), completely different implementation patterns.
+An LLM evaluates the output against a rubric or criteria. DeepEval's GEval, Braintrust's custom scorers, and RAGAS metrics all work this way.
 
----
+**Strengths:** Handle open-ended outputs (explanations, creative writing, analysis). Can apply partial credit. Flexible criteria.
+**Weakness:** Expensive (each grading call costs tokens), stochastic (run the same grading call twice, sometimes get different scores), and susceptible to bias.
 
-## Multi-Agent Evaluation
+Use model graders when the output varies legitimately and code can't distinguish good from bad. Grade the outcome, not the path -- if five different solutions are correct, the grader must accept all five.
 
-Single-agent metrics miss the collaboration layer.
+### Human Graders
 
-**The blind spot:** Each agent works perfectly in isolation, but handoffs fail. Task scores look good, but work is duplicated or dropped.
+Expert review of agent outputs against a rubric.
 
-### Why Task Scores Aren't Enough
+**Strengths:** Ground truth. Catches things code and models miss. Builds intuition about failure modes.
+**Weakness:** Slow, expensive, doesn't scale.
 
-You need to measure the gaps between agents:
+Use human graders for calibration (spot-checking 10% of outputs), for discovering new failure modes, and as the gold standard when establishing ground truth for model grader training. Not for every run.
 
-| Metric | Catches |
-|--------|---------|
-| **Handoff success** | Work dropped during transfers |
-| **Communication efficiency** | Noise drowning signal |
-| **Role adherence** | Agents doing each other's work |
-| **Theory of Mind** | Misunderstanding collaborator state |
+### The Routing Decision
 
-**Example failure mode:**
+| Agent Type | Primary Grader | Why |
+|------------|----------------|-----|
+| Coding agents | Code (test suites) | Tests are deterministic ground truth |
+| Tool-using agents | Code (tool call matching) | Expected tools and args are specifiable |
+| Conversational agents | Model (rubric) + Code (state checks) | Response quality is subjective; resolution state is verifiable |
+| Research agents | Model (groundedness, coverage) | Claim quality requires judgment |
+| Skills | Code (activation F1) + Model (methodology adherence) | Trigger is binary; behavior quality is graded |
 
-```
-Agent A: Research task score = 90%
-Agent B: Writing task score = 92%
-Handoff success: 45%
-
-Overall system: Task completion = 41%
-```
-
-Each component looks good. The system fails.
+The principle: use the most deterministic grader that captures the dimension you care about. Escalate to model graders only for dimensions code can't reach. (Source: Anthropic 2026, "prefer deterministic graders")
 
 ---
 
-## Why Grader Types Matter
+## Non-Determinism: pass@k and pass^k
 
-### Code-Based Graders (Preferred)
+A single run tells you what happened once. It doesn't tell you what the agent can do.
 
-Deterministic, fast, objective.
+**pass@k** answers: "If I give the agent k independent tries, does it succeed at least once?" This measures capability ceiling. An agent with 75% per-trial success has pass@3 of approximately 98%. It can almost certainly solve the problem -- it just might need a couple of attempts.
 
-```python
-# ✅ Unambiguous
-assert result.status == "success"
-assert result.files_modified == ["config.yaml"]
+**pass^k** answers: "If I run the agent k times, does it succeed every time?" This measures production reliability. That same 75%-per-trial agent has pass^3 of approximately 42%. Fewer than half of deployments would see three consecutive successes.
+
+Same agent, same task. One metric says 98%, the other says 42%. Neither is wrong -- they measure different things.
+
+| Context | Use | Reasoning |
+|---------|-----|-----------|
+| Exploring what's possible | pass@k | One good solution is enough |
+| Production deployment | pass^k | Every execution must succeed |
+| Comparing models | Both | Capability AND reliability matter |
+
+**The trap of mean accuracy.** Reporting "75% accuracy" from a single run of 100 tasks conflates capability with reliability. Run 5+ trials per task. Report the distribution, not just the mean. (Source: Anthropic 2026 eval guide, "run 5+ trials"; Anthropic statistical approach to model evals)
+
+---
+
+## The Iterative Pattern
+
+Standard pass@k treats each trial as independent -- the agent doesn't see its previous failures. Real-world agents often work differently: they try, fail, get error output, and try again. The Ralph pattern measures this feedback loop.
+
+**The question it answers:** Is 60% pass@1 the agent's ceiling, or just its first-try performance?
+
+Consider a code agent that fixes bugs. Traditional eval: 60% success rate. But if you feed the test failures back to the agent and let it retry:
+
+```
+pass@1:          60%   (baseline)
+pass@3 iterative: 91%  (with feedback from failures)
+recovery_rate:    78%  (78% of first-try failures became successes)
 ```
 
-**Use when:** You can specify exact expected state.
+This changes the deployment decision completely. You don't need a better prompt -- you need a retry loop with error feedback.
 
-### Model-Based Graders (When Necessary)
+Contrast with an agent where feedback doesn't help:
 
-LLM judges for open-ended tasks.
+```
+pass@1:          60%
+pass@3 iterative: 64%  (plateau)
+recovery_rate:    10%
+```
 
-**The trap:** LLMs can't reliably grade their own outputs without bias.
+Same baseline performance, completely different architecture recommendation. The first agent needs a feedback loop. The second needs a better model or approach.
 
-**The solution:** Multi-judge agreement or human spot-checks.
+### Key Iterative Metrics
 
-**Use when:**
-- Output varies legitimately (creative writing, explanations)
-- Outcome matters more than path
-- Applying partial credit for multi-component tasks
+| Metric | Formula | What It Tells You |
+|--------|---------|-------------------|
+| **recovery_rate** | (pass@k - pass@1) / (1 - pass@1) | Fraction of failures that become successes with feedback |
+| **iterations_to_pass** | Number of retries until success | How fast the agent learns from feedback |
+| **feedback_sensitivity** | Score change per iteration | Whether guidance produces measurable improvement |
+| **ceiling_score** | Max score across all iterations | Best the agent can achieve with unlimited retries |
 
-### The Grading Principle
+A recovery_rate above 50% means feedback loops are worth building. Below 25% means the failures are structural -- the agent doesn't have the capability, and retrying won't create it.
 
-> "Grade what the agent produced, not the path it took."
-
-If 5 different correct solutions exist, your grader must accept all 5. Path-dependent grading creates false failures.
-
----
-
-## Real-World Benchmark Patterns
-
-Production benchmarks reveal design principles:
-
-| Benchmark | Domain | Key Insight |
-|-----------|--------|-------------|
-| **SWE-bench Verified** | Code agents | Test suites are ground truth; 500 tasks >> 2294 unverified |
-| **τ2-Bench** | Conversation | Multi-turn state tracking; turn limits prevent rambling |
-| **WebArena** | Web agents | Screenshot + state inspection; must verify GUI changes |
-| **OSWorld** | Computer use | File system state is proof of work |
-
-The pattern: Verify actual state changes, not LLM claims about state changes.
+(Source: Ralph pattern, ghuntley.com/ralph; Anthropic 2026 building effective agents)
 
 ---
 
-## The Saturation Problem
+## Cost as a First-Class Metric
 
-> "100% pass rate means the eval only catches regressions."
+A grader that costs more than the thing it's grading is broken.
 
-**Why it matters:** You've stopped measuring improvement. The test set is too easy.
+Model-based graders consume tokens on every evaluation call. If you run 100 test cases across 5 trials each with an LLM judge, that's 500 grading calls. At Sonnet pricing ($3/M input, $15/M output), a verbose rubric grader can easily cost more per run than the agent outputs it's evaluating.
 
-**Anthropic guidance:** Target 60-80% pass rates for active development. This leaves headroom to measure progress.
+### What to Track
 
-**The fix when saturated:**
-1. Add harder tasks from recent failures
-2. Expand to edge cases
-3. Increase complexity (multi-step → long-horizon)
+| Metric | Why |
+|--------|-----|
+| Cost per eval run | Budget planning -- know what a suite costs before scaling |
+| Cost per success | Efficiency -- cheap failures are fine, expensive failures aren't |
+| Grader cost vs agent cost | Sanity check -- grading shouldn't dominate the budget |
+| Context utilization | How much of the model's context window each eval consumes |
 
-Evals are living artifacts. They must grow with capability.
+### The Economics of Grader Selection
+
+Code graders cost nothing to run. Model graders cost tokens per call. The routing decision from the grader section has a cost dimension: use code graders wherever possible, and reserve model graders for dimensions that genuinely require judgment.
+
+For high-volume eval suites, consider using a cheaper model as judge (Haiku instead of Sonnet) and calibrating its scores against a small human-labeled sample. The accuracy tradeoff is usually worth the 10-20x cost reduction.
+
+Set budget guardrails. A per-case limit ($0.50) and a per-suite limit ($50) prevent runaway costs during development. (Source: tokencost library, Anthropic pricing)
+
+---
+
+## Two-Sided Testing
+
+Every capability has two ways to fail. Measuring only one side creates blind spots.
+
+A skill that activates on every prompt has perfect recall -- it never misses a valid trigger. It also has terrible precision -- it fires on irrelevant prompts, generates noise, and trains users to ignore it.
+
+A skill that activates only on exact keyword matches has perfect precision -- when it fires, it's always relevant. It also has terrible recall -- it misses paraphrases, synonyms, and natural-language variations of valid triggers.
+
+F1 forces both sides into one score:
+
+```
+Precision = correct activations / total activations     ("when it fires, is it right?")
+Recall    = correct activations / should-have-fired     ("when it should fire, does it?")
+F1        = 2 * (Precision * Recall) / (Precision + Recall)
+```
+
+You can't game F1 by optimizing one side. High F1 requires both high precision and high recall.
+
+This applies beyond skill activation. Any binary decision the agent makes -- call this tool or don't, flag this issue or don't, trigger this workflow or don't -- has the same two-failure-mode structure.
+
+### Reading the Pattern
+
+| Observation | Diagnosis | Action |
+|-------------|-----------|--------|
+| High recall, low precision | Fires on everything | Tighten trigger criteria, add exclusions |
+| High precision, low recall | Barely fires | Broaden trigger, add intent variations |
+| Both low | Fundamentally miscalibrated | Rethink the activation logic |
+| Both high (F1 > 0.85) | Working well | Monitor for regression |
+
+---
+
+## Saturation: When Evals Stop Teaching You Things
+
+A 100% pass rate means the eval only catches regressions. You've stopped measuring improvement because the test set is too easy.
+
+Anthropic's guidance: target 60-80% pass rates during active development. This provides headroom to detect improvements and enough failures to analyze.
+
+When a suite saturates:
+1. Add harder tasks drawn from real production failures
+2. Expand into edge cases the current suite doesn't cover
+3. Increase task complexity (single-step to multi-step to long-horizon)
+
+Evals are living artifacts. They grow with the system's capability. The moment you stop adding to them, they start decaying into regression tests. That's useful but incomplete. (Source: Anthropic 2026, "monitor saturation")
 
 ---
 
 ## Defense in Depth
 
-No single eval catches everything.
+No single evaluation method catches everything.
 
-| Layer | Speed | Coverage | Catches |
-|-------|-------|----------|---------|
-| **Automated regression tests** | Fast | Narrow | Breaking changes |
-| **Production monitoring** | Real-time | Broad | Unexpected real-world behavior |
-| **A/B testing** | Days | Statistical | Outcome differences |
-| **Transcript review** | Slow | Deep | Reasoning failures |
-| **Human studies** | Very slow | Gold standard | Subjective quality |
+| Layer | Speed | What It Catches |
+|-------|-------|-----------------|
+| Automated evals (CI) | Minutes | Regressions, known failure modes |
+| Production monitoring | Real-time | Unexpected behavior in the wild |
+| A/B testing | Days-weeks | Statistical outcome differences |
+| Transcript review | Hours | Reasoning failures, grader bugs |
+| Human studies | Weeks | Subjective quality, user experience |
 
-The Swiss Cheese model: Each layer has holes. Safety comes from holes rarely aligning.
+Each layer has holes. Automated evals miss novel failure modes. Production monitoring misses subtle quality degradation. Transcript review doesn't scale. The Swiss Cheese model: safety comes from the holes rarely aligning across layers.
 
-**Example composite strategy:**
-```
-Pre-deploy: Automated evals (regression prevention)
-Post-deploy: A/B test (outcome validation)
-Weekly: Transcript review (failure pattern discovery)
-Quarterly: Human study (subjective quality check)
-```
+A practical layering:
+- **Pre-deploy:** Automated eval suite (regression gate)
+- **Post-deploy:** A/B test against previous version (outcome validation)
+- **Weekly:** Review 20 transcripts from lowest-scoring cases (failure pattern discovery)
+- **Monthly:** Refresh test set with new production failures (suite growth)
 
 ---
 
-## Why These Principles
+## Connection to ix
 
-### Start Early (Step 0)
+build-eval teaches the methodology: what to measure, which grader to use, which metrics matter for which agent type, how to handle non-determinism and iteration.
 
-Building evals after the agent is like writing tests after shipping.
+ix is the experimentation platform that runs it.
 
-**The pattern:** 20-50 tasks from actual failures becomes your foundation. Real problems, not hypothetical ones.
+| build-eval decides | ix handles |
+|-------------------|------------|
+| Which grader type (code, model, human) | Sensor protocol -- sensors implement grading logic |
+| What to measure (pass@k, recovery_rate, F1) | Analysis pipeline -- aggregate_readings, compute_metrics |
+| How many trials | Experiment config -- trials per probe, statistical rigor |
+| Test case design | Probe definition -- stimulus + ground truth |
+| What agent configurations to compare | Subject definition -- agent config as independent variable |
 
-### Unambiguous Tasks (Step 1)
+The skill informs the design decisions. The platform handles execution: running probes across subjects, managing trials for statistical validity, computing metrics with appropriate rigor (Bayesian for small-N, not CLT), and persisting results for comparison.
 
-> "If an expert would debate whether the agent succeeded, the task is poorly specified."
-
-Vague goals create grader arguments. Evals measure grader quality, not agent quality.
-
-### Balanced Datasets (Step 2)
-
-Positive-only test sets let agents overfit to "always yes."
-
-**The fix:** Include negative examples (should_not_trigger cases) to measure precision.
-
-### Environment Isolation (Step 3)
-
-Shared state between test runs creates hidden dependencies.
-
-**The failure:** Test 5 passes because Test 3 created a file. Reordering breaks everything.
-
-**The fix:** Clean environment per trial.
-
-### Read Transcripts (Step 5)
-
-Metrics tell you where. Transcripts tell you why.
-
-Patterns emerge: "The agent always fails when X and Y both happen." That becomes your next test case.
-
-### Maintain as Artifact (Step 7)
-
-Evals decay without ownership. Tests bitrot. Benchmarks saturate.
-
-**The fix:** Dedicated ownership. Someone responsible for keeping evals relevant.
+You can use the build-eval methodology without ix -- the concepts work with any eval framework. But ix operationalizes it: repeatable experiments, controlled comparisons, phased execution, persistent results.
 
 ---
 
-## Effect Sizes That Matter
+## Sources
 
-From Anthropic's production deployment research:
-
-| Change | Impact |
-|--------|--------|
-| Adding behavioral evals (Bloom) | Caught alignment issues automated tests missed |
-| Transcript review | Identified grader bugs in 15% of evals |
-| Pass@5 vs pass@1 | 98% vs 75% apparent reliability (same model) |
-
-The pattern: Multiple measurement modes, multiple angles, continuous refinement.
-
----
-
-## The Test
-
-For every eval you write:
-
-1. **Does it test both failure modes?** (false positive AND false negative)
-2. **Is the task unambiguous?** (would experts agree on success?)
-3. **Does it measure outcome, not path?** (accepts all valid solutions)
-4. **Can you explain what it catches?** (if not, it's not testing anything meaningful)
-5. **Will it survive model improvements?** (or saturate immediately)
-
-Evals that fail these questions waste time or create false confidence.
-
----
-
-## The Deeper Why
-
-Evaluation isn't about proving the agent works. It's about understanding where it doesn't—before users find out.
-
-### When Measurement Was Missing
-
-A skill activated on 95% of relevant prompts (high recall) — looked great. But it also activated on 60% of irrelevant prompts (low precision). Users saw noise, learned to ignore it, and eventually disabled the plugin entirely. Accuracy was 70% — a "passing grade" that hid a fatal flaw. F1 would have caught it: 0.58, clearly below threshold.
-
-Single metrics lie. Dimensional measurement tells the truth.
-
----
-
-The goal is compounding insight: each test reveals a failure mode, each failure mode becomes a test, the suite becomes a map of how the system can go wrong.
-
-That map is how you ship with confidence.
-
----
-
-See [sources.md](sources.md) for research citations and framework documentation.
+- Anthropic (2026). [Demystifying Evals for AI Agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents). Agent evaluation guide.
+- Anthropic (2026). [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents). Agent design and feedback loops.
+- Anthropic (2025). [Statistical Approach to Model Evals](https://www.anthropic.com/research/statistical-approach-to-model-evals). Clustering, paired differences.
+- Anthropic (2025). [Bloom: Automated Behavioral Evaluations](https://alignment.anthropic.com/2025/bloom-auto-evals/). Behavioral eval framework.
+- KDD 2025. [LLM Agent Evaluation Survey](https://arxiv.org/abs/2507.21504). Comprehensive taxonomy.
+- NeurIPS 2023. [Judging LLM-as-a-Judge](https://arxiv.org/abs/2310.05470). Judge bias analysis.
+- Ralph pattern. [ghuntley.com/ralph](https://ghuntley.com/ralph/). Iterative eval loop.
+- MCPGauge (2025). [arxiv:2506.07540](https://arxiv.org/abs/2506.07540). MCP server evaluation.
+- Scott Spence. [Skill activation study](https://scottspence.com/posts/how-to-make-claude-code-skills-activate-reliably). 200+ test methodology.

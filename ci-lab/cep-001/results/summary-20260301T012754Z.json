@@ -1,0 +1,32 @@
+{
+  "experiment_name": "cep-003-skills-vs-references",
+  "probe_results": [
+    {
+      "probe_id": "boundary-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: locate(db-migrate-v2)",
+        "correct: locate(db-migrate-v2)",
+        "correct: locate(db-migrate-v2)",
+        "correct: locate(db-migrate-v2)",
+        "correct: locate(db-migrate-v2)"
+      ]
+    }
+  ],
+  "pass_rate": 1.0,
+  "mean_score": 1.0,
+  "min_score": 1.0,
+  "max_score": 1.0,
+  "config_hash": "1ce9ff35879465dc",
+  "run_timestamp": "2026-03-01T01:27:54.187429Z",
+  "ix_version": "0.0.1-alpha",
+  "status": "excellent"
+}

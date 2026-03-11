@@ -4,9 +4,10 @@ Experiment definition and result types.
 Agent response types (AgentResponse) live in Matrix.
 """
 
+from datetime import UTC, datetime
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 
 from ix.domain.types import Probe, Subject
 
@@ -73,18 +74,35 @@ class ProbeResult(BaseModel, frozen=True):
 
 
 class ExperimentResults(BaseModel, frozen=True):
-    """Complete results for one experiment run."""
+    """Complete results for one experiment run.
+
+    Status is derived from pass_rate — no separate interpretation layer.
+    Provenance fields trace results back to the config that produced them.
+    """
 
     experiment_name: str
+    subject: str = ""
     probe_results: tuple[ProbeResult, ...] = ()
 
     # Summary metrics
+    pass_rate: float = 0.0
     mean_score: float = 0.0
-    std_dev: float = 0.0
     min_score: float = 0.0
     max_score: float = 0.0
 
-    # Interpretation
-    status: str = "pending"
-    issues: tuple[str, ...] = ()
-    suggestions: tuple[str, ...] = ()
+    # Provenance — trace results to their source
+    config_hash: str = ""
+    run_timestamp: datetime | None = None
+    ix_version: str = ""
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def status(self) -> str:
+        """Status derived from pass rate. The numbers speak."""
+        if self.pass_rate >= 1.0:
+            return "excellent"
+        if self.pass_rate >= 0.85:
+            return "good"
+        if self.pass_rate >= 0.50:
+            return "needs_work"
+        return "poor"

@@ -1,0 +1,854 @@
+{
+  "experiment_name": "cep-003-skills-vs-references",
+  "probe_results": [
+    {
+      "probe_id": "el-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: locate(auth-decision-2024)",
+        "correct: locate(auth-decision-2024)",
+        "correct: locate(auth-decision-2024)",
+        "correct: locate(auth-decision-2024)",
+        "correct: locate(auth-decision-2024)",
+        "correct: locate(auth-decision-2024)",
+        "correct: locate(auth-decision-2024)",
+        "correct: locate(auth-decision-2024)",
+        "correct: locate(auth-decision-2024)",
+        "correct: locate(auth-decision-2024)"
+      ]
+    },
+    {
+      "probe_id": "el-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: excavate(retry strategies debate whether to retry at all discussion)",
+        "correct: excavate(retry strategies debate whether to retry at all)",
+        "correct: excavate(retry strategies debate whether to retry at all discussion)",
+        "correct: excavate(retry strategies debate whether to retry at all)",
+        "correct: excavate(retry strategies debate whether to retry at all discussion)",
+        "correct: excavate(retry strategies debate whether to retry at all discussion)",
+        "correct: excavate(retry strategies debate whether to retry at all discussion)",
+        "correct: excavate(retry strategies debate whether to retry at all discussion not config)",
+        "correct: excavate(retry strategies debate whether to retry at all discussion)",
+        "correct: excavate(retry strategies debate whether to retry at all discussion)"
+      ]
+    },
+    {
+      "probe_id": "el-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: locate(7f3a9b2c)",
+        "correct: locate(7f3a9b2c)",
+        "correct: locate(7f3a9b2c)",
+        "correct: locate(7f3a9b2c)",
+        "correct: locate(7f3a9b2c)",
+        "correct: locate(7f3a9b2c)",
+        "correct: locate(7f3a9b2c)",
+        "correct: locate(7f3a9b2c)",
+        "correct: locate(7f3a9b2c)",
+        "correct: locate(7f3a9b2c)"
+      ]
+    },
+    {
+      "probe_id": "el-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: excavate(DynamoDB Postgres October database comparison)",
+        "correct: excavate(DynamoDB Postgres October conversation database comparison)",
+        "correct: excavate(DynamoDB Postgres October conversation database choice)",
+        "correct: excavate(DynamoDB Postgres October database comparison)",
+        "correct: excavate(DynamoDB Postgres October conversation database choice)",
+        "correct: excavate(DynamoDB Postgres October conversation database comparison)",
+        "correct: excavate(DynamoDB Postgres October conversation database comparison)",
+        "correct: excavate(DynamoDB Postgres October conversation database comparison)",
+        "correct: excavate(DynamoDB Postgres October database comparison)",
+        "correct: excavate(DynamoDB Postgres October conversation database comparison)"
+      ]
+    },
+    {
+      "probe_id": "el-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: locate(docs/arch/adr-017.md)",
+        "correct: locate(docs/arch/adr-017.md)",
+        "correct: locate(docs/arch/adr-017.md)",
+        "correct: locate(docs/arch/adr-017.md)",
+        "correct: locate(docs/arch/adr-017.md)",
+        "correct: locate(docs/arch/adr-017.md)",
+        "correct: locate(docs/arch/adr-017.md)",
+        "correct: locate(docs/arch/adr-017.md)",
+        "correct: locate(docs/arch/adr-017.md)",
+        "correct: locate(docs/arch/adr-017.md)"
+      ]
+    },
+    {
+      "probe_id": "es-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()"
+      ]
+    },
+    {
+      "probe_id": "es-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: excavate(caching)",
+        "correct: excavate(caching)",
+        "correct: excavate(caching)",
+        "correct: excavate(caching cache cached)",
+        "correct: excavate(caching)",
+        "correct: excavate(caching)",
+        "correct: excavate(caching)",
+        "correct: excavate(caching)",
+        "correct: excavate(caching)",
+        "correct: excavate(caching)"
+      ]
+    },
+    {
+      "probe_id": "es-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()"
+      ]
+    },
+    {
+      "probe_id": "es-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: excavate(deployment Q1)",
+        "correct: excavate(deployment discussions Q1)",
+        "correct: excavate(deployment Q1 discussions)",
+        "correct: excavate(deployment Q1)",
+        "correct: excavate(deployment Q1)",
+        "correct: excavate(deployment discussions Q1)",
+        "correct: excavate(deployment Q1)",
+        "correct: excavate(deployment discussions Q1)",
+        "correct: excavate(deployment discussions Q1)",
+        "correct: excavate(deployment Q1)"
+      ]
+    },
+    {
+      "probe_id": "es-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()"
+      ]
+    },
+    {
+      "probe_id": "et-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: excavate(API design)",
+        "correct: excavate(API design)",
+        "correct: excavate(API design discussions RFCs meeting notes decisions architecture endpoints REST GraphQL)",
+        "correct: excavate(API design)",
+        "correct: excavate(API design)",
+        "correct: excavate(API design)",
+        "correct: excavate(API design)",
+        "correct: excavate(API design)",
+        "correct: excavate(API design)",
+        "correct: excavate(API design)"
+      ]
+    },
+    {
+      "probe_id": "et-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: trace(rate-limit-rfc)",
+        "correct: trace(rate-limit-rfc)",
+        "correct: trace(rate-limit-rfc)",
+        "correct: trace(rate-limit-rfc)",
+        "correct: trace(rate-limit-rfc)",
+        "correct: trace(rate-limit-rfc)",
+        "correct: trace(rate-limit-rfc)",
+        "correct: trace(rate-limit-rfc)",
+        "correct: trace(rate-limit-rfc)",
+        "correct: trace(rate-limit-rfc)"
+      ]
+    },
+    {
+      "probe_id": "et-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: excavate(rate limiting)",
+        "correct: excavate(rate limiting)",
+        "correct: excavate(rate limiting)",
+        "correct: excavate(rate limiting)",
+        "correct: excavate(rate limiting)",
+        "correct: excavate(rate limiting)",
+        "correct: excavate(rate limiting)",
+        "correct: excavate(rate limiting)",
+        "correct: excavate(rate limiting)",
+        "correct: excavate(rate limiting)"
+      ]
+    },
+    {
+      "probe_id": "et-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: trace(security-review-v1)",
+        "correct: trace(security-review-v1)",
+        "correct: trace(security-review-v1)",
+        "correct: trace(security-review-v1)",
+        "correct: trace(security-review-v1)",
+        "correct: trace(security-review-v1)",
+        "correct: trace(security-review-v1)",
+        "correct: trace(security-review-v1)",
+        "correct: trace(security-review-v1)",
+        "correct: trace(security-review-v1)"
+      ]
+    },
+    {
+      "probe_id": "et-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: excavate(authentication auth decisions history discussions)",
+        "correct: excavate(authentication auth decisions history)",
+        "correct: excavate(authentication auth decisions history)",
+        "correct: excavate(authentication auth decisions history)",
+        "correct: excavate(authentication auth decisions history)",
+        "correct: excavate(authentication auth decisions history)",
+        "correct: excavate(authentication auth decisions history discussions)",
+        "correct: excavate(authentication auth decisions history discussions)",
+        "correct: excavate(authentication auth decisions history)",
+        "correct: excavate(authentication auth decisions)"
+      ]
+    },
+    {
+      "probe_id": "lt-001",
+      "score": 0.7,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: trace(api-design-v1)",
+        "correct: trace(api-design-v1)",
+        "wrong command: got locate, expected trace",
+        "wrong command: got locate, expected trace",
+        "correct: trace(api-design-v1)",
+        "wrong command: got locate, expected trace",
+        "correct: trace(api-design-v1)",
+        "correct: trace(api-design-v1)",
+        "correct: trace(api-design-v1)",
+        "correct: trace(api-design-v1)"
+      ]
+    },
+    {
+      "probe_id": "lt-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: locate(deploy-runbook-v3)",
+        "correct: locate(deploy-runbook-v3)",
+        "correct: locate(deploy-runbook-v3)",
+        "correct: locate(deploy-runbook-v3)",
+        "correct: locate(deploy-runbook-v3)",
+        "correct: locate(deploy-runbook-v3)",
+        "correct: locate(deploy-runbook-v3)",
+        "correct: locate(deploy-runbook-v3)",
+        "correct: locate(deploy-runbook-v3)",
+        "correct: locate(deploy-runbook-v3)"
+      ]
+    },
+    {
+      "probe_id": "lt-003",
+      "score": 0.3,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "details": [
+        "wrong command: got locate, expected trace",
+        "correct: trace(auth-rfc-001)",
+        "correct: trace(auth-rfc-001)",
+        "wrong command: got locate, expected trace",
+        "wrong command: got locate, expected trace",
+        "wrong command: got locate, expected trace",
+        "wrong command: got locate, expected trace",
+        "wrong command: got locate, expected trace",
+        "wrong command: got locate, expected trace",
+        "correct: trace(auth-rfc-001)"
+      ]
+    },
+    {
+      "probe_id": "lt-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: locate(perf-audit-q4)",
+        "correct: locate(perf-audit-q4)",
+        "correct: locate(perf-audit-q4)",
+        "correct: locate(perf-audit-q4)",
+        "correct: locate(perf-audit-q4)",
+        "correct: locate(perf-audit-q4)",
+        "correct: locate(perf-audit-q4)",
+        "correct: locate(perf-audit-q4)",
+        "correct: locate(perf-audit-q4)",
+        "correct: locate(perf-audit-q4)"
+      ]
+    },
+    {
+      "probe_id": "lt-005",
+      "score": 0.8,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: trace(final-arch-choice)",
+        "correct: trace(final-arch-choice)",
+        "correct: trace(final-arch-choice)",
+        "correct: trace(final-arch-choice)",
+        "wrong command: got locate, expected trace",
+        "correct: trace(final-arch-choice)",
+        "correct: trace(final-arch-choice)",
+        "wrong command: got locate, expected trace",
+        "correct: trace(final-arch-choice)",
+        "correct: trace(final-arch-choice)"
+      ]
+    },
+    {
+      "probe_id": "neg-001",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus"
+      ]
+    },
+    {
+      "probe_id": "neg-002",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus"
+      ]
+    },
+    {
+      "probe_id": "neg-003",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus",
+        "incorrectly used nexus"
+      ]
+    },
+    {
+      "probe_id": "neg-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correctly did not use nexus",
+        "correctly did not use nexus",
+        "correctly did not use nexus",
+        "correctly did not use nexus",
+        "correctly did not use nexus",
+        "correctly did not use nexus",
+        "correctly did not use nexus",
+        "correctly did not use nexus",
+        "correctly did not use nexus",
+        "correctly did not use nexus"
+      ]
+    },
+    {
+      "probe_id": "tc-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: connect(deploy-postmortem deploy-plan)",
+        "correct: connect(deploy-postmortem deploy-plan)",
+        "correct: connect(deploy-postmortem deploy-plan)",
+        "correct: connect(deploy-postmortem deploy-plan)",
+        "correct: connect(deploy-postmortem deploy-plan)",
+        "correct: connect(deploy-postmortem deploy-plan)",
+        "correct: connect(deploy-postmortem deploy-plan)",
+        "correct: connect(deploy-postmortem deploy-plan)",
+        "correct: connect(deploy-postmortem deploy-plan)",
+        "correct: connect(deploy-postmortem deploy-plan)"
+      ]
+    },
+    {
+      "probe_id": "tc-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: trace(auth-v1)",
+        "correct: trace(auth-v1)",
+        "correct: trace(auth-v1)",
+        "correct: trace(auth-v1)",
+        "correct: trace(auth-v1)",
+        "correct: trace(auth-v1)",
+        "correct: trace(auth-v1)",
+        "correct: trace(auth-v1)",
+        "correct: trace(auth-v1)",
+        "correct: trace(auth-v1)"
+      ]
+    },
+    {
+      "probe_id": "tc-003",
+      "score": 0.9,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "details": [
+        "correct: connect(cache-strategy perf-baseline)",
+        "correct: connect(cache-strategy perf-baseline)",
+        "correct: connect(cache-strategy perf-baseline)",
+        "correct: connect(cache-strategy perf-baseline)",
+        "correct: connect(cache-strategy perf-baseline)",
+        "correct: connect(cache-strategy perf-baseline)",
+        "correct: connect(cache-strategy perf-baseline)",
+        "correct: connect(cache-strategy perf-baseline)",
+        "wrong command: got locate, expected connect",
+        "correct: connect(cache-strategy perf-baseline)"
+      ]
+    },
+    {
+      "probe_id": "tc-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: trace(initial-proposal)",
+        "correct: trace(initial-proposal)",
+        "correct: trace(initial-proposal)",
+        "correct: trace(initial-proposal)",
+        "correct: trace(initial-proposal)",
+        "correct: trace(initial-proposal)",
+        "correct: trace(initial-proposal)",
+        "correct: trace(initial-proposal)",
+        "correct: trace(initial-proposal)",
+        "correct: trace(initial-proposal)"
+      ]
+    },
+    {
+      "probe_id": "tc-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: connect(meeting-notes-0312 action-items-0312)",
+        "correct: connect(meeting-notes-0312 action-items-0312)",
+        "correct: connect(meeting-notes-0312 action-items-0312)",
+        "correct: connect(meeting-notes-0312 action-items-0312)",
+        "correct: connect(meeting-notes-0312 action-items-0312)",
+        "correct: connect(meeting-notes-0312 action-items-0312)",
+        "correct: connect(meeting-notes-0312 action-items-0312)",
+        "correct: connect(meeting-notes-0312 action-items-0312)",
+        "correct: connect(meeting-notes-0312 action-items-0312)",
+        "correct: connect(meeting-notes-0312 action-items-0312)"
+      ]
+    }
+  ],
+  "pass_rate": 0.8620689655172413,
+  "mean_score": 0.8517241379310344,
+  "min_score": 0.0,
+  "max_score": 1.0,
+  "config_hash": "584bea34f17374ef",
+  "run_timestamp": "2026-03-05T14:42:53.200788Z",
+  "ix_version": "0.0.1-alpha",
+  "status": "good"
+}

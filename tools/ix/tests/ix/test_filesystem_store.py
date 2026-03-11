@@ -140,15 +140,16 @@ class TestSaveSummary:
     def test_creates_summary(self, store: FilesystemStore, lab: Path):
         results = ExperimentResults(
             experiment_name="test-exp",
-            mean_score=0.95,
-            std_dev=0.05,
+            pass_rate=0.95,
+            mean_score=0.90,
             min_score=0.8,
             max_score=1.0,
         )
         path = store.save_summary("test-exp", results)
         assert path.exists()
         data = json.loads(path.read_text())
-        assert data["mean_score"] == 0.95
+        assert data["pass_rate"] == 0.95
+        assert data["mean_score"] == 0.90
 
     def test_creates_latest(self, store: FilesystemStore, lab: Path):
         results = ExperimentResults(experiment_name="test-exp")

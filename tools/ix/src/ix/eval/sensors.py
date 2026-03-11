@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import importlib.util
 import re
+import signal
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -38,8 +39,8 @@ class CompositeSensor:
     def name(self) -> str:
         return "+".join(s.name for s in self._sensors)
 
-    def sense(self, trial: Trial) -> list[Reading]:
-        return [r for s in self._sensors for r in s.sense(trial)]
+    def measure(self, trial: Trial) -> list[Reading]:
+        return [r for s in self._sensors for r in s.measure(trial)]
 
 
 # --- Config Models ---
@@ -59,20 +60,39 @@ class FunctionTestSensorConfig(BaseModel, frozen=True, extra="forbid"):
     timeout: int = 30
 
 
+class ToolUsageSensorConfig(BaseModel, frozen=True, extra="forbid"):
+    """Config for ToolUsageSensor. Validated from experiment.yaml sensor section."""
+
+    type: str = "tool-usage"
+    expected_tool: str = "memex"
+
+
+class OutcomeSensorConfig(BaseModel, frozen=True, extra="forbid"):
+    """Config for OutcomeSensor. Validated from experiment.yaml sensor section."""
+
+    type: str = "outcome"
+    graders_module: str | None = None  # Path to Python module with grader functions
+
+
 # --- Sensors ---
 
 
 class ActivationSensor:
-    """Checks whether the expected skill activated in the response.
+    """Deterministic grader — did the agent activate the right skill?
 
-    Configured with expected_skill at construction. Ground truth is
-    the skill name — same for all probes in the experiment.
+    Expectation-aware: accounts for must_trigger vs should_not_trigger.
+    A should_not_trigger probe that correctly doesn't activate → passed=True.
     """
 
     Config = ActivationSensorConfig
 
-    def __init__(self, expected_skill: str = "build-eval"):
+    def __init__(
+        self,
+        expected_skill: str = "build-eval",
+        expectations: dict[str, str] | None = None,
+    ):
         self._expected_skill = expected_skill
+        self._expectations = expectations or {}
 
     @classmethod
     def from_config(
@@ -81,14 +101,18 @@ class ActivationSensor:
         probes: tuple[Probe, ...] = (),
         **kwargs: Any,
     ) -> ActivationSensor:
-        return cls(expected_skill=config.expected_skill)
+        expectations = {
+            p.id: p.metadata.get("expectation", "must_trigger")
+            for p in probes
+        }
+        return cls(expected_skill=config.expected_skill, expectations=expectations)
 
     @property
     def name(self) -> str:
         return "activation"
 
-    def sense(self, trial: Trial) -> list[Reading]:
-        """Check if any tool call activated the expected skill."""
+    def measure(self, trial: Trial) -> list[Reading]:
+        """Grade: did the agent's activation match the expectation?"""
         response: AgentResponse = trial.response
 
         activated = any(
@@ -98,14 +122,23 @@ class ActivationSensor:
             if tc.get("name") == "Skill"
         )
 
+        expectation = self._expectations.get(trial.probe_id, "must_trigger")
+
+        if expectation == "must_trigger":
+            passed = activated
+        elif expectation == "should_not_trigger":
+            passed = not activated
+        else:  # acceptable
+            passed = True
+
         return [
             Reading(
                 sensor_name=self.name,
                 probe_id=trial.probe_id,
                 trial_index=trial.trial_index,
-                passed=activated,
-                score=1.0 if activated else 0.0,
-                details=f"skill={self._expected_skill}, activated={activated}",
+                passed=passed,
+                score=1.0 if passed else 0.0,
+                details=f"skill={self._expected_skill}, activated={activated}, expected={expectation}",
             )
         ]
 
@@ -155,7 +188,7 @@ class FunctionTestSensor:
     def name(self) -> str:
         return "function-test"
 
-    def sense(self, trial: Trial) -> list[Reading]:
+    def measure(self, trial: Trial) -> list[Reading]:
         """Extract code from response, run against probe's test cases."""
         truth = self._ground_truth.get(trial.probe_id, {})
         test_cases = truth.get("test_cases", [])
@@ -179,6 +212,8 @@ class FunctionTestSensor:
 
         try:
             fn = self._load_function(code, function_name)
+        except TimeoutError as e:
+            return [self._reading(trial, passed=False, score=0.0, details=f"timeout: {e}")]
         except Exception as e:
             return [self._reading(trial, passed=False, score=0.0, details=f"load error: {e}")]
 
@@ -261,13 +296,347 @@ class FunctionTestSensor:
         return text
 
     def _load_function(self, code: str, function_name: str):
-        """Load code into isolated module, extract named function."""
+        """Load code into isolated module, extract named function.
+
+        Enforces self._timeout on exec_module to prevent infinite loops
+        in generated code. Uses SIGALRM on Unix; noop on Windows.
+        """
         tmp = Path(tempfile.mktemp(suffix=".py"))
         tmp.write_text(code)
         try:
             spec = importlib.util.spec_from_file_location("solution", tmp)
             module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
+            self._exec_with_timeout(spec.loader.exec_module, module)
         finally:
             tmp.unlink()
         return getattr(module, function_name)
+
+    def _exec_with_timeout(self, fn, *args):
+        """Execute fn with SIGALRM timeout. Noop on platforms without SIGALRM."""
+        if not hasattr(signal, "SIGALRM"):
+            return fn(*args)
+
+        def handler(signum, frame):
+            raise TimeoutError(f"execution exceeded {self._timeout}s timeout")
+
+        prev = signal.signal(signal.SIGALRM, handler)
+        signal.alarm(self._timeout)
+        try:
+            return fn(*args)
+        finally:
+            signal.alarm(0)
+            signal.signal(signal.SIGALRM, prev)
+
+
+class ToolUsageSensor:
+    """Checks if the agent used the right tool with the right subcommand.
+
+    Probe metadata carries expected usage:
+      expected_command: "dig"       — which subcommand
+      expected_args: "auth"         — substring in query (optional)
+
+    Scores: 1.0 = right tool + right command + right args,
+            0.5 = right tool + right command, wrong/missing args,
+            0.0 = wrong tool or no tool call.
+    """
+
+    Config = ToolUsageSensorConfig
+
+    def __init__(
+        self,
+        expected_tool: str = "memex",
+        expectations: dict[str, dict] | None = None,
+    ):
+        self._expected_tool = expected_tool
+        self._expectations = expectations or {}
+
+    @classmethod
+    def from_config(
+        cls,
+        config: ToolUsageSensorConfig,
+        probes: tuple[Probe, ...] = (),
+        **kwargs: Any,
+    ) -> "ToolUsageSensor":
+        expectations = {
+            p.id: {
+                "command": p.metadata.get("expected_command", ""),
+                "args": p.metadata.get("expected_query", p.metadata.get("expected_args", "")),
+                "expectation": p.metadata.get("expectation", "must_trigger"),
+            }
+            for p in probes
+        }
+        return cls(expected_tool=config.expected_tool, expectations=expectations)
+
+    @property
+    def name(self) -> str:
+        return "tool-usage"
+
+    def measure(self, trial: Trial) -> list[Reading]:
+        response: AgentResponse = trial.response
+        expect = self._expectations.get(trial.probe_id, {})
+        expected_cmd = expect.get("command", "")
+        expected_args = expect.get("args", "")
+        expectation = expect.get("expectation", "must_trigger")
+
+        # Find tool calls matching expected tool — direct or via Bash
+        matching = self._find_tool_calls(response.tool_calls)
+
+        if not matching:
+            # No tool call — correct for should_not_trigger
+            if expectation == "should_not_trigger":
+                return [self._reading(trial, passed=True, score=1.0,
+                                      details=f"correctly did not use {self._expected_tool}")]
+            return [self._reading(trial, passed=False, score=0.0,
+                                  details=f"no {self._expected_tool} tool call")]
+
+        # Tool was called — wrong for should_not_trigger
+        if expectation == "should_not_trigger":
+            return [self._reading(trial, passed=False, score=0.0,
+                                  details=f"incorrectly used {self._expected_tool}")]
+
+        tc = matching[0]
+        tc_input = tc.get("input", {})
+        actual_cmd = str(tc_input.get("command", "")).replace("\n", " ").strip()
+        actual_query = str(tc_input.get("query", "")).replace("\n", " ").strip()
+
+        # Check command correctness
+        cmd_correct = expected_cmd and expected_cmd.lower() in actual_cmd.lower()
+        args_correct = (
+            not expected_args
+            or expected_args.lower() in actual_query.lower()
+            or expected_args.lower() in str(tc_input).lower()
+        )
+
+        if cmd_correct and args_correct:
+            score = 1.0
+            passed = True
+            detail = f"correct: {actual_cmd}({actual_query})"
+        elif cmd_correct:
+            score = 0.5
+            passed = True
+            detail = f"right command ({actual_cmd}) but args missing/wrong: {actual_query}"
+        else:
+            score = 0.0
+            passed = False
+            detail = f"wrong command: got {actual_cmd}, expected {expected_cmd}"
+
+        return [self._reading(trial, passed=passed, score=score, details=detail)]
+
+    def _find_tool_calls(self, tool_calls: tuple[dict, ...]) -> list[dict]:
+        """Find tool calls matching expected_tool — direct or via Bash.
+
+        ClaudeAgent records Bash tool calls like:
+          {"name": "Bash", "input": {"command": "memex dig 'auth tokens'"}}
+        We parse these into normalized form matching the direct tool schema.
+        """
+        # Direct matches (AnthropicAgent style)
+        direct = [tc for tc in tool_calls if tc.get("name") == self._expected_tool]
+        if direct:
+            return direct
+
+        # Bash matches (ClaudeAgent style)
+        bash_matches = []
+        for tc in tool_calls:
+            if tc.get("name") != "Bash":
+                continue
+            cmd = str(tc.get("input", {}).get("command", ""))
+            if self._expected_tool not in cmd:
+                continue
+            # Parse "memex dig 'query'" → {"command": "dig", "query": "query"}
+            parsed = self._parse_bash_command(cmd)
+            if parsed:
+                bash_matches.append({"name": self._expected_tool, "input": parsed})
+        return bash_matches
+
+    def _parse_bash_command(self, bash_cmd: str) -> dict | None:
+        """Parse a bash command like 'memex dig "query"' into structured form.
+
+        Handles compound commands: 'cd /path && memex dig "query"'
+        Handles pipes: 'memex dig "query" | head'
+        """
+        # Split on && and ; to find the memex segment
+        import shlex
+
+        for segment in re.split(r"&&|;", bash_cmd):
+            segment = segment.strip()
+            if self._expected_tool not in segment:
+                continue
+
+            # Strip pipes — take only the memex part
+            segment = segment.split("|")[0].strip()
+
+            try:
+                parts = shlex.split(segment)
+            except ValueError:
+                parts = segment.split()
+
+            try:
+                tool_idx = next(i for i, p in enumerate(parts) if p == self._expected_tool)
+            except StopIteration:
+                continue
+
+            remaining = parts[tool_idx + 1:]
+            if not remaining:
+                return {"command": "", "query": ""}
+
+            # First non-flag arg is the subcommand
+            subcommand = ""
+            query_parts = []
+            for part in remaining:
+                if part.startswith("-"):
+                    continue
+                if not subcommand:
+                    subcommand = part
+                else:
+                    query_parts.append(part)
+
+            return {
+                "command": subcommand,
+                "query": " ".join(query_parts),
+            }
+
+        return None
+
+    def _reading(self, trial: Trial, *, passed: bool, score: float, details: str) -> Reading:
+        return Reading(
+            sensor_name=self.name,
+            probe_id=trial.probe_id,
+            trial_index=trial.trial_index,
+            passed=passed,
+            score=score,
+            details=details,
+        )
+
+
+class OutcomeSensor:
+    """Grades intent→outcome: did the agent's answer contain the expected facts?
+
+    Two grading modes:
+      1. Functional graders (preferred): Python functions per probe that validate
+         against corpus ground truth. Loaded from graders_module in config.
+      2. String containment (fallback): checks expected_facts from probe metadata.
+
+    Scores:
+      - answer_score: from grader function or fraction of expected_facts found
+      - efficiency metrics: num_turns, num_tool_calls, tokens (from AgentResponse)
+    """
+
+    Config = OutcomeSensorConfig
+
+    def __init__(
+        self,
+        ground_truth: dict[str, dict] | None = None,
+        graders: dict[str, Any] | None = None,
+    ):
+        self._ground_truth = ground_truth or {}
+        self._graders = graders or {}
+
+    @classmethod
+    def from_config(
+        cls,
+        config: OutcomeSensorConfig,
+        probes: tuple[Probe, ...] = (),
+        **kwargs: Any,
+    ) -> "OutcomeSensor":
+        ground_truth = {
+            p.id: {
+                "expected_facts": p.metadata.get("expected_facts", []),
+                "expected_command": p.metadata.get("expected_command", ""),
+            }
+            for p in probes
+        }
+        graders = {}
+        if config.graders_module:
+            graders = cls._load_graders(config.graders_module)
+        return cls(ground_truth=ground_truth, graders=graders)
+
+    @staticmethod
+    def _load_graders(module_path: str) -> dict[str, Any]:
+        """Load grader functions from a Python module file."""
+        spec = importlib.util.spec_from_file_location("graders", module_path)
+        if spec is None or spec.loader is None:
+            return {}
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        registry = getattr(mod, "GRADERS", {})
+        return dict(registry)
+
+    @property
+    def name(self) -> str:
+        return "outcome"
+
+    def measure(self, trial: Trial) -> list[Reading]:
+        response: AgentResponse = trial.response
+
+        # Efficiency metrics from AgentResponse
+        num_tool_calls = len(response.tool_calls)
+        metrics = {
+            "num_turns": response.num_turns,
+            "num_tool_calls": num_tool_calls,
+            "tokens_input": response.tokens_input,
+            "tokens_output": response.tokens_output,
+            "duration_ms": response.duration_ms,
+        }
+        if response.cost_usd is not None:
+            metrics["cost_usd"] = response.cost_usd
+
+        # Path quality: did it use the right command?
+        truth = self._ground_truth.get(trial.probe_id, {})
+        expected_cmd = truth.get("expected_command", "")
+        if expected_cmd and response.tool_calls:
+            cmd_used = any(
+                expected_cmd.lower() in str(tc.get("input", {}).get("command", "")).lower()
+                for tc in response.tool_calls
+            )
+            metrics["correct_command"] = cmd_used
+
+        # Grade: functional grader (preferred) or string containment (fallback)
+        grader = self._graders.get(trial.probe_id)
+        if grader is not None:
+            answer_score = grader(response.content)
+            details = f"grader={trial.probe_id}, score={answer_score:.0%}, turns={response.num_turns}, tools={num_tool_calls}"
+        else:
+            expected_facts = truth.get("expected_facts", [])
+            if not expected_facts:
+                return [self._reading(trial, passed=False, score=0.0,
+                                      details=f"no grader or expected_facts for probe '{trial.probe_id}'")]
+            content_lower = response.content.lower()
+            found = [f for f in expected_facts if f.lower() in content_lower]
+            missed = [f for f in expected_facts if f.lower() not in content_lower]
+            answer_score = len(found) / len(expected_facts)
+            details_parts = []
+            if found:
+                details_parts.append(f"found: {found}")
+            if missed:
+                details_parts.append(f"missed: {missed}")
+            details_parts.append(f"turns={response.num_turns}, tools={num_tool_calls}")
+            details = "; ".join(details_parts)
+
+        metrics["answer_score"] = answer_score
+
+        return [self._reading(
+            trial,
+            passed=answer_score > 0.5,
+            score=answer_score,
+            metrics=metrics,
+            details=details,
+        )]
+
+    def _reading(
+        self,
+        trial: Trial,
+        *,
+        passed: bool,
+        score: float,
+        details: str = "",
+        metrics: dict | None = None,
+    ) -> Reading:
+        return Reading(
+            sensor_name=self.name,
+            probe_id=trial.probe_id,
+            trial_index=trial.trial_index,
+            passed=passed,
+            score=score,
+            metrics=metrics or {},
+            details=details,
+        )

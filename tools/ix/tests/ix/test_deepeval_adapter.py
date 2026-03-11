@@ -61,13 +61,27 @@ class TestAgentModelAdapter:
 class TestDeepEvalSensorWithJudge:
     """Test DeepEvalSensor accepts a judge agent."""
 
-    def test_from_config_with_judge(self):
-        """from_config passes judge through to constructor."""
-        config = DeepEvalSensorConfig(metric="answer_relevancy", threshold=0.5)
+    def test_constructor_with_judge(self):
+        """Direct constructor accepts judge agent."""
         judge = MockAgent(expected_skill="judge")
+        sensor = DeepEvalSensor(
+            metric_name="answer_relevancy", threshold=0.5, judge=judge,
+        )
+        assert sensor.name == "deepeval.answer_relevancy"
 
-        sensor = DeepEvalSensor.from_config(config, probes=(), judge=judge)
+    def test_from_config_with_registry(self):
+        """from_config resolves judge from registry when model is set."""
+        from matrix import ComponentRegistry
 
+        registry = ComponentRegistry()
+        registry.register(
+            "matrix.agent.claude",
+            lambda **kw: MockAgent(expected_skill="judge"),
+        )
+        config = DeepEvalSensorConfig(
+            metric="answer_relevancy", threshold=0.5, model="haiku",
+        )
+        sensor = DeepEvalSensor.from_config(config, probes=(), registry=registry)
         assert sensor.name == "deepeval.answer_relevancy"
 
     @pytest.mark.skipif(

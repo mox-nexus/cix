@@ -1,0 +1,332 @@
+{
+  "experiment_name": "cep-003-skills-vs-references",
+  "probe_results": [
+    {
+      "probe_id": "el-001",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "el-002",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "el-003",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "el-004",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "el-005",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "es-001",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "es-002",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "es-003",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "es-004",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "es-005",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "et-001",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "et-002",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "et-003",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "et-004",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "et-005",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "lt-001",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "lt-002",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "lt-003",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "lt-004",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "lt-005",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "neg-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correctly did not use nexus"
+      ]
+    },
+    {
+      "probe_id": "neg-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correctly did not use nexus"
+      ]
+    },
+    {
+      "probe_id": "neg-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correctly did not use nexus"
+      ]
+    },
+    {
+      "probe_id": "neg-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correctly did not use nexus"
+      ]
+    },
+    {
+      "probe_id": "tc-001",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "tc-002",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "tc-003",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "tc-004",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    },
+    {
+      "probe_id": "tc-005",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "no nexus tool call"
+      ]
+    }
+  ],
+  "pass_rate": 0.13793103448275862,
+  "mean_score": 0.13793103448275862,
+  "min_score": 0.0,
+  "max_score": 1.0,
+  "config_hash": "1fee962c93f42ff7",
+  "run_timestamp": "2026-03-05T14:27:15.319989Z",
+  "ix_version": "0.0.1-alpha",
+  "status": "poor"
+}

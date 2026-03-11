@@ -1,12 +1,11 @@
-"""Post-DAG analysis — aggregate, metrics, interpret.
+"""Post-DAG analysis — aggregate readings into results.
 
-Pure functions operating on Reading types.
-Generic — works with any sensor. The Reading is the contract.
+Pure functions. The sensor is the grader — passed=True means correct.
+Analysis just counts.
 """
 
 from __future__ import annotations
 
-import statistics
 from collections import defaultdict
 from collections.abc import Callable
 
@@ -19,29 +18,21 @@ def aggregate_readings(
     probes: dict[str, Probe],
     on_probe_complete: Callable[[ProbeResult], None] | None = None,
 ) -> list[ProbeResult]:
-    """Group readings by probe_id, average scores across trials.
-
-    Sensor-agnostic. Uses Reading.score (continuous) when available,
-    falls back to Reading.passed (binary).
-    """
+    """Group readings by probe_id, compute pass rate per probe."""
     by_probe: dict[str, list[Reading]] = defaultdict(list)
     for reading in readings:
         by_probe[reading.probe_id].append(reading)
 
     probe_results: list[ProbeResult] = []
     for probe_id, probe_readings in by_probe.items():
-        if any(r.score is not None for r in probe_readings):
-            score = sum(r.score for r in probe_readings if r.score is not None) / len(
-                probe_readings
-            )
-        else:
-            score = sum(1 for r in probe_readings if r.passed) / len(probe_readings)
+        trial_scores = tuple(r.score for r in probe_readings)
+        score = sum(trial_scores) / len(trial_scores) if trial_scores else 0.0
 
         probe_result = ProbeResult(
             probe_id=probe_id,
             score=score,
             passed=score > 0.5,
-            trial_scores=tuple(r.score or (1.0 if r.passed else 0.0) for r in probe_readings),
+            trial_scores=trial_scores,
             details=tuple(r.details for r in probe_readings if r.details),
         )
         probe_results.append(probe_result)
@@ -53,52 +44,22 @@ def aggregate_readings(
 
 
 def compute_metrics(results: list[ProbeResult]) -> dict:
-    """Compute summary metrics from probe results.
+    """Compute pass rate and mean score across all probes.
 
-    Generic — computes mean score, std dev, min/max.
+    pass_rate: fraction of probes that passed (binary).
+    mean_score: mean of continuous per-probe scores (preserves resolution).
     """
     if not results:
-        return {"mean_score": 0.0, "std_dev": 0.0, "min_score": 0.0, "max_score": 0.0}
+        return {"pass_rate": 0.0, "mean_score": 0.0, "min_score": 0.0, "max_score": 0.0}
 
     scores = [r.score for r in results]
-    all_trial_scores = [s for r in results for s in r.trial_scores]
+    n_passed = sum(1 for r in results if r.passed)
 
     return {
-        "mean_score": statistics.mean(scores),
-        "std_dev": statistics.stdev(all_trial_scores) if len(all_trial_scores) > 1 else 0.0,
-        "min_score": min(all_trial_scores) if all_trial_scores else 0.0,
-        "max_score": max(all_trial_scores) if all_trial_scores else 0.0,
+        "pass_rate": n_passed / len(results),
+        "mean_score": sum(scores) / len(scores),
+        "min_score": min(scores),
+        "max_score": max(scores),
     }
 
 
-def interpret(metrics: dict) -> dict:
-    """Interpret metrics."""
-    mean = metrics.get("mean_score", 0.0)
-    std = metrics.get("std_dev", 0.0)
-
-    issues: list[str] = []
-    suggestions: list[str] = []
-
-    if mean < 0.10:
-        issues.append(f"Floor effect — mean={mean:.1%}, task may be too hard")
-    elif mean > 0.90:
-        issues.append(f"Ceiling effect — mean={mean:.1%}, task may be too easy")
-
-    if std > 0.25:
-        issues.append(f"High variance — std={std:.3f}, results may be noisy")
-        suggestions.append("Increase trial count or simplify task")
-
-    if mean >= 0.85:
-        status = "excellent"
-    elif mean >= 0.70:
-        status = "good"
-    elif mean >= 0.50:
-        status = "needs_work"
-    else:
-        status = "poor"
-
-    return {
-        "status": status,
-        "issues": tuple(issues),
-        "suggestions": tuple(suggestions),
-    }

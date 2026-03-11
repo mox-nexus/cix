@@ -1,0 +1,999 @@
+{
+  "experiment_name": "cep-003-skills-vs-references",
+  "probe_results": [
+    {
+      "probe_id": "dk-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: keyword(ECONNRESET timeout 30s)",
+        "correct: keyword(ECONNRESET timeout 30s)",
+        "correct: keyword(ECONNRESET timeout 30s)",
+        "correct: keyword(ECONNRESET timeout 30s)",
+        "correct: keyword(ECONNRESET timeout 30s)",
+        "correct: keyword(ECONNRESET timeout 30s)",
+        "correct: keyword(ECONNRESET timeout 30s)",
+        "correct: keyword(ECONNRESET timeout 30s)",
+        "correct: keyword(ECONNRESET timeout 30s)",
+        "correct: keyword(ECONNRESET timeout 30s)"
+      ]
+    },
+    {
+      "probe_id": "dk-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: dig(authentication best practices)",
+        "correct: dig(authentication best practices)",
+        "correct: dig(authentication best practices)",
+        "correct: dig(authentication best practices)",
+        "correct: dig(authentication best practices)",
+        "correct: dig(authentication best practices)",
+        "correct: dig(authentication best practices)",
+        "correct: dig(authentication best practices)",
+        "correct: dig(authentication best practices)",
+        "correct: dig(authentication best practices)"
+      ]
+    },
+    {
+      "probe_id": "dk-003",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "wrong command: got dig, expected keyword",
+        "wrong command: got dig, expected keyword",
+        "wrong command: got dig, expected keyword",
+        "wrong command: got dig, expected keyword",
+        "wrong command: got dig, expected keyword",
+        "wrong command: got dig, expected keyword",
+        "wrong command: got dig, expected keyword",
+        "wrong command: got dig, expected keyword",
+        "wrong command: got dig, expected keyword",
+        "wrong command: got dig, expected keyword"
+      ]
+    },
+    {
+      "probe_id": "dk-004",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "right command (dig) but args missing/wrong: DynamoDB Postgres chose why",
+        "right command (dig) but args missing/wrong: DynamoDB Postgres choice decision",
+        "right command (dig) but args missing/wrong: DynamoDB Postgres chose why",
+        "right command (dig) but args missing/wrong: DynamoDB over Postgres chose why",
+        "right command (dig) but args missing/wrong: DynamoDB Postgres database choice decision",
+        "right command (dig) but args missing/wrong: DynamoDB Postgres choice why chose",
+        "right command (dig) but args missing/wrong: DynamoDB Postgres choice chose decision",
+        "right command (dig) but args missing/wrong: DynamoDB Postgres chose why",
+        "right command (dig) but args missing/wrong: DynamoDB over Postgres why chose",
+        "right command (dig) but args missing/wrong: DynamoDB Postgres database choice"
+      ]
+    },
+    {
+      "probe_id": "dk-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: keyword(circuit breaker)",
+        "correct: keyword(circuit breaker)",
+        "correct: keyword(circuit breaker)",
+        "correct: keyword(circuit breaker)",
+        "correct: keyword(circuit breaker)",
+        "correct: keyword(circuit breaker)",
+        "correct: keyword(circuit breaker)",
+        "correct: keyword(circuit breaker)",
+        "correct: keyword(circuit breaker)",
+        "correct: keyword(circuit breaker)"
+      ]
+    },
+    {
+      "probe_id": "ds-001",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic"
+      ]
+    },
+    {
+      "probe_id": "ds-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: dig(caching strategies)",
+        "correct: dig(caching strategies)",
+        "correct: dig(caching strategies)",
+        "correct: dig(caching strategies)",
+        "correct: dig(caching strategies)",
+        "correct: dig(caching strategies)",
+        "correct: dig(caching strategies)",
+        "correct: dig(caching strategies)",
+        "correct: dig(caching strategies)",
+        "correct: dig(caching strategies)"
+      ]
+    },
+    {
+      "probe_id": "ds-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: semantic(we should use event sourcing for audit trails)",
+        "correct: semantic(we should use event sourcing for audit trails)",
+        "correct: semantic(we should use event sourcing for audit trails)",
+        "correct: semantic(we should use event sourcing for audit trails)",
+        "correct: semantic(we should use event sourcing for audit trails)",
+        "correct: semantic(we should use event sourcing for audit trails)",
+        "correct: semantic(we should use event sourcing for audit trails)",
+        "correct: semantic(we should use event sourcing for audit trails)",
+        "correct: semantic(we should use event sourcing for audit trails)",
+        "correct: semantic(we should use event sourcing for audit trails)"
+      ]
+    },
+    {
+      "probe_id": "ds-004",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "right command (dig) but args missing/wrong: rate limiting discussions decisions",
+        "right command (dig) but args missing/wrong: rate limiting discussions decisions",
+        "right command (dig) but args missing/wrong: rate limiting discussions decisions",
+        "right command (dig) but args missing/wrong: rate limiting discussions decisions",
+        "right command (dig) but args missing/wrong: rate limiting discussions decisions",
+        "right command (dig) but args missing/wrong: rate limiting discussions decisions",
+        "right command (dig) but args missing/wrong: rate limiting discussions decisions",
+        "right command (dig) but args missing/wrong: rate limiting discussions decisions",
+        "right command (dig) but args missing/wrong: rate limiting discussions decisions",
+        "right command (dig) but args missing/wrong: rate limiting discussions decisions"
+      ]
+    },
+    {
+      "probe_id": "ds-005",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic",
+        "wrong command: got similar, expected semantic"
+      ]
+    },
+    {
+      "probe_id": "neg-001",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex"
+      ]
+    },
+    {
+      "probe_id": "neg-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correctly did not use memex",
+        "correctly did not use memex",
+        "correctly did not use memex",
+        "correctly did not use memex",
+        "correctly did not use memex",
+        "correctly did not use memex",
+        "correctly did not use memex",
+        "correctly did not use memex",
+        "correctly did not use memex",
+        "correctly did not use memex"
+      ]
+    },
+    {
+      "probe_id": "neg-003",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex"
+      ]
+    },
+    {
+      "probe_id": "neg-004",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex"
+      ]
+    },
+    {
+      "probe_id": "qd-001",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "wrong command: got dig, expected query",
+        "wrong command: got dig, expected query",
+        "wrong command: got dig, expected query",
+        "wrong command: got dig, expected query",
+        "wrong command: got dig, expected query",
+        "wrong command: got dig, expected query",
+        "wrong command: got dig, expected query",
+        "wrong command: got dig, expected query",
+        "wrong command: got dig, expected query",
+        "wrong command: got dig, expected query"
+      ]
+    },
+    {
+      "probe_id": "qd-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: dig(deployment strategies)",
+        "correct: dig(deployment strategies)",
+        "correct: dig(deployment strategies)",
+        "correct: dig(deployment strategies)",
+        "correct: dig(deployment strategies)",
+        "correct: dig(deployment strategies)",
+        "correct: dig(deployment strategies)",
+        "correct: dig(deployment strategies)",
+        "correct: dig(deployment strategies)",
+        "correct: dig(deployment strategies)"
+      ]
+    },
+    {
+      "probe_id": "qd-003",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "right command (query) but args missing/wrong: SELECT \n    source_kind,\n    strftime('%Y-%m', created_at) as month,\n    COUNT(*) as fragment_count\nFROM fragments \nGROUP BY source_kind, strftime('%Y-%m', created_at)\nORDER BY month DESC, source_kind",
+        "right command (query) but args missing/wrong: SELECT \n    source_kind,\n    strftime('%Y-%m', created_at) as month,\n    COUNT(*) as fragment_count\nFROM fragments \nGROUP BY source_kind, strftime('%Y-%m', created_at)\nORDER BY month DESC, source_kind",
+        "right command (query) but args missing/wrong: SELECT \n    source_kind,\n    strftime('%Y-%m', created_at) as month,\n    COUNT(*) as fragment_count\nFROM fragments \nGROUP BY source_kind, strftime('%Y-%m', created_at)\nORDER BY month DESC, source_kind",
+        "right command (query) but args missing/wrong: SELECT \n    source_kind,\n    strftime('%Y-%m', created_at) as month,\n    COUNT(*) as fragment_count\nFROM fragments \nGROUP BY source_kind, strftime('%Y-%m', created_at)\nORDER BY month DESC, source_kind",
+        "right command (query) but args missing/wrong: SELECT \n    source_kind,\n    strftime('%Y-%m', created_at) as month,\n    COUNT(*) as fragment_count\nFROM fragments \nGROUP BY source_kind, strftime('%Y-%m', created_at)\nORDER BY source_kind, month",
+        "right command (query) but args missing/wrong: SELECT \n    source_kind,\n    strftime('%Y-%m', created_at) as month,\n    COUNT(*) as fragment_count\nFROM fragments \nGROUP BY source_kind, strftime('%Y-%m', created_at)\nORDER BY month DESC, source_kind",
+        "right command (query) but args missing/wrong: SELECT \n    source,\n    strftime('%Y-%m', created_at) as month,\n    COUNT(*) as fragment_count\nFROM fragments \nGROUP BY source, strftime('%Y-%m', created_at)\nORDER BY month DESC, source",
+        "right command (query) but args missing/wrong: SELECT \n    source_kind,\n    strftime('%Y-%m', created_at) as month,\n    COUNT(*) as fragment_count\nFROM fragments \nGROUP BY source_kind, strftime('%Y-%m', created_at)\nORDER BY month DESC, source_kind",
+        "right command (query) but args missing/wrong: SELECT \n    source_kind,\n    strftime('%Y-%m', created_at) as month,\n    COUNT(*) as fragment_count\nFROM fragments \nGROUP BY source_kind, strftime('%Y-%m', created_at)\nORDER BY month DESC, source_kind",
+        "right command (query) but args missing/wrong: SELECT \n    source_kind,\n    strftime('%Y-%m', created_at) as month,\n    COUNT(*) as fragment_count\nFROM fragments \nGROUP BY source_kind, strftime('%Y-%m', created_at)\nORDER BY month DESC, source_kind"
+      ]
+    },
+    {
+      "probe_id": "qd-004",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "right command (dig) but args missing/wrong: caching changed mind opinion evolution thinking",
+        "right command (dig) but args missing/wrong: caching changed mind opinion evolution thinking",
+        "right command (dig) but args missing/wrong: caching changed mind opinion evolution thinking",
+        "right command (dig) but args missing/wrong: caching changed mind opinion thinking evolution",
+        "right command (dig) but args missing/wrong: caching changed mind opinion thinking evolution",
+        "right command (dig) but args missing/wrong: caching changed mind opinion evolution thinking",
+        "right command (dig) but args missing/wrong: caching changed mind opinion evolution thinking",
+        "right command (dig) but args missing/wrong: caching cache changed mind evolution thinking opinion",
+        "right command (dig) but args missing/wrong: caching changed mind opinion evolution thinking",
+        "right command (dig) but args missing/wrong: caching changed mind opinion evolution thinking"
+      ]
+    },
+    {
+      "probe_id": "qd-005",
+      "score": 0.2,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "details": [
+        "right command (query) but args missing/wrong: SELECT * FROM fragments WHERE source = 'openai' AND created_at > '2026-02-01' ORDER BY created_at",
+        "correct: query(SELECT * FROM fragments WHERE source = 'openai' AND created > '2026-02-01' ORDER BY created)",
+        "right command (query) but args missing/wrong: SELECT * FROM fragments WHERE source = 'openai' AND created_at > '2026-02-01' ORDER BY created_at",
+        "right command (query) but args missing/wrong: SELECT * FROM fragments WHERE source = 'openai' AND created_at > '2026-02-01' ORDER BY created_at",
+        "right command (query) but args missing/wrong: SELECT * FROM fragments WHERE source = 'openai' AND created_at > '2026-02-01' ORDER BY created_at",
+        "right command (query) but args missing/wrong: SELECT * FROM fragments WHERE source = 'openai' AND created_at > '2026-02-01' ORDER BY created_at",
+        "right command (query) but args missing/wrong: SELECT * FROM fragments WHERE source = 'openai' AND created_at > '2026-02-01' ORDER BY created_at",
+        "right command (query) but args missing/wrong: SELECT * FROM fragments WHERE source = 'openai' AND created_at > '2026-02-01' ORDER BY created_at",
+        "right command (query) but args missing/wrong: SELECT * FROM fragments WHERE source = 'openai' AND created_at > '2026-02-01' ORDER BY created_at",
+        "correct: query(SELECT * FROM fragments WHERE source = 'openai' AND created > '2026-02-01' ORDER BY created)"
+      ]
+    },
+    {
+      "probe_id": "sc-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()"
+      ]
+    },
+    {
+      "probe_id": "sc-002",
+      "score": 0.9,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "details": [
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()",
+        "wrong command: got corpus, expected sources",
+        "correct: sources()"
+      ]
+    },
+    {
+      "probe_id": "sc-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: corpus()",
+        "correct: corpus()",
+        "correct: corpus()",
+        "correct: corpus()",
+        "correct: corpus()",
+        "correct: corpus()",
+        "correct: corpus()",
+        "correct: corpus()",
+        "correct: corpus()",
+        "correct: corpus()"
+      ]
+    },
+    {
+      "probe_id": "sc-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()",
+        "correct: status()"
+      ]
+    },
+    {
+      "probe_id": "sc-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()",
+        "correct: sources()"
+      ]
+    },
+    {
+      "probe_id": "ts-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: similar(@27)",
+        "correct: similar(@27)",
+        "correct: similar(@27)",
+        "correct: similar(@27)",
+        "correct: similar(@27)",
+        "correct: similar(@27)",
+        "correct: similar(@27)",
+        "correct: similar(@27)",
+        "correct: similar(@27)",
+        "correct: similar(@27)"
+      ]
+    },
+    {
+      "probe_id": "ts-002",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread"
+      ]
+    },
+    {
+      "probe_id": "ts-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: similar(@55)",
+        "correct: similar(@55)",
+        "correct: similar(@55)",
+        "correct: similar(@55)",
+        "correct: similar(@55)",
+        "correct: similar(@55)",
+        "correct: similar(@55)",
+        "correct: similar(@55)",
+        "correct: similar(@55)",
+        "correct: similar(@55)"
+      ]
+    },
+    {
+      "probe_id": "ts-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: thread(conv-2026-03-01-abc)",
+        "correct: thread(conv-2026-03-01-abc)",
+        "correct: thread(conv-2026-03-01-abc)",
+        "correct: thread(conv-2026-03-01-abc)",
+        "correct: thread(conv-2026-03-01-abc)",
+        "correct: thread(conv-2026-03-01-abc)",
+        "correct: thread(conv-2026-03-01-abc)",
+        "correct: thread(conv-2026-03-01-abc)",
+        "correct: thread(conv-2026-03-01-abc)",
+        "correct: thread(conv-2026-03-01-abc)"
+      ]
+    },
+    {
+      "probe_id": "ts-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: similar(@12)",
+        "correct: similar(@12)",
+        "correct: similar(@12)",
+        "correct: similar(@12)",
+        "correct: similar(@12)",
+        "correct: similar(@12)",
+        "correct: similar(@12)",
+        "correct: similar(@12)",
+        "correct: similar(@12)",
+        "correct: similar(@12)"
+      ]
+    },
+    {
+      "probe_id": "tt-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: trail(follow auth-evolution)",
+        "correct: trail(follow auth-evolution)",
+        "correct: trail(follow auth-evolution)",
+        "correct: trail(follow auth-evolution)",
+        "correct: trail(follow auth-evolution)",
+        "correct: trail(follow auth-evolution)",
+        "correct: trail(follow auth-evolution)",
+        "correct: trail(follow auth-evolution)",
+        "correct: trail(follow auth-evolution)",
+        "correct: trail(follow auth-evolution)"
+      ]
+    },
+    {
+      "probe_id": "tt-002",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got timeline, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread"
+      ]
+    },
+    {
+      "probe_id": "tt-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: trail(follow deployment-journey)",
+        "correct: trail(follow deployment-journey)",
+        "correct: trail(follow deployment-journey)",
+        "correct: trail(follow deployment-journey)",
+        "correct: trail(follow deployment-journey)",
+        "correct: trail(follow deployment-journey)",
+        "correct: trail(follow deployment-journey)",
+        "correct: trail(follow deployment-journey)",
+        "correct: trail(follow deployment-journey)",
+        "correct: trail(follow deployment-journey)"
+      ]
+    },
+    {
+      "probe_id": "tt-004",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread",
+        "wrong command: got dig, expected thread"
+      ]
+    },
+    {
+      "probe_id": "tt-005",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "wrong command: got dig, expected trail",
+        "wrong command: got dig, expected trail",
+        "wrong command: got dig, expected trail",
+        "wrong command: got dig, expected trail",
+        "wrong command: got dig, expected trail",
+        "wrong command: got dig, expected trail",
+        "wrong command: got dig, expected trail",
+        "wrong command: got dig, expected trail",
+        "wrong command: got dig, expected trail",
+        "wrong command: got dig, expected trail"
+      ]
+    }
+  ],
+  "pass_rate": 0.5294117647058824,
+  "mean_score": 0.5323529411764706,
+  "min_score": 0.0,
+  "max_score": 1.0,
+  "config_hash": "e1b4e8c49a21022b",
+  "run_timestamp": "2026-03-06T08:43:24.724440Z",
+  "ix_version": "0.0.1-alpha",
+  "status": "needs_work"
+}

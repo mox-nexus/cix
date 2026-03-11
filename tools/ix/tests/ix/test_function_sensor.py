@@ -58,7 +58,7 @@ def _trial(probe_id: str, response: str, trial_index: int = 0) -> Trial:
 class TestFunctionTestSensor:
     def test_all_tests_pass(self):
         sensor = FunctionTestSensor(ground_truth=GROUND_TRUTH)
-        result = sensor.sense(_trial("merge-001", MERGE_INTERVALS_CODE))
+        result = sensor.measure(_trial("merge-001", MERGE_INTERVALS_CODE))
 
         assert len(result) == 1
         assert result[0].passed is True
@@ -68,7 +68,7 @@ class TestFunctionTestSensor:
 
     def test_wrong_output_fails(self):
         sensor = FunctionTestSensor(ground_truth=GROUND_TRUTH)
-        result = sensor.sense(_trial("merge-001", BROKEN_CODE))
+        result = sensor.measure(_trial("merge-001", BROKEN_CODE))
 
         assert result[0].passed is False
         assert result[0].score < 1.0
@@ -76,28 +76,28 @@ class TestFunctionTestSensor:
 
     def test_syntax_error_fails(self):
         sensor = FunctionTestSensor(ground_truth=GROUND_TRUTH)
-        result = sensor.sense(_trial("merge-001", SYNTAX_ERROR_CODE))
+        result = sensor.measure(_trial("merge-001", SYNTAX_ERROR_CODE))
 
         assert result[0].passed is False
         assert "load error" in result[0].details
 
     def test_no_code_in_response(self):
         sensor = FunctionTestSensor(ground_truth=GROUND_TRUTH)
-        result = sensor.sense(_trial("merge-001", ""))
+        result = sensor.measure(_trial("merge-001", ""))
 
         assert result[0].passed is False
         assert "no code" in result[0].details
 
     def test_missing_ground_truth(self):
         sensor = FunctionTestSensor(ground_truth={})
-        result = sensor.sense(_trial("merge-001", MERGE_INTERVALS_CODE))
+        result = sensor.measure(_trial("merge-001", MERGE_INTERVALS_CODE))
 
         assert result[0].passed is False
         assert "missing ground truth" in result[0].details
 
     def test_reading_carries_trial_identity(self):
         sensor = FunctionTestSensor(ground_truth=GROUND_TRUTH)
-        result = sensor.sense(_trial("merge-001", MERGE_INTERVALS_CODE, trial_index=2))
+        result = sensor.measure(_trial("merge-001", MERGE_INTERVALS_CODE, trial_index=2))
 
         assert result[0].probe_id == "merge-001"
         assert result[0].trial_index == 2
@@ -113,7 +113,7 @@ def merge_intervals(intervals):
     return intervals  # no actual merging
 """
         sensor = FunctionTestSensor(ground_truth=GROUND_TRUTH)
-        result = sensor.sense(_trial("merge-001", partial_code))
+        result = sensor.measure(_trial("merge-001", partial_code))
 
         assert result[0].passed is False
         assert 0.0 < result[0].score < 1.0
@@ -127,7 +127,7 @@ def merge_intervals(intervals):
     raise ValueError("boom")
 """
         sensor = FunctionTestSensor(ground_truth=GROUND_TRUTH)
-        result = sensor.sense(_trial("merge-001", raise_code))
+        result = sensor.measure(_trial("merge-001", raise_code))
 
         assert result[0].passed is False
         assert result[0].score == 0.0

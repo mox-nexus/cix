@@ -1,0 +1,332 @@
+{
+  "experiment_name": "cep-003-skills-vs-references",
+  "probe_results": [
+    {
+      "probe_id": "el-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: locate(auth-decision-2024)"
+      ]
+    },
+    {
+      "probe_id": "el-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: excavate(retry strategies debate whether to retry at all discussion)"
+      ]
+    },
+    {
+      "probe_id": "el-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: locate(7f3a9b2c)"
+      ]
+    },
+    {
+      "probe_id": "el-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: excavate(DynamoDB Postgres October database comparison conversation)"
+      ]
+    },
+    {
+      "probe_id": "el-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: locate(docs/arch/adr-017.md)"
+      ]
+    },
+    {
+      "probe_id": "es-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: survey()"
+      ]
+    },
+    {
+      "probe_id": "es-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: excavate(caching cache cached)"
+      ]
+    },
+    {
+      "probe_id": "es-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: survey()"
+      ]
+    },
+    {
+      "probe_id": "es-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: excavate(deployment Q1)"
+      ]
+    },
+    {
+      "probe_id": "es-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: survey()"
+      ]
+    },
+    {
+      "probe_id": "et-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: excavate(API design)"
+      ]
+    },
+    {
+      "probe_id": "et-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: trace(rate-limit-rfc)"
+      ]
+    },
+    {
+      "probe_id": "et-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: excavate(rate limiting)"
+      ]
+    },
+    {
+      "probe_id": "et-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: trace(security-review-v1)"
+      ]
+    },
+    {
+      "probe_id": "et-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: excavate(auth decisions authentication)"
+      ]
+    },
+    {
+      "probe_id": "lt-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: trace(api-design-v1)"
+      ]
+    },
+    {
+      "probe_id": "lt-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: locate(deploy-runbook-v3)"
+      ]
+    },
+    {
+      "probe_id": "lt-003",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "wrong command: got locate, expected trace"
+      ]
+    },
+    {
+      "probe_id": "lt-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: locate(perf-audit-q4)"
+      ]
+    },
+    {
+      "probe_id": "lt-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: trace(final-arch-choice)"
+      ]
+    },
+    {
+      "probe_id": "neg-001",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "incorrectly used nexus"
+      ]
+    },
+    {
+      "probe_id": "neg-002",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "incorrectly used nexus"
+      ]
+    },
+    {
+      "probe_id": "neg-003",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0
+      ],
+      "details": [
+        "incorrectly used nexus"
+      ]
+    },
+    {
+      "probe_id": "neg-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correctly did not use nexus"
+      ]
+    },
+    {
+      "probe_id": "tc-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: connect(deploy-postmortem deploy-plan)"
+      ]
+    },
+    {
+      "probe_id": "tc-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: trace(auth-v1)"
+      ]
+    },
+    {
+      "probe_id": "tc-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: connect(cache-strategy perf-baseline)"
+      ]
+    },
+    {
+      "probe_id": "tc-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: trace(initial-proposal)"
+      ]
+    },
+    {
+      "probe_id": "tc-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0
+      ],
+      "details": [
+        "correct: connect(meeting-notes-0312 action-items-0312)"
+      ]
+    }
+  ],
+  "pass_rate": 0.8620689655172413,
+  "mean_score": 0.8620689655172413,
+  "min_score": 0.0,
+  "max_score": 1.0,
+  "config_hash": "1fee962c93f42ff7",
+  "run_timestamp": "2026-03-05T14:28:45.071185Z",
+  "ix_version": "0.0.1-alpha",
+  "status": "good"
+}
