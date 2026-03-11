@@ -1,0 +1,10 @@
+name: cep-001
+description: >
+  CEP-001: Capabilities with Packaged Semantic Glue. Does skill-format
+  documentation improve intent-to-outcome accuracy over --help for memex?
+  Measures answer correctness, tool selection, and efficiency across
+  three documentation formats.
+sensor:
+  type: outcome
+  graders_module: graders.py
+trials: 5

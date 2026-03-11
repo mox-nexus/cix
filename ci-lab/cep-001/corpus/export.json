@@ -1,0 +1,270 @@
+[
+  {
+    "uuid": "conv-001-auth-duckdb",
+    "name": "Auth Token Storage Decision",
+    "created_at": "2025-01-15T10:00:00.000000+00:00",
+    "updated_at": "2025-01-15T10:30:00.000000+00:00",
+    "chat_messages": [
+      {
+        "uuid": "msg-001-01",
+        "sender": "human",
+        "text": "We need to decide where to store auth tokens. Redis vs DuckDB vs SQLite.",
+        "created_at": "2025-01-15T10:00:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-001-02",
+        "sender": "assistant",
+        "text": "Let me analyze the trade-offs:\n\nRedis: Fast, TTL support built-in, but requires a separate service. Good for distributed systems.\n\nDuckDB: Columnar, great for analytics queries on token usage. Single-file, no server. But no built-in TTL — you'd need a cleanup job.\n\nSQLite: Battle-tested, single-file, WAL mode for concurrent reads. But row-oriented, slower for analytical queries.",
+        "created_at": "2025-01-15T10:05:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-001-03",
+        "sender": "human",
+        "text": "We're single-node for now. Analytics on token usage patterns matters — we want to query which services consume the most tokens per hour.",
+        "created_at": "2025-01-15T10:10:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-001-04",
+        "sender": "assistant",
+        "text": "Then DuckDB is the right choice. Single-file deployment matches your constraint. Columnar storage makes the analytics queries fast. You lose TTL automation but a simple cron job handles that.\n\nDecision: DuckDB for auth token storage. Rationale: single-node deployment plus analytics requirement on token usage patterns. The cleanup cron runs every 6 hours, purging tokens older than 24h.",
+        "created_at": "2025-01-15T10:15:00.000000+00:00"
+      }
+    ]
+  },
+  {
+    "uuid": "conv-002-rate-limiting",
+    "name": "Rate Limiting Strategy",
+    "created_at": "2025-01-20T14:00:00.000000+00:00",
+    "updated_at": "2025-01-20T14:30:00.000000+00:00",
+    "chat_messages": [
+      {
+        "uuid": "msg-002-01",
+        "sender": "human",
+        "text": "We're seeing 429s from the Claude API during peak hours. Need a rate limiting strategy.",
+        "created_at": "2025-01-20T14:00:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-002-02",
+        "sender": "assistant",
+        "text": "Current behavior: you're hitting the API directly with no client-side rate control. The 429s are Anthropic's server-side limits pushing back.\n\nThree approaches:\n1. Token bucket — smooth, handles bursts, standard approach\n2. Sliding window — simpler, but bursty at window boundaries\n3. Adaptive backoff — responds to 429s dynamically",
+        "created_at": "2025-01-20T14:05:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-002-03",
+        "sender": "human",
+        "text": "We need burst tolerance. Sometimes 10 requests arrive in 100ms from different users.",
+        "created_at": "2025-01-20T14:10:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-002-04",
+        "sender": "assistant",
+        "text": "Token bucket with burst capacity. Configure: Rate 40 requests per minute (under the 50/min limit), Burst 15 (absorb spikes without queuing), Retry with exponential backoff starting at 500ms, max 3 retries.",
+        "created_at": "2025-01-20T14:15:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-002-05",
+        "sender": "human",
+        "text": "What about per-user fairness?",
+        "created_at": "2025-01-20T14:20:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-002-06",
+        "sender": "assistant",
+        "text": "Add a second tier: per-user bucket at 10/min with burst of 5. Global bucket catches the aggregate; per-user prevents one heavy user from starving others.\n\nFinal config: Two-tier token bucket. Global: 40/min burst 15. Per-user: 10/min burst 5.",
+        "created_at": "2025-01-20T14:25:00.000000+00:00"
+      }
+    ]
+  },
+  {
+    "uuid": "conv-003-embedding-model",
+    "name": "Embedding Model Selection",
+    "created_at": "2025-02-01T09:00:00.000000+00:00",
+    "updated_at": "2025-02-01T09:30:00.000000+00:00",
+    "chat_messages": [
+      {
+        "uuid": "msg-003-01",
+        "sender": "human",
+        "text": "We need to pick an embedding model for memex semantic search. Options: OpenAI ada-002, Cohere embed-v3, nomic-embed-text-v1.5, or BGE-large.",
+        "created_at": "2025-02-01T09:00:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-003-02",
+        "sender": "assistant",
+        "text": "Key dimensions:\n- ada-002: 1536-dim, cloud-only, great quality but requires API calls.\n- Cohere embed-v3: 1024-dim, cloud-only, comparable quality. Matryoshka support.\n- nomic-embed-text-v1.5: 768-dim, runs locally via ONNX. Open-source, Matryoshka dimensions.\n- BGE-large: 1024-dim, runs locally. Excellent MTEB scores.",
+        "created_at": "2025-02-01T09:05:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-003-03",
+        "sender": "human",
+        "text": "Local inference is non-negotiable. We can't depend on cloud APIs for search — it needs to work offline.",
+        "created_at": "2025-02-01T09:10:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-003-04",
+        "sender": "assistant",
+        "text": "That narrows it to nomic and BGE. nomic-embed-text-v1.5 advantages: Matryoshka representations (can truncate dimensions for speed), ONNX plus CoreML acceleration on macOS, 768-dim is more storage-efficient than BGE's 1024, comparable MTEB scores to BGE-large.\n\nDecision: nomic-ai/nomic-embed-text-v1.5. Rationale: local inference, CoreML acceleration, Matryoshka flexibility, storage efficiency at 768 dimensions. At 768 dimensions with CoreML, encoding 1000 fragments takes approximately 4.2 seconds on M2.",
+        "created_at": "2025-02-01T09:15:00.000000+00:00"
+      }
+    ]
+  },
+  {
+    "uuid": "conv-004-hexagonal-ports",
+    "name": "Hexagonal Architecture: Protocol vs ABC",
+    "created_at": "2025-02-05T11:00:00.000000+00:00",
+    "updated_at": "2025-02-05T11:20:00.000000+00:00",
+    "chat_messages": [
+      {
+        "uuid": "msg-004-01",
+        "sender": "human",
+        "text": "For cix ports — should we use ABC or Protocol? I've seen both in Python hexagonal code.",
+        "created_at": "2025-02-05T11:00:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-004-02",
+        "sender": "assistant",
+        "text": "Strong preference for Protocol. ABC requires explicit inheritance, coupling the adapter to the port module. Protocol uses structural typing — if it quacks, it's a duck. No import needed in the adapter. With @runtime_checkable you still get isinstance support. This aligns with hexagonal's dependency inversion — ports don't leak into adapters.",
+        "created_at": "2025-02-05T11:05:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-004-03",
+        "sender": "human",
+        "text": "The port lives in domain. If adapters import domain ABC, that's an inward dependency — which is fine. But Protocol means they don't even need to import it?",
+        "created_at": "2025-02-05T11:10:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-004-04",
+        "sender": "assistant",
+        "text": "Exactly. With Protocol, an adapter in adapters/_out/ can satisfy domain.ports.Storage without importing it. The type checker verifies structural conformance. This is cleaner dependency inversion.\n\nDecision: typing.Protocol with @runtime_checkable for all hexagonal ports. Karman approved this decision.",
+        "created_at": "2025-02-05T11:15:00.000000+00:00"
+      }
+    ]
+  },
+  {
+    "uuid": "conv-005-ci-lab-naming",
+    "name": "CI Lab Naming: CEP",
+    "created_at": "2025-02-28T16:00:00.000000+00:00",
+    "updated_at": "2025-02-28T16:20:00.000000+00:00",
+    "chat_messages": [
+      {
+        "uuid": "msg-005-01",
+        "sender": "human",
+        "text": "The experiments in ci-lab need a name. Something like RFC but for collaborative intelligence experiments.",
+        "created_at": "2025-02-28T16:00:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-005-02",
+        "sender": "assistant",
+        "text": "Options: CIE (Collaborative Intelligence Experiment), CEP (Collaboration Enhancement Proposal), CIP (Collaborative Intelligence Proposal).",
+        "created_at": "2025-02-28T16:05:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-005-03",
+        "sender": "human",
+        "text": "CEP. Collaboration Enhancement Proposal. It covers extensions, plugin design, agent design, interaction strategies, documentation formats, prompt framing.",
+        "created_at": "2025-02-28T16:10:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-005-04",
+        "sender": "assistant",
+        "text": "CEP it is. Current CEPs: CEP-001 mandate framing (WHY vs HOW in system prompts), CEP-002 mandate framing expanded (completed), CEP-003 skills vs references — do skill-format docs improve agent performance over mechanical help output. CEP-003 has three subjects: help-only, skill-at-tool, help-plus-agent-skill.",
+        "created_at": "2025-02-28T16:15:00.000000+00:00"
+      }
+    ]
+  },
+  {
+    "uuid": "conv-006-reranking-bug",
+    "name": "Reranking Bug: Scores Inverted",
+    "created_at": "2025-02-10T15:00:00.000000+00:00",
+    "updated_at": "2025-02-10T15:20:00.000000+00:00",
+    "chat_messages": [
+      {
+        "uuid": "msg-006-01",
+        "sender": "human",
+        "text": "Search results are weird — the most relevant results are at the bottom. Something's wrong with reranking.",
+        "created_at": "2025-02-10T15:00:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-006-02",
+        "sender": "assistant",
+        "text": "Let me check the reranking pipeline. The cross-encoder returns scores where higher equals more relevant. But the sort is ascending. Found it. In search.py line 142, the sort was missing reverse=True. The BM25 plus semantic scores were correct (higher equals better), but after reranking, the sort order inverted everything.",
+        "created_at": "2025-02-10T15:05:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-006-03",
+        "sender": "human",
+        "text": "How long has this been broken?",
+        "created_at": "2025-02-10T15:10:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-006-04",
+        "sender": "assistant",
+        "text": "Since the reranking feature was added in commit a3f7e21. About 2 weeks. The initial search without reranking worked fine — this only affects the default path where reranking is enabled. Fix: Added reverse=True to the reranking sort. The cross-encoder model is Xenova/ms-marco-MiniLM-L-6-v2.",
+        "created_at": "2025-02-10T15:15:00.000000+00:00"
+      }
+    ]
+  },
+  {
+    "uuid": "conv-007-svelte-runes",
+    "name": "Svelte 5 Runes Migration",
+    "created_at": "2025-02-12T13:00:00.000000+00:00",
+    "updated_at": "2025-02-12T13:20:00.000000+00:00",
+    "chat_messages": [
+      {
+        "uuid": "msg-007-01",
+        "sender": "human",
+        "text": "The experience site needs to migrate from Svelte 4 stores to Svelte 5 runes. What's the mapping?",
+        "created_at": "2025-02-12T13:00:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-007-02",
+        "sender": "assistant",
+        "text": "The core mappings: writable becomes $state, export let prop becomes $props destructuring, reactive statements ($:) become $derived, and reactive blocks become $effect. Key gotchas: $state is deeply reactive with proxied objects and arrays, $effect runs after DOM updates not before, $derived is lazy and only recomputes when accessed.",
+        "created_at": "2025-02-12T13:05:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-007-03",
+        "sender": "human",
+        "text": "What about the animation pattern? We use onMount plus requestAnimationFrame for the sigil and logo.",
+        "created_at": "2025-02-12T13:10:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-007-04",
+        "sender": "assistant",
+        "text": "That pattern stays the same — runes don't change lifecycle hooks. onMount plus rAF loop is still the right approach for imperative animations. The OKLCH color system uses three tokens: spark (blue), emergence (green), constraint (red).",
+        "created_at": "2025-02-12T13:15:00.000000+00:00"
+      }
+    ]
+  },
+  {
+    "uuid": "conv-008-trail-architecture",
+    "name": "Trail Architecture: Associative Paths",
+    "created_at": "2025-02-15T10:00:00.000000+00:00",
+    "updated_at": "2025-02-15T10:25:00.000000+00:00",
+    "chat_messages": [
+      {
+        "uuid": "msg-008-01",
+        "sender": "human",
+        "text": "Memex needs a way to link related conversations across sessions. Not just search — curated paths.",
+        "created_at": "2025-02-15T10:00:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-008-02",
+        "sender": "assistant",
+        "text": "This is Vannevar Bush's original trail concept from As We May Think (1945). A trail is an ordered sequence of fragments, curated by the user not algorithmic, named and reusable, cross-session by definition. Implementation: memex trail create, trail add with @N references, trail follow, trail list. Stored as TRAIL_MEMBER edges in the knowledge graph with an order property.",
+        "created_at": "2025-02-15T10:05:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-008-03",
+        "sender": "human",
+        "text": "How does this differ from memex similar?",
+        "created_at": "2025-02-15T10:10:00.000000+00:00"
+      },
+      {
+        "uuid": "msg-008-04",
+        "sender": "assistant",
+        "text": "Similar is algorithmic — finds fragments with high embedding cosine similarity. It discovers connections you didn't know about. Trail is intentional — you curate the path. You decide what connects. The human makes the associative links, not the algorithm. Both are valuable. Similar for exploration. Trail for synthesis.",
+        "created_at": "2025-02-15T10:15:00.000000+00:00"
+      }
+    ]
+  }
+]

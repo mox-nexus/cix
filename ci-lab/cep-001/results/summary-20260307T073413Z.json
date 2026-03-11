@@ -1,0 +1,91 @@
+{
+  "experiment_name": "cep-003-skills-vs-references",
+  "probe_results": [
+    {
+      "probe_id": "out-001",
+      "score": 0.5,
+      "passed": false,
+      "trial_scores": [
+        1.0,
+        0.0
+      ],
+      "details": [
+        "correct: dig(auth tokens database storage 10)",
+        "missed: ['DuckDB', 'single-node', 'analytics', 'token usage']; turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "out-002",
+      "score": 0.5,
+      "passed": false,
+      "trial_scores": [
+        1.0,
+        0.0
+      ],
+      "details": [
+        "correct: dig(rate limiting configuration tiers 10)",
+        "missed: ['40', '10', 'token bucket', 'per-user']; turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "out-003",
+      "score": 0.5,
+      "passed": false,
+      "trial_scores": [
+        1.0,
+        0.0
+      ],
+      "details": [
+        "correct: dig(embedding model selection 10)",
+        "missed: ['nomic', '768', 'local inference', 'CoreML']; turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "out-004",
+      "score": 0.625,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        0.25
+      ],
+      "details": [
+        "correct: dig(search results wrong order bug 10)",
+        "found: ['reranking']; missed: ['reverse', 'sort', 'a3f7e21']; turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "out-005",
+      "score": 0.75,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        0.5
+      ],
+      "details": [
+        "correct: dig(trails similar difference 10)",
+        "found: ['trail', 'similar']; missed: ['curate', 'algorithmic']; turns=6, tools=6"
+      ]
+    },
+    {
+      "probe_id": "out-006",
+      "score": 0.5,
+      "passed": false,
+      "trial_scores": [
+        1.0,
+        0.0
+      ],
+      "details": [
+        "correct: dig(hexagonal ports cix alternative 10)",
+        "missed: ['Protocol', 'structural typing', 'runtime_checkable']; turns=6, tools=5"
+      ]
+    }
+  ],
+  "pass_rate": 0.3333333333333333,
+  "mean_score": 0.5625,
+  "min_score": 0.5,
+  "max_score": 0.75,
+  "config_hash": "d487a1fb2e5ccf06",
+  "run_timestamp": "2026-03-07T07:34:13.001582Z",
+  "ix_version": "0.0.1-alpha",
+  "status": "poor"
+}

@@ -145,7 +145,7 @@ class TestClaudeAgent:
         opts = fake_sdk["calls"][0]["options"]
         assert opts["system_prompt"] == "Be concise."
         assert opts["max_turns"] == 3
-        assert opts["allowed_tools"] == ["Read"]
+        assert opts["tools"] == ["Read"]
         assert opts["plugins"] == [{"name": "test"}]
 
     @pytest.mark.anyio

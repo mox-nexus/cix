@@ -144,32 +144,46 @@ class TestExperimentResults:
     def test_with_metrics(self):
         results = ExperimentResults(
             experiment_name="skill-activation",
-            mean_score=0.85,
-            std_dev=0.12,
+            pass_rate=0.85,
+            mean_score=0.80,
             min_score=0.6,
             max_score=1.0,
-            status="good",
-            issues=("High variance — std=0.120, results may be noisy",),
-            suggestions=("Increase trial count or simplify task",),
         )
-        assert results.mean_score == 0.85
+        assert results.pass_rate == 0.85
+        assert results.mean_score == 0.80
         assert results.status == "good"
 
     def test_defaults(self):
         results = ExperimentResults(experiment_name="test")
+        assert results.pass_rate == 0.0
         assert results.mean_score == 0.0
-        assert results.status == "pending"
-        assert results.issues == ()
+        assert results.status == "poor"
 
     def test_serialization_roundtrip(self):
         results = ExperimentResults(
             experiment_name="test",
-            mean_score=0.85,
-            std_dev=0.12,
+            pass_rate=0.85,
+            mean_score=0.80,
             min_score=0.6,
             max_score=1.0,
-            status="good",
         )
         data = results.model_dump()
         restored = ExperimentResults.model_validate(data)
         assert restored == results
+
+    def test_status_computed_from_pass_rate(self):
+        """Status is derived from pass_rate, not stored — computed_field."""
+        assert ExperimentResults(experiment_name="t", pass_rate=1.0).status == "excellent"
+        assert ExperimentResults(experiment_name="t", pass_rate=0.90).status == "good"
+        assert ExperimentResults(experiment_name="t", pass_rate=0.60).status == "needs_work"
+        assert ExperimentResults(experiment_name="t", pass_rate=0.30).status == "poor"
+
+    def test_provenance_fields(self):
+        """Results carry provenance for reproducibility."""
+        results = ExperimentResults(
+            experiment_name="test",
+            config_hash="abc123",
+            ix_version="0.0.1-alpha",
+        )
+        assert results.config_hash == "abc123"
+        assert results.ix_version == "0.0.1-alpha"

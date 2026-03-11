@@ -1,0 +1,127 @@
+{
+  "experiment_name": "cep-001",
+  "probe_results": [
+    {
+      "probe_id": "out-001",
+      "score": 0.45,
+      "passed": false,
+      "trial_scores": [
+        0.5,
+        0.25,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "details": [
+        "grader=out-001, score=50%, turns=4, tools=3",
+        "grader=out-001, score=25%, turns=6, tools=5",
+        "grader=out-001, score=50%, turns=4, tools=3",
+        "grader=out-001, score=50%, turns=5, tools=4",
+        "grader=out-001, score=50%, turns=4, tools=3"
+      ]
+    },
+    {
+      "probe_id": "out-002",
+      "score": 0.04,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.2,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "grader=out-002, score=0%, turns=6, tools=7",
+        "grader=out-002, score=0%, turns=3, tools=2",
+        "grader=out-002, score=20%, turns=3, tools=2",
+        "grader=out-002, score=0%, turns=6, tools=5",
+        "grader=out-002, score=0%, turns=4, tools=3"
+      ]
+    },
+    {
+      "probe_id": "out-003",
+      "score": 0.6,
+      "passed": true,
+      "trial_scores": [
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "details": [
+        "grader=out-003, score=0%, turns=6, tools=6",
+        "grader=out-003, score=100%, turns=5, tools=4",
+        "grader=out-003, score=100%, turns=5, tools=4",
+        "grader=out-003, score=100%, turns=4, tools=3",
+        "grader=out-003, score=0%, turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "out-004",
+      "score": 0.5,
+      "passed": false,
+      "trial_scores": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "details": [
+        "grader=out-004, score=50%, turns=6, tools=5",
+        "grader=out-004, score=50%, turns=6, tools=5",
+        "grader=out-004, score=50%, turns=6, tools=5",
+        "grader=out-004, score=50%, turns=6, tools=5",
+        "grader=out-004, score=50%, turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "out-005",
+      "score": 0.96,
+      "passed": true,
+      "trial_scores": [
+        0.8,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "grader=out-005, score=80%, turns=3, tools=2",
+        "grader=out-005, score=100%, turns=5, tools=4",
+        "grader=out-005, score=100%, turns=5, tools=4",
+        "grader=out-005, score=100%, turns=5, tools=4",
+        "grader=out-005, score=100%, turns=5, tools=4"
+      ]
+    },
+    {
+      "probe_id": "out-006",
+      "score": 0.35,
+      "passed": false,
+      "trial_scores": [
+        0.25,
+        0.0,
+        0.25,
+        0.25,
+        1.0
+      ],
+      "details": [
+        "grader=out-006, score=25%, turns=4, tools=3",
+        "grader=out-006, score=0%, turns=3, tools=2",
+        "grader=out-006, score=25%, turns=4, tools=3",
+        "grader=out-006, score=25%, turns=3, tools=2",
+        "grader=out-006, score=100%, turns=5, tools=4"
+      ]
+    }
+  ],
+  "pass_rate": 0.3333333333333333,
+  "mean_score": 0.48333333333333334,
+  "min_score": 0.04,
+  "max_score": 0.96,
+  "config_hash": "0ec37c7a02cff625",
+  "run_timestamp": "2026-03-10T10:22:27.305941Z",
+  "ix_version": "0.0.1-alpha",
+  "status": "poor"
+}

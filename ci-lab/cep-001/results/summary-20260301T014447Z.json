@@ -1,0 +1,203 @@
+{
+  "experiment_name": "cep-003-skills-vs-references",
+  "probe_results": [
+    {
+      "probe_id": "boundary-001",
+      "score": 0.4,
+      "passed": false,
+      "trial_scores": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "details": [
+        "correct: locate(auth-decision-2024)",
+        "wrong command: got excavate, expected locate",
+        "wrong command: got excavate, expected locate",
+        "correct: locate(auth-decision-2024)",
+        "wrong command: got excavate, expected locate"
+      ]
+    },
+    {
+      "probe_id": "boundary-002",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: excavate(database migrations schema versioning strategies)",
+        "correct: excavate(database migrations schema versioning strategies)",
+        "correct: excavate(database migrations schema versioning strategies)",
+        "correct: excavate(database migrations schema versioning strategies)",
+        "correct: excavate(database migrations schema versioning strategies)"
+      ]
+    },
+    {
+      "probe_id": "boundary-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: trace(api-design-v1)",
+        "correct: trace(api-design-v1)",
+        "correct: trace(api-design-v1)",
+        "correct: trace(api-design-v1)",
+        "correct: trace(api-design-v1)"
+      ]
+    },
+    {
+      "probe_id": "boundary-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: excavate(API design decisions architecture patterns)",
+        "correct: excavate(API design evolution thinking decisions architecture)",
+        "correct: excavate(API design thinking evolution decisions discussions)",
+        "correct: excavate(API design evolution thinking decisions approaches)",
+        "correct: excavate(API design evolution thinking decisions patterns)"
+      ]
+    },
+    {
+      "probe_id": "boundary-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: connect(perf-analysis-jan perf-analysis-mar similar)",
+        "correct: connect(perf-analysis-jan perf-analysis-mar similar)",
+        "correct: connect(perf-analysis-jan perf-analysis-mar similar)",
+        "correct: connect(perf-analysis-jan perf-analysis-mar similar)",
+        "correct: connect(perf-analysis-jan perf-analysis-mar similar)"
+      ]
+    },
+    {
+      "probe_id": "boundary-006",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: excavate(rate limiting)",
+        "correct: excavate(rate limiting)",
+        "correct: excavate(rate limiting)",
+        "correct: excavate(rate limiting)",
+        "correct: excavate(rate limiting)"
+      ]
+    },
+    {
+      "probe_id": "boundary-007",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()",
+        "correct: survey()"
+      ]
+    },
+    {
+      "probe_id": "boundary-008",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: trace(auth-rfc-001)",
+        "correct: trace(auth-rfc-001)",
+        "correct: trace(auth-rfc-001)",
+        "correct: trace(auth-rfc-001)",
+        "correct: trace(auth-rfc-001)"
+      ]
+    },
+    {
+      "probe_id": "boundary-009",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: connect(deploy-postmortem)",
+        "correct: connect(deploy-postmortem)",
+        "correct: connect(deploy-postmortem)",
+        "correct: connect(deploy-postmortem contradicts deploy-plan)",
+        "correct: connect(deploy-postmortem)"
+      ]
+    },
+    {
+      "probe_id": "boundary-010",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: locate(7f3a9b2c)",
+        "correct: locate(7f3a9b2c)",
+        "correct: locate(7f3a9b2c)",
+        "correct: locate(7f3a9b2c)",
+        "correct: locate(7f3a9b2c)"
+      ]
+    }
+  ],
+  "pass_rate": 0.9,
+  "mean_score": 0.9400000000000001,
+  "min_score": 0.4,
+  "max_score": 1.0,
+  "config_hash": "1ce9ff35879465dc",
+  "run_timestamp": "2026-03-01T01:44:47.098313Z",
+  "ix_version": "0.0.1-alpha",
+  "status": "good"
+}

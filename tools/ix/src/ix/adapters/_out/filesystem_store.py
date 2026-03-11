@@ -42,19 +42,25 @@ class FilesystemStore:
         probes = self._load_probes(path)
         subjects = self._load_subjects(path, config)
 
-        # Normalize sensor: string shorthand → config dict
-        raw_sensor = config.get("sensor", "activation")
-        sensor_config = {"type": raw_sensor} if isinstance(raw_sensor, str) else raw_sensor
+        # Normalize sensor config: supports both singular and plural forms
+        kwargs: dict = {
+            "name": config.get("name", path.name),
+            "description": config.get("description", ""),
+            "subjects": tuple(subjects),
+            "agent": config.get("agent", {}),
+            "trials": config.get("trials", 5),
+            "probes": tuple(probes),
+        }
 
-        return ExperimentConfig(
-            name=config.get("name", path.name),
-            description=config.get("description", ""),
-            subjects=tuple(subjects),
-            agent=config.get("agent", {}),
-            sensor=sensor_config,
-            trials=config.get("trials", 5),
-            probes=tuple(probes),
-        )
+        if "sensors" in config:
+            # Plural form: list of sensor configs
+            kwargs["sensors"] = tuple(config["sensors"])
+        else:
+            # Singular form: string shorthand or single dict
+            raw_sensor = config.get("sensor", "activation")
+            kwargs["sensor"] = {"type": raw_sensor} if isinstance(raw_sensor, str) else raw_sensor
+
+        return ExperimentConfig(**kwargs)
 
     def _load_probes(self, exp_path: Path) -> list[Probe]:
         """Load probes from tasks/ (preferred) or cases/ (backward compat).

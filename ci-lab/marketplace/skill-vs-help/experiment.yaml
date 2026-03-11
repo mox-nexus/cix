@@ -1,0 +1,9 @@
+name: skill-vs-help
+description: >
+  Does an agent use memex more accurately when given skill-format docs
+  vs --help format docs? Same information, different presentation.
+  Measures tool usage correctness, not just activation.
+sensor:
+  type: tool-usage
+  expected_tool: memex
+trials: 5

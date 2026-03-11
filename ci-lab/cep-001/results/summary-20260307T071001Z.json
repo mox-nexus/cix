@@ -1,0 +1,91 @@
+{
+  "experiment_name": "cep-003-skills-vs-references",
+  "probe_results": [
+    {
+      "probe_id": "out-001",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0
+      ],
+      "details": [
+        "no memex tool call",
+        "missed: ['DuckDB', 'single-node', 'analytics', 'token usage']; turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "out-002",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0
+      ],
+      "details": [
+        "no memex tool call",
+        "missed: ['40', '10', 'token bucket', 'per-user']; turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "out-003",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0
+      ],
+      "details": [
+        "no memex tool call",
+        "missed: ['nomic', '768', 'local inference', 'CoreML']; turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "out-004",
+      "score": 0.375,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.75
+      ],
+      "details": [
+        "no memex tool call",
+        "found: ['reverse', 'sort', 'reranking']; missed: ['a3f7e21']; turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "out-005",
+      "score": 0.25,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.5
+      ],
+      "details": [
+        "no memex tool call",
+        "found: ['trail', 'similar']; missed: ['curate', 'algorithmic']; turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "out-006",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0
+      ],
+      "details": [
+        "no memex tool call",
+        "missed: ['Protocol', 'structural typing', 'runtime_checkable']; turns=6, tools=5"
+      ]
+    }
+  ],
+  "pass_rate": 0.0,
+  "mean_score": 0.10416666666666667,
+  "min_score": 0.0,
+  "max_score": 0.375,
+  "config_hash": "e7466425fa0b2316",
+  "run_timestamp": "2026-03-07T07:10:01.964983Z",
+  "ix_version": "0.0.1-alpha",
+  "status": "poor"
+}

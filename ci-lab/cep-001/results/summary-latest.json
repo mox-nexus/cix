@@ -1,0 +1,188 @@
+{
+  "experiment_name": "cep-001",
+  "subject": "help-only",
+  "probe_results": [
+    {
+      "probe_id": "task-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "grader=task-001, score=100%, turns=6, tools=5",
+        "grader=task-001, score=100%, turns=6, tools=5",
+        "grader=task-001, score=100%, turns=6, tools=5",
+        "grader=task-001, score=100%, turns=9, tools=8",
+        "grader=task-001, score=100%, turns=7, tools=6",
+        "grader=task-001, score=100%, turns=5, tools=4",
+        "grader=task-001, score=100%, turns=6, tools=5",
+        "grader=task-001, score=100%, turns=6, tools=5",
+        "grader=task-001, score=100%, turns=6, tools=5",
+        "grader=task-001, score=100%, turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "task-002",
+      "score": 0.6714285714285715,
+      "passed": true,
+      "trial_scores": [
+        0.0,
+        1.0,
+        0.0,
+        0.8571428571428571,
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        0.8571428571428571,
+        1.0
+      ],
+      "details": [
+        "grader=task-002, score=0%, turns=11, tools=10",
+        "grader=task-002, score=100%, turns=6, tools=5",
+        "grader=task-002, score=0%, turns=11, tools=10",
+        "grader=task-002, score=86%, turns=5, tools=4",
+        "grader=task-002, score=100%, turns=7, tools=6",
+        "grader=task-002, score=100%, turns=4, tools=3",
+        "grader=task-002, score=0%, turns=11, tools=10",
+        "grader=task-002, score=100%, turns=4, tools=3",
+        "grader=task-002, score=86%, turns=7, tools=6",
+        "grader=task-002, score=100%, turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "task-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "grader=task-003, score=100%, turns=5, tools=4",
+        "grader=task-003, score=100%, turns=6, tools=5",
+        "grader=task-003, score=100%, turns=6, tools=5",
+        "grader=task-003, score=100%, turns=6, tools=5",
+        "grader=task-003, score=100%, turns=6, tools=5",
+        "grader=task-003, score=100%, turns=7, tools=6",
+        "grader=task-003, score=100%, turns=6, tools=5",
+        "grader=task-003, score=100%, turns=6, tools=5",
+        "grader=task-003, score=100%, turns=6, tools=5",
+        "grader=task-003, score=100%, turns=6, tools=5"
+      ]
+    },
+    {
+      "probe_id": "task-004",
+      "score": 0.825,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        0.75,
+        0.75,
+        0.75,
+        0.75,
+        1.0,
+        0.75,
+        0.75,
+        0.75
+      ],
+      "details": [
+        "grader=task-004, score=100%, turns=7, tools=6",
+        "grader=task-004, score=100%, turns=6, tools=5",
+        "grader=task-004, score=75%, turns=7, tools=6",
+        "grader=task-004, score=75%, turns=9, tools=8",
+        "grader=task-004, score=75%, turns=6, tools=5",
+        "grader=task-004, score=75%, turns=5, tools=4",
+        "grader=task-004, score=100%, turns=7, tools=6",
+        "grader=task-004, score=75%, turns=7, tools=6",
+        "grader=task-004, score=75%, turns=6, tools=5",
+        "grader=task-004, score=75%, turns=7, tools=6"
+      ]
+    },
+    {
+      "probe_id": "task-005",
+      "score": 0.2,
+      "passed": false,
+      "trial_scores": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "details": [
+        "grader=task-005, score=100%, turns=8, tools=7",
+        "grader=task-005, score=0%, turns=11, tools=10",
+        "grader=task-005, score=0%, turns=9, tools=8",
+        "grader=task-005, score=0%, turns=11, tools=10",
+        "grader=task-005, score=0%, turns=11, tools=10",
+        "grader=task-005, score=0%, turns=11, tools=10",
+        "grader=task-005, score=0%, turns=11, tools=10",
+        "grader=task-005, score=0%, turns=11, tools=10",
+        "grader=task-005, score=0%, turns=11, tools=10",
+        "grader=task-005, score=100%, turns=10, tools=9"
+      ]
+    },
+    {
+      "probe_id": "task-006",
+      "score": 0.9,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "grader=task-006, score=100%, turns=6, tools=5",
+        "grader=task-006, score=100%, turns=8, tools=7",
+        "grader=task-006, score=100%, turns=8, tools=7",
+        "grader=task-006, score=0%, turns=11, tools=10",
+        "grader=task-006, score=100%, turns=7, tools=6",
+        "grader=task-006, score=100%, turns=7, tools=6",
+        "grader=task-006, score=100%, turns=7, tools=6",
+        "grader=task-006, score=100%, turns=9, tools=8",
+        "grader=task-006, score=100%, turns=7, tools=6",
+        "grader=task-006, score=100%, turns=6, tools=5"
+      ]
+    }
+  ],
+  "pass_rate": 0.8333333333333334,
+  "mean_score": 0.7660714285714286,
+  "min_score": 0.2,
+  "max_score": 1.0,
+  "config_hash": "5df1839636fd9d30",
+  "run_timestamp": "2026-03-10T21:03:41.935683Z",
+  "ix_version": "0.0.1-alpha",
+  "status": "needs_work"
+}

@@ -180,8 +180,18 @@ class DeepEvalSensor:
         cls,
         config: DeepEvalSensorConfig,
         probes: tuple[Probe, ...] = (),
-        judge: Any | None = None,
+        *,
+        registry: Any | None = None,
+        **kwargs: Any,
     ) -> DeepEvalSensor:
+        # Resolve judge from registry if model is specified
+        judge = None
+        if config.model and registry:
+            judge = registry.create("matrix.agent.claude", {
+                "model": config.model,
+                "max_turns": 1,
+            })
+
         ground_truth = {
             p.id: {
                 "prompt": p.prompt,
@@ -203,7 +213,7 @@ class DeepEvalSensor:
     def name(self) -> str:
         return f"deepeval.{self._metric_name}"
 
-    def sense(self, trial: Trial) -> list[Reading]:
+    def measure(self, trial: Trial) -> list[Reading]:
         """Measure a trial via the DeepEval metric."""
         from deepeval.test_case import LLMTestCase
 

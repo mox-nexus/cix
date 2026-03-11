@@ -1,0 +1,165 @@
+{
+  "experiment_name": "skill-vs-help",
+  "probe_results": [
+    {
+      "probe_id": "must-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: dig(authentication architecture decisions)",
+        "correct: dig(authentication architecture decisions)",
+        "correct: dig(authentication architecture decisions)",
+        "correct: dig(authentication architecture decisions)",
+        "correct: dig(authentication architecture decisions)"
+      ]
+    },
+    {
+      "probe_id": "must-002",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "wrong command: got dig, expected keyword",
+        "wrong command: got dig, expected keyword",
+        "wrong command: got dig, expected keyword",
+        "wrong command: got dig, expected keyword",
+        "wrong command: got dig, expected keyword"
+      ]
+    },
+    {
+      "probe_id": "must-003",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: semantic(performance optimization)",
+        "correct: semantic(performance optimization)",
+        "correct: semantic(performance optimization)",
+        "correct: semantic(performance optimization)",
+        "correct: semantic(performance optimization)"
+      ]
+    },
+    {
+      "probe_id": "must-004",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: ingest(claude-export.json)",
+        "correct: ingest(claude-export.json)",
+        "correct: ingest(claude-export.json)",
+        "correct: ingest(claude-export.json)",
+        "correct: ingest(claude-export.json)"
+      ]
+    },
+    {
+      "probe_id": "must-005",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correct: backfill()",
+        "correct: backfill()",
+        "correct: backfill()",
+        "correct: backfill()",
+        "correct: backfill()"
+      ]
+    },
+    {
+      "probe_id": "not-001",
+      "score": 1.0,
+      "passed": true,
+      "trial_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "details": [
+        "correctly did not use memex",
+        "correctly did not use memex",
+        "correctly did not use memex",
+        "correctly did not use memex",
+        "correctly did not use memex"
+      ]
+    },
+    {
+      "probe_id": "not-002",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex"
+      ]
+    },
+    {
+      "probe_id": "not-003",
+      "score": 0.0,
+      "passed": false,
+      "trial_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "details": [
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex",
+        "incorrectly used memex"
+      ]
+    }
+  ],
+  "pass_rate": 0.625,
+  "mean_score": 0.625,
+  "min_score": 0.0,
+  "max_score": 1.0,
+  "config_hash": "8571d36136b6f4c3",
+  "run_timestamp": "2026-02-28T14:26:27.917130Z",
+  "ix_version": "0.0.1-alpha",
+  "status": "needs_work"
+}

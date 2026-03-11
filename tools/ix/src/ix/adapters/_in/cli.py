@@ -38,8 +38,8 @@ def _print_metrics(results) -> None:
     table = Table(show_header=False, box=None, padding=(0, 2))
     table.add_column("Metric", style="bold")
     table.add_column("Value")
+    table.add_row("Pass Rate", f"{results.pass_rate:.1%}")
     table.add_row("Mean Score", f"{results.mean_score:.1%}")
-    table.add_row("Std Dev", f"{results.std_dev:.3f}")
     table.add_row("Min / Max", f"{results.min_score:.1%} / {results.max_score:.1%}")
     console.print(table)
 
@@ -64,15 +64,6 @@ def _print_metrics(results) -> None:
 
     console.print()
     console.print(f"Status: {_status_style(results.status)}")
-
-    if results.issues:
-        for issue in results.issues:
-            console.print(f"  [yellow]-[/yellow] {issue}")
-
-    if results.suggestions:
-        for sug in results.suggestions:
-            console.print(f"  [cyan]-[/cyan] {sug}")
-
     console.print()
 
 
@@ -231,7 +222,9 @@ def run(
         else:
             subject = experiment.subjects[0]
 
-    skill = subject.name if subject else "build-eval"
+    # Mock skill comes from sensor config, not subject name
+    sensor_config = experiment.sensor if isinstance(experiment.sensor, dict) else {}
+    skill = sensor_config.get("expected_skill", "build-eval")
 
     try:
         service = create_service(
@@ -240,7 +233,7 @@ def run(
             lab=lab_path,
             seed=seed,
             experiment=experiment,
-            subject=subject,
+            experiment_cwd=str(exp_path.resolve()),
         )
     except ValueError as e:
         _cli_error(str(e))
@@ -248,19 +241,24 @@ def run(
         _cli_error(str(e))
 
     subject_label = f", subject={subject.name}" if subject else ""
-    model_label = experiment.agent.get("model", "claude-sonnet-4-20250514") if not mock else "mock"
+    if mock:
+        runtime_label = "mock"
+    elif subject:
+        runtime_label = subject.config.get("runtime", {}).get("type", "anthropic")
+    else:
+        runtime_label = "anthropic"
     console.print(
         f"Running [bold cyan]{experiment.name}[/bold cyan] "
         f"in lab [cyan]{lab_path.name}[/cyan] "
         f"({len(experiment.probes)} probes, {experiment.trials} trials, "
-        f"{model_label}{subject_label})"
+        f"{runtime_label}{subject_label})"
     )
 
     def on_probe(probe_result) -> None:
         status = "[green]PASS[/green]" if probe_result.passed else "[yellow]FAIL[/yellow]"
         console.print(f"  {probe_result.probe_id}: {status} (score={probe_result.score:.0%})")
 
-    exp_results = asyncio.run(service.run(experiment, on_probe_complete=on_probe))
+    exp_results = asyncio.run(service.run(experiment, subject=subject, on_probe_complete=on_probe))
 
     if fmt == "json":
         console.print(exp_results.model_dump_json(indent=2))

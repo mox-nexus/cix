@@ -111,3 +111,12 @@ tools/.claude/
 # mdbook output
 docs/book/
 .playwright-mcp/
+
+# Rhetoric workspace (discourse output, pipeline working state)
+**/.rhet/
+
+# Research workspace
+**/.research/
+
+# Memex local corpus (binary, user-local)
+**/.memex/

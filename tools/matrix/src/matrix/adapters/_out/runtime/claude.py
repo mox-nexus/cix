@@ -12,7 +12,12 @@ Requires: uv add claude-agent-sdk
 
 from __future__ import annotations
 
+import logging
+import os
+
 from matrix.domain.types import AgentResponse
+
+logger = logging.getLogger(__name__)
 
 
 class ClaudeAgent:
@@ -34,6 +39,8 @@ class ClaudeAgent:
         max_turns: int = 1,
         allowed_tools: list[str] | None = None,
         plugins: list[dict] | None = None,
+        permission_mode: str = "bypassPermissions",
+        cwd: str | None = None,
     ) -> None:
         try:
             import claude_agent_sdk  # noqa: F401
@@ -45,12 +52,18 @@ class ClaudeAgent:
         self._max_turns = max_turns
         self._allowed_tools = allowed_tools or []
         self._plugins = plugins or []
+        self._permission_mode = permission_mode
+        self._cwd = cwd
 
     async def run(self, prompt: str) -> AgentResponse:
         """Execute a prompt via the Claude Agent SDK.
 
         Streams messages, extracts TextBlock + ToolUseBlock content,
         and captures usage/cost from ResultMessage.
+
+        The SDK may raise a ProcessError during generator cleanup even
+        after all messages have been received. If we already got the
+        ResultMessage, the query succeeded — treat the error as non-fatal.
         """
         from claude_agent_sdk import (
             AssistantMessage,
@@ -61,26 +74,48 @@ class ClaudeAgent:
             query,
         )
 
+        # Strip CLAUDECODE so the subprocess doesn't refuse to start
+        # ("cannot be launched inside another Claude Code session").
+        stashed = os.environ.pop("CLAUDECODE", None)
+
         options = ClaudeAgentOptions(
             system_prompt=self._system_prompt,
             max_turns=self._max_turns,
-            allowed_tools=self._allowed_tools,
+            tools=self._allowed_tools or None,
             plugins=self._plugins,
+            permission_mode=self._permission_mode,
+            cwd=self._cwd,
         )
 
         content_parts: list[str] = []
         tool_calls: list[dict] = []
         result_msg = None
 
-        async for message in query(prompt=prompt, options=options):
-            if isinstance(message, AssistantMessage):
-                for block in message.content:
-                    if isinstance(block, TextBlock):
-                        content_parts.append(block.text)
-                    elif isinstance(block, ToolUseBlock):
-                        tool_calls.append({"name": block.name, "input": block.input})
-            elif isinstance(message, ResultMessage):
-                result_msg = message
+        try:
+            async for message in query(prompt=prompt, options=options):
+                if isinstance(message, AssistantMessage):
+                    for block in message.content:
+                        if isinstance(block, TextBlock):
+                            content_parts.append(block.text)
+                        elif isinstance(block, ToolUseBlock):
+                            tool_calls.append({"name": block.name, "input": block.input})
+                elif isinstance(message, ResultMessage):
+                    result_msg = message
+        except Exception as e:
+            if result_msg is not None:
+                # Query completed — subprocess cleanup error is non-fatal.
+                logger.debug("SDK cleanup error (non-fatal, result received): %s", e)
+            else:
+                err_name = type(e).__name__
+                if err_name == "CLINotFoundError":
+                    raise RuntimeError(
+                        "Claude Code CLI not found. "
+                        "Install: npm install -g @anthropic-ai/claude-code"
+                    ) from e
+                raise RuntimeError(f"Claude SDK error: {e}") from e
+        finally:
+            if stashed is not None:
+                os.environ["CLAUDECODE"] = stashed
 
         usage = result_msg.usage if result_msg and hasattr(result_msg, "usage") else None
 
