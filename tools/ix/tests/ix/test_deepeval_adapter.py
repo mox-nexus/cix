@@ -7,6 +7,9 @@ metrics to run — just verifies the adapter correctly translates between protoc
 import os
 
 import pytest
+
+deepeval = pytest.importorskip("deepeval", reason="deepeval not installed")
+
 from ix.adapters._out.mock_runtime import MockAgent
 from ix.eval.sensors_deepeval import DeepEvalSensor, DeepEvalSensorConfig, _create_agent_adapter
 
