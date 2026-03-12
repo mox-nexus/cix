@@ -10,14 +10,29 @@ Architecture note (from Burner):
 - Mismatch is impossible by construction
 """
 
+import logging
 import os
+import warnings
 from pathlib import Path
 
 from memex.adapters._out.corpus import DuckDBCorpus
-from memex.adapters._out.sources import ClaudeConversationsAdapter, OpenAIConversationsAdapter
+from memex.adapters._out.sources import ClaudeConversationsAdapter, OpenAIConversationsAdapter, PlaintextAdapter
 from memex.config.settings import Settings, get_settings
 from memex.domain.ports._out.embedding import EmbeddingPort
 from memex.domain.services import ExcavationService
+
+# Suppress noisy ONNX Runtime / CoreML native warnings
+os.environ.setdefault("ORT_LOG_LEVEL", "3")  # ERROR only (suppresses C++ level)
+os.environ.setdefault("COREML_DELEGATE_NO_SYNC", "1")  # CoreML sync warnings
+# macOS CoreML emits native NSLog ("Context leak", "IsInputSupported") to fd 2.
+# These are benign — unsupported ops fall back to CPU. Suppress via os_log level.
+import sys
+if sys.platform == "darwin":
+    os.environ.setdefault("OS_ACTIVITY_MODE", "disable")
+logging.getLogger("onnxruntime").setLevel(logging.ERROR)
+warnings.filterwarnings("ignore", message=".*CoreML.*", category=UserWarning)
+
+log = logging.getLogger("memex")
 
 
 class EmbeddingDimensionMismatchError(Exception):
@@ -135,21 +150,8 @@ def get_reranker(settings: Settings | None = None):
     return _reranker_instance
 
 
-def daemon_available(settings: Settings | None = None) -> bool:
-    """Check if memexd is running and connectable.
-
-    Respects MEMEX_NO_DAEMON=1 kill switch.
-    """
-    if os.environ.get("MEMEX_NO_DAEMON"):
-        return False
-
-    from memex.daemon.server import default_socket_path
-
-    sock_path = default_socket_path()
-    if not sock_path.exists():
-        return False
-
-    # Try connecting to verify it's alive
+def _try_connect(sock_path: Path) -> bool:
+    """Try connecting to a Unix socket. Returns True if alive."""
     import socket
 
     try:
@@ -160,6 +162,86 @@ def daemon_available(settings: Settings | None = None) -> bool:
         return True
     except (ConnectionRefusedError, FileNotFoundError, OSError):
         return False
+
+
+def _spawn_daemon() -> bool:
+    """Spawn memexd as a background daemon. Returns True if started successfully."""
+    import subprocess
+    import sys
+    import time
+
+    from memex.daemon.server import default_socket_path
+
+    try:
+        subprocess.Popen(
+            [sys.executable, "-m", "memex.daemon.cli", "start"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        sock_path = default_socket_path()
+        for _ in range(30):  # Up to 3 seconds (model loading)
+            time.sleep(0.1)
+            if _try_connect(sock_path):
+                return True
+        return False
+    except Exception:
+        return False
+
+
+def stop_daemon() -> bool:
+    """Stop the running daemon. Idempotent — safe to call when not running."""
+    import signal
+
+    from memex.daemon.server import default_pid_path, default_socket_path
+
+    pid_path = default_pid_path()
+    if not pid_path.exists():
+        return False
+    try:
+        pid = int(pid_path.read_text().strip())
+        os.kill(pid, signal.SIGTERM)
+        log.debug("Stopping memexd (PID %d)", pid)
+        # Wait for socket to disappear
+        import time
+
+        sock_path = default_socket_path()
+        for _ in range(20):  # Up to 2 seconds
+            time.sleep(0.1)
+            if not sock_path.exists():
+                log.debug("memexd stopped")
+                return True
+        return True
+    except (ValueError, ProcessLookupError, PermissionError, OSError):
+        pid_path.unlink(missing_ok=True)
+        return False
+
+
+def ensure_daemon() -> bool:
+    """Idempotent daemon start. Already running? Returns True. Not running? Starts it.
+
+    Respects MEMEX_NO_DAEMON=1 kill switch.
+    """
+    if os.environ.get("MEMEX_NO_DAEMON"):
+        return False
+
+    from memex.daemon.server import default_socket_path
+
+    sock_path = default_socket_path()
+    if sock_path.exists() and _try_connect(sock_path):
+        log.debug("memexd already running (socket: %s)", sock_path)
+        return True
+
+    log.debug("memexd not running, starting...")
+    started = _spawn_daemon()
+    if started:
+        log.debug("memexd started (socket: %s)", sock_path)
+    else:
+        log.debug("memexd failed to start — using direct DuckDB")
+    return started
+
+
+# Alias — daemon_available is the name used by create_service
+daemon_available = ensure_daemon
 
 
 def create_service(
@@ -178,6 +260,7 @@ def create_service(
         settings: Optional settings. Constructs default if not provided.
         direct: Force direct DuckDB (skip daemon). Use for write-heavy
                 operations (ingest, backfill) that need exclusive access.
+                Automatically stops running daemon to release DuckDB lock.
 
     Returns:
         Fully wired ExcavationService
@@ -188,8 +271,12 @@ def create_service(
     """
     s = settings or get_settings()
 
+    # Write operations need exclusive DuckDB lock — stop daemon if running
+    if direct:
+        stop_daemon()
+
     # Auto-detect: use daemon for read-heavy operations if available
-    if not direct and daemon_available(s):
+    if not direct and ensure_daemon():
         from memex.adapters._out.corpus.remote import RemoteCorpusAdapter
         from memex.daemon.server import default_socket_path
 
@@ -197,6 +284,7 @@ def create_service(
         adapters = [
             ClaudeConversationsAdapter(),
             OpenAIConversationsAdapter(),
+            PlaintextAdapter(),
         ]
         # Remote adapter implements all three ports
         # Embedder/reranker live on daemon side — search goes through wire
@@ -231,6 +319,7 @@ def create_service(
     adapters = [
         ClaudeConversationsAdapter(),
         OpenAIConversationsAdapter(),
+        PlaintextAdapter(),
     ]
 
     reranker = get_reranker(s) if with_reranker else None
@@ -268,9 +357,11 @@ __all__ = [
     "detect_providers",
     "create_service",
     "create_corpus",
+    "ensure_daemon",
     "get_embedder",
     "get_reranker",
     "initialize_corpus",
     "reranker_available",
+    "stop_daemon",
     "EmbeddingDimensionMismatchError",
 ]

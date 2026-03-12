@@ -1,6 +1,26 @@
-# How to Ingest Conversations
+# How to Ingest Content
 
-Import conversation exports from Claude.ai and ChatGPT into your memex corpus.
+Import text files, documents, and conversation exports into your memex corpus.
+
+---
+
+## Directory of Text Files
+
+Point memex at a directory — it recursively finds all supported files:
+
+```bash
+memex ingest ~/research/
+memex ingest ~/notes/
+memex ingest ./src/            # Source code too
+```
+
+Supported: `.md`, `.txt`, `.rst`, `.pdf`, `.docx`, `.py`, `.js`, `.ts`, `.rs`, `.go`, `.sh`, `.sql`, `.html`, `.css`, `.xml`, `.json`, `.yaml`, `.toml`, `.csv`, `.log`, and more.
+
+Splitting strategy:
+- **Markdown**: sections by headings (`##`)
+- **PDF**: one fragment per page
+- **DOCX**: sections by heading paragraphs
+- **Other text**: whole file as one fragment
 
 ---
 
@@ -11,68 +31,45 @@ Import conversation exports from Claude.ai and ChatGPT into your memex corpus.
 3. Ingest:
 
 ```bash
-memex ingest ~/Downloads/claude-export.json
+memex ingest ~/Downloads/claude-export.zip
 ```
-
-Memex auto-detects the Claude conversation format and extracts fragments with provenance metadata (timestamps, conversation IDs).
-
-### Large Exports
-
-For large exports (1000+ conversations), ingest without embeddings first, then backfill:
-
-```bash
-memex ingest ~/Downloads/claude-export.json --no-embed
-memex backfill
-```
-
-This separates the I/O-bound ingestion from the CPU-bound embedding generation, and shows progress for each phase independently.
 
 ---
 
 ## ChatGPT Export
 
 1. Go to ChatGPT Settings > Data Controls > Export Data
-2. Download the export (arrives as a `.zip` containing `conversations.json`)
-3. Extract and ingest:
+2. Download the export
+3. Ingest:
 
 ```bash
-unzip chatgpt-export.zip
-memex ingest conversations.json
+memex ingest ~/Downloads/chatgpt-export.zip
 ```
-
-The OpenAI source adapter handles the ChatGPT conversation format.
-
----
-
-## Verifying Ingestion
-
-After ingesting, check corpus stats:
-
-```bash
-memex corpus
-```
-
-This shows total fragments, source breakdown, and embedding coverage. If embedding coverage is below 100%, run `memex backfill` to generate missing embeddings.
 
 ---
 
 ## Multiple Sources
 
-You can ingest from multiple platforms into the same corpus. Memex tracks provenance per fragment, so search results show where each fragment came from:
+Ingest from multiple platforms and file types into the same corpus. Memex tracks provenance per fragment:
 
 ```bash
-memex ingest ~/Downloads/claude-export.json
-memex ingest ~/Downloads/chatgpt-conversations.json
-memex dig "authentication decisions"   # Searches across both
+memex ingest ~/research/papers/
+memex ingest ~/Downloads/claude-export.zip
+memex dig "authentication decisions"     # Searches across everything
+```
+
+---
+
+## Recovery
+
+Ingest parses, stores, embeds, and indexes in one step. If interrupted mid-embedding (e.g., OOM or SIGKILL), fragments are already stored — run backfill to finish:
+
+```bash
+memex backfill
 ```
 
 ---
 
 ## Re-ingestion
 
-Memex deduplicates by source ID. Re-ingesting the same export is safe -- existing fragments are skipped, new ones are added.
-
-```bash
-# Safe to run multiple times
-memex ingest ~/Downloads/claude-export-v2.json
-```
+Memex deduplicates by source ID. Re-ingesting the same file is safe — existing fragments are skipped, new ones are added.
