@@ -1,5 +1,3 @@
-> experimental, pre release status
-> 
 # cix
 
 Collaborative Intelligence Extensions for Claude Code.
@@ -31,7 +29,6 @@ Browse the [catalog](https://mox-nexus.github.io/cix/catalog). Read the [researc
 | **craft-extensions** | Craft | Build extensions, data layers, reasoning prompts |
 | **craft-evals** | Measure | Eval methodology for AI systems |
 | **ci-scaffolds** | Cross-cutting | Collaboration patterns, problem-solving, engineering craft |
-| **run-openclaw-seatbelt** | Security | OpenClaw with Seatbelt sandbox for secure AI assistants |
 
 ## Architecture
 

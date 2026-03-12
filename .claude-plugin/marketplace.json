@@ -86,19 +86,6 @@
       "license": "MIT",
       "keywords": ["evals", "evaluation", "testing", "agents", "skills", "mcp"],
       "category": "testing"
-    },
-    {
-      "name": "run-openclaw-seatbelt",
-      "source": "./plugins/run-openclaw-seatbelt",
-      "description": "Run OpenClaw with macOS Seatbelt sandboxing for secure AI assistant operation.",
-      "version": "0.2.0",
-      "author": {
-        "name": "Mox Labs",
-        "email": "mox.rnd@gmail.com"
-      },
-      "license": "MIT",
-      "keywords": ["openclaw", "srt", "sandbox", "security", "telegram"],
-      "category": "security"
     }
   ]
 }
