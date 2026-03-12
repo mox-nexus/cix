@@ -89,11 +89,12 @@ uv.lock
 *.local.md
 *.local.json
 
-# Claude local config
-.claude/agents/
-.claude/worktrees/
-.claude/settings.local.json
+# Claude (project-local config, agents, hooks, skills, state)
+.claude/
 tools/.claude/
+
+# Scratch (session notes, working documents)
+scratch/
 
 # Rhetoric workspace (discourse output, pipeline working state)
 **/.rhet/
@@ -103,9 +104,6 @@ tools/.claude/
 
 # Memex local corpus (binary, user-local)
 **/.memex/
-
-# Claude local state
-.claude/todos.md
 
 # Screenshots (dev/review artifacts)
 .screenshots/
