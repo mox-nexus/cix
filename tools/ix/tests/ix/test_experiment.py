@@ -16,11 +16,10 @@ from ix.adapters._out.mock_runtime import MockAgent
 from ix.composition import make_run_trial
 from ix.domain.types import Probe, Reading, Subject
 from ix.eval.analysis import aggregate_readings, compute_metrics
+from ix.eval.experiment import Experiment
 from ix.eval.models import ExperimentConfig, ProbeResult
 from ix.eval.sensors import ActivationSensor
-from ix.eval.experiment import Experiment
 from matrix import ComponentRegistry
-
 
 # --- Helpers ---
 
@@ -253,8 +252,7 @@ class TestExperiment:
         """MockAgent always activates -> high pass rate on must_trigger probes."""
         exp = _config(
             probes=tuple(
-                _probe(f"must-{i:03d}", f"eval question {i}", "must_trigger")
-                for i in range(1, 11)
+                _probe(f"must-{i:03d}", f"eval question {i}", "must_trigger") for i in range(1, 11)
             )
             + tuple(
                 _probe(f"not-{i:03d}", f"non-eval question {i}", "should_not_trigger")

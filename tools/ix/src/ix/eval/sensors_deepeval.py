@@ -187,10 +187,13 @@ class DeepEvalSensor:
         # Resolve judge from registry if model is specified
         judge = None
         if config.model and registry:
-            judge = registry.create("matrix.agent.claude", {
-                "model": config.model,
-                "max_turns": 1,
-            })
+            judge = registry.create(
+                "matrix.agent.claude",
+                {
+                    "model": config.model,
+                    "max_turns": 1,
+                },
+            )
 
         ground_truth = {
             p.id: {

@@ -69,5 +69,7 @@ class TestStochasticMode:
             if len(result.tool_calls) > 0:
                 not_activations += 1
 
-        assert must_activations > 70, f"Expected >70 must_trigger activations, got {must_activations}"
+        assert must_activations > 70, (
+            f"Expected >70 must_trigger activations, got {must_activations}"
+        )
         assert not_activations < 30, f"Expected <30 should_not activations, got {not_activations}"

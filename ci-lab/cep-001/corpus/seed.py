@@ -9,10 +9,11 @@ def insert(id: str, conv_id: str, role: str, content: str, ts: str):
     """Insert a fragment via memex query."""
     # Escape single quotes for SQL
     content = content.replace("'", "''")
-    sql = (
-        f"INSERT INTO fragments (id, conversation_id, role, content, timestamp, source_kind, source_id) "
-        f"VALUES ('{id}', '{conv_id}', '{role}', '{content}', '{ts}', 'claude_conversations', 'test-corpus')"
+    cols = "id, conversation_id, role, content, timestamp, source_kind, source_id"
+    vals = (
+        f"'{id}', '{conv_id}', '{role}', '{content}', '{ts}', 'claude_conversations', 'test-corpus'"
     )
+    sql = f"INSERT INTO fragments ({cols}) VALUES ({vals})"
     subprocess.run(["memex", "query", sql], capture_output=True, text=True, check=True)
 
 

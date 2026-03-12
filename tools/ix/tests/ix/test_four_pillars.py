@@ -10,7 +10,6 @@ from ix.domain.ports import Sensor
 from ix.domain.types import Probe, Reading, Subject, Trial
 from matrix import Artifact, Component, ComponentRegistry, Construct, Orchestrator
 
-
 # --- Dummy implementations (no eval awareness) ---
 
 
@@ -71,9 +70,7 @@ def _registry(agent_factory=None) -> ComponentRegistry:
 def _construct_with_trial(trial: Trial) -> Construct:
     """Pre-populate a Construct with one trial for isolated SensorNode tests."""
     construct = Construct()
-    construct.append(
-        Artifact.create(type_url="trial.observation", producer="trial", data=trial)
-    )
+    construct.append(Artifact.create(type_url="trial.observation", producer="trial", data=trial))
     return construct
 
 
@@ -107,13 +104,9 @@ class TestTrialNode:
         probe = _probes(5)[0]
 
         construct = Construct()
+        construct.append(Artifact.create(type_url="probe.stimulus", producer="probe", data=probe))
         construct.append(
-            Artifact.create(type_url="probe.stimulus", producer="probe", data=probe)
-        )
-        construct.append(
-            Artifact.create(
-                type_url="subject.config", producer="subject", data=_subject().config
-            )
+            Artifact.create(type_url="subject.config", producer="subject", data=_subject().config)
         )
 
         node = TrialNode(registry=reg, trial_index=0)
@@ -131,9 +124,7 @@ class TestTrialNode:
             Artifact.create(type_url="probe.stimulus", producer="probe", data=_probes(1)[0])
         )
         construct.append(
-            Artifact.create(
-                type_url="subject.config", producer="subject", data=_subject().config
-            )
+            Artifact.create(type_url="subject.config", producer="subject", data=_subject().config)
         )
 
         node = TrialNode(registry=reg, trial_index=0)
@@ -189,12 +180,14 @@ class TestFullDag:
         subject = _subject()
         sensor = ThresholdSensor(threshold=15)
 
-        orchestrator = Orchestrator([
-            ProbeNode(probe),
-            SubjectNode(subject),
-            TrialNode(registry=reg, trial_index=0),
-            SensorNode(sensor),
-        ])
+        orchestrator = Orchestrator(
+            [
+                ProbeNode(probe),
+                SubjectNode(subject),
+                TrialNode(registry=reg, trial_index=0),
+                SensorNode(sensor),
+            ]
+        )
         construct = await orchestrator.run()
 
         trial = construct["trial.observation"]
@@ -209,12 +202,14 @@ class TestFullDag:
         """Probe with value 1 → response 10 → fails threshold 15."""
         reg = _registry()
 
-        orchestrator = Orchestrator([
-            ProbeNode(_probes(1)[0]),
-            SubjectNode(_subject()),
-            TrialNode(registry=reg, trial_index=0),
-            SensorNode(ThresholdSensor(threshold=15)),
-        ])
+        orchestrator = Orchestrator(
+            [
+                ProbeNode(_probes(1)[0]),
+                SubjectNode(_subject()),
+                TrialNode(registry=reg, trial_index=0),
+                SensorNode(ThresholdSensor(threshold=15)),
+            ]
+        )
         construct = await orchestrator.run()
 
         readings = construct["sensor.reading"]

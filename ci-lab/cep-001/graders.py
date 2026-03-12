@@ -123,12 +123,20 @@ def grade_task_001(response: str) -> float:
 
     Corpus: conv-001-auth-duckdb.md
     """
-    return _grade_yaml(response, [
-        ("database", "duckdb", 1.0, "contains"),
-        ("deployment_model", "single-node", 1.0, "any"),  # also accept "single node", "single-file"
-        ("analytics_capability", True, 1.0, "boolean"),
-        ("primary_use_case", "token", 1.0, "contains"),
-    ])
+    return _grade_yaml(
+        response,
+        [
+            ("database", "duckdb", 1.0, "contains"),
+            (
+                "deployment_model",
+                "single-node",
+                1.0,
+                "any",
+            ),  # also accept "single node", "single-file"
+            ("analytics_capability", True, 1.0, "boolean"),
+            ("primary_use_case", "token", 1.0, "contains"),
+        ],
+    )
 
 
 def _grade_task_001_deployment(actual: Any) -> bool:
@@ -136,10 +144,19 @@ def _grade_task_001_deployment(actual: Any) -> bool:
     if actual is None:
         return False
     a = str(actual).lower()
-    return any(t in a for t in [
-        "single-node", "single node", "single-file", "single file",
-        "embedded", "serverless", "no server", "one machine",
-    ])
+    return any(
+        t in a
+        for t in [
+            "single-node",
+            "single node",
+            "single-file",
+            "single file",
+            "embedded",
+            "serverless",
+            "no server",
+            "one machine",
+        ]
+    )
 
 
 # Override task-001 to use flexible deployment matching
@@ -169,15 +186,18 @@ def grade_task_002(response: str) -> float:
 
     Corpus: conv-002-rate-limiting.md
     """
-    return _grade_yaml(response, [
-        ("algorithm", "token bucket", 1.0, "contains"),
-        ("tiers", 2, 1.0, "numeric"),
-        ("global_rate_per_min", 40, 1.0, "numeric"),
-        ("global_burst", 15, 1.0, "numeric"),
-        ("per_user_rate_per_min", 10, 1.0, "numeric"),
-        ("per_user_burst", 5, 1.0, "numeric"),
-        ("backoff_initial_ms", 500, 1.0, "numeric"),
-    ])
+    return _grade_yaml(
+        response,
+        [
+            ("algorithm", "token bucket", 1.0, "contains"),
+            ("tiers", 2, 1.0, "numeric"),
+            ("global_rate_per_min", 40, 1.0, "numeric"),
+            ("global_burst", 15, 1.0, "numeric"),
+            ("per_user_rate_per_min", 10, 1.0, "numeric"),
+            ("per_user_burst", 5, 1.0, "numeric"),
+            ("backoff_initial_ms", 500, 1.0, "numeric"),
+        ],
+    )
 
 
 def grade_task_003(response: str) -> float:
@@ -185,12 +205,15 @@ def grade_task_003(response: str) -> float:
 
     Corpus: conv-003-embedding-model.md
     """
-    return _grade_yaml(response, [
-        ("model_name", "nomic", 1.0, "contains"),
-        ("dimensions", 768, 1.0, "numeric"),
-        ("inference_mode", "local", 1.0, "contains"),
-        ("acceleration", "coreml", 1.0, "any"),
-    ])
+    return _grade_yaml(
+        response,
+        [
+            ("model_name", "nomic", 1.0, "contains"),
+            ("dimensions", 768, 1.0, "numeric"),
+            ("inference_mode", "local", 1.0, "contains"),
+            ("acceleration", "coreml", 1.0, "any"),
+        ],
+    )
 
 
 # Override task-003 for flexible acceleration matching
@@ -231,7 +254,15 @@ def grade_task_004(response: str) -> float:
 
     # root_cause should mention ascending/descending/inverted/reverse
     rc = str(parsed.get("root_cause", "")).lower()
-    if any(t in rc for t in ["ascending", "descending", "invert", "reverse", "wrong order", "sort order"]):
+    order_terms = [
+        "ascending",
+        "descending",
+        "invert",
+        "reverse",
+        "wrong order",
+        "sort order",
+    ]
+    if any(t in rc for t in order_terms):
         score += 1.0
 
     # fix should mention reverse

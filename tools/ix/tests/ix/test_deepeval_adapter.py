@@ -10,8 +10,12 @@ import pytest
 
 deepeval = pytest.importorskip("deepeval", reason="deepeval not installed")
 
-from ix.adapters._out.mock_runtime import MockAgent
-from ix.eval.sensors_deepeval import DeepEvalSensor, DeepEvalSensorConfig, _create_agent_adapter
+from ix.adapters._out.mock_runtime import MockAgent  # noqa: E402
+from ix.eval.sensors_deepeval import (  # noqa: E402
+    DeepEvalSensor,
+    DeepEvalSensorConfig,
+    _create_agent_adapter,
+)
 
 
 class TestAgentModelAdapter:
@@ -68,7 +72,9 @@ class TestDeepEvalSensorWithJudge:
         """Direct constructor accepts judge agent."""
         judge = MockAgent(expected_skill="judge")
         sensor = DeepEvalSensor(
-            metric_name="answer_relevancy", threshold=0.5, judge=judge,
+            metric_name="answer_relevancy",
+            threshold=0.5,
+            judge=judge,
         )
         assert sensor.name == "deepeval.answer_relevancy"
 
@@ -82,7 +88,9 @@ class TestDeepEvalSensorWithJudge:
             lambda **kw: MockAgent(expected_skill="judge"),
         )
         config = DeepEvalSensorConfig(
-            metric="answer_relevancy", threshold=0.5, model="haiku",
+            metric="answer_relevancy",
+            threshold=0.5,
+            model="haiku",
         )
         sensor = DeepEvalSensor.from_config(config, probes=(), registry=registry)
         assert sensor.name == "deepeval.answer_relevancy"

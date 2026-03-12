@@ -132,28 +132,6 @@ _TOOL_SCHEMAS: dict[str, dict] = {
             "required": ["skill"],
         },
     },
-    "memex": {
-        "name": "memex",
-        "description": "Execute a memex command to search, ingest, or explore knowledge artifacts.",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "command": {
-                    "type": "string",
-                    "description": "The memex subcommand (dig, keyword, semantic, ingest, backfill)",
-                },
-                "query": {
-                    "type": "string",
-                    "description": "Search query or path argument",
-                },
-                "options": {
-                    "type": "object",
-                    "description": "Additional options (limit, source_kind, etc.)",
-                },
-            },
-            "required": ["command"],
-        },
-    },
     "nexus": {
         "name": "nexus",
         "description": "Execute a nexus command to manage knowledge artifacts.",
@@ -162,7 +140,7 @@ _TOOL_SCHEMAS: dict[str, dict] = {
             "properties": {
                 "command": {
                     "type": "string",
-                    "description": "The nexus subcommand (excavate, locate, survey, absorb, connect, trace)",
+                    "description": "The nexus subcommand (excavate, locate, survey, ...)",
                 },
                 "query": {
                     "type": "string",
@@ -184,11 +162,18 @@ _TOOL_SCHEMAS: dict[str, dict] = {
             "properties": {
                 "command": {
                     "type": "string",
-                    "description": "The memex subcommand (dig, keyword, semantic, thread, timeline, similar, trail, ingest, backfill, rebuild, reset, status, init, query, sql, corpus, sources, schema)",
+                    "description": (
+                        "The memex subcommand (dig, keyword, semantic, "
+                        "thread, timeline, similar, trail, ingest, "
+                        "backfill, rebuild, reset, status, init, "
+                        "query, sql, corpus, sources, schema)"
+                    ),
                 },
                 "query": {
                     "type": "string",
-                    "description": "Search query, conversation ID, trail name, SQL query, or path argument",
+                    "description": (
+                        "Search query, conversation ID, trail name, SQL query, or path argument"
+                    ),
                 },
                 "options": {
                     "type": "object",

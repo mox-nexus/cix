@@ -61,5 +61,3 @@ def compute_metrics(results: list[ProbeResult]) -> dict:
         "min_score": min(scores),
         "max_score": max(scores),
     }
-
-
