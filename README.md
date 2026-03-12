@@ -9,6 +9,8 @@ Collaborative Intelligence Extensions for Claude Code.
 
 AI reliably improves immediate task performance while simultaneously degrading the cognitive foundations that enable future performance. The interaction design — not the technology — determines which outcome you get. cix is a marketplace of cognitive extensions designed around the research: tools that amplify human capability rather than replace it.
 
+Read about the [ethos and research](https://mox-nexus.github.io/cix/library) behind the project.
+
 ## Install
 
 ```bash
