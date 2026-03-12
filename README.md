@@ -1,3 +1,5 @@
+> experimental, pre release status
+> 
 # cix
 
 Collaborative Intelligence Extensions for Claude Code.
