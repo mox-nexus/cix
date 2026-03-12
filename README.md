@@ -4,6 +4,9 @@
 
 Collaborative Intelligence Extensions for Claude Code.
 
+> [!WARNING]
+> **Experimental.** This project is under active development and experiments are being conducted. APIs, extension formats, and conventions may change. Questions, feedback, and ideas welcome in [Discussions](https://github.com/mox-nexus/cix/discussions).
+
 AI reliably improves immediate task performance while simultaneously degrading the cognitive foundations that enable future performance. The interaction design — not the technology — determines which outcome you get. cix is a marketplace of cognitive extensions designed around the research: tools that amplify human capability rather than replace it.
 
 ## Install
@@ -37,7 +40,7 @@ cix/
 ├── docs/
 │   ├── experience/  # SvelteKit documentation site
 │   └── content/     # Library articles + bibliography
-└── .claude/         # Project extensions
+└── ci-lab/          # Experiment workspace (CEPs)
 ```
 
 ## Development
