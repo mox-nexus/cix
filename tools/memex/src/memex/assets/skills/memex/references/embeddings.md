@@ -36,12 +36,11 @@ memex backfill
 
 ## Backfill Patterns
 
-### Quick import, embed later
+### Recovery after interrupted ingest
 
 ```bash
-memex ingest export.zip --no-embed  # Fast: keyword search only
-# ... later when you have time ...
-memex backfill                      # Generate embeddings
+# Ingest always embeds. If interrupted:
+memex backfill                      # Finish embedding remaining fragments
 ```
 
 ### Monitor progress

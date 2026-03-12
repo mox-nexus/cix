@@ -58,7 +58,7 @@ def start(foreground: bool):
     # Wire up the service
     from memex.composition import create_service
 
-    service = create_service(with_embedder=True, with_reranker=True)
+    service = create_service(with_embedder=True, with_reranker=True, direct=True)
     logger.info("Corpus: %s", service.corpus)
     logger.info("Embedder: %s", "enabled" if service.embedder else "disabled")
     logger.info("Reranker: %s", "enabled" if service.reranker else "disabled")

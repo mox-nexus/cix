@@ -1,0 +1,232 @@
+"""Plaintext and document source adapter.
+
+Handles:
+- Text files: .md, .txt, .rst, .csv, .log, .json, .yaml, .yml, .toml, and source code
+- PDF files: .pdf (via pymupdf)
+- DOCX files: .docx (via python-docx)
+
+Text files are split by markdown headings (## sections) into fragments.
+PDF splits by page. DOCX splits by heading paragraphs.
+"""
+
+import hashlib
+import re
+from collections.abc import Iterator
+from datetime import UTC, datetime
+from pathlib import Path
+
+from memex.domain.models import Fragment, Provenance
+
+# Extensions handled natively (no extra deps)
+_TEXT_EXTENSIONS = {
+    ".md",
+    ".txt",
+    ".rst",
+    ".csv",
+    ".log",
+    ".json",
+    ".yaml",
+    ".yml",
+    ".toml",
+    ".ini",
+    ".cfg",
+    ".conf",
+    ".sh",
+    ".bash",
+    ".zsh",
+    ".py",
+    ".js",
+    ".ts",
+    ".rs",
+    ".go",
+    ".html",
+    ".css",
+    ".sql",
+    ".xml",
+}
+
+# Extensions requiring optional deps
+_PDF_EXTENSIONS = {".pdf"}
+_DOCX_EXTENSIONS = {".docx"}
+
+# Minimum content length to create a fragment (skip empty/trivial sections)
+_MIN_FRAGMENT_LENGTH = 50
+
+
+def _stable_id(path: Path, section: str) -> str:
+    """Deterministic fragment ID from file path + section identifier."""
+    key = f"{path.resolve()}:{section}"
+    return hashlib.sha256(key.encode()).hexdigest()[:16]
+
+
+def _file_timestamp(path: Path) -> datetime:
+    """Get file modification time as timezone-aware datetime."""
+    return datetime.fromtimestamp(path.stat().st_mtime, tz=UTC)
+
+
+class PlaintextAdapter:
+    """Adapter for text files, markdown, PDF, and DOCX.
+
+    Splits text files by markdown headings into fragments.
+    PDF splits by page. DOCX splits by heading paragraphs.
+    """
+
+    SOURCE_KIND = "plaintext"
+
+    def can_handle(self, path: Path) -> bool:
+        """Check if this adapter can handle the given path."""
+        suffix = path.suffix.lower()
+        return suffix in _TEXT_EXTENSIONS | _PDF_EXTENSIONS | _DOCX_EXTENSIONS
+
+    def source_kind(self) -> str:
+        return self.SOURCE_KIND
+
+    def ingest(self, path: Path) -> Iterator[Fragment]:
+        """Ingest a file and yield Fragments."""
+        suffix = path.suffix.lower()
+        if suffix in _PDF_EXTENSIONS:
+            yield from self._ingest_pdf(path)
+        elif suffix in _DOCX_EXTENSIONS:
+            yield from self._ingest_docx(path)
+        else:
+            yield from self._ingest_text(path)
+
+    # ── Text / Markdown ───────────────────────────────────────────
+
+    def _ingest_text(self, path: Path) -> Iterator[Fragment]:
+        """Split text file by markdown headings into fragments.
+
+        Files without headings become a single fragment.
+        """
+        try:
+            content = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            content = path.read_text(encoding="latin-1")
+
+        if not content.strip():
+            return
+
+        timestamp = _file_timestamp(path)
+        file_id = str(path.resolve())
+
+        # Split by markdown headings (any level)
+        sections = re.split(r"(?m)^(#{1,6}\s+.+)$", content)
+
+        if len(sections) <= 1:
+            # No headings — single fragment for the whole file
+            yield self._make_fragment(
+                path, file_id, "whole", path.name, content.strip(), timestamp
+            )
+            return
+
+        # First section before any heading (preamble)
+        preamble = sections[0].strip()
+        if preamble and len(preamble) >= _MIN_FRAGMENT_LENGTH:
+            yield self._make_fragment(
+                path, file_id, "preamble", path.name, preamble, timestamp
+            )
+
+        # Heading + body pairs
+        for i in range(1, len(sections), 2):
+            heading = sections[i].strip()
+            body = sections[i + 1].strip() if i + 1 < len(sections) else ""
+            section_content = f"{heading}\n\n{body}".strip()
+
+            if len(section_content) < _MIN_FRAGMENT_LENGTH:
+                continue
+
+            section_slug = re.sub(r"[^a-z0-9]+", "-", heading.lower().lstrip("#").strip())
+            yield self._make_fragment(
+                path, file_id, section_slug, heading.lstrip("#").strip(), section_content, timestamp
+            )
+
+    # ── PDF ────────────────────────────────────────────────────────
+
+    def _ingest_pdf(self, path: Path) -> Iterator[Fragment]:
+        """Extract text from PDF pages."""
+        import pymupdf
+
+        timestamp = _file_timestamp(path)
+        file_id = str(path.resolve())
+
+        doc = pymupdf.open(path)
+        for page_num in range(len(doc)):
+            page = doc[page_num]
+            text = page.get_text().strip()
+
+            if not text or len(text) < _MIN_FRAGMENT_LENGTH:
+                continue
+
+            yield self._make_fragment(
+                path,
+                file_id,
+                f"page-{page_num + 1}",
+                f"{path.name} — page {page_num + 1}",
+                text,
+                timestamp,
+            )
+        doc.close()
+
+    # ── DOCX ───────────────────────────────────────────────────────
+
+    def _ingest_docx(self, path: Path) -> Iterator[Fragment]:
+        """Extract text from DOCX, split by headings."""
+        import docx
+
+        timestamp = _file_timestamp(path)
+        file_id = str(path.resolve())
+
+        doc = docx.Document(path)
+        current_heading = path.name
+        current_content: list[str] = []
+        section_idx = 0
+
+        for para in doc.paragraphs:
+            if para.style and para.style.name and para.style.name.startswith("Heading"):
+                # Flush previous section
+                if current_content:
+                    body = "\n\n".join(current_content).strip()
+                    if len(body) >= _MIN_FRAGMENT_LENGTH:
+                        yield self._make_fragment(
+                            path, file_id, f"section-{section_idx}",
+                            current_heading, body, timestamp,
+                        )
+                    section_idx += 1
+
+                current_heading = para.text.strip() or path.name
+                current_content = [f"# {current_heading}"]
+            elif para.text.strip():
+                current_content.append(para.text.strip())
+
+        # Flush final section
+        if current_content:
+            body = "\n\n".join(current_content).strip()
+            if len(body) >= _MIN_FRAGMENT_LENGTH:
+                yield self._make_fragment(
+                    path, file_id, f"section-{section_idx}",
+                    current_heading, body, timestamp,
+                )
+
+    # ── Helpers ────────────────────────────────────────────────────
+
+    def _make_fragment(
+        self,
+        path: Path,
+        file_id: str,
+        section: str,
+        title: str,
+        content: str,
+        timestamp: datetime,
+    ) -> Fragment:
+        frag_id = _stable_id(path, section)
+        return Fragment(
+            id=frag_id,
+            conversation_id=file_id,
+            role="document",
+            content=content,
+            provenance=Provenance(
+                source_kind=self.SOURCE_KIND,
+                source_id=f"{file_id}:{section}",
+                timestamp=timestamp,
+            ),
+        )

@@ -5,6 +5,7 @@ No torch dependency. Same ms-marco model quality, ~12x faster inference.
 
 from functools import cached_property
 
+from memex.adapters._out.onnx_quiet import suppress_native_stderr
 from memex.domain.models import Fragment
 
 
@@ -36,7 +37,8 @@ class FastEmbedReranker:
         """Lazy load the cross-encoder model."""
         from fastembed.rerank.cross_encoder import TextCrossEncoder
 
-        return TextCrossEncoder(model_name=self._model_name, providers=self._providers)
+        with suppress_native_stderr():
+            return TextCrossEncoder(model_name=self._model_name, providers=self._providers)
 
     def rerank(
         self,
@@ -57,14 +59,14 @@ class FastEmbedReranker:
         if not candidates:
             return []
 
-        # fastembed 0.7+ returns floats in document order
-        scores = list(
-            self.model.rerank(
-                query,
-                [frag.content for frag in candidates],
-                batch_size=self._batch_size,
+        with suppress_native_stderr():
+            scores = list(
+                self.model.rerank(
+                    query,
+                    [frag.content for frag in candidates],
+                    batch_size=self._batch_size,
+                )
             )
-        )
         scored = list(zip(candidates, scores))
         scored.sort(key=lambda x: x[1], reverse=True)
 

@@ -80,10 +80,9 @@ Tuning (rarely needed): `memex dig "query" --semantic-weight 0.8` (default: 0.6)
 | `memex trail list` | List all trails |
 | `memex trail delete "name"` | Delete a trail |
 | **Ingest** | |
-| `memex ingest <file>` | Import with embeddings (default) |
+| `memex ingest <file>` | Parse, store, embed, and index in one step |
 | `memex ingest <dir>` | Recurse directory, import matching files |
-| `memex ingest <file> --no-embed` | Fast import, keyword search only |
-| `memex backfill` | Generate embeddings for existing fragments |
+| `memex backfill` | Finish embedding if ingest was interrupted |
 | `memex build-edges` | Build SIMILAR_TO edges (requires embeddings) |
 | `memex build-edges -t 0.7 -k 10` | Custom threshold and max edges per fragment |
 | `memex rebuild` | Rebuild search indexes |
@@ -146,7 +145,7 @@ Local `.memex/` structure (add to .gitignore):
 |---------|----------|
 | No semantic results | `memex status` (check embedding coverage), then `memex backfill` |
 | Changing embedding model | `memex reset --backup`, then `memex ingest <file>` |
-| Fast import, embed later | `memex ingest <file> --no-embed`, then `memex backfill` |
+| Ingest interrupted mid-embedding | `memex backfill` to finish |
 | Backfill killed / OOM | Tune ONNX resources (see below) |
 | DuckDB lock error during backfill | Normal — DuckDB holds an exclusive write lock. Wait for backfill to finish. Check with `ps aux \| grep memex` |
 | Any command fails with `Conflicting lock` | Another memex process is running (backfill, ingest). Only one writer at a time. |
