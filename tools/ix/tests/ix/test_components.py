@@ -6,12 +6,10 @@ Four-node inner DAG:
              SensorNode
 """
 
-from matrix import Artifact, Component, ComponentRegistry, Construct, AgentResponse, Orchestrator
-
 from ix.adapters._out.components import ProbeNode, SensorNode, SubjectNode, TrialNode
-from ix.domain.types import Probe, Reading, Subject, Trial
+from ix.domain.types import Probe, Subject, Trial
 from ix.eval.sensors import ActivationSensor
-
+from matrix import AgentResponse, Artifact, Component, ComponentRegistry, Construct, Orchestrator
 
 # --- Test Helpers ---
 
@@ -55,9 +53,7 @@ def _subject(runtime_type: str = "test") -> Subject:
 def _construct_with_trial(trial: Trial) -> Construct:
     """Pre-populate a Construct with one trial for isolated SensorNode tests."""
     construct = Construct()
-    construct.append(
-        Artifact.create(type_url="trial.observation", producer="trial", data=trial)
-    )
+    construct.append(Artifact.create(type_url="trial.observation", producer="trial", data=trial))
     return construct
 
 

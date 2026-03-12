@@ -42,10 +42,22 @@ class _MultiReadingSensor:
 
     def measure(self, trial: Trial) -> list[Reading]:
         return [
-            Reading(sensor_name="multi", probe_id=trial.probe_id, trial_index=trial.trial_index,
-                    passed=True, score=1.0, details="check-a"),
-            Reading(sensor_name="multi", probe_id=trial.probe_id, trial_index=trial.trial_index,
-                    passed=False, score=0.0, details="check-b"),
+            Reading(
+                sensor_name="multi",
+                probe_id=trial.probe_id,
+                trial_index=trial.trial_index,
+                passed=True,
+                score=1.0,
+                details="check-a",
+            ),
+            Reading(
+                sensor_name="multi",
+                probe_id=trial.probe_id,
+                trial_index=trial.trial_index,
+                passed=False,
+                score=0.0,
+                details="check-b",
+            ),
         ]
 
 

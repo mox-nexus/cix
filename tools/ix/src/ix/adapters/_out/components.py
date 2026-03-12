@@ -115,11 +115,14 @@ class TrialNode:
         if self._experiment_cwd and "cwd" not in runtime_config:
             runtime_config["cwd"] = self._experiment_cwd
 
-        return self._registry.create(type_url, {
-            "system_prompt": subject_config.get("system_prompt"),
-            "trial_index": self._trial_index,
-            **runtime_config,
-        })
+        return self._registry.create(
+            type_url,
+            {
+                "system_prompt": subject_config.get("system_prompt"),
+                "trial_index": self._trial_index,
+                **runtime_config,
+            },
+        )
 
 
 class SensorNode:

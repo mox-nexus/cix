@@ -11,10 +11,10 @@ Usage: uv run python ci-lab/cep-001/validate_graders.py
 from __future__ import annotations
 
 import sys
+
 sys.path.insert(0, "ci-lab/cep-001")
 
 from graders import GRADERS  # noqa: E402
-
 
 # --- Perfect responses (should score ~1.0) ---
 
@@ -69,23 +69,37 @@ ZERO = {
     "task-001": "I couldn't find any information about that.",
     "task-002": "```yaml\nalgorithm: sliding window\ntiers: 1\n```",
     "task-003": "The model is GPT-4.",
-    "task-004": "```yaml\nroot_cause: network timeout\nfix: increased timeout\ncomponent: api gateway\ncommit: abc1234\n```",
-    "task-005": "```yaml\ntrail_type: algorithmic\ntrail_creation: automatic\nsimilar_type: curated\nsimilar_method: manual comparison\ntrail_use_case: exploration\nsimilar_use_case: synthesis\n```",
-    "task-006": "```yaml\nchosen_pattern: Abstract Base Class\ntyping_style: nominal\nruntime_check: abstractmethod\nrejected_alternative: Protocol\n```",
+    "task-004": (
+        "```yaml\nroot_cause: network timeout\nfix: increased timeout\n"
+        "component: api gateway\ncommit: abc1234\n```"
+    ),
+    "task-005": (
+        "```yaml\ntrail_type: algorithmic\ntrail_creation: automatic\n"
+        "similar_type: curated\nsimilar_method: manual comparison\n"
+        "trail_use_case: exploration\nsimilar_use_case: synthesis\n```"
+    ),
+    "task-006": (
+        "```yaml\nchosen_pattern: Abstract Base Class\n"
+        "typing_style: nominal\nruntime_check: abstractmethod\n"
+        "rejected_alternative: Protocol\n```"
+    ),
 }
 
 
 # --- Partial responses (should score between 0 and 1) ---
 
 PARTIAL = {
-    "task-001": ("""```yaml
+    "task-001": (
+        """```yaml
 database: DuckDB
 deployment_model: clustered
 analytics_capability: true
 primary_use_case: user sessions
-```""", 0.5),  # database + analytics correct, deployment + use_case wrong
-
-    "task-002": ("""```yaml
+```""",
+        0.5,
+    ),  # database + analytics correct, deployment + use_case wrong
+    "task-002": (
+        """```yaml
 algorithm: token bucket
 tiers: 2
 global_rate_per_min: 40
@@ -93,14 +107,18 @@ global_burst: 15
 per_user_rate_per_min: 0
 per_user_burst: 0
 backoff_initial_ms: 0
-```""", 4/7),  # 4 of 7 fields correct
-
-    "task-003": ("""```yaml
+```""",
+        4 / 7,
+    ),  # 4 of 7 fields correct
+    "task-003": (
+        """```yaml
 model_name: nomic-embed-text-v1.5
 dimensions: 768
 inference_mode: cloud
 acceleration: cuda
-```""", 0.5),  # model + dimensions correct, mode + accel wrong
+```""",
+        0.5,
+    ),  # model + dimensions correct, mode + accel wrong
 }
 
 
@@ -148,7 +166,7 @@ def main() -> int:
         else:
             failed += 1
 
-    print(f"\n{'='*50}")
+    print(f"\n{'=' * 50}")
     print(f"Results: {passed}/{total} passed, {failed} failed")
 
     if failed > 0:

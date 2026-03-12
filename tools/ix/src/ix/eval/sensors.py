@@ -101,10 +101,7 @@ class ActivationSensor:
         probes: tuple[Probe, ...] = (),
         **kwargs: Any,
     ) -> ActivationSensor:
-        expectations = {
-            p.id: p.metadata.get("expectation", "must_trigger")
-            for p in probes
-        }
+        expectations = {p.id: p.metadata.get("expectation", "must_trigger") for p in probes}
         return cls(expected_skill=config.expected_skill, expectations=expectations)
 
     @property
@@ -138,7 +135,9 @@ class ActivationSensor:
                 trial_index=trial.trial_index,
                 passed=passed,
                 score=1.0 if passed else 0.0,
-                details=f"skill={self._expected_skill}, activated={activated}, expected={expectation}",
+                details=(
+                    f"skill={self._expected_skill}, activated={activated}, expected={expectation}"
+                ),
             )
         ]
 
@@ -356,7 +355,7 @@ class ToolUsageSensor:
         config: ToolUsageSensorConfig,
         probes: tuple[Probe, ...] = (),
         **kwargs: Any,
-    ) -> "ToolUsageSensor":
+    ) -> ToolUsageSensor:
         expectations = {
             p.id: {
                 "command": p.metadata.get("expected_command", ""),
@@ -384,15 +383,30 @@ class ToolUsageSensor:
         if not matching:
             # No tool call — correct for should_not_trigger
             if expectation == "should_not_trigger":
-                return [self._reading(trial, passed=True, score=1.0,
-                                      details=f"correctly did not use {self._expected_tool}")]
-            return [self._reading(trial, passed=False, score=0.0,
-                                  details=f"no {self._expected_tool} tool call")]
+                return [
+                    self._reading(
+                        trial,
+                        passed=True,
+                        score=1.0,
+                        details=f"correctly did not use {self._expected_tool}",
+                    )
+                ]
+            return [
+                self._reading(
+                    trial, passed=False, score=0.0, details=f"no {self._expected_tool} tool call"
+                )
+            ]
 
         # Tool was called — wrong for should_not_trigger
         if expectation == "should_not_trigger":
-            return [self._reading(trial, passed=False, score=0.0,
-                                  details=f"incorrectly used {self._expected_tool}")]
+            return [
+                self._reading(
+                    trial,
+                    passed=False,
+                    score=0.0,
+                    details=f"incorrectly used {self._expected_tool}",
+                )
+            ]
 
         tc = matching[0]
         tc_input = tc.get("input", {})
@@ -475,7 +489,7 @@ class ToolUsageSensor:
             except StopIteration:
                 continue
 
-            remaining = parts[tool_idx + 1:]
+            remaining = parts[tool_idx + 1 :]
             if not remaining:
                 return {"command": "", "query": ""}
 
@@ -537,7 +551,7 @@ class OutcomeSensor:
         config: OutcomeSensorConfig,
         probes: tuple[Probe, ...] = (),
         **kwargs: Any,
-    ) -> "OutcomeSensor":
+    ) -> OutcomeSensor:
         ground_truth = {
             p.id: {
                 "expected_facts": p.metadata.get("expected_facts", []),
@@ -594,12 +608,22 @@ class OutcomeSensor:
         grader = self._graders.get(trial.probe_id)
         if grader is not None:
             answer_score = grader(response.content)
-            details = f"grader={trial.probe_id}, score={answer_score:.0%}, turns={response.num_turns}, tools={num_tool_calls}"
+            details = (
+                f"grader={trial.probe_id}, score={answer_score:.0%}, "
+                f"turns={response.num_turns}, tools={num_tool_calls}"
+            )
         else:
             expected_facts = truth.get("expected_facts", [])
             if not expected_facts:
-                return [self._reading(trial, passed=False, score=0.0,
-                                      details=f"no grader or expected_facts for probe '{trial.probe_id}'")]
+                msg = f"no grader or expected_facts for probe '{trial.probe_id}'"
+                return [
+                    self._reading(
+                        trial,
+                        passed=False,
+                        score=0.0,
+                        details=msg,
+                    )
+                ]
             content_lower = response.content.lower()
             found = [f for f in expected_facts if f.lower() in content_lower]
             missed = [f for f in expected_facts if f.lower() not in content_lower]
@@ -614,13 +638,15 @@ class OutcomeSensor:
 
         metrics["answer_score"] = answer_score
 
-        return [self._reading(
-            trial,
-            passed=answer_score > 0.5,
-            score=answer_score,
-            metrics=metrics,
-            details=details,
-        )]
+        return [
+            self._reading(
+                trial,
+                passed=answer_score > 0.5,
+                score=answer_score,
+                metrics=metrics,
+                details=details,
+            )
+        ]
 
     def _reading(
         self,

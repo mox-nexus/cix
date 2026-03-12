@@ -98,7 +98,11 @@ class Experiment:
         for probe in config.probes:
             for trial_idx in range(config.trials):
                 trial_readings = await self._run_trial(
-                    probe, active_subject, self._sensor, self._registry, trial_idx,
+                    probe,
+                    active_subject,
+                    self._sensor,
+                    self._registry,
+                    trial_idx,
                 )
                 readings.extend(trial_readings)
 
@@ -123,4 +127,3 @@ class Experiment:
         )
         self._store.save_summary(config.name, results)
         return results
-

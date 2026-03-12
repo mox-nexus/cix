@@ -39,7 +39,10 @@ def analyze(results_path: Path) -> None:
         lo, hi = min(scores), max(scores)
         zeros = sum(1 for s in scores if s == 0.0)
 
-        print(f"  {probe_id}: mean={mean:.3f}, sd={sd:.3f}, range=[{lo:.2f}, {hi:.2f}], n={n}, zeros={zeros}")
+        print(
+            f"  {probe_id}: mean={mean:.3f}, sd={sd:.3f}, "
+            f"range=[{lo:.2f}, {hi:.2f}], n={n}, zeros={zeros}"
+        )
 
         # Check rollback triggers
         probe_triggers = []
@@ -50,7 +53,7 @@ def analyze(results_path: Path) -> None:
         if sd > 0.35:
             probe_triggers.append(f"NOISY (sd={sd:.3f} > 0.35)")
         if zeros / n > 0.5:
-            probe_triggers.append(f"YAML_FAIL ({zeros}/{n} = {zeros/n:.0%} zero scores)")
+            probe_triggers.append(f"YAML_FAIL ({zeros}/{n} = {zeros / n:.0%} zero scores)")
 
         if probe_triggers:
             for t in probe_triggers:

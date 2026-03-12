@@ -4,7 +4,7 @@ Experiment definition and result types.
 Agent response types (AgentResponse) live in Matrix.
 """
 
-from datetime import UTC, datetime
+from datetime import datetime
 from typing import Any
 
 from pydantic import BaseModel, computed_field

@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from matrix import ComponentRegistry
-
 from matrix import Orchestrator as _Orchestrator
 
 from ix.adapters._out.components import ProbeNode, SensorNode, SubjectNode, TrialNode
@@ -19,6 +18,7 @@ from ix.adapters._out.mock_runtime import MockAgent
 from ix.config.settings import find_lab
 from ix.domain.ports import Sensor as _Sensor
 from ix.domain.types import Probe, Reading, Subject
+from ix.eval.experiment import Experiment
 from ix.eval.models import ACCEPTABLE, MUST_TRIGGER
 from ix.eval.sensors import (
     ActivationSensor,
@@ -31,7 +31,6 @@ from ix.eval.sensors import (
     ToolUsageSensorConfig,
 )
 from ix.eval.sensors_deepeval import DeepEvalSensor, DeepEvalSensorConfig
-from ix.eval.experiment import Experiment
 
 if TYPE_CHECKING:
     from ix.domain.ports import Sensor
@@ -132,11 +131,14 @@ def build_registry(
     registry.register("matrix.agent.claude", _claude_factory)
 
     expectations = _build_expectations(experiment) if experiment and mock else {}
-    registry.register("matrix.agent.mock", _make_mock_factory(
-        expected_skill=skill,
-        base_seed=seed,
-        expectations=expectations,
-    ))
+    registry.register(
+        "matrix.agent.mock",
+        _make_mock_factory(
+            expected_skill=skill,
+            base_seed=seed,
+            expectations=expectations,
+        ),
+    )
 
     return registry
 
@@ -161,8 +163,9 @@ def _build_one_sensor(
         sensor_config["graders_module"] = str(graders_path.resolve())
 
     if type_url not in registry:
-        valid = sorted(t.removeprefix("ix.sensor.") for t in registry.types()
-                       if t.startswith("ix.sensor."))
+        valid = sorted(
+            t.removeprefix("ix.sensor.") for t in registry.types() if t.startswith("ix.sensor.")
+        )
         raise ValueError(f"Unknown sensor type: {sensor_type!r}. Valid types: {', '.join(valid)}")
 
     return registry.create(
@@ -209,12 +212,16 @@ def make_run_trial(experiment_cwd: str | None = None):
         registry: ComponentRegistry,
         trial_index: int,
     ) -> list[Reading]:
-        orchestrator = _Orchestrator([
-            ProbeNode(probe),
-            SubjectNode(subject),
-            TrialNode(registry=registry, trial_index=trial_index, experiment_cwd=experiment_cwd),
-            SensorNode(sensor=sensor),
-        ])
+        orchestrator = _Orchestrator(
+            [
+                ProbeNode(probe),
+                SubjectNode(subject),
+                TrialNode(
+                    registry=registry, trial_index=trial_index, experiment_cwd=experiment_cwd
+                ),
+                SensorNode(sensor=sensor),
+            ]
+        )
         construct = await orchestrator.run()
         return construct["sensor.reading"]
 
@@ -243,7 +250,11 @@ def create_service(
         seed=seed,
         experiment=experiment,
     )
-    sensor = create_sensor(experiment, registry, experiment_cwd) if experiment else ActivationSensor(expected_skill=skill)
+    sensor = (
+        create_sensor(experiment, registry, experiment_cwd)
+        if experiment
+        else ActivationSensor(expected_skill=skill)
+    )
     store = FilesystemStore(lab or find_lab())
 
     return Experiment(
