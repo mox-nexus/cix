@@ -95,23 +95,6 @@ uv.lock
 .claude/settings.local.json
 tools/.claude/
 
-# Rhetoric workspace
-.rhet/
-
-# Research workspace
-.research/
-
-# Claude local state
-.claude/settings.local.json
-.claude/todos.md
-
-# Screenshots (dev/review artifacts)
-.screenshots/
-
-# mdbook output
-docs/book/
-.playwright-mcp/
-
 # Rhetoric workspace (discourse output, pipeline working state)
 **/.rhet/
 
@@ -120,3 +103,13 @@ docs/book/
 
 # Memex local corpus (binary, user-local)
 **/.memex/
+
+# Claude local state
+.claude/todos.md
+
+# Screenshots (dev/review artifacts)
+.screenshots/
+
+# mdbook output
+docs/book/
+.playwright-mcp/
