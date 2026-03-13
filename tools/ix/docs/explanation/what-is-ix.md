@@ -7,24 +7,23 @@ You have an agent that picks which tool subcommand to call based on a natural la
 Here is what that question looks like as an ix experiment:
 
 ```
-ci-lab/cep-003-skills-vs-references/
-├── experiment.yaml          # 4 subjects, tool-usage sensor, 25 trials
+ci-lab/cep-001/
+├── experiment.yaml          # 3 subjects, outcome sensor, 6 task probes
 ├── tasks/
-│   ├── el-001.md            # "I think the artifact ID was something like auth-decision..."
-│   ├── lt-001.md            # "Starting from artifact api-design-v1, what followed?"
-│   └── ...                  # 25 probes targeting 5 ambiguous command boundaries
+│   ├── task-001.md          # Auth token storage — find DuckDB decision
+│   ├── task-002.md          # Rate limiting — extract token bucket config
+│   └── ...                  # 6 probes targeting corpus retrieval + YAML extraction
 └── subjects/
-    ├── skill-rich.md        # Structured "when to use" guidance
-    ├── skill-minimal.md     # Skill structure, stripped of decision heuristics
-    ├── reference-rich.md    # CLI help format, with decision heuristics added
-    └── reference-minimal.md # Standard --help output
+    ├── help-only.md         # Standard --help output
+    ├── skill-at-tool.md     # Structured skill-format guidance
+    └── help-plus-agent-skill.md  # Both --help and agent-provided skill
 ```
 
 ```bash
-ix run cep-003-skills-vs-references --lab ci-lab
+ix run cep-001 --lab ci-lab
 ```
 
-ix sends each of the 25 probes to each of the 4 subjects, 25 times each. That is 2,500 agent invocations. For every invocation, a sensor checks whether the agent called the right subcommand with reasonable arguments. After all trials complete, ix aggregates: per-probe accuracy, per-boundary accuracy, factorial contrasts, credible intervals.
+ix sends each probe to a subject, repeated across trials. For every invocation, a sensor grades the agent's response — did it find the right data and produce correct YAML? After all trials complete, ix aggregates: per-probe accuracy, mean scores, rollback triggers.
 
 The output is numbers you can compare, reproduce, and act on. Not "it seemed to work better."
 
@@ -152,7 +151,7 @@ ix ships four sensors:
 
 **FunctionTestSensor** -- extracts code from the agent's response, loads it into an isolated module, runs test cases with a timeout. Returns `score = tests_passed / tests_total`. Ground truth (function name, test cases) is injected at construction from probe metadata.
 
-**ToolUsageSensor** -- checks subcommand selection and argument quality. Two-tier scoring. Used in the CEP-003 experiment described above.
+**ToolUsageSensor** -- checks subcommand selection and argument quality. Two-tier scoring.
 
 **DeepEvalSensor** -- wraps any DeepEval metric (answer relevancy, faithfulness, hallucination, bias, toxicity, GEval) as an ix sensor. When a judge agent is provided, LLM grading calls route through Matrix's Agent protocol, making grading costs observable.
 
@@ -233,7 +232,7 @@ The `Experiment` class never imports a concrete node class or agent implementati
 
 ## Status: alpha
 
-ix 0.0.1-alpha means the core loop works and real experiments have run (CEP-002, CEP-003). The sensor protocol, the file format, and the CLI commands are stable. Internal model field names may change.
+ix 0.0.1-alpha means the core loop works and real experiments have run (CEP-001). The sensor protocol, the file format, and the CLI commands are stable. Internal model field names may change.
 
 Known gaps: no built-in statistical significance testing (Bayesian methods are documented in experiment proposals but not automated), no pass@k metric, no load-testing sensor. The architecture supports all three -- the Sensor protocol generalizes -- but they do not exist yet.
 

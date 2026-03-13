@@ -12,12 +12,10 @@ Each experiment follows the CEP (Collaboration Enhancement Proposal) format: a q
 
 ```
 ci-lab/
-├── cep-001-rigor/          # Does iteration improve code generation?
-├── cep-002-mandates/        # WHY vs HOW — does prescribing process help or hurt?
-├── cep-003-skills-vs-references/  # Do tool-description skills earn their keep?
-├── marketplace/             # Earlier exploratory experiments (skill-activation, skill-vs-help)
-├── src/ci_lab/              # Shared experiment utilities
-└── pyproject.toml           # Workspace member, depends on ix
+├── cep-001/                # Skills vs Help — does skill-format docs improve agent accuracy?
+├── marketplace/            # Earlier exploratory experiments (skill-activation, skill-vs-help)
+├── src/ci_lab/             # Shared experiment utilities
+└── pyproject.toml          # Workspace member, depends on ix
 ```
 
 ### CEP Format
@@ -35,11 +33,7 @@ Each `cep-*/` directory contains:
 
 ### Experiments
 
-**CEP-001 — Rigor**: Does self-review iteration (1, 3, 5 rounds) produce more correct code than single-shot generation? Tests the common assumption that "iterate until good" works.
-
-**CEP-002 — Mandates**: Does explaining WHY outperform prescribing HOW? 6 conditions on the autonomy spectrum, from baseline to highly-structured. Validates the WHY > HOW principle with discriminating tasks.
-
-**CEP-003 — Skills vs References**: Do tool-description skills add value over the mechanical interface definitions (`--help`, tool schemas) that already exist? Tests whether this category of skill earns its maintenance cost or is redundant.
+**CEP-001 — Skills vs Help**: Do tool-description skills add value over `--help` output? Three documentation formats compared (help-only, skill-at-tool, help-plus-agent-skill) using a controlled memex corpus. Status: draft/active, Phase 1 complete.
 
 ### Phased Execution
 
@@ -56,9 +50,9 @@ A null result is not a failed experiment. It is the experiment doing its job.
 ci-lab depends on `ix` (workspace member). Experiments run through the ix CLI:
 
 ```bash
-cd ci-lab/cep-003-skills-vs-references
-ix experiment validate    # Check probes, subjects, sensor config
-ix experiment run         # Execute trials
+ix run cep-001 --lab ci-lab --mock    # Dry run, no API calls
+ix run cep-001 --lab ci-lab           # Real run
+ix results cep-001 --lab ci-lab       # View results
 ```
 
 ## Relationship to ix

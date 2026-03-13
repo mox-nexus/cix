@@ -190,8 +190,8 @@ def run(
 
     Examples:
         ix run skill-activation --lab ci-lab --mock
-        ix run cep-002-mandates --subject baseline
-        ix run cep-002-mandates --subject motivation --trials 5
+        ix run cep-001 --lab ci-lab --subject help-only
+        ix run cep-001 --lab ci-lab --trials 5
     """
     from ix.composition import create_service, create_store
 

@@ -18,7 +18,6 @@ PLUGINS=(
   "craft-rhetoric:Explanation craft organized by the Five Canons of Classical Rhetoric"
   "craft-extensions:Build extensions for human-AI collaboration"
   "craft-evals:Eval methodology for AI systems"
-  "run-openclaw-seatbelt:OpenClaw with Seatbelt sandbox for secure AI assistants"
 )
 
 usage() {

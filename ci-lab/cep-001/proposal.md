@@ -1,7 +1,7 @@
 # CEP-001: Capabilities with Packaged Semantic Glue
 
 **Status**: Directional Signal (Run 1)
-**Author**: Yashodeep Vyas
+**Author**: Mox Labs
 **Created**: 2026-02-28
 **Updated**: 2026-03-07
 

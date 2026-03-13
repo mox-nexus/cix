@@ -20,15 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Two-column article layout with cluster sidebar navigation
   - Reading progress tracking
   - Catalog with plugin detail modals and Mermaid diagrams
-- **Plugins**: 8 marketplace extensions
+- **Plugins**: 6 marketplace extensions
   - `guild-arch` — 13 orthogonal architecture reasoning agents
   - `ci-scaffolds` — Collaboration, problem-solving, and engineering craft scaffolds
   - `craft-rhetoric` — Semantic Stack workflow with 7 agents (feynman, sagan, tufte, socrates, orwell, vyasa, jobs)
-  - `craft-extensions` — Plugin creation: skills, agents, hooks, commands, MCPs, tools
+  - `craft-extensions` — Plugin creation: skills, agents, hooks, commands, MCPs, tools (absorbed `craft-prompts` and `data-store`)
   - `craft-evals` — Eval methodology for AI systems
-  - `craft-prompts` — Prompt engineering for reasoning models and deep research
-  - `data-store` — Database selection, search, hybrid retrieval, RAG
-  - `run-openclaw-srt` — OpenClaw with SRT sandbox
 
 ### Changed
 
