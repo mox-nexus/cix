@@ -1,41 +1,30 @@
 # memex
 
-Extended memory for you and your agents. Excavates and connects historical human-AI collaboration artifacts across Claude, OpenAI, and other sources with hybrid search.
+Extended memory for you and your agents.
 
-Named for Vannevar Bush's 1945 vision of an "enlarged intimate supplement to memory."
-
-## When to Use
-
-- Looking back on past decisions: "where did I decide on auth?"
-- Finding patterns across conversations
-- Building a searchable corpus of collaboration history
-- Running SQL queries against your AI interaction data
+Ingest text, documents, and conversation exports. Search with hybrid retrieval (BM25 + semantic + reranking). Navigate via knowledge graph and curated trails.
 
 ## Quick Start
 
 ```bash
-# Ingest a Claude.ai export
-memex ingest ~/Downloads/claude-export.json
-
-# Search with hybrid retrieval (keyword + semantic + reranking)
-memex dig "authentication decisions"
-
-# View what's in your corpus
-memex corpus
-
-# Power-user SQL escape hatch
-memex query "SELECT COUNT(*) FROM fragments"
-memex sql  # Interactive shell
+memex init                                    # First-time setup
+memex ingest ~/research/                      # Ingest a directory of text files
+memex ingest ~/Downloads/claude-export.zip    # Or a Claude/ChatGPT export
+memex dig "authentication decisions"          # Hybrid search
 ```
 
-## Design
+## What It Ingests
 
-- **`dig` is the default** — hybrid search that just works (BM25 + semantic + cross-encoder reranking)
-- **SQL for power users** — `query` and `sql` for when you need full control
-- **Source-agnostic** — Claude, OpenAI, more to come. Adding a source = one adapter
-- **Local-first** — corpus stored at `~/.memex/corpus.duckdb`, project-local with `.memex/`
+| Source | Formats |
+|--------|---------|
+| Text files | `.md`, `.txt`, `.rst`, `.py`, `.js`, `.ts`, `.rs`, `.go`, `.sh`, `.sql`, and more |
+| Documents | `.pdf`, `.docx` |
+| Claude.ai | `.json` or `.zip` export |
+| ChatGPT | `.json` or `.zip` export |
 
-## Search Modes
+Point `memex ingest` at a file or directory — it auto-detects the format, splits intelligently (markdown by headings, PDF by pages, DOCX by heading paragraphs), embeds, and indexes in one step.
+
+## Search
 
 | Command | Method | Best For |
 |---------|--------|----------|
@@ -43,6 +32,13 @@ memex sql  # Interactive shell
 | `memex keyword` | BM25 full-text | Exact terms, code identifiers |
 | `memex semantic` | Vector similarity | Conceptual, fuzzy matching |
 | `memex query` | Raw SQL | Complex filters, aggregation |
+
+## Design
+
+- **Local-first** — DuckDB corpus at `~/.memex/`, project-local with `memex init --local`
+- **One command to ingest** — parses, stores, embeds, and indexes
+- **Source-agnostic** — adding a source = one adapter, zero domain changes
+- **Agent-friendly** — Python API (`from memex.api import Memex`), daemon for concurrent access
 
 ## License
 

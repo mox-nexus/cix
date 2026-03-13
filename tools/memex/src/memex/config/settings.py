@@ -18,7 +18,6 @@ _CONFIG_KEY_MAP = {
     ("corpus", "path"): "corpus_path",
     ("embedding", "onnx_batch_size"): "onnx_batch_size",
     ("embedding", "onnx_threads"): "onnx_threads",
-    ("ingest", "embed_by_default"): "embed_by_default",
     ("ingest", "batch_size"): "batch_size",
     ("search", "rerank_by_default"): "rerank_by_default",
     ("embedding", "provider"): "onnx_provider",
@@ -108,7 +107,6 @@ class Settings(BaseSettings):
 
     Environment variables:
         MEMEX_CORPUS_PATH: Path to DuckDB corpus file
-        MEMEX_EMBED_BY_DEFAULT: Embed during ingest (default: true)
         MEMEX_BATCH_SIZE: Fragments per batch for embedding
         MEMEX_RERANK_BY_DEFAULT: Enable reranking in search
         MEMEX_SEMANTIC_WEIGHT: Weight for semantic vs keyword (0-1)
@@ -118,7 +116,6 @@ class Settings(BaseSettings):
     corpus_path: Path = Path.home() / ".memex" / "corpus.duckdb"
 
     # Ingest
-    embed_by_default: bool = True
     batch_size: int = 100
 
     # Embedding
@@ -209,7 +206,6 @@ path = "{path}"
 # onnx_threads = 2      # inter-op parallelism (1-4)
 
 [ingest]
-embed_by_default = true
 batch_size = 100
 
 [search]

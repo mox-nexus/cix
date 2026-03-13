@@ -12,6 +12,7 @@ for convenience in non-bulk paths (single queries, small batches).
 from collections.abc import Iterator
 from functools import cached_property
 
+from memex.adapters._out.onnx_quiet import suppress_native_stderr
 from memex.domain.models import EmbeddingConfig
 
 
@@ -49,11 +50,12 @@ class FastEmbedEmbedder:
         """Lazy load the embedding model."""
         from fastembed import TextEmbedding
 
-        return TextEmbedding(
-            model_name=self._model_name,
-            threads=self._onnx_threads,
-            providers=self._providers,
-        )
+        with suppress_native_stderr():
+            return TextEmbedding(
+                model_name=self._model_name,
+                threads=self._onnx_threads,
+                providers=self._providers,
+            )
 
     @property
     def model_name(self) -> str:
@@ -89,5 +91,6 @@ class FastEmbedEmbedder:
         Callers can write each embedding to storage immediately
         without accumulating them all in memory.
         """
-        for embedding in self.model.embed(texts, batch_size=self._onnx_batch_size):
-            yield embedding.tolist()
+        with suppress_native_stderr():
+            for embedding in self.model.embed(texts, batch_size=self._onnx_batch_size):
+                yield embedding.tolist()

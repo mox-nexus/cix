@@ -34,6 +34,7 @@ from memex.composition import (
     create_corpus,
     create_service,
     detect_providers,
+    ensure_daemon,
     get_embedder,
     reranker_available,
 )
@@ -362,25 +363,20 @@ def _run_import_wizard(context: dict) -> Path | None:
 
 
 def _ingest_inline(path: Path):
-    """Run ingest as part of init wizard — always embeds, friendly output."""
-    _do_ingest(path, embed=True, wizard=True)
+    """Run ingest as part of init wizard — friendly output."""
+    _do_ingest(path, wizard=True)
 
 
-def _do_ingest(path: Path, *, embed: bool = True, wizard: bool = False):
+def _do_ingest(path: Path, *, wizard: bool = False):
     """Shared ingest logic for both init wizard and ingest command.
 
     Calls through ExcavationService — no direct infrastructure access.
-    Args:
-        embed: Generate embeddings (True) or keyword-only (False).
-        wizard: Use friendly wizard output (True) or standard CLI output (False).
+    Always embeds. If embedding fails mid-flight, `memex backfill` recovers.
     """
     from memex.config.settings import get_settings
 
-    if embed:
-        with obs.status("Loading embedding model..."):
-            service = create_service(with_embedder=True)
-    else:
-        service = create_service()
+    with obs.status("Loading embedding model..."):
+        service = create_service(with_embedder=True, direct=True)
 
     try:
         with obs.status("Parsing..."):
@@ -388,7 +384,7 @@ def _do_ingest(path: Path, *, embed: bool = True, wizard: bool = False):
 
         obs.dim(f"Parsed {parsed:,} fragments, stored {stored:,} new")
 
-        if embed and stored > 0 and service.embedder:
+        if stored > 0 and service.embedder:
             with Progress(
                 SpinnerColumn(),
                 TextColumn("[progress.description]{task.description}"),
@@ -414,22 +410,17 @@ def _do_ingest(path: Path, *, embed: bool = True, wizard: bool = False):
         with obs.status("Building search index..."):
             service.corpus.rebuild_search_index()
 
-        # Output: wizard gets friendly closing, CLI gets standard hints
         if wizard:
             obs.console.print()
-            obs.success(f"Ingested {stored:,} fragments (ready for semantic search)")
+            obs.success(f"Ingested {stored:,} fragments (ready for search)")
             obs.console.print()
             obs.console.print("  You're all set! Try:")
             obs.console.print()
             obs.console.print('    [cyan]memex dig "that auth discussion"[/cyan]')
             obs.console.print("    [cyan]memex status[/cyan]")
             obs.console.print()
-        elif embed:
-            obs.success(f"Ingested {stored:,} fragments (ready for semantic search)")
-            obs.hint('memex dig "your query" to search')
         else:
-            obs.success(f"Ingested {stored:,} fragments (keyword search only)")
-            obs.info("Run 'memex backfill' for semantic search")
+            obs.success(f"Ingested {stored:,} fragments")
             obs.hint('memex dig "your query" to search')
     except ValueError as e:
         obs.error(str(e))
@@ -438,17 +429,15 @@ def _do_ingest(path: Path, *, embed: bool = True, wizard: bool = False):
             obs.info("Run 'memex sources' for all adapters")
     finally:
         service.close()
+        ensure_daemon()
 
 
-def _ingest_directory(directory: Path, *, embed: bool = True):
+def _ingest_directory(directory: Path):
     """Ingest all matching files in a directory recursively."""
     from memex.config.settings import get_settings
 
-    if embed:
-        with obs.status("Loading embedding model..."):
-            service = create_service(with_embedder=True)
-    else:
-        service = create_service()
+    with obs.status("Loading embedding model..."):
+        service = create_service(with_embedder=True, direct=True)
 
     try:
         # Find all files that match any adapter
@@ -478,7 +467,7 @@ def _ingest_directory(directory: Path, *, embed: bool = True):
             except Exception as e:
                 obs.warning(f"  {file_path.name}: {e}")
 
-        if total_stored > 0 and embed and service.embedder:
+        if total_stored > 0 and service.embedder:
             settings = get_settings()
             with Progress(
                 SpinnerColumn(),
@@ -503,6 +492,7 @@ def _ingest_directory(directory: Path, *, embed: bool = True):
         obs.success(f"Ingested {total_stored:,} fragments from {len(matching_files)} file(s)")
     finally:
         service.close()
+        ensure_daemon()
 
 
 def _human_age(mtime: float) -> str:
@@ -772,26 +762,20 @@ def similar(fragment_ref: str, limit: int, fmt: str):
 
 @main.command()
 @click.argument("path", type=click.Path(exists=True, path_type=Path))
-@click.option("--no-embed", is_flag=True, help="Skip embedding (faster, keyword search only)")
-def ingest(path: Path, no_embed: bool):
+def ingest(path: Path):
     """Ingest a file or directory into the corpus.
 
-    For directories, recursively finds all files that match a known adapter.
-    By default, generates embeddings for semantic search.
+    Parses, stores, embeds, and indexes in one step.
+    If interrupted, run 'memex backfill' to finish embedding.
 
     Example:
         memex ingest ~/Downloads/conversations.json
-        memex ingest export.zip --no-embed
         memex ingest ~/exports/           # Recurse directory
     """
-    from memex.config.settings import get_settings
-
-    should_embed = get_settings().embed_by_default and not no_embed
-
     if path.is_dir():
-        _ingest_directory(path, embed=should_embed)
+        _ingest_directory(path)
     else:
-        _do_ingest(path, embed=should_embed)
+        _do_ingest(path)
 
 
 @main.command()
@@ -803,13 +787,14 @@ def rebuild():
     Example:
         memex rebuild
     """
-    service = create_service()
+    service = create_service(direct=True)
     try:
         with obs.status("Rebuilding FTS (BM25) index..."):
             service.corpus.rebuild_search_index()
         obs.success("FTS index rebuilt")
     finally:
         service.close()
+        ensure_daemon()
     obs.info("VSS (embedding) index is managed automatically")
 
 
@@ -825,7 +810,7 @@ def build_edges(threshold: float, k: int):
         memex build-edges
         memex build-edges --threshold 0.7 --k 10
     """
-    service = create_service()
+    service = create_service(direct=True)
     try:
         if not service.corpus.has_semantic_search():
             obs.error("No embeddings found. Run 'memex backfill' first.")
@@ -853,6 +838,7 @@ def build_edges(threshold: float, k: int):
         obs.hint("memex similar @N to find related fragments")
     finally:
         service.close()
+        ensure_daemon()
 
 
 @main.command()
@@ -867,7 +853,7 @@ def backfill(batch_size: int):
         memex backfill --batch-size 50  # Smaller batches for lower memory
     """
     with obs.status("Loading embedding model..."):
-        service = create_service(with_embedder=True)
+        service = create_service(with_embedder=True, direct=True)
 
     try:
         coverage = service.embedding_coverage()
@@ -907,6 +893,7 @@ def backfill(batch_size: int):
         raise SystemExit(137)
     finally:
         service.close()
+        ensure_daemon()
 
 
 @main.command()
@@ -1156,14 +1143,23 @@ def sources():
     table.add_column("Adapter", style="green")
     table.add_column("Formats")
 
+    _FORMAT_MAP = {
+        "claude_conversations": ".json, .zip",
+        "openai": ".json, .zip",
+        "plaintext": ".md, .txt, .pdf, .docx, source code",
+    }
+
     for adapter in service.source_adapters:
-        table.add_row(adapter.source_kind(), adapter.__class__.__name__, ".json, .zip")
+        kind = adapter.source_kind()
+        formats = _FORMAT_MAP.get(kind, ".json, .zip")
+        table.add_row(kind, adapter.__class__.__name__, formats)
 
     obs.console.print(table)
     obs.console.print()
     obs.info("To add more sources, export from:")
     obs.console.print("  • Claude.ai: Settings → Account → Export Data")
     obs.console.print("  • ChatGPT: Settings → Data Controls → Export")
+    obs.console.print("  • Text/PDF/DOCX: memex ingest <file or directory>")
 
 
 # --- SQL Escape Hatch ---

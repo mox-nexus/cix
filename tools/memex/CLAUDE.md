@@ -97,6 +97,7 @@ Extensible strings (not enum). Common values:
 ```python
 SOURCE_CLAUDE_CONVERSATIONS = "claude_conversations"
 SOURCE_OPENAI = "openai"
+SOURCE_PLAINTEXT = "plaintext"  # .md, .txt, .pdf, .docx, source code
 SOURCE_GEMINI = "gemini"  # adapter not yet implemented
 SOURCE_CUSTOM = "custom"
 ```
@@ -125,7 +126,7 @@ SOURCE_CUSTOM = "custom"
 │ ├── TrailPort    → DuckDB trails                    │
 │ ├── EmbeddingPort → nomic-embed-text-v1.5 (ONNX)   │
 │ ├── RerankerPort  → MS MARCO cross-encoder (ONNX)   │
-│ └── SourcePort → Claude, OpenAI              │
+│ └── SourcePort → Claude, OpenAI, Plaintext    │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -173,7 +174,7 @@ memexd status
 - `os.umask(0o077)` around socket bind (no chmod race)
 - `MEMEX_NO_DAEMON=1` kill switch
 
-Auto-detect: `create_service()` checks for running daemon. If found, returns `RemoteCorpusAdapter`. If not, direct DuckDB. Transparent to callers.
+Auto-detect: `create_service()` calls `ensure_daemon()` (idempotent — starts daemon if not running). If daemon is available, returns `RemoteCorpusAdapter`. If not, direct DuckDB. Transparent to callers. Write commands use `create_service(direct=True)` which auto-stops the daemon, acquires exclusive DuckDB access, then restarts daemon in `finally`.
 
 ---
 
@@ -207,9 +208,8 @@ memex sources                  # Available source kinds
 
 ### Ingestion
 ```bash
-memex ingest ~/Downloads/conversations.json
-memex ingest export.zip --no-embed
-memex backfill                 # Generate embeddings for existing fragments
+memex ingest ~/Downloads/conversations.json   # Parse, store, embed, index — one step
+memex backfill                 # Finish embedding if ingest was interrupted
 memex rebuild                  # Rebuild search index
 memex reset                    # Delete corpus, start fresh
 ```
@@ -280,9 +280,11 @@ tools/memex/
             │   └── fastembed_embedder.py  # nomic-embed-text-v1.5 (768-dim, ONNX)
             ├── reranking/
             │   └── fastembed_reranker.py  # MS MARCO cross-encoder (ONNX)
+            ├── onnx_quiet.py             # CoreML stderr suppression (macOS)
             └── sources/
                 ├── claude_conversations/  # Claude.ai export adapter
-                └── openai_conversations/  # ChatGPT export adapter
+                ├── openai_conversations/  # ChatGPT export adapter
+                └── plaintext/             # Text, PDF, DOCX adapter
 ```
 
 ---
