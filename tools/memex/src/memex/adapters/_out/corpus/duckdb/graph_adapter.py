@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from memex.domain.models import EdgeTypeStats, Fragment
+from memex.domain.models import EDGE_FOLLOWS, EDGE_SIMILAR_TO, EdgeTypeStats, Fragment
 
 from .connection import DuckDBConnection, row_to_fragment
 
@@ -82,7 +82,7 @@ class DuckDBGraphAdapter:
         where = " AND ".join(conditions)
         rows = self.con.execute(
             f"""
-            SELECT source_id, target_id, edge_type, weight
+            SELECT source_id, target_id, edge_type, weight, metadata
             FROM edges
             WHERE {where}
             ORDER BY weight DESC
@@ -91,7 +91,14 @@ class DuckDBGraphAdapter:
         ).fetchall()
 
         return [
-            {"source_id": r[0], "target_id": r[1], "edge_type": r[2], "weight": r[3]} for r in rows
+            {
+                "source_id": r[0],
+                "target_id": r[1],
+                "edge_type": r[2],
+                "weight": r[3],
+                "metadata": r[4],
+            }
+            for r in rows
         ]
 
     def find_similar(
@@ -105,19 +112,20 @@ class DuckDBGraphAdapter:
                    f.source_kind, f.source_id, f.metadata, e.weight
             FROM edges e
             JOIN fragments f ON f.id = e.target_id
-            WHERE e.source_id = ? AND e.edge_type = 'SIMILAR_TO'
+            WHERE e.source_id = ? AND e.edge_type = ?
             ORDER BY e.weight DESC
             LIMIT ?
             """,
-            [fragment_id, limit],
+            [fragment_id, EDGE_SIMILAR_TO, limit],
         ).fetchall()
 
         return [(row_to_fragment(row[:8]), row[8]) for row in rows]
 
     def build_follows_edges(self) -> int:
-        self.con.execute("""
+        self.con.execute(
+            """
             INSERT OR REPLACE INTO edges (source_id, target_id, edge_type, weight, created_at)
-            SELECT source_id, target_id, 'FOLLOWS', 1.0, NOW()
+            SELECT source_id, target_id, ?, 1.0, NOW()
             FROM (
                 SELECT
                     LAG(id) OVER (PARTITION BY conversation_id ORDER BY timestamp) as source_id,
@@ -126,9 +134,12 @@ class DuckDBGraphAdapter:
                 WHERE conversation_id IS NOT NULL
             )
             WHERE source_id IS NOT NULL
-        """)
+            """,
+            [EDGE_FOLLOWS],
+        )
         count = self.con.execute(
-            "SELECT COUNT(*) FROM edges WHERE edge_type = 'FOLLOWS'"
+            "SELECT COUNT(*) FROM edges WHERE edge_type = ?",
+            [EDGE_FOLLOWS],
         ).fetchone()[0]
         return count
 
@@ -175,7 +186,7 @@ class DuckDBGraphAdapter:
             for neighbor_id, distance in neighbors:
                 if distance <= max_distance:
                     similarity = 1.0 - distance
-                    batch.append((frag_id, neighbor_id, "SIMILAR_TO", similarity))
+                    batch.append((frag_id, neighbor_id, EDGE_SIMILAR_TO, similarity))
 
             if len(batch) >= batch_size:
                 self.add_edges_batch(batch)

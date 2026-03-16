@@ -36,6 +36,12 @@ SOURCE_PLAINTEXT = "plaintext"
 SOURCE_GEMINI = "gemini"
 SOURCE_CUSTOM = "custom"
 
+# Common edge types (not exhaustive — extensible strings, not enum)
+EDGE_FOLLOWS = "FOLLOWS"
+EDGE_SIMILAR_TO = "SIMILAR_TO"
+EDGE_REFERENCES = "REFERENCES"
+EDGE_DERIVED_FROM = "DERIVED_FROM"
+
 
 class Completeness(StrEnum):
     """Fragment completeness.
