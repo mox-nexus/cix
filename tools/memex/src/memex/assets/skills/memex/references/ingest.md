@@ -4,11 +4,12 @@
 
 | Source | Input | Splits By |
 |--------|-------|-----------|
+| Text files | `.md`, `.txt`, `.rst`, `.csv`, `.log`, `.json`, `.jsonl`, `.yaml`, `.toml`, `.ini`, `.cfg`, `.conf` | Markdown headings (or single fragment) |
+| Source code | `.py`, `.js`, `.ts`, `.rs`, `.go`, `.sh`, `.bash`, `.zsh`, `.html`, `.css`, `.sql`, `.xml` | Markdown headings (or single fragment) |
+| PDF | `.pdf` | Pages (requires pymupdf) |
+| DOCX | `.docx` | Heading paragraphs (requires python-docx) |
 | Claude.ai | `.json` or `.zip` export | Messages, artifacts, attachments |
 | ChatGPT | `.json` or `.zip` export | Messages |
-| Text/Markdown | `.md`, `.txt`, `.rst`, source code | Markdown headings |
-| PDF | `.pdf` | Pages |
-| DOCX | `.docx` | Heading paragraphs |
 
 ## Ingest Commands
 

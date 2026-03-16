@@ -6,7 +6,7 @@ Fragment is THE canonical entity (Karman recommendation).
 
 from datetime import datetime
 from enum import StrEnum
-from typing import NamedTuple
+from typing import Any, NamedTuple
 
 from pydantic import BaseModel
 
@@ -72,6 +72,7 @@ class Fragment(BaseModel):
     role: str
     content: str
     provenance: Provenance
+    metadata: dict[str, Any] | None = None
 
     @property
     def timestamp(self) -> datetime | None:

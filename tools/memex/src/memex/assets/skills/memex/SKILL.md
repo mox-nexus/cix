@@ -3,32 +3,35 @@ name: Memex
 description: >
   This skill should be used when the user asks to "search my conversations",
   "find where I discussed", "what did I decide about", "what did I work on",
-  "set up memex", "import conversations", "ingest export", "create a trail",
-  "find similar", "show recent conversations", "memex timeline",
-  "memex status", "dig through conversations", or mentions searching AI
-  conversation history, conversation memory, or knowledge trails.
+  "set up memex", "import conversations", "ingest export", "ingest text files",
+  "ingest directory", "create a trail", "find similar", "show recent",
+  "memex timeline", "memex status", "dig through conversations",
+  "agent memory", "search my notes", "search my docs", or mentions
+  searching AI conversation history, text files, research notes,
+  conversation memory, or knowledge trails.
 ---
 
 # Memex Skill
 
-Extended memory for you and your agents. Query AI conversations from Claude.ai, ChatGPT, and other sources.
+Extended memory for you and your agents. Ingest text files, conversation exports, PDFs, and source code into a searchable corpus with hybrid search (BM25 + semantic + reranking).
 
 ## When to Use
 
 | User Intent | Command | Note |
 |-------------|---------|------|
-| "Find where I discussed X" | `memex dig "X"` | Hybrid search (best quality) |
+| "Ingest my research notes" | `memex ingest ~/research/` | Recurses directory, finds all text/md/pdf/code |
+| "Search my docs for X" | `memex dig "X"` | Hybrid search (best quality) |
+| "Import conversations" | `memex ingest ~/Downloads/export.zip` | Claude.ai, ChatGPT exports |
+| "Find where I discussed X" | `memex dig "X"` | Works across all ingested sources |
 | "What did I work on last week?" | `memex timeline` or SQL with date filter | |
-| "Show recent conversations" | `memex timeline` | Shows @N indices |
+| "Show recent" | `memex timeline` | Shows @N indices |
 | "Open that conversation" | `memex thread @3` | From search/timeline results |
-| "Find similar to this" | `memex similar @3` | Uses SIMILAR_TO edges (embedding similarity) |
+| "Find similar to this" | `memex similar @3` | SIMILAR_TO edges (embedding similarity) |
 | "Build a trail" | `memex trail create "name"` then `trail add "name" @N` | Associative paths |
 | "Is memex set up?" | `memex status` | Shows capabilities, pending actions |
 | "Search is slow" | `memex backfill` | Generate missing embeddings |
 | "Set up memex" | `memex init` | Guided wizard (first run, TTY) |
 | "Set up for this project" | `memex init --local` | Creates .memex/ in CWD |
-| "Import conversations" | `memex ingest <file>` or `memex init --import-file <path>` | |
-| "Import a directory" | `memex ingest <dir>` | Recurses, finds matching files |
 | "Connect related fragments" | `memex build-edges` | Builds SIMILAR_TO edges from embeddings |
 
 ## @N References
@@ -186,6 +189,39 @@ onnx_threads = 1
 - **Backfill is memory-safe**: drops HNSW index before bulk writes, checkpoints periodically, rebuilds index after. DuckDB capped at 2GB.
 - **DuckDB is single-writer**: only one process can write at a time. During backfill/ingest, all other memex commands will fail with a lock error. This is expected — wait or check `ps aux | grep memex`.
 
+## Use Cases
+
+### Agent memory — ingest a directory of text files
+
+```bash
+memex init --local                    # Project-local store at ./.memex/
+memex ingest ~/research/              # Recurse directory, import all matching files
+memex dig "authentication patterns"   # Search across everything
+```
+
+Supported: `.md`, `.txt`, `.rst`, `.py`, `.js`, `.ts`, `.rs`, `.go`, `.json`, `.jsonl`, `.yaml`, `.toml`, `.pdf`, `.docx`, `.csv`, `.log`, `.sql`, `.html`, `.css`, `.xml`, `.sh`, and more.
+
+Text files split by markdown headings. PDFs split by page. DOCX by heading paragraphs. Files without headings become a single fragment.
+
+### Conversation history — Claude.ai / ChatGPT exports
+
+```bash
+memex ingest ~/Downloads/claude-export.zip
+memex ingest ~/Downloads/conversations.json    # ChatGPT export
+memex dig "what did I decide about auth?"
+```
+
+### Project-local knowledge base
+
+```bash
+cd myproject/
+memex init --local                              # .memex/ in project root
+memex ingest docs/ src/                         # Index docs and source code
+memex dig "error handling"                      # Search project knowledge
+```
+
+Local `.memex/` is isolated — won't mix with global store. Add `.memex/` to `.gitignore`.
+
 ## References
 
 For detailed patterns, use `memex --skill -r <name>`:
@@ -193,7 +229,8 @@ For detailed patterns, use `memex --skill -r <name>`:
 | Reference | Content |
 |-----------|---------|
 | query | SQL query patterns, output formats |
-| ingest | Ingest workflow, embedding options |
+| ingest | Ingest workflow, supported formats, directory ingest |
 | schema | Full schema, index details |
 | embeddings | Model details, dimension mismatch, backfill patterns |
 | trails | Trail usage patterns, examples, design tips |
+| use-cases | Specific use cases: agent memory, research notes, code search |

@@ -6,6 +6,7 @@ Supports:
 - Full-text search via FTS extension (BM25 scoring)
 """
 
+import json
 import logging
 from collections.abc import Callable, Iterable, Iterator
 from itertools import batched, chain, count
@@ -93,6 +94,9 @@ class DuckDBCorpus:
             )
         """)
 
+        # Schema migrations — add columns that may not exist in older corpora
+        self._ensure_column("fragments", "metadata", "JSON")
+
         # Add embedding column if dimensions specified
         if self._embedding_dim:
             self._ensure_embedding_column()
@@ -162,7 +166,9 @@ class DuckDBCorpus:
         """)
         # Set schema version if not present
         if self.get_meta("schema_version") is None:
-            self.set_meta("schema_version", "1")
+            self.set_meta("schema_version", "2")
+        elif self.get_meta("schema_version") == "1":
+            self.set_meta("schema_version", "2")
 
     def get_meta(self, key: str) -> str | None:
         """Get metadata value by key."""
@@ -179,17 +185,18 @@ class DuckDBCorpus:
             [key, value],
         )
 
+    def _ensure_column(self, table: str, column: str, dtype: str) -> None:
+        """Add column if it doesn't exist (schema migration)."""
+        columns = self.con.execute(
+            "SELECT column_name FROM information_schema.columns WHERE table_name = ?",
+            [table],
+        ).fetchall()
+        if column not in {row[0] for row in columns}:
+            self.con.execute(f"ALTER TABLE {table} ADD COLUMN {column} {dtype}")
+
     def _ensure_embedding_column(self) -> None:
         """Ensure embedding column exists with correct dimensions."""
-        columns = self.con.execute(
-            "SELECT column_name FROM information_schema.columns WHERE table_name = 'fragments'"
-        ).fetchall()
-        column_names = {row[0] for row in columns}
-
-        if "embedding" not in column_names:
-            self.con.execute(
-                f"ALTER TABLE fragments ADD COLUMN embedding FLOAT[{self._embedding_dim}]"
-            )
+        self._ensure_column("fragments", "embedding", f"FLOAT[{self._embedding_dim}]")
 
     def _ensure_fts_index(self) -> None:
         """Create FTS index if it doesn't exist."""
@@ -243,6 +250,7 @@ class DuckDBCorpus:
                     frag.timestamp,
                     frag.provenance.source_kind,
                     frag.provenance.source_id,
+                    json.dumps(frag.metadata) if frag.metadata else None,
                 )
             )
             if len(batch) >= batch_size:
@@ -259,8 +267,8 @@ class DuckDBCorpus:
         self.con.executemany(
             """
             INSERT INTO fragments
-                (id, conversation_id, role, content, timestamp, source_kind, source_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+                (id, conversation_id, role, content, timestamp, source_kind, source_id, metadata)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?::JSON)
             ON CONFLICT (id) DO NOTHING
             """,
             batch,
@@ -296,6 +304,7 @@ class DuckDBCorpus:
                     frag.timestamp,
                     frag.provenance.source_kind,
                     frag.provenance.source_id,
+                    json.dumps(frag.metadata) if frag.metadata else None,
                     embedding,
                 )
             )
@@ -314,9 +323,9 @@ class DuckDBCorpus:
             f"""
             INSERT INTO fragments (
                 id, conversation_id, role, content,
-                timestamp, source_kind, source_id, embedding
+                timestamp, source_kind, source_id, metadata, embedding
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?::FLOAT[{self._embedding_dim}])
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?::JSON, ?::FLOAT[{self._embedding_dim}])
             ON CONFLICT (id) DO NOTHING
             """,
             batch,
@@ -370,7 +379,7 @@ class DuckDBCorpus:
             rows = self.con.execute(
                 f"""
                 SELECT f.id, f.conversation_id, f.role, f.content,
-                       f.timestamp, f.source_kind, f.source_id, fts.score
+                       f.timestamp, f.source_kind, f.source_id, f.metadata, fts.score
                 FROM fts_main_fragments.match_bm25(?, fields := 'content') AS fts
                 JOIN fragments f ON f.id = fts.id
                 WHERE 1=1 {source_filter}
@@ -379,7 +388,7 @@ class DuckDBCorpus:
                 """,
                 params,
             ).fetchall()
-            return [self._row_to_fragment(row[:7]) for row in rows]
+            return [self._row_to_fragment(row[:8]) for row in rows]
         except duckdb.Error:
             # BM25 failed, fall back to ILIKE
             return self._search_ilike(query, limit, source_kind)
@@ -408,7 +417,7 @@ class DuckDBCorpus:
 
         rows = self.con.execute(
             f"""
-            SELECT id, conversation_id, role, content, timestamp, source_kind, source_id
+            SELECT id, conversation_id, role, content, timestamp, source_kind, source_id, metadata
             FROM fragments
             WHERE {where_clause}
             ORDER BY timestamp DESC
@@ -430,7 +439,7 @@ class DuckDBCorpus:
         # Try exact match first
         rows = self.con.execute(
             """
-            SELECT id, conversation_id, role, content, timestamp, source_kind, source_id
+            SELECT id, conversation_id, role, content, timestamp, source_kind, source_id, metadata
             FROM fragments
             WHERE conversation_id = ?
             ORDER BY timestamp
@@ -444,7 +453,7 @@ class DuckDBCorpus:
         # Try prefix match (short IDs like "66e1524a")
         rows = self.con.execute(
             """
-            SELECT id, conversation_id, role, content, timestamp, source_kind, source_id
+            SELECT id, conversation_id, role, content, timestamp, source_kind, source_id, metadata
             FROM fragments
             WHERE conversation_id LIKE ? || '%'
             ORDER BY timestamp
@@ -531,7 +540,7 @@ class DuckDBCorpus:
                 WITH candidates AS (
                     SELECT
                         id, conversation_id, role, content, timestamp,
-                        source_kind, source_id,
+                        source_kind, source_id, metadata,
                         array_cosine_distance(
                             embedding, ?::FLOAT[{self._embedding_dim}]
                         ) as distance
@@ -540,7 +549,7 @@ class DuckDBCorpus:
                     LIMIT ?
                 )
                 SELECT id, conversation_id, role, content, timestamp,
-                       source_kind, source_id, distance
+                       source_kind, source_id, metadata, distance
                 FROM candidates
                 WHERE source_kind = ? AND distance <= ?
                 ORDER BY distance ASC
@@ -554,7 +563,7 @@ class DuckDBCorpus:
                 f"""
                 SELECT
                     id, conversation_id, role, content, timestamp,
-                    source_kind, source_id,
+                    source_kind, source_id, metadata,
                     array_cosine_distance(embedding, ?::FLOAT[{self._embedding_dim}]) as distance
                 FROM fragments
                 ORDER BY distance ASC
@@ -566,10 +575,10 @@ class DuckDBCorpus:
         # Convert distance back to similarity for the port contract
         results = []
         for row in rows:
-            distance = row[7]
+            distance = row[8]
             similarity = 1.0 - distance
             if similarity >= min_score:
-                fragment = self._row_to_fragment(row[:7])
+                fragment = self._row_to_fragment(row[:8])
                 results.append((fragment, similarity))
         return results
 
@@ -841,7 +850,7 @@ class DuckDBCorpus:
         rows = self.con.execute(
             """
             SELECT f.id, f.conversation_id, f.role, f.content, f.timestamp,
-                   f.source_kind, f.source_id, e.weight
+                   f.source_kind, f.source_id, f.metadata, e.weight
             FROM edges e
             JOIN fragments f ON f.id = e.target_id
             WHERE e.source_id = ? AND e.edge_type = 'SIMILAR_TO'
@@ -851,7 +860,7 @@ class DuckDBCorpus:
             [fragment_id, limit],
         ).fetchall()
 
-        return [(self._row_to_fragment(row[:7]), row[7]) for row in rows]
+        return [(self._row_to_fragment(row[:8]), row[8]) for row in rows]
 
     def build_follows_edges(self) -> int:
         """Materialize FOLLOWS edges from conversation ordering.
@@ -1009,7 +1018,7 @@ class DuckDBCorpus:
         rows = self.con.execute(
             """
             SELECT f.id, f.conversation_id, f.role, f.content, f.timestamp,
-                   f.source_kind, f.source_id, te.note
+                   f.source_kind, f.source_id, f.metadata, te.note
             FROM trail_entries te
             JOIN fragments f ON f.id = te.fragment_id
             WHERE te.trail_id = ?
@@ -1018,7 +1027,7 @@ class DuckDBCorpus:
             [trail["id"]],
         ).fetchall()
 
-        return [(self._row_to_fragment(row[:7]), row[7] or "") for row in rows]
+        return [(self._row_to_fragment(row[:8]), row[8] or "") for row in rows]
 
     def list_trails(self) -> list[TrailSummary]:
         """List all trails with entry counts."""
@@ -1110,7 +1119,13 @@ class DuckDBCorpus:
         return self.con.execute(sql).fetchall()
 
     def _row_to_fragment(self, row: tuple) -> Fragment:
-        """Convert DB row to Fragment."""
+        """Convert DB row to Fragment.
+
+        Expected column order: id, conversation_id, role, content,
+        timestamp, source_kind, source_id, metadata.
+        """
+        meta_raw = row[7] if len(row) > 7 else None
+        metadata = json.loads(meta_raw) if isinstance(meta_raw, str) else meta_raw
         return Fragment(
             id=row[0],
             conversation_id=row[1],
@@ -1121,4 +1136,5 @@ class DuckDBCorpus:
                 source_id=row[6],
                 timestamp=row[4],
             ),
+            metadata=metadata if metadata else None,
         )
