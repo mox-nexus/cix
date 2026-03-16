@@ -205,6 +205,12 @@ class DuckDBCorpus:
     def delete_trail(self, trail_name: str) -> bool:
         return self._trails.delete_trail(trail_name)
 
+    def search_trails(self, query: str) -> list[TrailSummary]:
+        return self._trails.search_trails(query)
+
+    def trails_for_fragment(self, fragment_id: str) -> list[TrailSummary]:
+        return self._trails.trails_for_fragment(fragment_id)
+
     # === Meta / lifecycle ===
 
     def get_meta(self, key: str) -> str | None:

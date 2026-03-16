@@ -129,6 +129,7 @@ class DuckDBConnection:
                 PRIMARY KEY (source_id, target_id, edge_type)
             )
         """)
+        self._ensure_column("edges", "metadata", "JSON")
         self.con.execute("CREATE INDEX IF NOT EXISTS idx_edges_source ON edges(source_id)")
         self.con.execute("CREATE INDEX IF NOT EXISTS idx_edges_target ON edges(target_id)")
         self.con.execute("CREATE INDEX IF NOT EXISTS idx_edges_type ON edges(edge_type)")

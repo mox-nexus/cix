@@ -102,6 +102,60 @@ class DuckDBTrailAdapter:
         self.con.execute("DELETE FROM trails WHERE id = ?", [trail["id"]])
         return True
 
+    def search_trails(self, query: str) -> list[TrailSummary]:
+        """Search trails by name or description (ILIKE)."""
+        pattern = f"%{query}%"
+        rows = self.con.execute(
+            """
+            SELECT t.id, t.name, t.description, t.created_at,
+                   COUNT(te.fragment_id) as entry_count
+            FROM trails t
+            LEFT JOIN trail_entries te ON t.id = te.trail_id
+            WHERE t.name ILIKE ? OR t.description ILIKE ?
+            GROUP BY t.id, t.name, t.description, t.created_at
+            ORDER BY t.created_at DESC
+            """,
+            [pattern, pattern],
+        ).fetchall()
+
+        return [
+            TrailSummary(
+                id=row[0],
+                name=row[1],
+                description=row[2],
+                created_at=row[3],
+                entry_count=row[4],
+            )
+            for row in rows
+        ]
+
+    def trails_for_fragment(self, fragment_id: str) -> list[TrailSummary]:
+        """Get all trails that contain a given fragment."""
+        rows = self.con.execute(
+            """
+            SELECT t.id, t.name, t.description, t.created_at,
+                   COUNT(te2.fragment_id) as entry_count
+            FROM trail_entries te
+            JOIN trails t ON t.id = te.trail_id
+            LEFT JOIN trail_entries te2 ON t.id = te2.trail_id
+            WHERE te.fragment_id = ?
+            GROUP BY t.id, t.name, t.description, t.created_at
+            ORDER BY t.created_at DESC
+            """,
+            [fragment_id],
+        ).fetchall()
+
+        return [
+            TrailSummary(
+                id=row[0],
+                name=row[1],
+                description=row[2],
+                created_at=row[3],
+                entry_count=row[4],
+            )
+            for row in rows
+        ]
+
     def _get_trail_by_name(self, name: str) -> dict | None:
         row = self.con.execute(
             "SELECT id, name, description, created_at FROM trails WHERE name = ?",

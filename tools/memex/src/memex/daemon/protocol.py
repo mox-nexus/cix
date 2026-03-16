@@ -210,6 +210,14 @@ class Dispatcher:
     def _trails_delete_trail(self, p: dict) -> bool:
         return self._trails.delete_trail(p["trail_name"])
 
+    def _trails_search_trails(self, p: dict) -> list[dict]:
+        results = self._trails.search_trails(p["query"])
+        return [t.model_dump(mode="json") for t in results]
+
+    def _trails_trails_for_fragment(self, p: dict) -> list[dict]:
+        results = self._trails.trails_for_fragment(p["fragment_id"])
+        return [t.model_dump(mode="json") for t in results]
+
 
 # --- JSON-RPC response helpers ---
 

@@ -241,3 +241,9 @@ class RemoteCorpusAdapter:
 
     def delete_trail(self, trail_name: str) -> bool:
         return self._call("trails.delete_trail", {"trail_name": trail_name})
+
+    def search_trails(self, query: str) -> list[TrailSummary]:
+        return parse_trails(self._call("trails.search_trails", {"query": query}))
+
+    def trails_for_fragment(self, fragment_id: str) -> list[TrailSummary]:
+        return parse_trails(self._call("trails.trails_for_fragment", {"fragment_id": fragment_id}))
