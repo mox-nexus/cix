@@ -1,1 +1,0 @@
-import{l as o,i as l,j as t,k as a,h as c}from"./Dc2djrc3.js";function s(n){t===null&&o(),a&&t.l!==null?u(t).m.push(n):l(()=>{const e=c(n);if(typeof e=="function")return e})}function u(n){var e=n.l;return e.u??={a:[],b:[],m:[]}}export{s as o};
