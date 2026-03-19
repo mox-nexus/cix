@@ -1,4 +1,11 @@
 name: skill-activation
-description: Does the build-eval skill activate for eval-related prompts?
-sensor: activation
-trials: 5
+description: >
+  Does each marketplace skill activate for its intended prompts?
+  Tests all 27 skills across 6 plugins. Each probe targets one skill
+  with a natural-language prompt matching its trigger description.
+  Negative probes test discrimination (no skill should fire).
+  Repeats measure noise floor (sd of pass_rate across runs).
+sensor:
+  type: activation
+trials: 3
+repeats: 3

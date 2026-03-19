@@ -49,6 +49,7 @@ class FilesystemStore:
             "subjects": tuple(subjects),
             "agent": config.get("agent", {}),
             "trials": config.get("trials", 5),
+            "repeats": config.get("repeats", 1),
             "probes": tuple(probes),
         }
 

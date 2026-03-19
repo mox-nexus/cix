@@ -87,11 +87,13 @@ def _make_mock_factory(
     expected_skill: str = "build-eval",
     base_seed: int | None = None,
     expectations: dict[str, bool] | None = None,
+    skill_map: dict[str, str] | None = None,
 ):
     """Build a mock factory with captured test config.
 
     Derives per-trial seed from (base_seed, trial_index) so each trial
-    is deterministic but independent.
+    is deterministic but independent. skill_map maps prompt -> skill name
+    for multi-skill experiments.
     """
 
     def factory(*, trial_index: int = 0, **kw: Any):
@@ -100,6 +102,7 @@ def _make_mock_factory(
             expected_skill=expected_skill,
             seed=effective_seed,
             expectations=expectations or {},
+            skill_map=skill_map or {},
         )
 
     return factory
@@ -131,12 +134,14 @@ def build_registry(
     registry.register("matrix.agent.claude", _claude_factory)
 
     expectations = _build_expectations(experiment) if experiment and mock else {}
+    skill_map = _build_skill_map(experiment) if experiment and mock else {}
     registry.register(
         "matrix.agent.mock",
         _make_mock_factory(
             expected_skill=skill,
             base_seed=seed,
             expectations=expectations,
+            skill_map=skill_map,
         ),
     )
 
@@ -277,6 +282,15 @@ def _build_expectations(experiment: ExperimentConfig) -> dict[str, bool]:
         probe.prompt: probe.metadata.get("expectation") == MUST_TRIGGER
         for probe in experiment.probes
         if probe.metadata.get("expectation") != ACCEPTABLE
+    }
+
+
+def _build_skill_map(experiment: ExperimentConfig) -> dict[str, str]:
+    """Map probe prompts to expected skill names for multi-skill mock mode."""
+    return {
+        probe.prompt: probe.metadata["expected_skill"]
+        for probe in experiment.probes
+        if "expected_skill" in probe.metadata
     }
 
 
