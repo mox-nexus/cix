@@ -41,6 +41,12 @@ def _print_metrics(results) -> None:
     table.add_row("Pass Rate", f"{results.pass_rate:.1%}")
     table.add_row("Mean Score", f"{results.mean_score:.1%}")
     table.add_row("Min / Max", f"{results.min_score:.1%} / {results.max_score:.1%}")
+    if results.repeats > 1:
+        table.add_row("Repeats", str(results.repeats))
+        rates = ", ".join(f"{r:.1%}" for r in results.per_run_pass_rates)
+        table.add_row("Per-Run Rates", rates)
+        if results.noise_floor_sd is not None:
+            table.add_row("Noise Floor (sd)", f"{results.noise_floor_sd:.4f}")
     console.print(table)
 
     if results.probe_results:
@@ -61,6 +67,20 @@ def _print_metrics(results) -> None:
                 detail,
             )
         console.print(probe_table)
+
+    if results.confusion_matrix:
+        console.print()
+        console.rule("[bold]Confusion Matrix[/bold]")
+        console.print()
+        cm_table = Table(show_header=True, header_style="bold")
+        cm_table.add_column("Expected")
+        cm_table.add_column("Activated")
+        cm_table.add_column("Count")
+        for expected, activations in sorted(results.confusion_matrix.items()):
+            for activated, count in sorted(activations.items()):
+                style = "green" if expected == activated else "red"
+                cm_table.add_row(expected, f"[{style}]{activated}[/{style}]", str(count))
+        console.print(cm_table)
 
     console.print()
     console.print(f"Status: {_status_style(results.status)}")
@@ -247,18 +267,28 @@ def run(
         runtime_label = subject.config.get("runtime", {}).get("type", "anthropic")
     else:
         runtime_label = "anthropic"
+    repeats_label = f", {experiment.repeats} repeats" if experiment.repeats > 1 else ""
     console.print(
         f"Running [bold cyan]{experiment.name}[/bold cyan] "
         f"in lab [cyan]{lab_path.name}[/cyan] "
-        f"({len(experiment.probes)} probes, {experiment.trials} trials, "
-        f"{runtime_label}{subject_label})"
+        f"({len(experiment.probes)} probes, {experiment.trials} trials"
+        f"{repeats_label}, {runtime_label}{subject_label})"
     )
 
     def on_probe(probe_result) -> None:
         status = "[green]PASS[/green]" if probe_result.passed else "[yellow]FAIL[/yellow]"
         console.print(f"  {probe_result.probe_id}: {status} (score={probe_result.score:.0%})")
 
-    exp_results = asyncio.run(service.run(experiment, subject=subject, on_probe_complete=on_probe))
+    def on_run(run_idx: int, pass_rate: float) -> None:
+        console.print(f"  [dim]run {run_idx + 1}/{experiment.repeats}: {pass_rate:.1%}[/dim]")
+
+    on_run_cb = on_run if experiment.repeats > 1 else None
+    exp_results = asyncio.run(service.run(
+        experiment,
+        subject=subject,
+        on_probe_complete=on_probe,
+        on_run_complete=on_run_cb,
+    ))
 
     if fmt == "json":
         console.print(exp_results.model_dump_json(indent=2))

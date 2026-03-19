@@ -43,6 +43,7 @@ class ExperimentConfig(BaseModel, frozen=True):
     sensor: dict = {}
     sensors: tuple[dict, ...] = ()
     trials: int = 5
+    repeats: int = 1
     probes: tuple[Probe, ...] = ()
 
     def __init__(self, **data: Any) -> None:
@@ -89,6 +90,12 @@ class ExperimentResults(BaseModel, frozen=True):
     mean_score: float = 0.0
     min_score: float = 0.0
     max_score: float = 0.0
+
+    # Multi-run stats (populated when repeats > 1)
+    repeats: int = 1
+    per_run_pass_rates: tuple[float, ...] = ()
+    noise_floor_sd: float | None = None
+    confusion_matrix: dict[str, dict[str, int]] = {}
 
     # Provenance — trace results to their source
     config_hash: str = ""

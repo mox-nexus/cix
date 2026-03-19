@@ -6,6 +6,7 @@ Analysis just counts.
 
 from __future__ import annotations
 
+import statistics
 from collections import defaultdict
 from collections.abc import Callable
 
@@ -61,3 +62,30 @@ def compute_metrics(results: list[ProbeResult]) -> dict:
         "min_score": min(scores),
         "max_score": max(scores),
     }
+
+
+def compute_noise_floor(per_run_pass_rates: list[float]) -> float | None:
+    """Standard deviation of pass_rate across repeated runs.
+
+    Returns None if fewer than 2 runs (can't compute variance).
+    """
+    if len(per_run_pass_rates) < 2:
+        return None
+    return statistics.stdev(per_run_pass_rates)
+
+
+def build_confusion_matrix(readings: list[Reading]) -> dict[str, dict[str, int]]:
+    """Build (expected_skill, activated_skill) confusion matrix from readings.
+
+    Only includes readings that have both expected_skill and activated_skill
+    in their metrics dict. Returns nested dict: {expected: {activated: count}}.
+    """
+    matrix: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    for r in readings:
+        expected = r.metrics.get("expected_skill")
+        activated = r.metrics.get("activated_skill")
+        if expected is None:
+            continue
+        label = activated if activated else "(none)"
+        matrix[expected][label] += 1
+    return {k: dict(v) for k, v in matrix.items()}

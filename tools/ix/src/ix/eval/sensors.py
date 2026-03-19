@@ -47,10 +47,14 @@ class CompositeSensor:
 
 
 class ActivationSensorConfig(BaseModel, frozen=True, extra="forbid"):
-    """Config for ActivationSensor. Validated from experiment.yaml sensor section."""
+    """Config for ActivationSensor. Validated from experiment.yaml sensor section.
+
+    expected_skill is the experiment-level default. Per-probe expected_skill
+    in probe metadata overrides it (same pattern as ToolUsageSensor).
+    """
 
     type: str = "activation"
-    expected_skill: str = "build-eval"
+    expected_skill: str | None = None
 
 
 class FunctionTestSensorConfig(BaseModel, frozen=True, extra="forbid"):
@@ -88,11 +92,13 @@ class ActivationSensor:
 
     def __init__(
         self,
-        expected_skill: str = "build-eval",
+        expected_skill: str | None = None,
         expectations: dict[str, str] | None = None,
+        expected_skills: dict[str, str] | None = None,
     ):
         self._expected_skill = expected_skill
         self._expectations = expectations or {}
+        self._expected_skills = expected_skills or {}
 
     @classmethod
     def from_config(
@@ -102,7 +108,16 @@ class ActivationSensor:
         **kwargs: Any,
     ) -> ActivationSensor:
         expectations = {p.id: p.metadata.get("expectation", "must_trigger") for p in probes}
-        return cls(expected_skill=config.expected_skill, expectations=expectations)
+        expected_skills = {
+            p.id: p.metadata.get("expected_skill", config.expected_skill)
+            for p in probes
+            if p.metadata.get("expected_skill") or config.expected_skill
+        }
+        return cls(
+            expected_skill=config.expected_skill,
+            expectations=expectations,
+            expected_skills=expected_skills,
+        )
 
     @property
     def name(self) -> str:
@@ -112,11 +127,23 @@ class ActivationSensor:
         """Grade: did the agent's activation match the expectation?"""
         response: AgentResponse = trial.response
 
-        activated = any(
-            self._expected_skill in tc.get("input", {}).get("skill", "")
-            or "eval" in tc.get("input", {}).get("skill", "").lower()
-            for tc in response.tool_calls
-            if tc.get("name") == "Skill"
+        # Resolve which skill this probe expects
+        expected = self._expected_skills.get(trial.probe_id, self._expected_skill)
+
+        # Check if any Skill tool call matches
+        activated_skill = None
+        for tc in response.tool_calls:
+            if tc.get("name") != "Skill":
+                continue
+            skill_value = tc.get("input", {}).get("skill", "")
+            if expected and expected in skill_value:
+                activated_skill = skill_value
+                break
+            if not activated_skill:
+                activated_skill = skill_value
+
+        activated = activated_skill is not None and (
+            expected is None or expected in activated_skill
         )
 
         expectation = self._expectations.get(trial.probe_id, "must_trigger")
@@ -124,7 +151,7 @@ class ActivationSensor:
         if expectation == "must_trigger":
             passed = activated
         elif expectation == "should_not_trigger":
-            passed = not activated
+            passed = not (activated_skill is not None)
         else:  # acceptable
             passed = True
 
@@ -135,8 +162,13 @@ class ActivationSensor:
                 trial_index=trial.trial_index,
                 passed=passed,
                 score=1.0 if passed else 0.0,
+                metrics={
+                    "expected_skill": expected,
+                    "activated_skill": activated_skill,
+                },
                 details=(
-                    f"skill={self._expected_skill}, activated={activated}, expected={expectation}"
+                    f"expected={expected}, activated={activated_skill}, "
+                    f"expectation={expectation}"
                 ),
             )
         ]
