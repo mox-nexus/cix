@@ -65,6 +65,7 @@ class DuckDBConnection:
         self._init_extensions()
         self._init_schema()
         self._init_meta_schema()
+        self.create_property_graph()
 
     # --- Extensions ---
 
@@ -83,6 +84,13 @@ class DuckDBConnection:
             self.fts_available = True
         except duckdb.Error:
             self.fts_available = False
+
+        try:
+            self.con.execute("INSTALL duckpgq FROM community")
+            self.con.execute("LOAD duckpgq")
+            self.pgq_available = True
+        except duckdb.Error:
+            self.pgq_available = False
 
     # --- Schema ---
 
@@ -156,6 +164,34 @@ class DuckDBConnection:
         self.con.execute(
             "CREATE INDEX IF NOT EXISTS idx_trail_entries_trail ON trail_entries(trail_id)"
         )
+
+    def create_property_graph(self) -> None:
+        """Create SQL/PGQ property graph view over fragments + edges.
+
+        Requires duckpgq extension. Idempotent — drops and recreates.
+        """
+        if not self.pgq_available:
+            return
+        try:
+            self.con.execute("DROP PROPERTY GRAPH IF EXISTS memex_graph")
+            self.con.execute("""
+                CREATE PROPERTY GRAPH memex_graph
+                VERTEX TABLES (
+                    fragments
+                        PROPERTIES (id, conversation_id, role, content, source_kind)
+                        LABEL frag
+                )
+                EDGE TABLES (
+                    edges
+                        SOURCE KEY (source_id) REFERENCES fragments (id)
+                        DESTINATION KEY (target_id) REFERENCES fragments (id)
+                        PROPERTIES (edge_type, weight)
+                        LABEL rel
+                )
+            """)
+        except duckdb.Error as e:
+            logger.debug("Failed to create property graph: %s", e)
+            self.pgq_available = False
 
     def _init_meta_schema(self) -> None:
         """Initialize _memex_meta table."""
