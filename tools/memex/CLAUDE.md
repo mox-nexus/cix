@@ -23,8 +23,9 @@ Historical artifacts, not live streams. Excavation, not observation.
 
 - Query conversations from Claude, OpenAI
 - Hybrid search: BM25 keyword + semantic (embeddings) + cross-encoder reranking
-- Graph: FOLLOWS (temporal) + SIMILAR_TO (semantic) edges between fragments
-- Trails: curated, annotated paths through fragments
+- Graph: FOLLOWS (temporal) + SIMILAR_TO (semantic) + extensible edge types, multi-hop traversal
+- Trails: curated, annotated, searchable paths through fragments
+- Property graph: SQL/PGQ via DuckPGQ for pattern-matching queries
 - Power-user SQL (20%): escape hatch for complex queries
 
 ## What Memex Is NOT
@@ -82,7 +83,7 @@ Resolution happens in `config/settings.py`. The rest of the stack receives a `Pa
 
 | Entity | What It Is |
 |--------|------------|
-| **Fragment** | Recovered unit of CI — THE canonical entity |
+| **Fragment** | Recovered unit of CI — THE canonical entity. Has optional `metadata: dict` for structured info (title, page, file) |
 | **Provenance** | Source-agnostic origin (source_kind, source_id, timestamp) |
 | **EmbeddingConfig** | Embedding contract (model_name, dimensions) — domain invariant |
 | **EmbeddingCoverage** | Coverage stats (with_embeddings, total) |
@@ -137,8 +138,8 @@ The original mega-port was split into three focused protocols:
 | Port | Responsibility | Methods |
 |------|---------------|---------|
 | **CorpusPort** | Storage, search, embeddings, metadata | `store`, `search`, `semantic_search`, `backfill_embeddings`, `rebuild_search_index`, ... |
-| **GraphPort** | Fragment relationships | `find_similar`, `build_follows_edges`, `build_similar_edges`, `edge_stats` |
-| **TrailPort** | Curated paths | `create_trail`, `add_to_trail`, `get_trail`, `list_trails`, `delete_trail` |
+| **GraphPort** | Fragment relationships | `find_similar`, `build_follows_edges`, `build_similar_edges`, `edge_stats`, `traverse` |
+| **TrailPort** | Curated paths | `create_trail`, `add_to_trail`, `get_trail`, `list_trails`, `delete_trail`, `search_trails`, `trails_for_fragment` |
 
 `DuckDBCorpus` implements all three. `RemoteCorpusAdapter` (daemon client) also implements all three. The service holds them separately: `service.corpus`, `service.graph`, `service.trails`.
 
@@ -273,9 +274,13 @@ tools/memex/
         └── _out/
             ├── corpus/
             │   ├── duckdb/
-            │   │   ├── adapter.py         # DuckDB + FTS + VSS
-            │   │   └── skill.md           # Corpus skill doc
-            │   └── remote.py              # Daemon client adapter
+            │   │   ├── __init__.py         # Public exports
+            │   │   ├── adapter.py          # DuckDBCorpus facade (delegates to below)
+            │   │   ├── connection.py       # Shared connection, schema, extensions (VSS, FTS, PGQ)
+            │   │   ├── corpus_adapter.py   # CorpusPort: store, search, backfill
+            │   │   ├── graph_adapter.py    # GraphPort: edges, traverse, similar
+            │   │   └── trail_adapter.py    # TrailPort: trails, search_trails
+            │   └── remote.py              # Daemon client adapter (JSON-RPC over Unix socket)
             ├── embedding/
             │   └── fastembed_embedder.py  # nomic-embed-text-v1.5 (768-dim, ONNX)
             ├── reranking/
@@ -314,7 +319,7 @@ Port methods use domain language: `rebuild_search_index()` not `rebuild_fts_inde
 
 DuckDB's HNSW index grows O(n log n) in memory when maintained during bulk UPDATEs. For backfill operations (embedding 50K+ fragments), **always** drop the HNSW index first, write in batches with periodic `CHECKPOINT`, then rebuild.
 
-Implemented in `DuckDBCorpus.backfill_embeddings()` — calls `_drop_hnsw_index()` before the loop and `_create_hnsw_index()` in a `finally` block.
+Implemented in `DuckDBCorpusAdapter.backfill_embeddings()` — calls `DuckDBConnection.drop_hnsw_index()` before the loop and `create_hnsw_index()` in a `finally` block.
 
 Also set `memory_limit = '2GB'` on the DuckDB connection to prevent contention with the host process (e.g., Claude Code).
 
