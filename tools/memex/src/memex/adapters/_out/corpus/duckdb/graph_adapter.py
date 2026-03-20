@@ -202,6 +202,49 @@ class DuckDBGraphAdapter:
 
         return edge_count
 
+    def traverse(
+        self,
+        fragment_id: str,
+        max_hops: int = 2,
+        edge_type: str | None = None,
+        limit: int = 20,
+    ) -> list[tuple[Fragment, int, str]]:
+        """Multi-hop graph traversal using recursive CTE.
+
+        When duckpgq is available, the property graph powers 1-hop queries
+        via SQL/PGQ MATCH. Multi-hop uses recursive CTE over the edges table.
+        """
+        type_filter = "AND e.edge_type = ?" if edge_type else ""
+        type_params = [edge_type] if edge_type else []
+
+        rows = self.con.execute(
+            f"""
+            WITH RECURSIVE reachable(id, hops, edge_type, path) AS (
+                SELECT ?, 0, '', ARRAY[?]::VARCHAR[]
+                UNION ALL
+                SELECT e.target_id, r.hops + 1, e.edge_type,
+                       list_append(r.path, e.target_id)
+                FROM reachable r
+                JOIN edges e ON e.source_id = r.id
+                WHERE r.hops < ?
+                  AND NOT list_contains(r.path, e.target_id)
+                  {type_filter}
+            )
+            SELECT DISTINCT ON (f.id)
+                   f.id, f.conversation_id, f.role, f.content, f.timestamp,
+                   f.source_kind, f.source_id, f.metadata,
+                   r.hops, r.edge_type
+            FROM reachable r
+            JOIN fragments f ON f.id = r.id
+            WHERE r.hops > 0
+            ORDER BY f.id, r.hops
+            LIMIT ?
+            """,
+            [fragment_id, fragment_id, max_hops, *type_params, limit],
+        ).fetchall()
+
+        return [(row_to_fragment(row[:8]), row[8], row[9]) for row in rows]
+
     def edge_stats(self) -> dict[str, EdgeTypeStats]:
         rows = self.con.execute("""
             SELECT edge_type, COUNT(*) as count, AVG(weight) as avg_weight

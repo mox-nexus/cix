@@ -83,12 +83,15 @@ class Dispatcher:
             "graph.find_similar": self._graph_find_similar,
             "graph.build_follows_edges": self._graph_build_follows_edges,
             "graph.edge_stats": self._graph_edge_stats,
+            "graph.traverse": self._graph_traverse,
             # TrailPort
             "trails.create_trail": self._trails_create_trail,
             "trails.add_to_trail": self._trails_add_to_trail,
             "trails.get_trail": self._trails_get_trail,
             "trails.list_trails": self._trails_list_trails,
             "trails.delete_trail": self._trails_delete_trail,
+            "trails.search_trails": self._trails_search_trails,
+            "trails.trails_for_fragment": self._trails_trails_for_fragment,
         }
 
     def dispatch(self, raw: str) -> str:
@@ -187,6 +190,19 @@ class Dispatcher:
         stats = self._graph.edge_stats()
         return {k: v.model_dump(mode="json") for k, v in stats.items()}
 
+    def _graph_traverse(self, p: dict) -> list[dict]:
+        p = _clamp_limit(p)
+        results = self._graph.traverse(
+            p["fragment_id"],
+            p.get("max_hops", 2),
+            p.get("edge_type"),
+            p.get("limit", 20),
+        )
+        return [
+            {"fragment": _fragment_to_dict(f), "hops": h, "edge_type": et}
+            for f, h, et in results
+        ]
+
     # --- TrailPort handlers ---
 
     def _trails_create_trail(self, p: dict) -> str:
@@ -265,6 +281,10 @@ def parse_conversations(data: list[dict]) -> list[ConversationSummary]:
 
 def parse_edge_stats(data: dict) -> dict[str, EdgeTypeStats]:
     return {k: EdgeTypeStats.model_validate(v) for k, v in data.items()}
+
+
+def parse_traversal(data: list[dict]) -> list[tuple[Fragment, int, str]]:
+    return [(_fragment_from_dict(d["fragment"]), d["hops"], d["edge_type"]) for d in data]
 
 
 def parse_trails(data: list[dict]) -> list[TrailSummary]:

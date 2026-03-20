@@ -215,6 +215,32 @@ class TestEdges:
         assert "FOLLOWS" in stats
         assert stats["FOLLOWS"].count == 2
 
+    def test_traverse_single_hop(self):
+        self.corpus.build_follows_edges()
+        results = self.corpus.traverse("f1", max_hops=1)
+        assert len(results) == 1
+        frag, hops, edge_type = results[0]
+        assert frag.id == "f2"
+        assert hops == 1
+        assert edge_type == "FOLLOWS"
+
+    def test_traverse_multi_hop(self):
+        self.corpus.build_follows_edges()
+        results = self.corpus.traverse("f1", max_hops=2)
+        ids = {r[0].id for r in results}
+        assert ids == {"f2", "f3"}
+
+    def test_traverse_with_edge_type_filter(self):
+        self.corpus.build_follows_edges()
+        self.corpus.add_edge("f1", "f3", "SIMILAR_TO", 0.9)
+        results = self.corpus.traverse("f1", max_hops=1, edge_type="SIMILAR_TO")
+        assert len(results) == 1
+        assert results[0][0].id == "f3"
+
+    def test_traverse_no_edges(self):
+        results = self.corpus.traverse("f1", max_hops=2)
+        assert results == []
+
 
 class TestTrails:
     @pytest.fixture(autouse=True)

@@ -34,3 +34,16 @@ class GraphPort(Protocol):
     def edge_stats(self) -> dict[str, EdgeTypeStats]:
         """Get edge statistics by type."""
         ...
+
+    def traverse(
+        self,
+        fragment_id: str,
+        max_hops: int = 2,
+        edge_type: str | None = None,
+        limit: int = 20,
+    ) -> list[tuple[Fragment, int, str]]:
+        """Multi-hop graph traversal from a fragment.
+
+        Returns (Fragment, hops, edge_type) tuples sorted by distance.
+        """
+        ...

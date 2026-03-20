@@ -188,6 +188,15 @@ class DuckDBCorpus:
     def edge_stats(self) -> dict[str, EdgeTypeStats]:
         return self._graph.edge_stats()
 
+    def traverse(
+        self,
+        fragment_id: str,
+        max_hops: int = 2,
+        edge_type: str | None = None,
+        limit: int = 20,
+    ) -> list[tuple[Fragment, int, str]]:
+        return self._graph.traverse(fragment_id, max_hops, edge_type, limit)
+
     # === TrailPort delegation ===
 
     def create_trail(self, name: str, description: str = "") -> str:
