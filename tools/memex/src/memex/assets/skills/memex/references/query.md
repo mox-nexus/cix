@@ -93,6 +93,38 @@ SELECT
     COUNT(*) FILTER (WHERE embedding IS NOT NULL) as with_embedding,
     COUNT(*) as total
 FROM fragments
+
+-- Fragment metadata (title, file, page)
+SELECT id, metadata->>'title' as title, metadata->>'file' as file
+FROM fragments
+WHERE metadata IS NOT NULL
+LIMIT 20
+
+-- Edge distribution
+SELECT edge_type, COUNT(*), ROUND(AVG(weight), 3) as avg_weight
+FROM edges
+GROUP BY edge_type
+
+-- Neighbors of a fragment
+SELECT f.id, e.edge_type, e.weight
+FROM edges e
+JOIN fragments f ON f.id = e.target_id
+WHERE e.source_id = 'fragment-id'
+ORDER BY e.weight DESC
+
+-- Trail contents
+SELECT t.name, te.position, f.content, te.note
+FROM trail_entries te
+JOIN trails t ON t.id = te.trail_id
+JOIN fragments f ON f.id = te.fragment_id
+ORDER BY t.name, te.position
+
+-- SQL/PGQ pattern matching (requires duckpgq extension)
+FROM GRAPH_TABLE (memex_graph
+    MATCH (a:frag)-[e:rel]->(b:frag)
+    COLUMNS (a.id AS src, e.edge_type, b.id AS dst, e.weight)
+)
+WHERE edge_type = 'SIMILAR_TO'
 ```
 
 ## Output Formats

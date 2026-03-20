@@ -27,7 +27,9 @@ Extended memory for you and your agents. Ingest text files, conversation exports
 | "Show recent" | `memex timeline` | Shows @N indices |
 | "Open that conversation" | `memex thread @3` | From search/timeline results |
 | "Find similar to this" | `memex similar @3` | SIMILAR_TO edges (embedding similarity) |
+| "What's connected to this?" | `memex traverse @3` | Multi-hop graph traversal (follows chains) |
 | "Build a trail" | `memex trail create "name"` then `trail add "name" @N` | Associative paths |
+| "Search my trails" | `memex trail search "auth"` | Find trails by name/description |
 | "Is memex set up?" | `memex status` | Shows capabilities, pending actions |
 | "Search is slow" | `memex backfill` | Generate missing embeddings |
 | "Set up memex" | `memex init` | Guided wizard (first run, TTY) |
@@ -76,11 +78,14 @@ Tuning (rarely needed): `memex dig "query" --semantic-weight 0.8` (default: 0.6)
 | `memex timeline` | Browse recent conversations |
 | `memex timeline --source openai` | Filter by source |
 | `memex similar @N` | Find similar fragments via graph |
+| `memex traverse @N` | Multi-hop graph traversal |
+| `memex traverse @N --hops 3` | Traverse up to 3 hops |
 | **Trails** | |
 | `memex trail create "name"` | Create a named trail |
 | `memex trail add "name" @N` | Add fragment to trail |
 | `memex trail follow "name"` | Walk a trail |
 | `memex trail list` | List all trails |
+| `memex trail search "query"` | Search trails by name/description |
 | `memex trail delete "name"` | Delete a trail |
 | **Ingest** | |
 | `memex ingest <file>` | Parse, store, embed, and index in one step |
@@ -184,6 +189,9 @@ onnx_threads = 1
 - **Vector search**: DuckDB VSS with HNSW
 - **FOLLOWS edges**: auto-computed on ingest (no manual step needed)
 - **SIMILAR_TO edges**: built via `memex build-edges` (requires `memex backfill` first)
+- **Graph traversal**: multi-hop via `traverse()` — follows chains of edges across fragments
+- **Fragment metadata**: structured `dict` (title, page, file, line) — queryable via SQL (`metadata->>'title'`)
+- **Property graph (DuckPGQ)**: SQL/PGQ `MATCH` patterns via `memex sql` for power users
 - **Fusion**: RRF (k=60)
 - **Backfill is idempotent**: `memex backfill` resumes from where it left off (`WHERE embedding IS NULL`). Safe to interrupt and restart.
 - **Backfill is memory-safe**: drops HNSW index before bulk writes, checkpoints periodically, rebuilds index after. DuckDB capped at 2GB.
