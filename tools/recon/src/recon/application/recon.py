@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -45,7 +45,7 @@ def run(
     If a collector names a source, it runs against that source only.
     If there's no catalog, collectors run once with no source.
     """
-    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d-%H%M%S-%f")
+    timestamp = datetime.now(UTC).strftime("%Y-%m-%d-%H%M%S-%f")
     archive_dir = mission_dir / "archive" / timestamp
     archive_dir.mkdir(parents=True, exist_ok=True)
 
@@ -70,7 +70,10 @@ def run(
                 results.append({
                     "name": entry.name,
                     "status": "error",
-                    "error": f"Source '{entry.source}' not in catalog. Available: {', '.join(sorted(catalog)) or '(none)'}",
+                    "error": (
+                        f"Source '{entry.source}' not in catalog. "
+                        f"Available: {', '.join(sorted(catalog)) or '(none)'}"
+                    ),
                 })
                 print(f"  {entry.name}: ERROR — source '{entry.source}' not found", file=sys.stderr)
                 continue
@@ -81,7 +84,7 @@ def run(
             targets = [(None, entry.name)]
 
         for source, output_name in targets:
-            start = datetime.now(timezone.utc)
+            start = datetime.now(UTC)
             try:
                 records = collector.collect(entry, source)
                 if not records:
@@ -89,7 +92,7 @@ def run(
 
                 _write_jsonl(records, archive_dir / f"{output_name}.jsonl")
 
-                elapsed = (datetime.now(timezone.utc) - start).total_seconds()
+                elapsed = (datetime.now(UTC) - start).total_seconds()
                 results.append({
                     "name": output_name,
                     "status": "ok",
@@ -100,7 +103,7 @@ def run(
                 print(f"  {output_name}: {len(records)} records", file=sys.stderr)
 
             except Exception as exc:
-                elapsed = (datetime.now(timezone.utc) - start).total_seconds()
+                elapsed = (datetime.now(UTC) - start).total_seconds()
                 results.append({
                     "name": output_name,
                     "status": "error",
@@ -111,7 +114,7 @@ def run(
 
     meta = {
         "format_version": 1,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "collectors": results,
     }
     meta_path = archive_dir / "meta.yaml"

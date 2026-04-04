@@ -4,7 +4,6 @@ import tempfile
 from pathlib import Path
 
 import pytest
-
 from recon.adapters._out.cli_collector import CliCollector, _parse_stdout
 from recon.domain.exceptions import CollectionError
 from recon.domain.models import CollectorEntry, SourceEntry

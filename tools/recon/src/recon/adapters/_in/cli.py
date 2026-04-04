@@ -41,7 +41,6 @@ from recon.application.utilization import RateLimiter
 from recon.domain.exceptions import ReconError
 from recon.domain.models import ReconConfig
 
-
 # --- Composition: build collector registry ---
 
 
@@ -214,7 +213,8 @@ def survey(name: str, config: Path | None) -> None:
 
     if not config_path.exists():
         console.print(f"[red]No config found:[/] {config_path}")
-        console.print(f"[dim]Run `recon init {name}` or write config to {mission / 'config.yaml'}[/]")
+        hint = mission / "config.yaml"
+        console.print(f"[dim]Run `recon init {name}` or write config to {hint}[/]")
         raise SystemExit(1)
 
     try:
