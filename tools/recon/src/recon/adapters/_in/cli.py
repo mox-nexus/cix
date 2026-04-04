@@ -151,7 +151,8 @@ def main() -> None:
 @main.command()
 @click.argument("name")
 @click.option(
-    "-t", "--template",
+    "-t",
+    "--template",
     default="research",
     help="Built-in template to use (default: research). See `recon templates`.",
 )
@@ -186,7 +187,8 @@ def init(name: str, template: str) -> None:
 @main.command()
 @click.argument("name")
 @click.option(
-    "-c", "--config",
+    "-c",
+    "--config",
     type=click.Path(exists=True, path_type=Path),
     default=None,
     help="Config file override (default: .cix/recon/<name>/config.yaml).",
@@ -256,10 +258,7 @@ def status() -> None:
         console.print("[dim]No missions found. Run `recon init <name>` to get started.[/]")
         return
 
-    missions = sorted(
-        d for d in recon_dir.iterdir()
-        if d.is_dir() and (d / "config.yaml").exists()
-    )
+    missions = sorted(d for d in recon_dir.iterdir() if d.is_dir() and (d / "config.yaml").exists())
 
     if not missions:
         console.print("[dim]No missions found. Run `recon init <name>` to get started.[/]")
@@ -334,10 +333,7 @@ def query(name: str, sql: str, run_id: str | None, as_json: bool) -> None:
     for jf in jsonl_files:
         table_name = _re.sub(r"[^a-zA-Z0-9_]", "_", jf.stem)
         jf_str = str(jf).replace("'", "''")
-        conn.execute(
-            f'CREATE VIEW "{table_name}" AS '
-            f"SELECT * FROM read_json_auto('{jf_str}')"
-        )
+        conn.execute(f"CREATE VIEW \"{table_name}\" AS SELECT * FROM read_json_auto('{jf_str}')")
 
     try:
         result = conn.execute(sql)

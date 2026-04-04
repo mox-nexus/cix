@@ -48,7 +48,10 @@ def _is_retryable(exc: BaseException) -> bool:
     reraise=True,
 )
 def _fetch(
-    client: httpx.Client, url: str, *, headers: dict[str, str],
+    client: httpx.Client,
+    url: str,
+    *,
+    headers: dict[str, str],
 ) -> httpx.Response:
     """HTTP GET with retry on 5xx/transport errors."""
     resp = client.get(url, headers=headers)
@@ -102,7 +105,7 @@ class WebCollector:
             title = _extract_title(raw)
             # Truncate raw HTML before conversion to bound markdownify memory
             if len(raw) > _MAX_CONTENT_CHARS * 3:
-                raw = raw[:_MAX_CONTENT_CHARS * 3]
+                raw = raw[: _MAX_CONTENT_CHARS * 3]
             content = md(raw, strip=["img", "script", "style", "noscript"])
         else:
             title = ""
@@ -113,10 +116,12 @@ class WebCollector:
         if len(content) > _MAX_CONTENT_CHARS:
             content = content[:_MAX_CONTENT_CHARS] + "\n\n[Content truncated due to length...]"
 
-        return [{
-            "url": str(resp.url),
-            "title": title,
-            "content": content,
-            "status_code": resp.status_code,
-            "content_type": content_type.split(";")[0].strip(),
-        }]
+        return [
+            {
+                "url": str(resp.url),
+                "title": title,
+                "content": content,
+                "status_code": resp.status_code,
+                "content_type": content_type.split(";")[0].strip(),
+            }
+        ]

@@ -33,7 +33,9 @@ class TestOpenAlexLive:
             user_agent="recon/0.7.0 (mailto:test@example.com)",
         )
         entry = CollectorEntry(
-            name="test", type="api", source="openalex",
+            name="test",
+            type="api",
+            source="openalex",
             endpoint="/works",
             params={
                 "search": "collaborative intelligence",
@@ -60,7 +62,9 @@ class TestOpenAlexLive:
             user_agent="recon/0.7.0 (mailto:test@example.com)",
         )
         entry = CollectorEntry(
-            name="test", type="api", source="openalex",
+            name="test",
+            type="api",
+            source="openalex",
             endpoint="/works",
             params={
                 "search": "attention mechanism transformer",
@@ -83,24 +87,32 @@ class TestOpenAlexLive:
         assert len(abstracts[0]) > 20
 
     def test_full_survey_to_jsonl(self):
-        config = ReconConfig.model_validate({
-            "catalog": [{
-                "name": "openalex",
-                "url": "https://api.openalex.org",
-                "user_agent": "recon/0.7.0 (mailto:test@example.com)",
-            }],
-            "collectors": [{
-                "name": "oa-search", "type": "api", "source": "openalex",
-                "endpoint": "/works",
-                "params": {
-                    "search": "attention mechanism",
-                    "per_page": "2",
-                    "select": "id,display_name,publication_year",
-                },
-                "extract": "results",
-                "normalize": {"title": "display_name", "year": "publication_year"},
-            }],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "catalog": [
+                    {
+                        "name": "openalex",
+                        "url": "https://api.openalex.org",
+                        "user_agent": "recon/0.7.0 (mailto:test@example.com)",
+                    }
+                ],
+                "collectors": [
+                    {
+                        "name": "oa-search",
+                        "type": "api",
+                        "source": "openalex",
+                        "endpoint": "/works",
+                        "params": {
+                            "search": "attention mechanism",
+                            "per_page": "2",
+                            "select": "id,display_name,publication_year",
+                        },
+                        "extract": "results",
+                        "normalize": {"title": "display_name", "year": "publication_year"},
+                    }
+                ],
+            }
+        )
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "m"
             mission.mkdir()
@@ -124,7 +136,9 @@ class TestS2Live:
             rate_limit={"rps": 0.33, "burst": 1},
         )
         entry = CollectorEntry(
-            name="test", type="api", source="s2",
+            name="test",
+            type="api",
+            source="s2",
             endpoint="/paper/search",
             params={
                 "query": "attention mechanism",
@@ -150,7 +164,9 @@ class TestArxivLive:
         """arXiv returns XML, parsed via xmltodict. Skips on timeout."""
         source = SourceEntry(name="arxiv", url="https://export.arxiv.org/api")
         entry = CollectorEntry(
-            name="test", type="api", source="arxiv",
+            name="test",
+            type="api",
+            source="arxiv",
             endpoint="/query",
             params={"search_query": "attention mechanism", "max_results": "2"},
             response_format="xml",
@@ -184,7 +200,9 @@ class TestZenodoLive:
             user_agent="recon/0.7.0 (https://github.com/mox-labs/cix)",
         )
         entry = CollectorEntry(
-            name="test", type="api", source="zenodo",
+            name="test",
+            type="api",
+            source="zenodo",
             endpoint="/records",
             params={"q": "machine learning", "size": "2", "sort": "bestmatch"},
             extract="hits.hits",
@@ -217,15 +235,17 @@ class TestFanOutLive:
         (repo_a / "hello.txt").write_text("from repo a")
         (repo_b / "hello.txt").write_text("from repo b")
 
-        config = ReconConfig.model_validate({
-            "catalog": [
-                {"name": "a", "type": "local", "url": str(repo_a)},
-                {"name": "b", "type": "local", "url": str(repo_b)},
-            ],
-            "collectors": [
-                {"name": "read", "type": "cli", "run": "cat hello.txt"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "catalog": [
+                    {"name": "a", "type": "local", "url": str(repo_a)},
+                    {"name": "b", "type": "local", "url": str(repo_b)},
+                ],
+                "collectors": [
+                    {"name": "read", "type": "cli", "run": "cat hello.txt"},
+                ],
+            }
+        )
         mission = tmp_path / "mission"
         mission.mkdir()
         archive = run(config, _collectors(), mission)
@@ -243,22 +263,25 @@ class TestFanOutLive:
         good.mkdir()
         (good / "data.txt").write_text("found")
 
-        config = ReconConfig.model_validate({
-            "catalog": [
-                {"name": "good", "type": "local", "url": str(good)},
-                {"name": "bad", "type": "local", "url": str(good)},
-            ],
-            "collectors": [
-                {"name": "ok", "type": "cli", "run": "cat data.txt", "source": "good"},
-                {"name": "fail", "type": "cli", "run": "exit 2", "source": "bad"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "catalog": [
+                    {"name": "good", "type": "local", "url": str(good)},
+                    {"name": "bad", "type": "local", "url": str(good)},
+                ],
+                "collectors": [
+                    {"name": "ok", "type": "cli", "run": "cat data.txt", "source": "good"},
+                    {"name": "fail", "type": "cli", "run": "exit 2", "source": "bad"},
+                ],
+            }
+        )
         mission = tmp_path / "mission"
         mission.mkdir()
         archive = run(config, _collectors(), mission)
 
         assert (archive / "ok.jsonl").exists()
         import yaml
+
         meta = yaml.safe_load((archive / "meta.yaml").read_text())
         statuses = {c["name"]: c["status"] for c in meta["collectors"]}
         assert statuses["ok"] == "ok"

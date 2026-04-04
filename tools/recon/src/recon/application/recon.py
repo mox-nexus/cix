@@ -56,25 +56,29 @@ def run(
     for entry in config.collectors:
         collector = collectors.get(entry.type)
         if not collector:
-            results.append({
-                "name": entry.name,
-                "status": "error",
-                "error": f"No collector registered for type: {entry.type}",
-            })
+            results.append(
+                {
+                    "name": entry.name,
+                    "status": "error",
+                    "error": f"No collector registered for type: {entry.type}",
+                }
+            )
             print(f"  {entry.name}: ERROR — unknown type '{entry.type}'", file=sys.stderr)
             continue
 
         # Determine targets: pinned source, fan-out, or standalone
         if entry.source:
             if entry.source not in catalog:
-                results.append({
-                    "name": entry.name,
-                    "status": "error",
-                    "error": (
-                        f"Source '{entry.source}' not in catalog. "
-                        f"Available: {', '.join(sorted(catalog)) or '(none)'}"
-                    ),
-                })
+                results.append(
+                    {
+                        "name": entry.name,
+                        "status": "error",
+                        "error": (
+                            f"Source '{entry.source}' not in catalog. "
+                            f"Available: {', '.join(sorted(catalog)) or '(none)'}"
+                        ),
+                    }
+                )
                 print(f"  {entry.name}: ERROR — source '{entry.source}' not found", file=sys.stderr)
                 continue
             targets = [(catalog[entry.source], entry.name)]
@@ -93,23 +97,27 @@ def run(
                 _write_jsonl(records, archive_dir / f"{output_name}.jsonl")
 
                 elapsed = (datetime.now(UTC) - start).total_seconds()
-                results.append({
-                    "name": output_name,
-                    "status": "ok",
-                    "file": f"{output_name}.jsonl",
-                    "records": len(records),
-                    "seconds": round(elapsed, 2),
-                })
+                results.append(
+                    {
+                        "name": output_name,
+                        "status": "ok",
+                        "file": f"{output_name}.jsonl",
+                        "records": len(records),
+                        "seconds": round(elapsed, 2),
+                    }
+                )
                 print(f"  {output_name}: {len(records)} records", file=sys.stderr)
 
             except Exception as exc:
                 elapsed = (datetime.now(UTC) - start).total_seconds()
-                results.append({
-                    "name": output_name,
-                    "status": "error",
-                    "error": str(exc),
-                    "seconds": round(elapsed, 2),
-                })
+                results.append(
+                    {
+                        "name": output_name,
+                        "status": "error",
+                        "error": str(exc),
+                        "seconds": round(elapsed, 2),
+                    }
+                )
                 print(f"  {output_name}: ERROR — {exc}", file=sys.stderr)
 
     meta = {

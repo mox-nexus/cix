@@ -31,11 +31,13 @@ class TestSubstitute:
 
 class TestReconRun:
     def test_single_cli_collector(self):
-        config = ReconConfig.model_validate({
-            "collectors": [
-                {"name": "test", "type": "cli", "run": 'echo \'{"k": "v"}\''},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "collectors": [
+                    {"name": "test", "type": "cli", "run": 'echo \'{"k": "v"}\''},
+                ],
+            }
+        )
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "m"
             mission.mkdir()
@@ -45,11 +47,13 @@ class TestReconRun:
             assert (archive / "meta.yaml").exists()
 
     def test_jsonl_content(self):
-        config = ReconConfig.model_validate({
-            "collectors": [
-                {"name": "data", "type": "cli", "run": 'printf \'{"k": "v"}\\n\''},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "collectors": [
+                    {"name": "data", "type": "cli", "run": 'printf \'{"k": "v"}\\n\''},
+                ],
+            }
+        )
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "m"
             mission.mkdir()
@@ -60,12 +64,14 @@ class TestReconRun:
             assert records[0]["k"] == "v"
 
     def test_multiple_collectors(self):
-        config = ReconConfig.model_validate({
-            "collectors": [
-                {"name": "first", "type": "cli", "run": "echo one"},
-                {"name": "second", "type": "cli", "run": "echo two"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "collectors": [
+                    {"name": "first", "type": "cli", "run": "echo one"},
+                    {"name": "second", "type": "cli", "run": "echo two"},
+                ],
+            }
+        )
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "m"
             mission.mkdir()
@@ -75,15 +81,17 @@ class TestReconRun:
 
     def test_fan_out_across_catalog(self):
         """No source on collector → runs against all catalog entries."""
-        config = ReconConfig.model_validate({
-            "catalog": [
-                {"name": "a", "type": "local", "url": "/tmp"},
-                {"name": "b", "type": "local", "url": "/tmp"},
-            ],
-            "collectors": [
-                {"name": "scan", "type": "cli", "run": "echo hello"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "catalog": [
+                    {"name": "a", "type": "local", "url": "/tmp"},
+                    {"name": "b", "type": "local", "url": "/tmp"},
+                ],
+                "collectors": [
+                    {"name": "scan", "type": "cli", "run": "echo hello"},
+                ],
+            }
+        )
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "m"
             mission.mkdir()
@@ -94,15 +102,17 @@ class TestReconRun:
 
     def test_pinned_source_no_fan_out(self):
         """Collector with source= runs against that source only."""
-        config = ReconConfig.model_validate({
-            "catalog": [
-                {"name": "s2", "url": "https://api.semanticscholar.org"},
-                {"name": "arxiv", "url": "https://export.arxiv.org"},
-            ],
-            "collectors": [
-                {"name": "test", "type": "cli", "run": "echo hello", "source": "s2"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "catalog": [
+                    {"name": "s2", "url": "https://api.semanticscholar.org"},
+                    {"name": "arxiv", "url": "https://export.arxiv.org"},
+                ],
+                "collectors": [
+                    {"name": "test", "type": "cli", "run": "echo hello", "source": "s2"},
+                ],
+            }
+        )
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "m"
             mission.mkdir()
@@ -112,11 +122,13 @@ class TestReconRun:
 
     def test_no_catalog_no_fan_out(self):
         """No catalog → collector runs once with no source."""
-        config = ReconConfig.model_validate({
-            "collectors": [
-                {"name": "solo", "type": "cli", "run": "echo hello"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "collectors": [
+                    {"name": "solo", "type": "cli", "run": "echo hello"},
+                ],
+            }
+        )
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "m"
             mission.mkdir()
@@ -125,12 +137,14 @@ class TestReconRun:
 
     def test_source_ref_error_recorded(self):
         """Missing source reference records error, doesn't crash."""
-        config = ReconConfig.model_validate({
-            "collectors": [
-                {"name": "bad", "type": "api", "source": "nonexistent", "endpoint": "/x"},
-                {"name": "ok", "type": "cli", "run": "echo hi"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "collectors": [
+                    {"name": "bad", "type": "api", "source": "nonexistent", "endpoint": "/x"},
+                    {"name": "ok", "type": "cli", "run": "echo hi"},
+                ],
+            }
+        )
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "m"
             mission.mkdir()
@@ -142,11 +156,13 @@ class TestReconRun:
             assert meta["collectors"][1]["status"] == "ok"
 
     def test_meta_yaml_content(self):
-        config = ReconConfig.model_validate({
-            "collectors": [
-                {"name": "meta-test", "type": "cli", "run": "echo hi"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "collectors": [
+                    {"name": "meta-test", "type": "cli", "run": "echo hi"},
+                ],
+            }
+        )
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "m"
             mission.mkdir()
@@ -158,12 +174,14 @@ class TestReconRun:
             assert "records" in meta["collectors"][0]
 
     def test_collector_error_recorded(self):
-        config = ReconConfig.model_validate({
-            "collectors": [
-                {"name": "fail", "type": "cli", "run": "exit 2"},
-                {"name": "ok", "type": "cli", "run": "echo hi"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "collectors": [
+                    {"name": "fail", "type": "cli", "run": "exit 2"},
+                    {"name": "ok", "type": "cli", "run": "echo hi"},
+                ],
+            }
+        )
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "m"
             mission.mkdir()
@@ -174,11 +192,13 @@ class TestReconRun:
             assert (archive / "ok.jsonl").exists()
 
     def test_archive_directory_structure(self):
-        config = ReconConfig.model_validate({
-            "collectors": [
-                {"name": "t", "type": "cli", "run": "echo hi"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "collectors": [
+                    {"name": "t", "type": "cli", "run": "echo hi"},
+                ],
+            }
+        )
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "my-mission"
             mission.mkdir()
@@ -188,11 +208,13 @@ class TestReconRun:
 
     def test_unknown_collector_type_recorded(self):
         """Unregistered type gets error in meta, doesn't crash."""
-        config = ReconConfig.model_validate({
-            "collectors": [
-                {"name": "ok", "type": "cli", "run": "echo hi"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "collectors": [
+                    {"name": "ok", "type": "cli", "run": "echo hi"},
+                ],
+            }
+        )
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "m"
             mission.mkdir()
@@ -203,11 +225,13 @@ class TestReconRun:
 
     def test_empty_collector_output(self):
         """Empty records get _empty sentinel."""
-        config = ReconConfig.model_validate({
-            "collectors": [
-                {"name": "empty", "type": "cli", "run": "true"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "collectors": [
+                    {"name": "empty", "type": "cli", "run": "true"},
+                ],
+            }
+        )
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "m"
             mission.mkdir()
