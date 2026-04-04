@@ -1,7 +1,7 @@
 [project]
 name = "recon"
-version = "0.1.0"
-description = "Paper scout — search, download, convert as matrix components"
+version = "0.7.0"
+description = "Mechanical collection system — collect, normalize, query via parquet + DuckDB"
 requires-python = ">=3.12"
 license = "MIT"
 authors = [
@@ -9,17 +9,21 @@ authors = [
 ]
 
 dependencies = [
-    "matrix",
-    "semanticscholar>=0.8",
     "httpx>=0.27",
     "rich>=13.0",
     "click>=8.1",
-    "duckduckgo-search>=8.1.1",
-    "trafilatura>=2.0.0",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "xmltodict>=0.13",
+    "duckdb>=1.0",
+    "glom>=23.0",
+    "pymupdf>=1.24",
+    "markdownify>=0.14",
+    "tenacity>=9.0",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "pytest-asyncio>=0.23"]
+dev = ["pytest>=8.0"]
 
 [project.scripts]
 recon = "recon.adapters._in.cli:main"
@@ -37,7 +41,5 @@ packages = ["src/recon"]
 [tool.hatch.build]
 include = [
     "src/recon/**/*.py",
+    "src/recon/configs/*.yaml",
 ]
-
-[tool.pytest.ini_options]
-asyncio_mode = "auto"

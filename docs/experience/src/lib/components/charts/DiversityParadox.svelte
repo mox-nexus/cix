@@ -1,133 +1,66 @@
 <script lang="ts">
 	// Butterfly (diverging) chart encoding the diversity paradox.
 	//
-	// Information structure: two paired findings, each with an individual-quality
-	// measurement (positive, right) and a diversity-loss measurement (negative, left).
-	// The center axis IS the paradox — the same AI session produces both simultaneously.
-	//
-	// Layout (per row):
-	//   [metric label .............. bar ====] | [==== bar .............. metric label]
-	//                                           ^
-	//                                      center axis
-	//
-	// Study group labels are rendered as a small caption above each group's first row,
-	// left-aligned. This avoids collision with bars. Value labels hug bar tips.
+	// Two paired findings: individual-quality (positive, right) and
+	// diversity-loss (negative, left). Center axis IS the paradox.
 
 	type Finding = {
 		source: string;
 		metric: string;
-		value: number; // negative for diversity loss, positive for individual quality
-		unit: string; // 'g' (Hedges') or '%'
+		value: number;
+		unit: string;
 		direction: 'individual' | 'diversity';
 	};
 
-	// Ordered so diversity and individual rows alternate within each study group.
-	// Diversity row first (top), individual row second (bottom) — loss before gain.
 	const findings: Finding[] = [
-		{
-			source: 'Holzner et al. 2025',
-			metric: 'Idea diversity',
-			value: -0.863,
-			unit: 'g',
-			direction: 'diversity'
-		},
-		{
-			source: 'Holzner et al. 2025',
-			metric: 'Creative performance',
-			value: +0.273,
-			unit: 'g',
-			direction: 'individual'
-		},
-		{
-			source: 'Doshi & Hauser 2024',
-			metric: 'Collective similarity',
-			value: -10.7,
-			unit: '%',
-			direction: 'diversity'
-		},
-		{
-			source: 'Doshi & Hauser 2024',
-			metric: 'Individual novelty',
-			value: +8.1,
-			unit: '%',
-			direction: 'individual'
-		}
+		{ source: 'Holzner et al. 2025', metric: 'Idea diversity', value: -0.863, unit: 'g', direction: 'diversity' },
+		{ source: 'Holzner et al. 2025', metric: 'Creative performance', value: +0.273, unit: 'g', direction: 'individual' },
+		{ source: 'Doshi & Hauser 2024', metric: 'Collective similarity', value: -10.7, unit: '%', direction: 'diversity' },
+		{ source: 'Doshi & Hauser 2024', metric: 'Individual novelty', value: +8.1, unit: '%', direction: 'individual' },
 	];
 
-	// SVG dimensions
-	const svgWidth = 640;
-	const rowHeight = 30;
-	const rowGap = 8; // gap between rows within a group
-	const groupGap = 32; // gap between study groups (holds the group label)
-	const topPad = 44; // column headers
-	const bottomPad = 12;
+	// Layout
+	const W = 700;
+	const rowH = 34;
+	const rowGap = 6;
+	const groupGap = 36;
+	const topPad = 28;
+	const botPad = 12;
+	const H = topPad + 2 * rowH + rowGap + groupGap + 2 * rowH + rowGap + botPad;
 
-	// Groups: 2 rows each, with a groupGap between groups.
-	// Total height: topPad + 2*(rowHeight+rowGap) + groupGap + 2*(rowHeight+rowGap) - rowGap + bottomPad
-	const svgHeight =
-		topPad +
-		2 * rowHeight +
-		1 * rowGap + // group 1: 2 rows, 1 gap between them
-		groupGap + // gap between groups
-		2 * rowHeight +
-		1 * rowGap + // group 2
-		bottomPad;
+	const pad = 12;
+	const labelW = 150;
+	const centerX = W / 2;
+	const barZone = centerX - pad - labelW;
 
-	// Horizontal layout
-	// The metric label sits outside the bar zone, right-aligned to left edge of bar / left-aligned to right edge.
-	// Bar zone fills from barZoneLeft to centerX (left bars) and centerX to barZoneRight (right bars).
-	const outerPad = 10;
-	const metricLabelWidth = 144; // reserved for metric name
-	const valueLabelGap = 6; // space between bar tip and value text
-	const valueLabelWidth = 48; // space for value text (e.g. "−0.863g")
-	const centerX = svgWidth / 2;
-	const barZoneLeft = outerPad + metricLabelWidth;
-	const maxBarWidth = centerX - barZoneLeft;
-
-	// Scales: independent per unit type
+	// Scales
 	const gMax = 1.0;
 	const pctMax = 12.0;
 
-	function scaledBarWidth(f: Finding): number {
-		const abs = Math.abs(f.value);
+	function barW(f: Finding): number {
 		const max = f.unit === 'g' ? gMax : pctMax;
-		return (abs / max) * maxBarWidth;
+		return (Math.abs(f.value) / max) * barZone;
 	}
 
-	// Row y positions, accounting for groupGap between the two study groups
 	function rowY(i: number): number {
-		if (i < 2) {
-			// Group 1: rows 0 and 1
-			return topPad + i * (rowHeight + rowGap);
-		} else {
-			// Group 2: rows 2 and 3
-			return topPad + 2 * (rowHeight + rowGap) + groupGap + (i - 2) * (rowHeight + rowGap);
-		}
+		if (i < 2) return topPad + i * (rowH + rowGap);
+		return topPad + 2 * (rowH + rowGap) + groupGap + (i - 2) * (rowH + rowGap);
 	}
 
-	// Group label y positions: sit in the groupGap above each group's first row,
-	// and also above group 1 (within topPad).
-	function groupLabelY(groupIndex: number): number {
-		// For group 0: label sits just above first row
-		if (groupIndex === 0) return topPad - 10;
-		// For group 1: label sits in the groupGap, below the gap midpoint
-		return rowY(1) + rowHeight + rowGap + groupGap / 2 + 4;
+	function groupLabelY(g: number): number {
+		if (g === 0) return topPad - 8;
+		return rowY(1) + rowH + rowGap + groupGap / 2 + 3;
 	}
 
-	// Colors: muted teal (individual quality gain), muted amber (diversity loss)
-	const colorIndividual = '#5a9e8a';
-	const colorDiversity = '#c47c3a';
-	const colorAxis = '#3a3a3a';
-	const colorText = '#aaa';
-	const colorDimText = '#555';
-	const colorGroupLabel = '#777';
-
-	// Gradient IDs for bars (fade toward tip)
-	const gradDiversity = 'dp-grad-diversity';
-	const gradIndividual = 'dp-grad-individual';
+	const cGain = '#5a9e8a';
+	const cLoss = '#c47c3a';
+	const cAxis = '#333';
+	const cText = '#aaa';
+	const cDim = '#555';
+	const cGroup = '#777';
 
 	function valStr(f: Finding): string {
-		const sign = f.value >= 0 ? '+' : '−';
+		const sign = f.value >= 0 ? '+' : '\u2212';
 		return `${sign}${Math.abs(f.value)}${f.unit}`;
 	}
 </script>
@@ -136,227 +69,78 @@
 	<figcaption class="chart-header">
 		<span class="chart-title">Better writers. Fewer distinct ideas. Both at once.</span>
 		<span class="chart-subtitle">
-			Individual quality improves while collective diversity collapses — same AI, same session,
-			opposite effects
+			Individual quality improves while collective diversity collapses — same AI, same session, opposite effects
 		</span>
 	</figcaption>
 
-	<div class="chart-container">
-		<svg
-			viewBox="0 0 {svgWidth} {svgHeight}"
-			width="100%"
-			height="100%"
-			role="img"
-			aria-label="Butterfly chart showing the diversity paradox. Holzner et al. 2025 (meta-analysis, 28 studies, n=8,214): idea diversity Hedges g=−0.863, creative performance Hedges g=+0.273. Doshi & Hauser 2024 (Science Advances, n=893): collective similarity +10.7% (diversity fell), individual novelty +8.1%. Left bars show loss; right bars show gain."
-		>
+	<div class="chart-wrap">
+		<svg viewBox="0 0 {W} {H}" role="img" aria-label="Butterfly chart: diversity paradox">
 			<defs>
-				<!-- Gradient fades toward the outer tip — visual weight at center matches data weight -->
-				<linearGradient id={gradDiversity} x1="1" y1="0" x2="0" y2="0">
-					<stop offset="0%" stop-color={colorDiversity} stop-opacity="0.25" />
-					<stop offset="60%" stop-color={colorDiversity} stop-opacity="0.88" />
+				<linearGradient id="dp-gl" x1="1" y1="0" x2="0" y2="0">
+					<stop offset="0%" stop-color={cLoss} stop-opacity="0.2" />
+					<stop offset="70%" stop-color={cLoss} stop-opacity="0.85" />
 				</linearGradient>
-				<linearGradient id={gradIndividual} x1="0" y1="0" x2="1" y2="0">
-					<stop offset="0%" stop-color={colorIndividual} stop-opacity="0.88" />
-					<stop offset="100%" stop-color={colorIndividual} stop-opacity="0.25" />
+				<linearGradient id="dp-gr" x1="0" y1="0" x2="1" y2="0">
+					<stop offset="0%" stop-color={cGain} stop-opacity="0.85" />
+					<stop offset="100%" stop-color={cGain} stop-opacity="0.2" />
 				</linearGradient>
 			</defs>
 
-			<!-- ── Column headers ── -->
-			<text
-				x={centerX - maxBarWidth * 0.5}
-				y={14}
-				text-anchor="middle"
-				fill={colorDiversity}
-				font-size="10"
-				font-family="system-ui, sans-serif"
-				font-weight="600"
-				letter-spacing="0.07em"
-			>
-				COLLECTIVE DIVERSITY LOSS
-			</text>
-			<text
-				x={centerX + maxBarWidth * 0.5}
-				y={14}
-				text-anchor="middle"
-				fill={colorIndividual}
-				font-size="10"
-				font-family="system-ui, sans-serif"
-				font-weight="600"
-				letter-spacing="0.07em"
-			>
-				INDIVIDUAL QUALITY GAIN
-			</text>
+			<!-- Column headers -->
+			<text x={centerX - 8} y={12} text-anchor="end" fill={cLoss} font-size="9.5" font-weight="600" letter-spacing="0.06em">COLLECTIVE DIVERSITY LOSS</text>
+			<text x={centerX + 8} y={12} fill={cGain} font-size="9.5" font-weight="600" letter-spacing="0.06em">INDIVIDUAL QUALITY GAIN</text>
 
-			<text
-				x={centerX - maxBarWidth * 0.5}
-				y={26}
-				text-anchor="middle"
-				fill={colorDiversity}
-				font-size="8.5"
-				font-family="system-ui, sans-serif"
-				opacity="0.5"
-			>
-				← extends left
-			</text>
-			<text
-				x={centerX + maxBarWidth * 0.5}
-				y={26}
-				text-anchor="middle"
-				fill={colorIndividual}
-				font-size="8.5"
-				font-family="system-ui, sans-serif"
-				opacity="0.5"
-			>
-				extends right →
-			</text>
+			<!-- Center axis -->
+			<line x1={centerX} y1={20} x2={centerX} y2={H - botPad} stroke={cAxis} stroke-width="1" />
 
-			<!-- ── Center axis ── -->
-			<line
-				x1={centerX}
-				y1={30}
-				x2={centerX}
-				y2={svgHeight - bottomPad}
-				stroke={colorAxis}
-				stroke-width="1"
-			/>
-
-			<!-- ── Study group labels ── -->
-			<!-- Group 0: Holzner — label above first row -->
-			<text
-				x={outerPad}
-				y={groupLabelY(0)}
-				fill={colorGroupLabel}
-				font-size="9"
-				font-family="system-ui, sans-serif"
-				font-weight="600"
-				letter-spacing="0.05em"
-			>
+			<!-- Group labels -->
+			<text x={pad} y={groupLabelY(0)} fill={cGroup} font-size="9" font-weight="600" letter-spacing="0.04em">
 				HOLZNER ET AL. 2025
+				<tspan fill={cDim} font-weight="400" font-size="8"> · meta-analysis · 28 studies · n=8,214</tspan>
 			</text>
-			<text
-				x={outerPad + 108}
-				y={groupLabelY(0)}
-				fill={colorDimText}
-				font-size="8"
-				font-family="system-ui, sans-serif"
-			>
-				· meta-analysis · 28 studies · n=8,214
-			</text>
-
-			<!-- Group 1: Doshi — label in the groupGap between groups -->
-			<text
-				x={outerPad}
-				y={groupLabelY(1)}
-				fill={colorGroupLabel}
-				font-size="9"
-				font-family="system-ui, sans-serif"
-				font-weight="600"
-				letter-spacing="0.05em"
-			>
+			<text x={pad} y={groupLabelY(1)} fill={cGroup} font-size="9" font-weight="600" letter-spacing="0.04em">
 				DOSHI &amp; HAUSER 2024
-			</text>
-			<text
-				x={outerPad + 108}
-				y={groupLabelY(1)}
-				fill={colorDimText}
-				font-size="8"
-				font-family="system-ui, sans-serif"
-			>
-				· Science Advances · n=893
+				<tspan fill={cDim} font-weight="400" font-size="8"> · Science Advances · n=893</tspan>
 			</text>
 
-			<!-- ── Separator between study groups ── -->
-			<line
-				x1={outerPad}
-				y1={rowY(1) + rowHeight + rowGap / 2}
-				x2={svgWidth - outerPad}
-				y2={rowY(1) + rowHeight + rowGap / 2}
-				stroke={colorAxis}
-				stroke-width="0.5"
-				opacity="0.5"
-			/>
+			<!-- Separator -->
+			<line x1={pad} y1={rowY(1) + rowH + rowGap / 2} x2={W - pad} y2={rowY(1) + rowH + rowGap / 2} stroke={cAxis} stroke-width="0.5" opacity="0.4" />
 
-			<!-- ── Bars, value labels, metric labels ── -->
 			{#each findings as f, i}
 				{@const y = rowY(i)}
-				{@const bw = scaledBarWidth(f)}
+				{@const bw = barW(f)}
 				{@const isLeft = f.direction === 'diversity'}
-				{@const barColor = isLeft ? colorDiversity : colorIndividual}
-				{@const grad = isLeft ? gradDiversity : gradIndividual}
+				{@const color = isLeft ? cLoss : cGain}
+				{@const grad = isLeft ? 'dp-gl' : 'dp-gr'}
 
 				<!-- Bar -->
-				{#if isLeft}
-					<rect
-						x={centerX - bw}
-						y={y + 4}
-						width={bw}
-						height={rowHeight - 8}
-						rx="2"
-						fill="url(#{grad})"
-					/>
-				{:else}
-					<rect
-						x={centerX}
-						y={y + 4}
-						width={bw}
-						height={rowHeight - 8}
-						rx="2"
-						fill="url(#{grad})"
-					/>
-				{/if}
+				<rect
+					x={isLeft ? centerX - bw : centerX}
+					y={y + 5}
+					width={bw}
+					height={rowH - 10}
+					rx="2"
+					fill="url(#{grad})"
+				/>
 
-				<!-- Value label at bar tip -->
+				<!-- Value label inside bar (or just outside if bar is tiny) -->
 				{#if isLeft}
-					<text
-						x={centerX - bw - valueLabelGap}
-						y={y + rowHeight / 2}
-						text-anchor="end"
-						dominant-baseline="central"
-						fill={barColor}
-						font-size="11"
-						font-weight="700"
-						font-family="system-ui, sans-serif"
-					>
-						{valStr(f)}
-					</text>
+					{@const vx = bw > 60 ? centerX - bw + 8 : centerX - bw - 6}
+					{@const anchor = bw > 60 ? 'start' : 'end'}
+					{@const vColor = bw > 60 ? '#fff' : color}
+					<text x={vx} y={y + rowH / 2} text-anchor={anchor} dominant-baseline="central" fill={vColor} font-size="11" font-weight="700" opacity={bw > 60 ? 0.9 : 1}>{valStr(f)}</text>
 				{:else}
-					<text
-						x={centerX + bw + valueLabelGap}
-						y={y + rowHeight / 2}
-						dominant-baseline="central"
-						fill={barColor}
-						font-size="11"
-						font-weight="700"
-						font-family="system-ui, sans-serif"
-					>
-						{valStr(f)}
-					</text>
+					{@const vx = bw > 60 ? centerX + bw - 8 : centerX + bw + 6}
+					{@const anchor = bw > 60 ? 'end' : 'start'}
+					{@const vColor = bw > 60 ? '#fff' : color}
+					<text x={vx} y={y + rowH / 2} text-anchor={anchor} dominant-baseline="central" fill={vColor} font-size="11" font-weight="700" opacity={bw > 60 ? 0.9 : 1}>{valStr(f)}</text>
 				{/if}
 
 				<!-- Metric label at outer edge -->
 				{#if isLeft}
-					<text
-						x={outerPad + metricLabelWidth}
-						y={y + rowHeight / 2}
-						text-anchor="end"
-						dominant-baseline="central"
-						fill={colorText}
-						font-size="12"
-						font-family="system-ui, sans-serif"
-					>
-						{f.metric}
-					</text>
+					<text x={pad + labelW - 4} y={y + rowH / 2} text-anchor="end" dominant-baseline="central" fill={cText} font-size="12">{f.metric}</text>
 				{:else}
-					<text
-						x={svgWidth - outerPad - metricLabelWidth}
-						y={y + rowHeight / 2}
-						dominant-baseline="central"
-						fill={colorText}
-						font-size="12"
-						font-family="system-ui, sans-serif"
-					>
-						{f.metric}
-					</text>
+					<text x={W - pad - labelW + 4} y={y + rowH / 2} dominant-baseline="central" fill={cText} font-size="12">{f.metric}</text>
 				{/if}
 			{/each}
 		</svg>
@@ -396,9 +180,9 @@
 		color: #888;
 	}
 
-	.chart-container {
+	.chart-wrap {
 		width: 100%;
-		max-width: 640px;
+		max-width: 700px;
 	}
 
 	.chart-source {

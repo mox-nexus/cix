@@ -39,7 +39,7 @@
       "name": "craft-research",
       "source": "./plugins/craft-research",
       "description": "Deep research and literature synthesis. Analyze papers, ground claims in evidence, build citation-accurate knowledge.",
-      "version": "0.1.0",
+      "version": "0.3.0",
       "author": {
         "name": "Mox Labs",
         "email": "mox.rnd@gmail.com"
@@ -86,6 +86,19 @@
       "license": "MIT",
       "keywords": ["evals", "evaluation", "testing", "agents", "skills", "mcp"],
       "category": "testing"
+    },
+    {
+      "name": "recon",
+      "source": "./tools/recon",
+      "description": "Mechanical collection system. Config-driven data collection from HTTP APIs, CLI tools, and local repositories into queryable JSONL.",
+      "version": "0.7.0",
+      "author": {
+        "name": "Mox Labs",
+        "email": "mox.rnd@gmail.com"
+      },
+      "license": "MIT",
+      "keywords": ["collection", "recon", "research", "data", "apis", "code-mining", "jsonl", "duckdb"],
+      "category": "tools"
     }
   ]
 }

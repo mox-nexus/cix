@@ -30,11 +30,19 @@ Browse the [catalog](https://mox-nexus.github.io/cix/catalog). Read the [researc
 | **craft-evals** | Measure | Eval methodology for AI systems |
 | **ci-scaffolds** | Cross-cutting | Collaboration patterns, problem-solving, engineering craft |
 
+## Tools
+
+| Tool | Purpose |
+|------|---------|
+| **recon** | Mechanical collection — config-driven data collection from APIs, CLI tools, and web pages into queryable JSONL |
+
 ## Architecture
 
 ```
 cix/
-├── tools/cix/       # CLI (Python + uv, hexagonal architecture)
+├── tools/
+│   ├── cix/         # CLI package manager (Python + uv, hexagonal)
+│   └── recon/       # Mechanical collection system (Python + uv)
 ├── plugins/         # Marketplace extensions
 ├── docs/
 │   ├── experience/  # SvelteKit documentation site

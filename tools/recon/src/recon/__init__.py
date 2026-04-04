@@ -1,13 +1,10 @@
-"""Paper scout for craft-research.
+"""Recon — mechanical collection system. Collect, normalize, query."""
 
-Programmatic usage:
+__version__ = "0.7.0"
 
-    from recon import ReconConfig, build_pipeline
-
-    config = ReconConfig.web_preset("cognitive forcing functions", Path("sources/"))
-    construct = await build_pipeline(config).run()
-"""
-
-from recon.config import ReconConfig, build_pipeline
-
-__all__ = ["ReconConfig", "build_pipeline"]
+# Shared browser-like UA — avoids AI-blocking 403s on academic sites.
+DEFAULT_USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/131.0.0.0 Safari/537.36"
+)
