@@ -8,7 +8,6 @@ import tempfile
 from pathlib import Path
 
 import pytest
-
 from recon.adapters._out.api_collector import ApiCollector
 from recon.adapters._out.cli_collector import CliCollector
 from recon.adapters._out.web_collector import WebCollector
@@ -233,8 +232,8 @@ class TestFanOutLive:
 
         a_lines = (archive / "read-a.jsonl").read_text().splitlines()
         b_lines = (archive / "read-b.jsonl").read_text().splitlines()
-        a_records = [json.loads(l) for l in a_lines]
-        b_records = [json.loads(l) for l in b_lines]
+        a_records = [json.loads(line) for line in a_lines]
+        b_records = [json.loads(line) for line in b_lines]
         assert "from repo a" in a_records[0]["line"]
         assert "from repo b" in b_records[0]["line"]
 

@@ -2,7 +2,6 @@
 
 import pytest
 from pydantic import ValidationError
-
 from recon.domain.models import (
     AuthConfig,
     CollectorEntry,

@@ -1,7 +1,6 @@
 """Tests for WebCollector — HTML to markdown, title extraction."""
 
 import pytest
-
 from recon.adapters._out.web_collector import WebCollector, _extract_title
 from recon.application.utilization import RateLimiter
 from recon.domain.exceptions import CollectionError
@@ -10,7 +9,8 @@ from recon.domain.models import CollectorEntry, SourceEntry
 
 class TestExtractTitle:
     def test_basic(self):
-        assert _extract_title("<html><head><title>Hello World</title></head></html>") == "Hello World"
+        html = "<html><head><title>Hello World</title></head></html>"
+        assert _extract_title(html) == "Hello World"
 
     def test_multiline(self):
         html = "<title>\n  My Page\n</title>"

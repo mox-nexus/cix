@@ -4,9 +4,7 @@ import json
 import tempfile
 from pathlib import Path
 
-import pytest
 import yaml
-
 from recon.adapters._out.api_collector import ApiCollector
 from recon.adapters._out.cli_collector import CliCollector
 from recon.adapters._out.web_collector import WebCollector

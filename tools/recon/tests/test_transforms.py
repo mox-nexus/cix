@@ -165,7 +165,6 @@ class TestPdf2Text:
     def test_roundtrip(self, tmp_path):
         """Create a PDF with pymupdf, extract text with $pdf2text."""
         import pymupdf
-
         from recon.adapters._in.cli import _pdf2text
 
         # Create a test PDF
