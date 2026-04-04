@@ -1,12 +1,17 @@
-#!/usr/bin/env bash
-# Pre-commit hook: run linters before committing
+#!/bin/sh
+# Mirrors CI lint job: ruff check + ruff format --check
 
-set -e
+if ! command -v uv >/dev/null 2>&1; then
+    echo "⚠ uv not found, skipping lint"
+    exit 0
+fi
 
 echo "Running ruff check..."
-uv run ruff check
+uv run ruff check --quiet || exit 1
 
 echo "Running ruff format --check..."
-uv run ruff format --check
-
-echo "✓ All checks passed"
+uv run ruff format --check --quiet || {
+    echo ""
+    echo "❌ Files need formatting. Run: uv run ruff format"
+    exit 1
+}

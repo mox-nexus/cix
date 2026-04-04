@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+"""Validate conventional commit format. Mirrors CI commit-lint."""
+
+import re
+import sys
+
+PATTERN = re.compile(r"^(feat|fix|docs|refactor|test|chore|perf)(\(.+\))?\!?: .+")
+
+with open(sys.argv[1]) as f:
+    msg = f.readline().strip()
+
+if msg.startswith("Merge "):
+    sys.exit(0)
+
+if not PATTERN.match(msg):
+    print(f"\n❌ Invalid commit message: {msg}")
+    print()
+    print("  Must follow: <type>(<scope>): <description>")
+    print("  Types: feat, fix, docs, refactor, test, chore, perf")
+    print()
+    sys.exit(1)
