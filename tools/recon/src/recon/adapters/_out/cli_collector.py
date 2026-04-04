@@ -37,11 +37,7 @@ def _parse_stdout(stdout: str) -> list[dict[str, Any]]:
     except (json.JSONDecodeError, IndexError):
         pass
 
-    return [
-        {"line_number": i, "line": line}
-        for i, line in enumerate(lines, 1)
-        if line.strip()
-    ]
+    return [{"line_number": i, "line": line} for i, line in enumerate(lines, 1) if line.strip()]
 
 
 class CliCollector:
@@ -82,14 +78,15 @@ class CliCollector:
             all_records = self._execute(cmd, cwd, timeout)
 
         if entry.normalize and all_records:
-            all_records = [
-                apply_normalize(record, entry.normalize) for record in all_records
-            ]
+            all_records = [apply_normalize(record, entry.normalize) for record in all_records]
 
         return all_records
 
     def _execute(
-        self, cmd: str, cwd: Path | None = None, timeout: float = 300,
+        self,
+        cmd: str,
+        cwd: Path | None = None,
+        timeout: float = 300,
     ) -> list[dict[str, Any]]:
         """Run a shell command, return parsed records.
 

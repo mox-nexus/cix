@@ -135,7 +135,10 @@ class ApiCollector:
         return {auth.header: value}
 
     def _build_url(
-        self, base_url: str, endpoint: str, params: dict[str, str],
+        self,
+        base_url: str,
+        endpoint: str,
+        params: dict[str, str],
     ) -> str:
         path = substitute(endpoint, params)
         return f"{base_url.rstrip('/')}{path}"

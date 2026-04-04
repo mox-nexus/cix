@@ -59,7 +59,9 @@ class TestWebCollector:
             rate_limit={"rps": 1, "burst": 1},
         )
         entry = CollectorEntry(
-            name="test", type="web", source="httpbin",
+            name="test",
+            type="web",
+            source="httpbin",
             endpoint="/html",
         )
         records = WebCollector(RateLimiter()).collect(entry, source)

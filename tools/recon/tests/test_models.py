@@ -92,9 +92,11 @@ class TestCollectorEntry:
 
 class TestReconConfig:
     def test_minimal(self):
-        config = ReconConfig(collectors=[
-            CollectorEntry(name="test", type="cli", run="echo hi"),
-        ])
+        config = ReconConfig(
+            collectors=[
+                CollectorEntry(name="test", type="cli", run="echo hi"),
+            ]
+        )
         assert config.catalog == []
         assert len(config.collectors) == 1
 
@@ -126,23 +128,27 @@ class TestReconConfig:
 
     def test_collectors_only(self):
         """No catalog needed for CLI collectors."""
-        config = ReconConfig.model_validate({
-            "collectors": [
-                {"name": "local", "type": "cli", "run": "ls"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "collectors": [
+                    {"name": "local", "type": "cli", "run": "ls"},
+                ],
+            }
+        )
         assert config.catalog == []
 
     def test_local_sources(self):
         """Local sources for CLI fan-out."""
-        config = ReconConfig.model_validate({
-            "catalog": [
-                {"name": "repo-a", "type": "local", "url": "/tmp/a"},
-                {"name": "repo-b", "type": "local", "url": "/tmp/b"},
-            ],
-            "collectors": [
-                {"name": "scan", "type": "cli", "run": "echo hello"},
-            ],
-        })
+        config = ReconConfig.model_validate(
+            {
+                "catalog": [
+                    {"name": "repo-a", "type": "local", "url": "/tmp/a"},
+                    {"name": "repo-b", "type": "local", "url": "/tmp/b"},
+                ],
+                "collectors": [
+                    {"name": "scan", "type": "cli", "run": "echo hello"},
+                ],
+            }
+        )
         assert len(config.catalog) == 2
         assert config.catalog[0].type == "local"

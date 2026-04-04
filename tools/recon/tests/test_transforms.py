@@ -71,10 +71,12 @@ class TestResolvePath:
         assert resolve_path(data, "authors.*.name") == ["Alice", "Bob"]
 
     def test_deep_list_map(self):
-        data = {"authorships": [
-            {"author": {"display_name": "Alice"}},
-            {"author": {"display_name": "Bob"}},
-        ]}
+        data = {
+            "authorships": [
+                {"author": {"display_name": "Alice"}},
+                {"author": {"display_name": "Bob"}},
+            ]
+        }
         assert resolve_path(data, "authorships.*.author.display_name") == ["Alice", "Bob"]
 
     def test_missing_field(self):
