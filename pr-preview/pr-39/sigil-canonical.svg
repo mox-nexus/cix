@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <!--
+    Collaborative Intelligence Sigil
+    9 + 18 + 27 + 36 = 90 points across 4 positions
+    Each position is a complete gestalt (valknut = 3 interlocking triangles)
+    Final position: 4 valknuts = 36 points = mastery of 36 chambers
+  -->
+
+  <!-- Background: Void black -->
+  <rect width="800" height="800" fill="#0a0a0a"/>
+
+  <!-- 36 Chamber divisions (10° each) -->
+  <g opacity="0.12">
+    <g stroke="#555" stroke-width="1">
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(0, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(10, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(20, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(30, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(40, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(50, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(60, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(70, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(80, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(90, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(100, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(110, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(120, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(130, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(140, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(150, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(160, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(170, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(180, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(190, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(200, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(210, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(220, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(230, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(240, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(250, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(260, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(270, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(280, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(290, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(300, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(310, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(320, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(330, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(340, 400, 400)"/>
+      <line x1="400" y1="350" x2="400" y2="324" transform="rotate(350, 400, 400)"/>
+    </g>
+    <circle cx="400" cy="400" r="76" fill="none" stroke="#444" stroke-width="1"/>
+  </g>
+
+  <!-- Connecting lines (green emergence) -->
+  <g stroke="#00e8a0" stroke-width="2" stroke-opacity="0.2">
+    <line x1="400" y1="324" x2="400" y2="240"/>
+    <line x1="476" y1="400" x2="560" y2="400"/>
+    <line x1="400" y1="476" x2="400" y2="560"/>
+    <line x1="324" y1="400" x2="240" y2="400"/>
+  </g>
+
+  <!-- North: 1 Valknut = 9 points (Foundation) -->
+  <g transform="translate(400, 210)">
+    <polygon points="0,-26 22.5,13 -22.5,13" fill="none" stroke="#00e8a0" stroke-width="2.5" stroke-linejoin="round"/>
+    <polygon points="0,-26 22.5,13 -22.5,13" fill="none" stroke="#00e8a0" stroke-width="2.5" stroke-linejoin="round" transform="rotate(40)"/>
+    <polygon points="0,-26 22.5,13 -22.5,13" fill="none" stroke="#00e8a0" stroke-width="2.5" stroke-linejoin="round" transform="rotate(80)"/>
+  </g>
+
+  <!-- East: 2 Valknuts = 18 points (Growth) -->
+  <g transform="translate(590, 400)">
+    <!-- Outer valknut -->
+    <polygon points="0,-30 26,15 -26,15" fill="none" stroke="#00e8a0" stroke-width="2.5" stroke-linejoin="round"/>
+    <polygon points="0,-30 26,15 -26,15" fill="none" stroke="#00e8a0" stroke-width="2.5" stroke-linejoin="round" transform="rotate(40)"/>
+    <polygon points="0,-30 26,15 -26,15" fill="none" stroke="#00e8a0" stroke-width="2.5" stroke-linejoin="round" transform="rotate(80)"/>
+    <!-- Inner valknut -->
+    <polygon points="0,-16 13.9,8 -13.9,8" fill="none" stroke="#00e8a0" stroke-width="2" stroke-linejoin="round" opacity="0.7" transform="rotate(20)"/>
+    <polygon points="0,-16 13.9,8 -13.9,8" fill="none" stroke="#00e8a0" stroke-width="2" stroke-linejoin="round" opacity="0.7" transform="rotate(60)"/>
+    <polygon points="0,-16 13.9,8 -13.9,8" fill="none" stroke="#00e8a0" stroke-width="2" stroke-linejoin="round" opacity="0.7" transform="rotate(100)"/>
+  </g>
+
+  <!-- South: 3 Valknuts = 27 points (Depth) -->
+  <g transform="translate(400, 590)">
+    <!-- Outer valknut -->
+    <polygon points="0,-34 29.4,17 -29.4,17" fill="none" stroke="#00e8a0" stroke-width="2.5" stroke-linejoin="round"/>
+    <polygon points="0,-34 29.4,17 -29.4,17" fill="none" stroke="#00e8a0" stroke-width="2.5" stroke-linejoin="round" transform="rotate(40)"/>
+    <polygon points="0,-34 29.4,17 -29.4,17" fill="none" stroke="#00e8a0" stroke-width="2.5" stroke-linejoin="round" transform="rotate(80)"/>
+    <!-- Middle valknut -->
+    <polygon points="0,-22 19,11 -19,11" fill="none" stroke="#00e8a0" stroke-width="2" stroke-linejoin="round" opacity="0.7" transform="rotate(20)"/>
+    <polygon points="0,-22 19,11 -19,11" fill="none" stroke="#00e8a0" stroke-width="2" stroke-linejoin="round" opacity="0.7" transform="rotate(60)"/>
+    <polygon points="0,-22 19,11 -19,11" fill="none" stroke="#00e8a0" stroke-width="2" stroke-linejoin="round" opacity="0.7" transform="rotate(100)"/>
+    <!-- Inner valknut -->
+    <polygon points="0,-12 10.4,6 -10.4,6" fill="none" stroke="#00e8a0" stroke-width="1.5" stroke-linejoin="round" opacity="0.5"/>
+    <polygon points="0,-12 10.4,6 -10.4,6" fill="none" stroke="#00e8a0" stroke-width="1.5" stroke-linejoin="round" opacity="0.5" transform="rotate(40)"/>
+    <polygon points="0,-12 10.4,6 -10.4,6" fill="none" stroke="#00e8a0" stroke-width="1.5" stroke-linejoin="round" opacity="0.5" transform="rotate(80)"/>
+  </g>
+
+  <!-- West: 4 Valknuts = 36 points (Mastery - Full Gestalt) -->
+  <g transform="translate(210, 400)">
+    <!-- Outer valknut -->
+    <polygon points="0,-40 34.6,20 -34.6,20" fill="none" stroke="#00e8a0" stroke-width="3" stroke-linejoin="round"/>
+    <polygon points="0,-40 34.6,20 -34.6,20" fill="none" stroke="#00e8a0" stroke-width="3" stroke-linejoin="round" transform="rotate(40)"/>
+    <polygon points="0,-40 34.6,20 -34.6,20" fill="none" stroke="#00e8a0" stroke-width="3" stroke-linejoin="round" transform="rotate(80)"/>
+    <!-- Second valknut -->
+    <polygon points="0,-28 24.2,14 -24.2,14" fill="none" stroke="#00e8a0" stroke-width="2.5" stroke-linejoin="round" opacity="0.8" transform="rotate(20)"/>
+    <polygon points="0,-28 24.2,14 -24.2,14" fill="none" stroke="#00e8a0" stroke-width="2.5" stroke-linejoin="round" opacity="0.8" transform="rotate(60)"/>
+    <polygon points="0,-28 24.2,14 -24.2,14" fill="none" stroke="#00e8a0" stroke-width="2.5" stroke-linejoin="round" opacity="0.8" transform="rotate(100)"/>
+    <!-- Third valknut -->
+    <polygon points="0,-18 15.6,9 -15.6,9" fill="none" stroke="#00e8a0" stroke-width="2" stroke-linejoin="round" opacity="0.6"/>
+    <polygon points="0,-18 15.6,9 -15.6,9" fill="none" stroke="#00e8a0" stroke-width="2" stroke-linejoin="round" opacity="0.6" transform="rotate(40)"/>
+    <polygon points="0,-18 15.6,9 -15.6,9" fill="none" stroke="#00e8a0" stroke-width="2" stroke-linejoin="round" opacity="0.6" transform="rotate(80)"/>
+    <!-- Inner valknut (core) -->
+    <polygon points="0,-10 8.7,5 -8.7,5" fill="none" stroke="#00e8a0" stroke-width="1.5" stroke-linejoin="round" opacity="0.5" transform="rotate(20)"/>
+    <polygon points="0,-10 8.7,5 -8.7,5" fill="none" stroke="#00e8a0" stroke-width="1.5" stroke-linejoin="round" opacity="0.5" transform="rotate(60)"/>
+    <polygon points="0,-10 8.7,5 -8.7,5" fill="none" stroke="#00e8a0" stroke-width="1.5" stroke-linejoin="round" opacity="0.5" transform="rotate(100)"/>
+  </g>
+
+  <!-- Red Circle: Machine Containment -->
+  <circle cx="400" cy="400" r="70" fill="#ff3333"/>
+
+  <!-- Blue Spark: Human Spirit -->
+  <g stroke="#00d4ff" stroke-linecap="round">
+    <line x1="400" y1="400" x2="400" y2="330" stroke-width="8"/>
+    <line x1="400" y1="400" x2="339.4" y2="435" stroke-width="8"/>
+    <line x1="400" y1="400" x2="460.6" y2="435" stroke-width="8"/>
+    <line x1="400" y1="400" x2="436" y2="358" stroke-width="5"/>
+    <line x1="400" y1="400" x2="400" y2="445" stroke-width="5"/>
+    <line x1="400" y1="400" x2="364" y2="358" stroke-width="5"/>
+  </g>
+  <circle cx="400" cy="400" r="16" fill="#00d4ff"/>
+</svg>
