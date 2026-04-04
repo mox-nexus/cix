@@ -1,0 +1,104 @@
+# Research domain — academic paper search across 4 sources.
+#
+# Template: copy to .cix/recon/<mission>/config.yaml and resolve
+# {query} and {limit} placeholders before running `recon survey <mission>`.
+#
+# Each collector produces a JSONL file with normalized columns:
+#   title, abstract, authors, year, citations, venue, source_id, pdf_url
+
+catalog:
+  - name: semantic-scholar
+    type: api
+    url: https://api.semanticscholar.org/graph/v1
+    auth: { header: x-api-key, env: S2_API_KEY }
+    rate_limit: { rps: 0.33, burst: 1 }
+
+  - name: arxiv
+    type: api
+    url: https://export.arxiv.org/api
+    timeout: 90
+
+  - name: openalex
+    type: api
+    url: https://api.openalex.org
+    auth: { param: api_key, env: OPENALEX_API_KEY }
+    rate_limit: { rps: 10, burst: 5 }
+    user_agent: "recon/0.7.0 (mailto:yza@mox.nexus)"
+
+  - name: zenodo
+    type: api
+    url: https://zenodo.org/api
+    rate_limit: { rps: 1, burst: 2 }
+    user_agent: "recon/0.7.0 (https://github.com/mox-labs/cix)"
+
+collectors:
+  - name: s2-search
+    type: api
+    source: semantic-scholar
+    endpoint: /paper/search
+    params:
+      query: "{query}"
+      limit: "{limit}"
+      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
+    extract: "data"
+    normalize:
+      title: title
+      abstract: abstract
+      authors: "authors.*.name"
+      year: year
+      citations: citationCount
+      pdf_url: "openAccessPdf.url"
+      venue: venue
+
+  - name: arxiv-search
+    type: api
+    source: arxiv
+    endpoint: /query
+    params:
+      search_query: "{query}"
+      max_results: "{limit}"
+    response_format: xml
+    extract: "feed.entry"
+    normalize:
+      title: title
+      abstract: summary
+      authors: "author.*.name"
+      year: published
+      source_id: id
+      venue: "arxiv:primary_category.@term"
+
+  - name: openalex-search
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "{query}"
+      per_page: "{limit}"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: display_name
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  - name: zenodo-search
+    type: api
+    source: zenodo
+    endpoint: /records
+    params:
+      q: "{query}"
+      size: "{limit}"
+      sort: bestmatch
+    extract: "hits.hits"
+    normalize:
+      title: "metadata.title"
+      abstract: "metadata.description|$html2text"
+      authors: "metadata.creators.*.name"
+      year: "metadata.publication_date"
+      source_id: doi
+      venue: "metadata.resource_type.title"
