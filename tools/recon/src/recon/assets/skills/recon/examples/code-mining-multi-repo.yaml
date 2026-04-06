@@ -1,0 +1,67 @@
+# Example: multi-repo code mining via fan-out
+#
+# Use case: survey patterns across several local repositories. Each collector
+# runs against every catalog entry, producing one JSONL per (collector, repo)
+# pair.
+#
+# Adapt by editing the catalog to point at real local paths, then:
+#   recon survey code-mining
+#   recon query code-mining "SELECT * FROM scars_tokio WHERE content LIKE '%SAFETY%'"
+#
+# Each collector's source.url is used as cwd for the shell command, so commands
+# like `rg`, `git log`, etc. run inside each repo automatically.
+
+catalog:
+  - name: tokio
+    type: local
+    url: /Users/dev/oss/tokio
+
+  - name: bytes
+    type: local
+    url: /Users/dev/oss/bytes
+
+  - name: hyper
+    type: local
+    url: /Users/dev/oss/hyper
+
+collectors:
+  # Pattern 1 — safety annotations in Rust code ("scars" of hard-won knowledge)
+  - name: scars
+    type: cli
+    # no source: → fans out across every catalog entry
+    run: "rg --json -C3 'SAFETY|INVARIANT|must not|be careful|critical' --type rust"
+    normalize:
+      file: "data.path.text"
+      line: "data.line_number"
+      content: "data.lines.text|$first"
+
+  # Pattern 2 — revert commits (architectural oscillations)
+  - name: reverts
+    type: cli
+    run: "git log --oneline --all --grep=revert -n 50"
+
+  # Pattern 3 — public API surface (signatures)
+  - name: api-surface
+    type: cli
+    run: "rg --json 'pub (fn|struct|trait|enum|type)' --type rust"
+    normalize:
+      file: "data.path.text"
+      line: "data.line_number"
+      content: "data.lines.text|$first"
+
+  # Pattern 4 — unsafe count per file (quantitative census)
+  - name: unsafe-census
+    type: cli
+    run: "rg --json 'unsafe' --type rust --count-matches"
+
+# Produces per catalog entry, per collector:
+#   scars-tokio.jsonl, scars-bytes.jsonl, scars-hyper.jsonl
+#   reverts-tokio.jsonl, reverts-bytes.jsonl, reverts-hyper.jsonl
+#   api-surface-tokio.jsonl, ...
+#   unsafe-census-tokio.jsonl, ...
+#
+# Cross-repo SQL query example (via `recon query`):
+#   SELECT 'tokio' AS repo, count(*) AS scars FROM scars_tokio
+#   UNION ALL SELECT 'bytes', count(*) FROM scars_bytes
+#   UNION ALL SELECT 'hyper', count(*) FROM scars_hyper
+#   ORDER BY scars DESC

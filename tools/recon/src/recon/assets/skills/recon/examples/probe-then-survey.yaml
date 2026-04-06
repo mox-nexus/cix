@@ -1,0 +1,100 @@
+# Example: probe → normalize → survey
+#
+# This file demonstrates the three-stage iterative workflow for writing a
+# correct normalize spec against an unknown API response shape.
+#
+# Usage:
+#   1. Copy the PROBE config (Stage 1) into .cix/recon/<mission>/config.yaml
+#   2. recon survey <mission>
+#   3. Read the raw JSONL output
+#   4. Copy the NORMALIZE config (Stage 2) into config.yaml — write the
+#      normalize: block based on the actual raw shape observed in step 3
+#   5. recon survey <mission> — validate on the 1-record sample
+#   6. Copy the SURVEY config (Stage 3) — bump the limit and run full collection
+#
+# Each stage below is a complete, runnable config. Pick one at a time.
+
+# ============================================================================
+# STAGE 1 — PROBE
+# ============================================================================
+# Minimal config. Small limit. NO normalize: block.
+# Purpose: see the raw response shape before writing any field paths.
+# ----------------------------------------------------------------------------
+
+catalog:
+  - name: openalex
+    type: api
+    url: https://api.openalex.org
+    user_agent: "recon/0.7.0 (mailto:user@example.com)"
+
+collectors:
+  - name: probe
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "collaborative intelligence"
+      per_page: "1"                    # just enough to see the shape
+      select: "id,display_name,authorships,publication_year,abstract_inverted_index,primary_location"
+    extract: "results"
+    # no normalize block — emit raw records
+
+# ============================================================================
+# STAGE 2 — NORMALIZE (validate the spec on the 1-record sample)
+# ============================================================================
+# Same config, but with a normalize: block written against what probe.jsonl
+# revealed. Still using per_page=1 so the re-run stays cheap.
+# ----------------------------------------------------------------------------
+#
+# catalog:
+#   - name: openalex
+#     type: api
+#     url: https://api.openalex.org
+#     user_agent: "recon/0.7.0 (mailto:user@example.com)"
+#
+# collectors:
+#   - name: probe
+#     type: api
+#     source: openalex
+#     endpoint: /works
+#     params:
+#       search: "collaborative intelligence"
+#       per_page: "1"
+#       select: "id,display_name,authorships,publication_year,abstract_inverted_index,primary_location"
+#     extract: "results"
+#     normalize:
+#       title: display_name                             # direct rename
+#       authors: "authorships.*.author.display_name"    # deep list-map
+#       year: publication_year
+#       abstract: "abstract_inverted_index|$inverted_index"  # transform
+#       venue: "primary_location.source.display_name"
+
+# ============================================================================
+# STAGE 3 — SURVEY (production run)
+# ============================================================================
+# Normalize spec validated. Bump per_page to production value and run.
+# ----------------------------------------------------------------------------
+#
+# catalog:
+#   - name: openalex
+#     type: api
+#     url: https://api.openalex.org
+#     rate_limit: { rps: 10, burst: 5 }
+#     user_agent: "recon/0.7.0 (mailto:user@example.com)"
+#
+# collectors:
+#   - name: oa-search
+#     type: api
+#     source: openalex
+#     endpoint: /works
+#     params:
+#       search: "collaborative intelligence"
+#       per_page: "50"                 # production-scale
+#       select: "id,display_name,authorships,publication_year,abstract_inverted_index,primary_location"
+#     extract: "results"
+#     normalize:
+#       title: display_name
+#       authors: "authorships.*.author.display_name"
+#       year: publication_year
+#       abstract: "abstract_inverted_index|$inverted_index"
+#       venue: "primary_location.source.display_name"

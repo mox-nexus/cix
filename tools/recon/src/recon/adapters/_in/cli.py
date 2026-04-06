@@ -32,6 +32,7 @@ from rich.console import Console
 from rich.table import Table
 
 from recon import __version__
+from recon import skill as skill_module
 from recon.adapters._out.api_collector import ApiCollector
 from recon.adapters._out.cli_collector import CliCollector
 from recon.adapters._out.web_collector import WebCollector
@@ -130,9 +131,12 @@ def _load_template(name: str) -> str | None:
 # --- Commands ---
 
 
-@click.group()
+@click.group(invoke_without_command=True)
+@click.option("--skill", is_flag=True, help="Output skill documentation for Claude")
+@click.option("--reference", "-r", help="Specific skill reference (use with --skill)")
 @click.version_option(__version__, prog_name="recon")
-def main() -> None:
+@click.pass_context
+def main(ctx: click.Context, skill: bool, reference: str | None) -> None:
     """Recon — mechanical collection system.
 
     Config-driven data collection from HTTP APIs, CLI tools, and web pages
@@ -146,6 +150,9 @@ def main() -> None:
       recon survey my-research
       recon query my-research "SELECT title, year FROM s2_search"
     """
+    if skill:
+        click.echo(skill_module.get_skill(reference))
+        ctx.exit(0)
 
 
 @main.command()
