@@ -54,6 +54,37 @@ collectors:
     type: cli
     run: "rg --json 'unsafe' --type rust --count-matches"
 
+  # Pattern 5 — forensic analysis via code-maat (Adam Tornhill)
+  # https://github.com/adamtornhill/code-maat
+  #
+  # Install: `brew install code-maat` or download the standalone jar.
+  # code-maat emits CSV; the tail pipes it through a tiny python one-liner
+  # that converts each row into a JSON object. Recon then normalizes per
+  # the collector's spec.
+  #
+  # Use mktemp so fan-out across repos doesn't collide on the logfile path.
+  - name: hotspots
+    type: cli
+    run: |
+      LOG=$(mktemp)
+      git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames > "$LOG"
+      maat -l "$LOG" -c git2 -a revisions | \
+        python3 -c "import csv,json,sys; [print(json.dumps(r)) for r in csv.DictReader(sys.stdin)]"
+      rm -f "$LOG"
+
+  # code-maat can run many analyses against the same logfile. Swap `-a` for
+  # coupling (files that change together), age (days since last change),
+  # entity-effort (who contributed what), main-dev (primary contributor),
+  # or communication (knowledge distribution).
+  - name: coupling
+    type: cli
+    run: |
+      LOG=$(mktemp)
+      git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames > "$LOG"
+      maat -l "$LOG" -c git2 -a coupling | \
+        python3 -c "import csv,json,sys; [print(json.dumps(r)) for r in csv.DictReader(sys.stdin)]"
+      rm -f "$LOG"
+
 # Produces per catalog entry, per collector:
 #   scars-tokio.jsonl, scars-bytes.jsonl, scars-hyper.jsonl
 #   reverts-tokio.jsonl, reverts-bytes.jsonl, reverts-hyper.jsonl

@@ -52,7 +52,7 @@ Recon is general-purpose. The built-in `research` template is one instance. Comm
 
 | Domain | What the config collects |
 |---|---|
-| Code mining | `rg`, `git log`, `gh api` across multiple repos via fan-out |
+| Code mining | `rg`, `git log`, `gh api`, `code-maat` (hotspots, coupling, knowledge distribution) across multiple repos via fan-out |
 | Release monitoring | GitHub releases, PyPI, crates.io, npm |
 | Dependency audits | `cargo tree`, `npm ls`, `pip-audit` |
 | Literature review | Semantic Scholar, arXiv, OpenAlex, Zenodo |

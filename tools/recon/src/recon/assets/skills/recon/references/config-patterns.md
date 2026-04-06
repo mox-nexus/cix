@@ -7,6 +7,7 @@ Complete config examples for common recon use cases. Copy, adapt, write to `.cix
 - [Academic Research](#academic-research)
 - [Code Mining (Multi-Repo)](#code-mining-multi-repo)
 - [Code Mining (Single Repo)](#code-mining-single-repo)
+- [Forensic Code Analysis with code-maat](#forensic-code-analysis-with-code-maat)
 - [Content Tracking (Scheduled)](#content-tracking-scheduled)
 - [Release Monitoring](#release-monitoring)
 - [RSS / Blog Tracking](#rss--blog-tracking)
@@ -210,6 +211,113 @@ collectors:
       labels: "labels.*.name"
       state: state
 ```
+
+---
+
+## Forensic Code Analysis with code-maat
+
+[code-maat](https://github.com/adamtornhill/code-maat) is Adam Tornhill's git-history analysis tool from *Your Code as a Crime Scene*. It surfaces hotspots (files changed most often), temporal coupling (files that change together), code age (time since last modification), knowledge distribution, and effort by author. These forensic signals are things static analyzers miss — they live in the history, not the code.
+
+code-maat emits CSV. Recon consumes JSONL. A small python pipeline bridges the two. Each collector generates a per-run logfile, runs one analysis, and pipes the CSV through `csv.DictReader` → `json.dumps`.
+
+**Install:** `brew install code-maat` (macOS) or download the standalone jar from the release page. The binary is `maat`.
+
+**Pattern:**
+
+```yaml
+catalog:
+  - name: tokio
+    type: local
+    url: /Users/dev/oss/tokio
+  - name: hyper
+    type: local
+    url: /Users/dev/oss/hyper
+
+collectors:
+  # Hotspots — files with the most revisions (candidates for refactoring)
+  - name: hotspots
+    type: cli
+    run: |
+      LOG=$(mktemp)
+      git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames > "$LOG"
+      maat -l "$LOG" -c git2 -a revisions | \
+        python3 -c "import csv,json,sys; [print(json.dumps(r)) for r in csv.DictReader(sys.stdin)]"
+      rm -f "$LOG"
+
+  # Temporal coupling — files that tend to change in the same commit
+  - name: coupling
+    type: cli
+    run: |
+      LOG=$(mktemp)
+      git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames > "$LOG"
+      maat -l "$LOG" -c git2 -a coupling | \
+        python3 -c "import csv,json,sys; [print(json.dumps(r)) for r in csv.DictReader(sys.stdin)]"
+      rm -f "$LOG"
+
+  # Code age — days since last modification (identifies stable vs churning code)
+  - name: age
+    type: cli
+    run: |
+      LOG=$(mktemp)
+      git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames > "$LOG"
+      maat -l "$LOG" -c git2 -a age | \
+        python3 -c "import csv,json,sys; [print(json.dumps(r)) for r in csv.DictReader(sys.stdin)]"
+      rm -f "$LOG"
+
+  # Entity effort — who contributed what, as a percentage per file
+  - name: entity-effort
+    type: cli
+    run: |
+      LOG=$(mktemp)
+      git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames > "$LOG"
+      maat -l "$LOG" -c git2 -a entity-effort | \
+        python3 -c "import csv,json,sys; [print(json.dumps(r)) for r in csv.DictReader(sys.stdin)]"
+      rm -f "$LOG"
+```
+
+**Query examples:**
+
+```sql
+-- Top 20 hotspots across tokio
+SELECT entity, "n-revs" AS revisions
+FROM hotspots_tokio
+ORDER BY CAST("n-revs" AS INTEGER) DESC
+LIMIT 20;
+```
+
+```sql
+-- Strongly-coupled file pairs in hyper (high coupling degree + enough shared commits)
+SELECT entity, coupled, degree, "average-revs"
+FROM coupling_hyper
+WHERE CAST(degree AS INTEGER) > 50
+  AND CAST("average-revs" AS INTEGER) > 10
+ORDER BY CAST(degree AS INTEGER) DESC;
+```
+
+```sql
+-- Cross-repo hotspot comparison
+SELECT 'tokio' AS repo, entity, "n-revs" FROM hotspots_tokio
+UNION ALL
+SELECT 'hyper', entity, "n-revs" FROM hotspots_hyper
+ORDER BY CAST("n-revs" AS INTEGER) DESC
+LIMIT 30;
+```
+
+**Available analyses** (pass to `-a`):
+
+| Analysis | Reveals |
+|----------|---------|
+| `revisions` | Hotspots — files with highest change frequency |
+| `coupling` | Temporal coupling — files that change together |
+| `age` | Days since last modification per file |
+| `entity-effort` | Author contribution percentage per file |
+| `main-dev` | Primary contributor per file |
+| `entity-ownership` | Added lines by author per file |
+| `communication` | Developer communication needs from shared files |
+| `abs-churn` | Absolute code churn per date |
+| `author-churn` | Churn grouped by author |
+
+**Why this is useful:** static analysis finds bugs and code smells in a single snapshot. code-maat finds the *social* and *historical* signals — where complexity has accumulated, what changes in lockstep, which modules are owned by one person, where knowledge silos have formed. These inform architectural decisions that static tools can't see.
 
 ---
 
