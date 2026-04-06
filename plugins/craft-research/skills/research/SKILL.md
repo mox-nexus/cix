@@ -51,6 +51,62 @@ Each layer transforms the representation. Each transformation is verifiable. The
 | Scope inflation | Synthesis | Misleading conclusions |
 | Missing chain links | Any stage | Finding ungrounded |
 
+## Workflows
+
+The full pipeline is the reference architecture. Not every research task needs every step. Choose the workflow that matches the task — proportional effort, not maximum effort.
+
+### Quick Lookup
+
+**When**: Checking a specific claim, verifying a number, finding a source for something you already know.
+
+```
+elicit (abbreviated — 1-2 questions, not full discourse)
+  → extract (single source)
+  → scrutiny (verify the specific claims)
+  > Done — verified claims with provenance
+```
+
+**Skip**: synthesis, audit, gap analysis. You're answering a specific question, not surveying a field.
+
+### Focused Review
+
+**When**: Understanding the evidence on a specific question, comparing 3-5 papers, building an evidence base for a decision.
+
+```
+elicit → extract (per source) → scrutiny (per source) → synthesis (single question)
+  > Done — findings with convergence/divergence map
+```
+
+**Skip**: audit (overkill for informal review), four-layer gap analysis (unless you're identifying research opportunities).
+
+### Systematic Review
+
+**When**: Publication-quality literature review, building a research foundation, comprehensive gap analysis.
+
+```
+elicit → extract → scrutiny → synthesis → audit
+  > Full pipeline, all gates, human checkpoints
+```
+
+**Nothing skipped.** This is the pipeline as designed. Use for high-stakes work where provenance and completeness matter.
+
+### Choosing a Workflow
+
+| Signal | Workflow |
+|--------|----------|
+| "Is this claim true?" | Quick lookup |
+| "What does the research say about X?" | Focused review |
+| "I need a complete evidence base for Y" | Systematic review |
+| Single source to verify | Quick lookup |
+| 3-5 papers to compare | Focused review |
+| 10+ sources, publication intent | Systematic review |
+| Low stakes (internal note, personal understanding) | Quick lookup or focused review |
+| High stakes (publication, policy, funding) | Systematic review |
+
+When in doubt, start with focused review. You can always upgrade to systematic if the initial findings surface complexity.
+
+---
+
 ## Routing
 
 One hub triggers. It routes to specialized skills on demand.
@@ -58,6 +114,7 @@ One hub triggers. It routes to specialized skills on demand.
 | Need | Agent | Spoke Skill |
 |------|-------|-------------|
 | Scope research inquiry | elicit | [eliciting](../eliciting/SKILL.md) |
+| Collect sources via recon | (orchestrator) | [collecting](../collecting/SKILL.md) |
 | Extract claims from sources | extract | [extracting](../extracting/SKILL.md) |
 | Verify claims against sources | scrutiny | [verifying](../verifying/SKILL.md) |
 | Integrate across sources | synthesis | [synthesizing](../synthesizing/SKILL.md) |
@@ -72,6 +129,10 @@ elicit — draws out research questions, boundaries, sources
   | produces scope.md + sources/inventory.md
   |
   | setup — scaffold .research/ workspace
+  |
+  | collect — translate inventory → recon config, run survey, stage JSONL
+  |   (orchestrator runs this directly — no subagent)
+  |   (works for remote APIs AND local sources: PDFs, repos, files)
   |
   | ─── per source ─── (parallelizable)
   | extract — reads source, extracts atomic claims with quotes
@@ -232,18 +293,20 @@ The orchestrator (main Claude) manages the pipeline:
 
 1. **Discourse**: Launch elicit. Draw out research questions, boundaries, sources. Produce `scope.md` + `sources/inventory.md`.
 2. **After discourse**: Read scope.md. Confirm sources from inventory. Create PLAN.md with sequence.
-3. **Extraction**: Launch extract per source (parallelizable). Check gate checklists.
-4. **Verification**: Launch scrutiny per source after its extraction is complete (parallelizable). Check gates.
-5. **Synthesis**: Launch synthesis per research question after all verification is complete. Check gates.
-6. **Audit**: Launch audit after all synthesis. Receive verdict.
-7. **On RETURN**: Audit specifies which agent and what fix. Orchestrator routes back. Re-run the failed step.
-8. **Max 2 returns per step**: After 2 failures, escalate to human.
+3. **Collection**: Translate inventory into a recon config — works for remote APIs AND local sources (PDFs on disk via `$pdf2text`, cloned repos via CLI collectors). Load the recon skill (`recon --skill`) for config syntax. Probe first (`limit: "1"`, no normalize), inspect the raw JSONL, write the normalize spec, then run the full survey. Read meta.yaml for failures. Stage results for extraction. Skip only for trivially small source counts (1-2 files). See [collecting](../collecting/SKILL.md).
+4. **Extraction**: Launch extract per source (parallelizable). Check gate checklists.
+5. **Verification**: Launch scrutiny per source after its extraction is complete (parallelizable). Check gates.
+6. **Synthesis**: Launch synthesis per research question after all verification is complete. Check gates.
+7. **Audit**: Launch audit after all synthesis. Receive verdict.
+8. **On RETURN**: Audit specifies which agent and what fix. Orchestrator routes back. Re-run the failed step.
+9. **Max 2 returns per step**: After 2 failures, escalate to human.
 
 ### Human Checkpoints
 
 | After | Checkpoint |
 |-------|-----------|
 | Discourse | Confirm scope.md and sources/inventory.md |
+| Collection | Review recon meta.yaml — any failed sources? Review JSONL sample — records populated? |
 | Extraction | Review claim quality — are claims atomic, quotes verbatim? |
 | Verification | Review REFUTED and INSUFFICIENT — any surprises? |
 | Synthesis | Review findings — do convergences and gaps make sense? |
@@ -256,6 +319,7 @@ Human checkpoints are recommended, not mandatory. For low-stakes research, the o
 
 | Step | Skip When | Mark in PLAN.md |
 |------|-----------|-----------------|
+| Collection | Only 1-2 files Claude can read directly | `skip: trivial source count` |
 | Verification | Trusted extraction, low stakes | `skip: trusted extraction` |
 | Four-layer gap analysis | Quick survey, not systematic review | `skip: not systematic` |
 | Audit | Informal research, no publication intent | `skip: informal` |
@@ -268,6 +332,8 @@ Human checkpoints are recommended, not mandatory. For low-stakes research, the o
 |---------|-----------|-------------|
 | Research question unclear | elicit | Re-scope with human |
 | Sources insufficient | elicit | Re-identify sources |
+| Collection failed (429, timeout) | collect | Retry with different rate limits or fallback source |
+| Normalize spec wrong (null fields) | collect | Probe raw shape again, fix the spec |
 | Quote not found in source | extract | Re-extract from source |
 | Claim doesn't follow from quote | extract | Re-extract with correct interpretation |
 | Verification rubber-stamped | scrutiny | Full CoVE with independence |
@@ -294,7 +360,11 @@ Human checkpoints are recommended, not mandatory. For low-stakes research, the o
 
 Spoke skills — load for domain-specific methodology:
 - [eliciting](../eliciting/SKILL.md) — Research discourse, question sharpening, source identification
+- [collecting](../collecting/SKILL.md) — Bridge inventory → recon config → structured data for extraction
 - [extracting](../extracting/SKILL.md) — Claimify pipeline, source tiers, extraction protocol
 - [verifying](../verifying/SKILL.md) — CoVE protocol, verification verdicts, independence
 - [synthesizing](../synthesizing/SKILL.md) — Evidence weighting, convergence/divergence, gap analysis
 - [auditing](../auditing/SKILL.md) — Provenance chain, chain integrity, ship/return verdict
+
+External tools:
+- `recon --skill` — mechanical collection tool (config syntax, normalize specs, domain patterns). Load before writing recon configs.

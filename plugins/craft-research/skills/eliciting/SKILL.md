@@ -99,7 +99,7 @@ These are the co-created input documents for the entire pipeline. Every downstre
 ## What Eliciting Does Not Do
 
 - Comprehend source material — that's extract (extracting skill)
-- Search for papers — it identifies what sources exist, it doesn't retrieve them
+- Retrieve or fetch sources — that's the collecting step (collecting skill + recon tool). Eliciting identifies what sources exist; collecting fetches them.
 - Suggest research questions — the agent asks, the human generates
 - Verify claims — that's scrutiny (verifying skill)
 - Write content downstream
