@@ -1,1 +1,0 @@
-import{e as h,f as t,h as S,q as b,S as k}from"./Dc2djrc3.js";function u(r,f){return r===f||r?.[k]===f}function c(r={},f,a,q){return h(()=>{var i,s;return t(()=>{i=s,s=[],S(()=>{r!==a(...s)&&(f(r,...s),i&&u(a(...i),r)&&f(null,...i))})}),()=>{b(()=>{s&&u(a(...s),r)&&f(null,...s)})}}),r}export{c as b};
