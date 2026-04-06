@@ -114,8 +114,8 @@ API collectors support different response formats via `response_format`:
 |--------|--------|----------|
 | `json` (default) | `resp.json()` | Most REST APIs |
 | `xml` | `xmltodict` with namespace handling | arXiv, PubMed |
-| `html` | Raw text | Web pages (planned) |
-| `text` | Raw text | Plain text APIs |
+
+`html` and `text` are accepted values but return raw response text — they don't produce structured records for normalize specs. Use the `web` collector type instead for HTML pages.
 
 ### XML Namespace Handling
 

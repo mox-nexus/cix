@@ -1,0 +1,70 @@
+# Example: periodic API state monitoring
+#
+# Use case: capture the state of a REST API endpoint on a recurring schedule.
+# Each run produces a timestamped archive. Diff across archives to see what
+# changed over time.
+#
+# Typical setup:
+#   1. Write this config to .cix/recon/github-releases/config.yaml
+#   2. Schedule: run `recon survey github-releases` on cron (e.g. hourly)
+#   3. Claude reads the latest archive and compares to the previous one
+#
+# This example tracks GitHub releases for a set of repos. Adapt the catalog
+# and collector endpoint to any REST API that returns JSON.
+
+catalog:
+  - name: github
+    type: api
+    url: https://api.github.com
+    auth:
+      header: Authorization
+      env: GITHUB_TOKEN                # set GITHUB_TOKEN in environment
+    rate_limit: { rps: 1, burst: 2 }   # GitHub unauth: 60/hr, auth: 5000/hr
+    user_agent: "recon/0.7.0 (api-monitoring example)"
+
+collectors:
+  # Track releases for a single repo (pin with source:)
+  - name: tokio-releases
+    type: api
+    source: github
+    endpoint: /repos/tokio-rs/tokio/releases
+    params:
+      per_page: "10"
+    # no extract: — the response is already a list of releases
+    normalize:
+      tag: tag_name
+      name: name
+      published: published_at
+      author: "author.login"
+      body: body
+      prerelease: prerelease
+      draft: draft
+      url: html_url
+
+  - name: axum-releases
+    type: api
+    source: github
+    endpoint: /repos/tokio-rs/axum/releases
+    params:
+      per_page: "10"
+    normalize:
+      tag: tag_name
+      name: name
+      published: published_at
+      author: "author.login"
+      url: html_url
+
+# Each run produces:
+#   .cix/recon/github-releases/archive/<timestamp>/tokio-releases.jsonl
+#   .cix/recon/github-releases/archive/<timestamp>/axum-releases.jsonl
+#   .cix/recon/github-releases/archive/<timestamp>/meta.yaml
+#
+# Diff across runs (pseudo-query, across two specific archives):
+#   SELECT curr.tag, curr.published
+#   FROM read_json_auto('archive/<t2>/tokio-releases.jsonl') curr
+#   LEFT JOIN read_json_auto('archive/<t1>/tokio-releases.jsonl') prev
+#     ON curr.tag = prev.tag
+#   WHERE prev.tag IS NULL            -- only new releases since t1
+#
+# Schedule pattern (cron entry for hourly):
+#   0 * * * * cd /path/to/project && recon survey github-releases

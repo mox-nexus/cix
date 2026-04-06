@@ -2,6 +2,18 @@
 
 Complete config examples for common recon use cases. Copy, adapt, write to `.cix/recon/<mission>/config.yaml`.
 
+## Contents
+
+- [Academic Research](#academic-research)
+- [Code Mining (Multi-Repo)](#code-mining-multi-repo)
+- [Code Mining (Single Repo)](#code-mining-single-repo)
+- [Content Tracking (Scheduled)](#content-tracking-scheduled)
+- [Release Monitoring](#release-monitoring)
+- [RSS / Blog Tracking](#rss--blog-tracking)
+- [Dependency Audits](#dependency-audits)
+- [Doc Site Survey](#doc-site-survey)
+- [Issue Triage Across Repos](#issue-triage-across-repos)
+
 ## Academic Research
 
 Search across 4 academic APIs. Each collector pins to its source because APIs have different endpoints, params, and response shapes.
@@ -286,4 +298,227 @@ The config never changes — only the archives accumulate.
 SELECT title, published, authors FROM arxiv_new
 WHERE published > '2026-03-25'
 ORDER BY published DESC
+```
+
+---
+
+## Release Monitoring
+
+Track GitHub releases (or PyPI / crates.io / npm) for a set of dependencies. Recurring survey — diff across archives to surface new versions.
+
+```yaml
+catalog:
+  - name: github
+    type: api
+    url: https://api.github.com
+    auth:
+      header: Authorization
+      env: GITHUB_TOKEN
+    rate_limit: { rps: 1, burst: 2 }
+    user_agent: "recon/0.7.0 (release-monitor)"
+
+collectors:
+  - name: tokio-releases
+    type: api
+    source: github
+    endpoint: /repos/tokio-rs/tokio/releases
+    params:
+      per_page: "10"
+    normalize:
+      tag: tag_name
+      name: name
+      published: published_at
+      author: "author.login"
+      prerelease: prerelease
+      url: html_url
+
+  - name: serde-releases
+    type: api
+    source: github
+    endpoint: /repos/serde-rs/serde/releases
+    params:
+      per_page: "10"
+    normalize:
+      tag: tag_name
+      published: published_at
+      author: "author.login"
+      url: html_url
+```
+
+**PyPI variant** — use the web collector since PyPI's public API is JSON-over-HTTPS at well-known URLs:
+
+```yaml
+catalog:
+  - name: pypi
+    type: api
+    url: https://pypi.org/pypi
+
+collectors:
+  - name: pydantic-releases
+    type: api
+    source: pypi
+    endpoint: /pydantic/json
+    extract: "releases"
+    # Raw releases is a dict keyed by version — inspect with probe first,
+    # then write a normalize spec that extracts version keys + metadata.
+```
+
+---
+
+## RSS / Blog Tracking
+
+Track a set of blogs or RSS feeds via the web collector. The web collector emits uniform records (`url`, `title`, `content`, `status_code`, `content_type`); feed items get parsed from the content field.
+
+```yaml
+catalog:
+  - name: overreacted
+    type: web
+    url: https://overreacted.io
+    rate_limit: { rps: 1, burst: 1 }
+
+  - name: simonwillison
+    type: web
+    url: https://simonwillison.net
+    rate_limit: { rps: 1, burst: 1 }
+
+collectors:
+  # Fetch the index page for each blog
+  - name: index
+    type: web
+    # no source: → fans out across both blogs
+```
+
+**Produces:** `index-overreacted.jsonl`, `index-simonwillison.jsonl`, each with the markdown-converted homepage. Claude extracts post titles and dates from the `content` field by reading the JSONL.
+
+For actual RSS/Atom feeds, treat them as `response_format: xml` API collectors and use `extract: "rss.channel.item"` or `extract: "feed.entry"`.
+
+---
+
+## Dependency Audits
+
+Inspect installed dependencies across a codebase using native package manager CLIs. Pins to a single local source.
+
+```yaml
+catalog:
+  - name: project
+    type: local
+    url: /Users/dev/my-project
+
+collectors:
+  - name: cargo-tree
+    type: cli
+    source: project
+    run: "cargo tree --format '{p} {f}' --prefix none"
+    # text output — one line per dependency
+
+  - name: npm-outdated
+    type: cli
+    source: project
+    run: "npm outdated --json || true"    # npm returns exit 1 when updates exist
+    # JSON output — object keyed by package name
+
+  - name: uv-tree
+    type: cli
+    source: project
+    run: "uv tree --depth 1"
+
+  - name: python-audit
+    type: cli
+    source: project
+    run: "uv run pip-audit --format=json || true"
+    # Vulnerability audit — JSON list of findings
+```
+
+**Query example:**
+```sql
+SELECT * FROM python_audit WHERE vulns IS NOT NULL
+```
+
+---
+
+## Doc Site Survey
+
+Scrape a documentation site section by section via the web collector. Useful for building a structured index of a docs tree.
+
+```yaml
+catalog:
+  - name: svelte-docs
+    type: web
+    url: https://svelte.dev
+    rate_limit: { rps: 1, burst: 1 }
+
+collectors:
+  - name: docs-intro
+    type: web
+    source: svelte-docs
+    endpoint: /docs/svelte/overview
+
+  - name: docs-runes
+    type: web
+    source: svelte-docs
+    endpoint: /docs/svelte/what-are-runes
+
+  - name: docs-state
+    type: web
+    source: svelte-docs
+    endpoint: /docs/svelte/$state
+
+  # ...one collector per docs page to fetch
+```
+
+Each collector produces one record per page with markdown content. Claude can then SQL-query for specific topics or diff across time to catch doc changes.
+
+For bulk crawls (dozens of pages), prefer generating the config programmatically from a sitemap, or use a sitemap-based collector chain.
+
+---
+
+## Issue Triage Across Repos
+
+Pull open issues from multiple GitHub repos for triage review. Uses `gh` CLI via the cli collector — inherits the user's gh auth automatically.
+
+```yaml
+catalog:
+  - name: repo-a
+    type: local
+    url: /tmp                 # cwd is irrelevant here; gh uses its own auth
+
+collectors:
+  - name: issues-tokio
+    type: cli
+    source: repo-a
+    run: "gh issue list --repo tokio-rs/tokio --state open --json number,title,labels,createdAt,author --limit 50"
+    normalize:
+      number: number
+      title: title
+      labels: "labels.*.name"
+      created: createdAt
+      author: "author.login"
+
+  - name: issues-axum
+    type: cli
+    source: repo-a
+    run: "gh issue list --repo tokio-rs/axum --state open --json number,title,labels,createdAt,author --limit 50"
+    normalize:
+      number: number
+      title: title
+      labels: "labels.*.name"
+      created: createdAt
+      author: "author.login"
+
+  - name: prs-review-requested
+    type: cli
+    source: repo-a
+    run: "gh search prs --review-requested=@me --state=open --json number,title,repository,url --limit 30"
+    normalize:
+      number: number
+      title: title
+      repo: "repository.nameWithOwner"
+      url: url
+```
+
+**Cross-repo query:**
+```sql
+SELECT 'tokio' AS repo, title FROM issues_tokio WHERE 'bug' = ANY(labels)
+UNION ALL
+SELECT 'axum', title FROM issues_axum WHERE 'bug' = ANY(labels)
 ```

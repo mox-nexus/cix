@@ -42,4 +42,5 @@ packages = ["src/recon"]
 include = [
     "src/recon/**/*.py",
     "src/recon/configs/*.yaml",
+    "src/recon/**/*.md",
 ]

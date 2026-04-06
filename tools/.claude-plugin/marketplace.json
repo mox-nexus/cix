@@ -14,6 +14,21 @@
       "name": "memex",
       "source": "./memex",
       "description": "Extended memory for you and your agents. Excavates and connects historical human-AI collaboration artifacts across heterogeneous sources."
+    },
+    {
+      "name": "ix",
+      "source": "./ix",
+      "description": "Intelligent experimentation. Multi-agent system for running structured experiments with provenance and reproducibility."
+    },
+    {
+      "name": "matrix",
+      "source": "./matrix",
+      "description": "Agent runtime platform. DAG orchestration, storage, configuration, and dependency injection for multi-agent systems."
+    },
+    {
+      "name": "recon",
+      "source": "./recon",
+      "description": "Heterogeneous sources in, structured data out. Fetch from APIs, CLIs, and web pages; reshape to uniform JSONL queryable with SQL. Extends Claude's effective context through structured indirection."
     }
   ]
 }
