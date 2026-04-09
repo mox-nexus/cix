@@ -6,7 +6,7 @@ Fragment is THE canonical entity (Karman recommendation).
 
 from datetime import datetime
 from enum import StrEnum
-from typing import NamedTuple
+from typing import Any, NamedTuple
 
 from pydantic import BaseModel
 
@@ -32,8 +32,15 @@ class EmbeddingConfig(BaseModel):
 # Common source kinds (not exhaustive)
 SOURCE_CLAUDE_CONVERSATIONS = "claude_conversations"
 SOURCE_OPENAI = "openai"
+SOURCE_PLAINTEXT = "plaintext"
 SOURCE_GEMINI = "gemini"
 SOURCE_CUSTOM = "custom"
+
+# Common edge types (not exhaustive — extensible strings, not enum)
+EDGE_FOLLOWS = "FOLLOWS"
+EDGE_SIMILAR_TO = "SIMILAR_TO"
+EDGE_REFERENCES = "REFERENCES"
+EDGE_DERIVED_FROM = "DERIVED_FROM"
 
 
 class Completeness(StrEnum):
@@ -71,6 +78,7 @@ class Fragment(BaseModel):
     role: str
     content: str
     provenance: Provenance
+    metadata: dict[str, Any] | None = None
 
     @property
     def timestamp(self) -> datetime | None:

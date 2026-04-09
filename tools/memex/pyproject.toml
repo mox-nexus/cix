@@ -1,6 +1,6 @@
 [project]
 name = "memex"
-version = "0.2.1"
+version = "0.3.0"
 description = "Extended memory for you and your agents"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -18,6 +18,8 @@ dependencies = [
     "fastembed>=0.4",
     "ijson>=3.2",
     "pytz>=2024.1",  # Required by DuckDB for timezone handling
+    "pymupdf>=1.27.2",
+    "python-docx>=1.2.0",
 ]
 
 [project.optional-dependencies]

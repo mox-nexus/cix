@@ -19,6 +19,7 @@ from memex.daemon.protocol import (
     parse_scored_fragments,
     parse_stats,
     parse_trails,
+    parse_traversal,
 )
 from memex.daemon.wire import recv_message, send_message
 from memex.domain.models import (
@@ -217,6 +218,24 @@ class RemoteCorpusAdapter:
     def edge_stats(self) -> dict[str, EdgeTypeStats]:
         return parse_edge_stats(self._call("graph.edge_stats"))
 
+    def traverse(
+        self,
+        fragment_id: str,
+        max_hops: int = 2,
+        edge_type: str | None = None,
+        limit: int = 20,
+    ) -> list[tuple[Fragment, int, str]]:
+        data = self._call(
+            "graph.traverse",
+            {
+                "fragment_id": fragment_id,
+                "max_hops": max_hops,
+                "edge_type": edge_type,
+                "limit": limit,
+            },
+        )
+        return parse_traversal(data)
+
     # --- TrailPort ---
 
     def create_trail(self, name: str, description: str = "") -> str:
@@ -241,3 +260,9 @@ class RemoteCorpusAdapter:
 
     def delete_trail(self, trail_name: str) -> bool:
         return self._call("trails.delete_trail", {"trail_name": trail_name})
+
+    def search_trails(self, query: str) -> list[TrailSummary]:
+        return parse_trails(self._call("trails.search_trails", {"query": query}))
+
+    def trails_for_fragment(self, fragment_id: str) -> list[TrailSummary]:
+        return parse_trails(self._call("trails.trails_for_fragment", {"fragment_id": fragment_id}))
