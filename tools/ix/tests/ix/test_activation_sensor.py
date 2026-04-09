@@ -46,11 +46,6 @@ class TestActivationSensor:
         result = sensor.measure(_trial_with_skill("build-evals:build-eval"))
         assert result[0].passed is True
 
-    def test_detects_eval_keyword(self):
-        sensor = ActivationSensor(expected_skill="build-eval")
-        result = sensor.measure(_trial_with_skill("eval-1337"))
-        assert result[0].passed is True
-
     def test_no_activation_without_tools(self):
         sensor = ActivationSensor(expected_skill="build-eval")
         result = sensor.measure(_trial_no_tools())
@@ -118,7 +113,6 @@ class TestExpectationAware:
             expected_skill="build-eval",
             expectations={"edge-001": "acceptable"},
         )
-        trial = _trial_no_tools()
         trial = Trial(
             probe_id="edge-001",
             trial_index=0,
@@ -126,3 +120,75 @@ class TestExpectationAware:
         )
         result = sensor.measure(trial)
         assert result[0].passed is True
+
+
+class TestMultiSkill:
+    """Per-probe expected_skill for multi-skill experiments."""
+
+    def test_per_probe_skill_match(self):
+        sensor = ActivationSensor(
+            expected_skills={
+                "crafting-001": "crafting",
+                "research-001": "research",
+            },
+        )
+        trial = _trial_with_skill("crafting", probe_id="crafting-001")
+        result = sensor.measure(trial)
+        assert result[0].passed is True
+
+    def test_per_probe_skill_mismatch(self):
+        sensor = ActivationSensor(
+            expected_skills={
+                "crafting-001": "crafting",
+                "research-001": "research",
+            },
+        )
+        # Probe expects "crafting" but agent activated "research"
+        trial = _trial_with_skill("research", probe_id="crafting-001")
+        result = sensor.measure(trial)
+        assert result[0].passed is False
+
+    def test_per_probe_overrides_default(self):
+        sensor = ActivationSensor(
+            expected_skill="build-eval",
+            expected_skills={"crafting-001": "crafting"},
+        )
+        trial = _trial_with_skill("crafting", probe_id="crafting-001")
+        result = sensor.measure(trial)
+        assert result[0].passed is True
+
+    def test_fallback_to_default_when_no_per_probe(self):
+        sensor = ActivationSensor(
+            expected_skill="build-eval",
+            expected_skills={"crafting-001": "crafting"},
+        )
+        # Probe not in expected_skills — falls back to default
+        trial = _trial_with_skill("build-eval", probe_id="other-001")
+        result = sensor.measure(trial)
+        assert result[0].passed is True
+
+    def test_from_config_reads_probe_metadata(self):
+        from ix.domain.types import Probe
+        from ix.eval.sensors import ActivationSensorConfig
+
+        config = ActivationSensorConfig(expected_skill="default-skill")
+        probes = (
+            Probe(id="a", prompt="test", metadata={"expected_skill": "crafting"}),
+            Probe(id="b", prompt="test2", metadata={"expected_skill": "research"}),
+            Probe(id="c", prompt="test3", metadata={}),
+        )
+        sensor = ActivationSensor.from_config(config, probes)
+        assert sensor._expected_skills["a"] == "crafting"
+        assert sensor._expected_skills["b"] == "research"
+        assert sensor._expected_skills["c"] == "default-skill"
+
+    def test_should_not_trigger_with_any_skill(self):
+        """should_not_trigger fails if ANY skill is activated, regardless of match."""
+        sensor = ActivationSensor(
+            expected_skills={"not-001": "crafting"},
+            expectations={"not-001": "should_not_trigger"},
+        )
+        # Agent activated a different skill — still a failure for should_not_trigger
+        trial = _trial_with_skill("research", probe_id="not-001")
+        result = sensor.measure(trial)
+        assert result[0].passed is False

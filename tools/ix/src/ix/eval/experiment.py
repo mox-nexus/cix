@@ -25,7 +25,12 @@ from matrix import ComponentRegistry
 from ix import __version__
 from ix.domain.ports import Sensor
 from ix.domain.types import Probe, Reading, Subject
-from ix.eval.analysis import aggregate_readings, compute_metrics
+from ix.eval.analysis import (
+    aggregate_readings,
+    build_confusion_matrix,
+    compute_metrics,
+    compute_noise_floor,
+)
 from ix.eval.models import (
     ExperimentConfig,
     ExperimentResults,
@@ -81,8 +86,13 @@ class Experiment:
         config: ExperimentConfig,
         subject: Subject | None = None,
         on_probe_complete: Callable[[ProbeResult], None] | None = None,
+        on_run_complete: Callable[[int, float], None] | None = None,
     ) -> ExperimentResults:
-        """Execute the experiment: inner DAG loop then post-loop aggregation."""
+        """Execute the experiment: inner DAG loop then post-loop aggregation.
+
+        When config.repeats > 1, runs the full probe×trial matrix N times
+        and computes noise floor (sd of pass_rate across runs) + confusion matrix.
+        """
         active_subject = subject or Subject(name="default")
 
         # Override runtime to mock if --mock flag
@@ -93,21 +103,38 @@ class Experiment:
                 update={"config": subject_config},
             )
 
-        readings: list[Reading] = []
+        all_readings: list[Reading] = []
+        per_run_pass_rates: list[float] = []
 
-        for probe in config.probes:
-            for trial_idx in range(config.trials):
-                trial_readings = await self._run_trial(
-                    probe,
-                    active_subject,
-                    self._sensor,
-                    self._registry,
-                    trial_idx,
-                )
-                readings.extend(trial_readings)
+        for run_idx in range(config.repeats):
+            run_readings: list[Reading] = []
 
+            for probe in config.probes:
+                for trial_idx in range(config.trials):
+                    trial_readings = await self._run_trial(
+                        probe,
+                        active_subject,
+                        self._sensor,
+                        self._registry,
+                        trial_idx,
+                    )
+                    run_readings.extend(trial_readings)
+
+            all_readings.extend(run_readings)
+
+            # Per-run metrics for noise floor
+            probe_map = {p.id: p for p in config.probes}
+            run_probe_results = aggregate_readings(run_readings, probe_map)
+            run_metrics = compute_metrics(run_probe_results)
+            per_run_pass_rates.append(run_metrics["pass_rate"])
+
+            if on_run_complete:
+                on_run_complete(run_idx, run_metrics["pass_rate"])
+
+        # Final aggregation across all runs
         probe_map = {p.id: p for p in config.probes}
-        probe_results = aggregate_readings(readings, probe_map, on_probe_complete)
+        callback = on_probe_complete if config.repeats == 1 else None
+        probe_results = aggregate_readings(all_readings, probe_map, callback)
         metrics = compute_metrics(probe_results)
 
         config_json = config.model_dump_json(exclude={"probes"})
@@ -121,6 +148,10 @@ class Experiment:
             mean_score=metrics["mean_score"],
             min_score=metrics["min_score"],
             max_score=metrics["max_score"],
+            repeats=config.repeats,
+            per_run_pass_rates=tuple(per_run_pass_rates),
+            noise_floor_sd=compute_noise_floor(per_run_pass_rates),
+            confusion_matrix=build_confusion_matrix(all_readings),
             config_hash=config_hash,
             run_timestamp=datetime.now(UTC),
             ix_version=__version__,
