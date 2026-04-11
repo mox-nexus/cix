@@ -1,0 +1,504 @@
+# Stream A: Human memory and cognition — recon collection config.
+#
+# Scope: research/stream-a-human-memory/scope.md
+# Inventory: research/stream-a-human-memory/sources/inventory.md
+#
+# Sources: Semantic Scholar + OpenAlex.
+# - arXiv dropped: returns ML papers about "episodic memory" in neural-network
+#   sense, not cognitive science. Reserve for Stream B (LLMs and memory).
+# - Zenodo dropped: returns datasets and supplementary materials, not papers.
+#
+# OpenAlex normalize spec fixed from upstream: was `title: display_name` but
+# the explicit `select` only includes `title`, so display_name was always null.
+# Changed to `title: title`. Upstream bug report belongs on
+# plugins/craft-research/skills/collecting/references/research-catalog.yaml.
+#
+# Env vars: S2_API_KEY and OPENALEX_API_KEY both optional. Currently unset;
+# survey runs unauthenticated (tighter S2 rate limit, OpenAlex public pool).
+#
+# Query set: 12 queries × 2 sources = 24 collectors covering RQ0-RQ4.
+# Priority-2 families (phenomenology, semiotics, extended cognition, PKM
+# lineage) deferred to a second sweep after reviewing first results.
+#
+# Limit: 25 records per query per source. Total survey volume ~600 records.
+# Rate limit: ~15 seconds total survey time (S2 bottleneck).
+
+catalog:
+  - name: semantic-scholar
+    type: api
+    url: https://api.semanticscholar.org/graph/v1
+    auth: { header: x-api-key, env: S2_API_KEY }
+    rate_limit: { rps: 0.33, burst: 1 }
+
+  - name: openalex
+    type: api
+    url: https://api.openalex.org
+    auth: { param: api_key, env: OPENALEX_API_KEY }
+    rate_limit: { rps: 10, burst: 5 }
+    user_agent: "recon/0.7.0 (mailto:yza@mox.nexus)"
+
+collectors:
+
+  # =====================================================================
+  # RQ0 — Baseline: what does cognitive science say about human memory?
+  # =====================================================================
+
+  - name: s2-rq0-episodic-review
+    type: api
+    source: semantic-scholar
+    endpoint: /paper/search
+    params:
+      query: "episodic memory review"
+      limit: "25"
+      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
+    extract: "data"
+    normalize:
+      title: title
+      abstract: abstract
+      authors: "authors.*.name"
+      year: year
+      citations: citationCount
+      pdf_url: "openAccessPdf.url"
+      venue: venue
+
+  - name: openalex-rq0-episodic-review
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "episodic memory review"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  - name: s2-rq0-consolidation
+    type: api
+    source: semantic-scholar
+    endpoint: /paper/search
+    params:
+      query: "memory consolidation neuroscience review"
+      limit: "25"
+      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
+    extract: "data"
+    normalize:
+      title: title
+      abstract: abstract
+      authors: "authors.*.name"
+      year: year
+      citations: citationCount
+      pdf_url: "openAccessPdf.url"
+      venue: venue
+
+  - name: openalex-rq0-consolidation
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "memory consolidation neuroscience"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  # =====================================================================
+  # RQ1 — Insight mechanism ("clicks")
+  # =====================================================================
+
+  - name: s2-rq1-insight-neural
+    type: api
+    source: semantic-scholar
+    endpoint: /paper/search
+    params:
+      query: "insight problem solving neural"
+      limit: "25"
+      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
+    extract: "data"
+    normalize:
+      title: title
+      abstract: abstract
+      authors: "authors.*.name"
+      year: year
+      citations: citationCount
+      pdf_url: "openAccessPdf.url"
+      venue: venue
+
+  - name: openalex-rq1-insight-neural
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "insight problem solving neural"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  - name: s2-rq1-aha-eeg
+    type: api
+    source: semantic-scholar
+    endpoint: /paper/search
+    params:
+      query: "aha moment EEG insight"
+      limit: "25"
+      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
+    extract: "data"
+    normalize:
+      title: title
+      abstract: abstract
+      authors: "authors.*.name"
+      year: year
+      citations: citationCount
+      pdf_url: "openAccessPdf.url"
+      venue: venue
+
+  - name: openalex-rq1-aha-eeg
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "aha moment EEG insight"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  - name: s2-rq1-eureka
+    type: api
+    source: semantic-scholar
+    endpoint: /paper/search
+    params:
+      query: "eureka effect cognitive restructuring"
+      limit: "25"
+      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
+    extract: "data"
+    normalize:
+      title: title
+      abstract: abstract
+      authors: "authors.*.name"
+      year: year
+      citations: citationCount
+      pdf_url: "openAccessPdf.url"
+      venue: venue
+
+  - name: openalex-rq1-eureka
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "eureka effect cognitive restructuring"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  # =====================================================================
+  # RQ2 — Storage: durable unit of episodic memory for conversation
+  # =====================================================================
+
+  - name: s2-rq2-reconstructive
+    type: api
+    source: semantic-scholar
+    endpoint: /paper/search
+    params:
+      query: "reconstructive memory schema Bartlett"
+      limit: "25"
+      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
+    extract: "data"
+    normalize:
+      title: title
+      abstract: abstract
+      authors: "authors.*.name"
+      year: year
+      citations: citationCount
+      pdf_url: "openAccessPdf.url"
+      venue: venue
+
+  - name: openalex-rq2-reconstructive
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "reconstructive memory schema"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  - name: s2-rq2-conversation
+    type: api
+    source: semantic-scholar
+    endpoint: /paper/search
+    params:
+      query: "memory for conversation discourse recall"
+      limit: "25"
+      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
+    extract: "data"
+    normalize:
+      title: title
+      abstract: abstract
+      authors: "authors.*.name"
+      year: year
+      citations: citationCount
+      pdf_url: "openAccessPdf.url"
+      venue: venue
+
+  - name: openalex-rq2-conversation
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "memory for conversation discourse recall"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  # =====================================================================
+  # RQ3 — Retrieval cue: what brings a memory back
+  # =====================================================================
+
+  - name: s2-rq3-encoding-specificity
+    type: api
+    source: semantic-scholar
+    endpoint: /paper/search
+    params:
+      query: "encoding specificity Tulving retrieval"
+      limit: "25"
+      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
+    extract: "data"
+    normalize:
+      title: title
+      abstract: abstract
+      authors: "authors.*.name"
+      year: year
+      citations: citationCount
+      pdf_url: "openAccessPdf.url"
+      venue: venue
+
+  - name: openalex-rq3-encoding-specificity
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "encoding specificity Tulving retrieval"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  - name: s2-rq3-context-dependent
+    type: api
+    source: semantic-scholar
+    endpoint: /paper/search
+    params:
+      query: "context dependent memory state dependent"
+      limit: "25"
+      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
+    extract: "data"
+    normalize:
+      title: title
+      abstract: abstract
+      authors: "authors.*.name"
+      year: year
+      citations: citationCount
+      pdf_url: "openAccessPdf.url"
+      venue: venue
+
+  - name: openalex-rq3-context-dependent
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "context dependent memory state dependent"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  # =====================================================================
+  # RQ4 — Metacognition reliability
+  # =====================================================================
+
+  - name: s2-rq4-metacognitive-accuracy
+    type: api
+    source: semantic-scholar
+    endpoint: /paper/search
+    params:
+      query: "metacognitive accuracy monitoring"
+      limit: "25"
+      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
+    extract: "data"
+    normalize:
+      title: title
+      abstract: abstract
+      authors: "authors.*.name"
+      year: year
+      citations: citationCount
+      pdf_url: "openAccessPdf.url"
+      venue: venue
+
+  - name: openalex-rq4-metacognitive-accuracy
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "metacognitive accuracy monitoring"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  - name: s2-rq4-feeling-knowing
+    type: api
+    source: semantic-scholar
+    endpoint: /paper/search
+    params:
+      query: "feeling of knowing Koriat metacognition"
+      limit: "25"
+      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
+    extract: "data"
+    normalize:
+      title: title
+      abstract: abstract
+      authors: "authors.*.name"
+      year: year
+      citations: citationCount
+      pdf_url: "openAccessPdf.url"
+      venue: venue
+
+  - name: openalex-rq4-feeling-knowing
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "feeling of knowing metacognition"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  - name: s2-rq4-judgment-learning
+    type: api
+    source: semantic-scholar
+    endpoint: /paper/search
+    params:
+      query: "judgment of learning Metcalfe"
+      limit: "25"
+      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
+    extract: "data"
+    normalize:
+      title: title
+      abstract: abstract
+      authors: "authors.*.name"
+      year: year
+      citations: citationCount
+      pdf_url: "openAccessPdf.url"
+      venue: venue
+
+  - name: openalex-rq4-judgment-learning
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "judgment of learning Metcalfe"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
