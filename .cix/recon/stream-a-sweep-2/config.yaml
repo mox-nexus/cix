@@ -1,0 +1,268 @@
+# Stream A sweep-2: refined weak queries + Priority-2 family queries.
+#
+# Sweep-1 archive: research/stream-a-human-memory/data/2026-04-11-sweep-1/
+# Scope: research/stream-a-human-memory/scope.md
+#
+# Purpose:
+#   1. Refine two weak sweep-1 queries (reconstructive, episodic-review)
+#   2. Add Priority-2 family coverage: phenomenology, semiotics, extended
+#      cognition, PKM lineage, memory-imagination, cog neuroscience mechanism
+#   3. Deliberately seek novelty: cross-disciplinary bridges over pure
+#      mainstream cognitive psych (Varela neurophenomenology, Deacon symbolic
+#      species, Peirce-cognition, Husserl-memory)
+#
+# OpenAlex-only. S2 rate-limited during sweep-1 and adds little value for
+# humanities-heavy queries. OpenAlex covers both humanities and empirical
+# work, which is what this sweep needs most.
+
+catalog:
+  - name: openalex
+    type: api
+    url: https://api.openalex.org
+    auth: { param: api_key, env: OPENALEX_API_KEY }
+    rate_limit: { rps: 10, burst: 5 }
+    user_agent: "recon/0.7.0 (mailto:yza@mox.nexus)"
+
+collectors:
+
+  # ---------- Refined weak sweep-1 queries ----------
+
+  - name: openalex-rq2-bartlett-schema
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "Bartlett remembering schema theory memory"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  - name: openalex-rq0-episodic-semantic-systems
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "episodic semantic memory systems Tulving"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  # ---------- Priority-2: Extended / Distributed cognition ----------
+
+  - name: openalex-p2-extended-mind
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "extended mind Clark Chalmers cognition"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  - name: openalex-p2-distributed-cognition
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "distributed cognition Hutchins cognition wild"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  # ---------- Priority-2: Phenomenology ----------
+
+  - name: openalex-p2-neurophenomenology
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "neurophenomenology Varela consciousness"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  - name: openalex-p2-husserl-time-memory
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "Husserl internal time consciousness memory retention"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  # ---------- Priority-2: Semiotics ----------
+
+  - name: openalex-p2-peirce-interpretant
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "Peirce interpretant semiotic sign cognition"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  - name: openalex-p2-deacon-symbolic
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "Deacon symbolic species cognition evolution"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  # ---------- Priority-2: PKM lineage (Bush, Engelbart, Nelson) ----------
+
+  - name: openalex-p2-bush-memex
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "Vannevar Bush as we may think memex"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  - name: openalex-p2-engelbart-augmenting
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "Engelbart augmenting human intellect"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  # ---------- Priority-2: Memory-imagination bridge ----------
+
+  - name: openalex-p2-memory-imagination
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "memory imagination constructive simulation Schacter"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
+
+  # ---------- Priority-2: Cognitive neuroscience mechanism ----------
+
+  - name: openalex-p2-hippocampus-relational
+    type: api
+    source: openalex
+    endpoint: /works
+    params:
+      search: "hippocampus relational memory Eichenbaum"
+      per_page: "25"
+      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
+    extract: "results"
+    normalize:
+      title: title
+      abstract: "abstract_inverted_index|$inverted_index"
+      authors: "authorships.*.author.display_name"
+      year: publication_year
+      citations: cited_by_count
+      pdf_url: "open_access.oa_url"
+      venue: "primary_location.source.display_name"
+      source_id: id
