@@ -1,0 +1,205 @@
+# Stream A: Human Memory and Cognition — Research Scope
+
+**Status:** Eliciting complete. Scope frozen pending user confirmation.
+**Frozen:** 2026-04-11
+**Purpose:** Foundational research informing the rebuild of memex — a personal memory system for human-AI collaboration archives. Architecture follows from understanding, not the other way around.
+
+---
+
+## Context
+
+The user (Yash) has been building memex through multiple iterations and design conversations, working from strong intuitions. Three of those intuitions are load-bearing for this research:
+
+- **The unit of recall is the insight, not the conversation.** Conversations are *episodes* — containers with edges. What gets recalled is something smaller: a moment inside the episode where a sign produced an interpretant that left a mark. The conversation is substrate; the click is the artifact. (The Peircean framing — signs, interpretants, marks — is deliberate, not metaphorical.)
+- **Recall happens through "fog match."** When something is recalled, it's because the *fog* — the conditions, the question being asked, the partial state of the searcher — matches the conditions in which the click originally happened. Recall is search by *trajectory shape* or *condition match*, not (only) content similarity.
+- **Memex's current primitives are intuitive, not grounded.** Frame (of different types) as embedding surface; Artifact (crystallized output); Archive (one conversation); Trail (curated path). Whether these primitives are aligned with what cognitive science actually says about memory architecture is exactly what this research is meant to answer.
+
+This stream is the foundation. Stream B (LLMs and memory) and Stream C (technical landscape and gaps) build on it.
+
+---
+
+## Research Questions
+
+### RQ0 — Baseline: What does cognitive science actually say about human memory?
+
+What is the current best-supported view of human memory architecture and mechanisms across the cognitive science domains (phenomenology, semiotics, cognitive psychology, neuroscience, classical cognitive science)?
+
+- What are the major schools, what do they converge on, where do they diverge?
+- What memory subsystems are well-attested (episodic, semantic, procedural, working, etc.) and how are they characterized?
+- What dominant theoretical frameworks organize the field (encoding-storage-retrieval, multi-store models, levels of processing, schema-based reconstruction, embodied/extended cognition)?
+
+*This is the baseline. Without it, RQ1–RQ4 are speculation against an unknown background.*
+
+### RQ1 — Mechanism of insight events ("clicks")
+
+What is known about the mechanism of "insight events" — the moment when something searched-for becomes visible, when a sign produces an interpretant that leaves a mark?
+
+- What neural, behavioral, or linguistic signatures accompany insight events?
+- What conditions reliably produce them? What conditions disrupt them?
+- Is insight a unitary phenomenon or are there typed variants (eureka, recognition, reframing, validation)?
+- Does the literature support the Peircean framing (sign → interpretant → mark) as a mechanism, or does this belong to a different theoretical lineage with different empirical commitments?
+
+*Reframed from "is the click real" — the user has firsthand phenomenological evidence and is asking about mechanism and conditions, not existence.*
+
+### RQ2 — Storage: what is the durable unit of episodic memory for a conversation?
+
+When humans recall a conversation weeks or months later, what is actually stored?
+
+- A moment (timestamped event with metadata)?
+- A content (semantic propositions decoupled from the original event)?
+- A trajectory (the shape of the discourse, with content reconstructed from shape at retrieval time)?
+- Multiple simultaneous representations at different scales?
+- What structural features of the originally encoded material determine what survives versus what fades? Does the "durable unit" depend on the *type* of content (narrative vs. argument vs. instruction vs. emotional)?
+
+### RQ3 — Retrieval: what brings a memory back?
+
+What features of stored material make recall easier, more reliable, or more accurate? What is the *retrieval cue*?
+
+- Is recall driven by cue-content similarity?
+- By contextual overlap (encoding specificity, Tulving)?
+- By emotional valence?
+- By prior access frequency or recency?
+- By the "fog-match" pattern the user describes — where the *partial state* of the searcher matches the partial state at encoding?
+- What is the relationship between encoding structure and retrieval structure — are they symmetric, or can retrieval cues be independent of how the material was encoded?
+
+### RQ4 — Metacognition: how reliable is self-report about cognitive events?
+
+When someone says "I just understood something" or "I remember that conversation clearly," do those reports track actual understanding and accurate recall, or are they generated by heuristic signals (fluency, surprise, repetition) that don't predict ground truth?
+
+- How accurate is metacognition (feeling-of-knowing, judgment-of-learning) compared to actual performance?
+- What systematic illusions exist (illusion of understanding, fluency-induced confidence, source amnesia)?
+- What does this imply for trusting user-tagged labels ("insight", "important", trail annotations) in a memory system?
+
+### Cross-stream bridges
+
+Two research questions explicitly bridge to Stream B (LLMs and memory):
+
+- **RQ1 ↔ Stream B "attention shift"** — The user noticed a structural parallel between human "click" and LLM attention moving to a particular loaded skill when the right phrase appears. Stream B's elicit inherits this question.
+- **RQ3 ↔ Stream B "retrieval cue"** — What structure makes it easier for an LLM to retrieve a particular fragment from context? Stream B examines the LLM analogue of the fog-match retrieval cue.
+
+These bridges become load-bearing during Stream C's synthesis.
+
+---
+
+## Boundaries
+
+### In scope
+
+- Healthy adult memory mechanisms (normal-state baseline)
+- Episodic and semantic memory (the two types most relevant to memex's domain)
+- Encoding, consolidation, retrieval (the three phases)
+- Insight and "Aha!" research (eureka studies, problem-solving insight literature)
+- Metacognition: feeling-of-knowing, judgment-of-learning, illusions of understanding
+- Memory for conversations and discourse specifically (sub-literature)
+- Encoding specificity, context-dependent memory, state-dependent memory
+- Phenomenology of memory experience (Husserl on time-consciousness, Merleau-Ponty on embodied recall, modern Gallagher/Zahavi)
+- Semiotic frameworks for sign / interpretant / mark (Peirce, Eco, Deacon)
+- Schema theory and reconstructive memory (Bartlett, modern schema research)
+- Externalized / extended memory traditions: writing, notes, PKM tools, the Bush → Engelbart → Nelson lineage
+- Distributed and extended cognition (Clark & Chalmers, Hutchins) where relevant to externalized memory
+- Cognitive load and chunking, where it bears on what gets encoded
+
+### Out of scope
+
+- **Clinical memory disorders** (amnesia, Alzheimer's, dissociative disorders) — different evidence base; would expand literature 10× without changing architectural answers
+- **Childhood and developmental memory specifically** — different mechanisms, different stakes
+- **Memory under acute stress or trauma** — distorts normal-state findings we care about
+- **Animal memory studies** — relevant for mechanism but vast adjacent literature
+- **The hard problem of consciousness** — adjacent and seductive, bottomless
+- **Molecular neuroscience of memory** (LTP, NMDA, synaptic biochemistry) — too granular for architectural questions
+- **Pure mathematical models of memory** (statistical learning theory) — too abstract
+
+### Partially in scope (case-by-case during extraction)
+
+- **Eyewitness memory and false memory** (Loftus and successors) — relevant to RQ4, not central
+- **Spaced repetition research** — include the consolidation/decay findings; skip practice guides
+- **Memory palaces and mnemotechnics** — include as evidence of structural retrieval cues; skip as instruction
+- **Cognitive load theory** — include load and chunking findings; skip educational applications
+
+---
+
+## Source Hierarchy
+
+Where to look, in priority order. Specific author/work details live in `sources/inventory.md`.
+
+| Priority | Source family | Why |
+|----------|---------------|-----|
+| **1** | Phenomenology + semiotics canon (Peirce, Husserl, Merleau-Ponty, Eco, Deacon, Gallagher, Zahavi) | Theoretical commitments declared in the inquiry; the Peircean framing is load-bearing |
+| **1** | Cognitive psychology classics (Bartlett, Tulving, Schacter, Anderson, Kahneman) | Canonical findings on episodic memory, encoding specificity, schemas, metacognition |
+| **1** | Cognitive neuroscience of memory (Eichenbaum, Squire, Buzsáki) | Mechanism-level findings that constrain RQ0 and RQ1 |
+| **1** | Insight research (Kounios & Beeman, Bowden, Topolinski) | Direct empirical work on RQ1 |
+| **1** | Metacognition research (Metcalfe, Koriat, Dunlosky) | Direct empirical work on RQ4 |
+| **2** | Distributed/extended cognition (Clark & Chalmers, Hutchins, Sutton) | Bridges human memory to externalized systems — relevant to memex's reason for existing |
+| **2** | Memory consolidation (McGaugh, Walker on sleep) | Mechanism evidence for RQ2 |
+| **2** | Memory and imagination (Hassabis, Schacter & Addis on simulation) | Recent integrative work on how memory supports prospection |
+| **2** | PKM lineage (Bush 1945, Engelbart, Nelson) | Historical sources for memex's own intellectual heritage |
+| **3** | Modern PKM discourse (Matuschak, Appleton) | Practitioner artifacts, context only |
+
+### Excluded sources
+
+- Pop neuroscience trade books with low replication standards (Doidge, Lehrer, etc.)
+- Self-help memory training guides (Foer borderline — include only as journalism, not evidence)
+- Single-study clickbait psychology
+- Unreplicated 1990s priming studies (the priming literature has serious replication problems)
+
+---
+
+## Source Tiers
+
+Adapted for the cognitive science / humanities context, not software engineering venues.
+
+| Tier | Criteria | Use for |
+|------|----------|---------|
+| **1 (Gold)** | Peer-reviewed; canonical authors in their field; books that defined a sub-discipline; findings with strong replication; foundational theoretical texts (Peirce, Husserl, Bush) | Core claims, RQ-defining evidence |
+| **2 (Silver)** | Peer-reviewed but more recent / less canonical; high-citation reviews; books by recognized authorities; integrative work bridging traditions | Supporting evidence, current state of the field |
+| **3 (Bronze)** | Recent reviews / preprints; high-quality popular work by domain experts (Hofstadter, Dennett); long-form journalism by science writers with track records | Context, framing, tradition orientation |
+
+---
+
+## Recency
+
+Cognitive science is a long game with foundational works decades old. No hard cutoff — recency is a default, not a filter.
+
+- **RQ0 and RQ1** — any age acceptable; canonical works (Bartlett 1932, Tulving 1972, Peirce 1903, Bush 1945) are explicitly in scope
+- **RQ2 and RQ3** — prefer past 30 years for current consensus; include foundational anchors
+- **RQ4** — prefer past 20 years; metacognition field matured significantly post-1990s
+- **Neuroscience methods** (fMRI, single-unit recording, optogenetics) — prefer past 15 years; older neuroscience often lacks resolution to settle current questions
+
+---
+
+## Success Criteria
+
+This stream is "done enough" when **all** of the following hold:
+
+- [ ] Each of RQ0–RQ4 has a defended answer with verified citations to at least **3 distinct sources spanning at least 2 different traditions** (e.g., a phenomenological and a cognitive psych source, or a semiotic and a neuroscience source)
+- [ ] Synthesis explicitly maps **convergence, divergence, and gaps** across the disciplines for each RQ — not "what does the literature say" but "where do the literatures agree, where do they fight, where does none of them have an answer"
+- [ ] Gap analysis identifies which intuitions in memex's current design (Frame/Artifact/Archive, click-as-unit, fog-match retrieval, Peircean framing) are **aligned with the literature**, which **contradict** it, and which are **bets the literature cannot settle**
+- [ ] An **architectural decision is possible** — the user can read the synthesis and decide whether to keep, change, or extend memex's current primitives based on what the science says about memory units, retrieval cues, and the click mechanism
+- [ ] All claims have passed CoVE verification against source quotes (no paraphrase drift, no hallucinated findings)
+
+---
+
+## Null Hypotheses
+
+For each research question, the steel-man counterargument the pipeline must extract evidence FOR as well as against. If any null hypothesis accumulates strong support, that finding goes into synthesis with the same weight as confirming evidence. Inconvenient findings are not suppressed.
+
+- **RQ0 null:** *There is no coherent "current best-supported view." The cognitive science traditions fundamentally disagree about what memory is, what its units are, and how it should be studied. Any cross-tradition synthesis is artifactual.*
+  Architectural implication if supported: memex must commit to one tradition over others; the choice is theoretical, not empirical.
+
+- **RQ1 null:** *"Insight" is not a unified mechanism. What feels like a click is post-hoc narrative construction that doesn't correspond to a discrete cognitive event. No reliable signatures exist; no conditions reliably produce it.*
+  Architectural implication if supported: memex cannot detect clicks at ingest; click-as-event is the wrong primitive, and the system must rely entirely on user-marked events or behavioral proxies.
+
+- **RQ2 null:** *The "durable unit" question is malformed. Memory is distributed and reconstructive, with no stored "units" at all — it is a process, not an object. Asking what gets stored is asking the wrong question.*
+  Architectural implication if supported: memex's storage model (Frame/Artifact/Archive as discrete entities) is conceptually wrong; storage should be replaced with a generative or reconstructive model.
+
+- **RQ3 null:** *Retrieval is not predictable from storage structure. Encoding specificity is one of many retrieval mechanisms, and the relationship between encoded form and retrieval cue is too idiosyncratic to capture in any general system.*
+  Architectural implication if supported: memex's retrieval optimizations (hybrid search, RRF, recency boost, fog-match) may be theoretically baseless; recall is fundamentally context-dependent in ways no system can model.
+
+- **RQ4 null:** *Metacognitive self-report is generally unreliable across most cognitive domains. Feeling-of-knowing tracks fluency, not recall accuracy. People consistently overestimate what they understand.*
+  Architectural implication if supported: memex should never trust user-tagged "this was important" labels; trail annotations and click markers are cheap signals, and the system should fall back to behavioral/structural evidence (re-access patterns, downstream reuse, re-reference).
+
+---
+
+## Next phase
+
+**Collecting** — set up recon configuration to mechanically gather sources from the source hierarchy, prioritizing Tier 1 and Priority 1 source families. The starting landscape is enumerated in `sources/inventory.md`.
