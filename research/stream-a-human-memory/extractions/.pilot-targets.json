@@ -1,0 +1,65 @@
+{
+  "Bartlett & Kintsch 1995 Remembering": {
+    "title": "Remembering",
+    "abstract": "In 1932, Cambridge University Press published Remembering, by psychologist, Frederic Bartlett. The landmark book described fascinating studies of memory and presented the theory of schema which informs much of cognitive science and psychology today. In Bartlett's most famous experiment, he had subjects read a Native American story about ghosts and had them retell the tale later. Because their background was so different from the cultural context of the story, the subjects changed details in the story that they could not understand. Based on observations like these, Bartlett developed his claim that memory is a process of reconstruction, and that this construction is in important ways a social act. His concerns about the social psychology of memory and the cultural context of remembering were long neglected but are finding an interested and responsive audience today. Now reissued in paperback, Remembering has a new Introduction by Walter Kintsch of the University of Colorado, Boulder.",
+    "authors": [
+      "F. C. Bartlett",
+      "Walter Kintsch"
+    ],
+    "year": 1995,
+    "citations": 2362,
+    "pdf_url": null,
+    "venue": "Cambridge University Press eBooks",
+    "source_id": "https://openalex.org/W1493772365"
+  },
+  "Kounios & Beeman 2009 Aha Moment": {
+    "title": "The <i>Aha!</i> Moment",
+    "abstract": "A sudden comprehension that solves a problem, reinterprets a situation, explains a joke, or resolves an ambiguous percept is called an insight (i.e., the \u201cAha! moment\u201d). Psychologists have studied insight using behavioral methods for nearly a century. Recently, the tools of cognitive neuroscience have been applied to this phenomenon. A series of studies have used electroencephalography (EEG) and functional magnetic resonance imaging (fMRI) to study the neural correlates of the \u201cAha! moment\u201d and its antecedents. Although the experience of insight is sudden and can seem disconnected from the immediately preceding thought, these studies show that insight is the culmination of a series of brain states and processes operating at different time scales. Elucidation of these precursors suggests interventional opportunities for the facilitation of insight.",
+    "authors": [
+      "John Kounios",
+      "Mark Beeman"
+    ],
+    "year": 2009,
+    "citations": 413,
+    "pdf_url": null,
+    "venue": "Current Directions in Psychological Science",
+    "source_id": "https://openalex.org/W2121406983"
+  },
+  "Tulving 1984 Precis Episodic Memory": {
+    "title": "Pr\u00e9cis of Elements of episodic memory",
+    "abstract": "Abstract Elements of episodic memory (Tulving 1983b) consists of three parts. Part I argues for the distinction between episodic and semantic memory as functionally separate albeit closely interacting systems. It begins with a review of the 1972 essay on the topic (Tulving 1972) and its shortcomings, presents a somewhat more complete characterization of the two forms of memory than the one that was possible in 1972, and proceeds to discuss empirical and theoretical reasons for a tentative acceptance of the functional distinction between the two systems and its possible extensions. Part II describes a framework for the study of episodic memory, dubbed General Abstract Processing System (GAPS). The basic unit in such study is an act of remembering. It begins with the witnessing of an event and ends with recollective experience of the event, with related memory performance, or both. The framework specifies a number of components (elements) of the act of remembering and their interrelations, classified under two broad categories of encoding and retrieval. Part III discusses experimental research under the label of \u201csynergistic ecphory.\u201d Ecphory is one of the central elements of retrieval; \u201csynergistic\u201d refers to the joint influence that the stored episodic information and the cognitively present retrieval information exert on the construction of the product of ecphory, the so-called ecphoric information. The concept of encoding specificity and the phenomenon of recognition failure of recallable words figure prominently in Part III. The final chapter of the book describes a model, named the synergistic ecphory model of retrieval, that relates qualitative characteristics of recollective experience and quantitative measures of memory performance in recall and recognition to the conjunction of episodic-memory traces and semantic-memory retrieval cues.",
+    "authors": [
+      "Endel Tulving"
+    ],
+    "year": 1984,
+    "citations": 804,
+    "pdf_url": null,
+    "venue": "Behavioral and Brain Sciences",
+    "source_id": "https://openalex.org/W2034470020"
+  },
+  "Lutz & Thompson 2003 Neurophenomenology": {
+    "title": "Neurophenomenology Integrating Subjective Experience and Brain Dynamics in the Neuroscience of Consciousness",
+    "abstract": "The paper presents a research programme for the neuroscience of con- sciousness called 'neurophenomenology' (Varela 1996) and illustrates it with a recent pilot study (Lutz et al., 2002). At a theoretical level, neurophenomenology pursues a n e mbodied a nd l arge-scale d ynamical a pproach t o t he neurophysiology of consciousness (Varela 1995; Thompson and Varela 2001; Varela and Thompson 2003). At a methodological level, the neurophenomeno- logical strategy is to make rigorous and extensive use of first-person data about subjective experience as a heuristic to describe and quantify the large-scale neurodynamics of consciousness (Lutz 2002). The paper foocuses on neurophenomenology in relation to three challenging methodological issues about incorporating first-person data into cognitive neuroscience: (i) first-person reports can be biased or inaccurate; (ii) the process of generating first-person reports about an experience can modify that experience; and (iii) there is an 'ex- planatory gap' in our understanding of how to relate first-person, phenomeno- logical data to third-person, biobehavioural data.",
+    "authors": [
+      "Antoine Lutz",
+      "Evan Thompson"
+    ],
+    "year": 2003,
+    "citations": 417,
+    "pdf_url": null,
+    "venue": "Journal of Consciousness Studies",
+    "source_id": "https://openalex.org/W2146431307"
+  },
+  "Metcalfe 1986 Feeling of Knowing": {
+    "title": "Feeling of knowing in memory and problem solving.",
+    "abstract": "This study investigates feelings of knowing for problem solving and memory. In Experiment 1 subjects judged their feelings of knowing to trivia questions they had been unable to answer, then performed a multiple-choice recognition test In a second task, subjects gave feeling-of-knowing judgments for problems to which they did not immediately know the answers. Later, they were given 5 mia to solve each problem. In contrast to the positive correlation found in the memory task, the feeling-of-knowing rank ordering of insight problems did not relate to problem solution. Experiment 2 provided a replication of Experiment 1 with a generation memory technique rather than a multiplechoice recognition test. Both experiments showed that although people could predict memory performance reasonably well, predictive metacognitions were nonexistent for the problems. The data are interpreted as implying that insight problems do involve a sudden illumination, and that illumination cannot be predicted in advance.",
+    "authors": [
+      "Janet Metcalfe"
+    ],
+    "year": 1986,
+    "citations": 334,
+    "pdf_url": null,
+    "venue": "Journal of Experimental Psychology Learning Memory and Cognition",
+    "source_id": "https://openalex.org/W2066379812"
+  }
+}
