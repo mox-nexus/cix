@@ -1,0 +1,152 @@
+[
+  {
+    "id": "https://openalex.org/W4386576685",
+    "title": "MTEB: Massive Text Embedding Benchmark",
+    "year": 2023,
+    "cited_by_count": 339,
+    "first_author": "Niklas Muennighoff",
+    "doi": "https://doi.org/10.18653/v1/2023.eacl-main.148",
+    "relevance_note": "Definitive benchmark for text embeddings across 8 tasks, 58 datasets, 112 languages. Provides empirical comparison of 33 models showing no single method dominates all tasks. Essential for understanding embedding model selection for conversation retrieval.",
+    "target_rq": "RQ-C3"
+  },
+  {
+    "id": "https://openalex.org/W4402670856",
+    "title": "M3-Embedding: Multi-Linguality, Multi-Functionality, Multi-Granularity Text Embeddings Through Self-Knowledge Distillation",
+    "year": 2024,
+    "cited_by_count": 350,
+    "first_author": "Jianlyu Chen",
+    "doi": "https://doi.org/10.18653/v1/2024.findings-acl.137",
+    "relevance_note": "State-of-the-art unified embedding model supporting dense, multi-vector, and sparse retrieval simultaneously. Novel self-knowledge distillation approach. Directly relevant to hybrid retrieval architecture decisions for memex.",
+    "target_rq": "RQ-C2"
+  },
+  {
+    "id": "https://openalex.org/W4377138005",
+    "title": "An Analysis of Fusion Functions for Hybrid Retrieval",
+    "year": 2023,
+    "cited_by_count": 34,
+    "first_author": "Sebastian Bruch",
+    "doi": "https://doi.org/10.1145/3596512",
+    "relevance_note": "Empirical analysis of dense+sparse score fusion methods (convex combination vs RRF). Finds RRF is sensitive to parameters contrary to prior claims, and convex combination is more robust. Directly informs memex hybrid retrieval design.",
+    "target_rq": "RQ-C2"
+  },
+  {
+    "id": "https://openalex.org/W4310418667",
+    "title": "Dense Text Retrieval based on Pretrained Language Models: A Survey",
+    "year": 2022,
+    "cited_by_count": 19,
+    "first_author": "Wayne Xin Zhao",
+    "doi": "https://doi.org/10.48550/arxiv.2211.14876",
+    "relevance_note": "Comprehensive survey (300+ references) on PLM-based dense retrieval covering architecture, training, indexing, and integration. Provides systematic taxonomy the web research lacks. High efficiency extraction target.",
+    "target_rq": "RQ-C2"
+  },
+  {
+    "id": "https://openalex.org/W4386528753",
+    "title": "Cognitive Architectures for Language Agents",
+    "year": 2023,
+    "cited_by_count": 57,
+    "first_author": "Theodore R. Sumers",
+    "doi": "https://doi.org/10.48550/arxiv.2309.02427",
+    "relevance_note": "Proposes CoALA framework: modular memory components, structured action space, generalized decision-making for language agents. Draws on cognitive science and symbolic AI history. Provides theoretical grounding for memory agent architectures beyond what MemGPT covers.",
+    "target_rq": "RQ-C1"
+  },
+  {
+    "id": "https://openalex.org/W4385573010",
+    "title": "An Efficient Memory-Augmented Transformer for Knowledge-Intensive NLP Tasks",
+    "year": 2022,
+    "cited_by_count": 29,
+    "first_author": "Yuxiang Wu",
+    "doi": "https://doi.org/10.18653/v1/2022.emnlp-main.346",
+    "relevance_note": "EMAT: encodes external knowledge into key-value memory with fast MIPS querying. Shows memory augmentation can dramatically improve QA (25.8 to 44.3 EM on NQ) while retaining 1000 queries/s throughput. Concrete architecture for memory-augmented retrieval.",
+    "target_rq": "RQ-C1"
+  },
+  {
+    "id": "https://openalex.org/W3186804217",
+    "title": "Beyond Goldfish Memory: Long-Term Open-Domain Conversation",
+    "year": 2022,
+    "cited_by_count": 102,
+    "first_author": "Jing Xu",
+    "doi": "https://doi.org/10.18653/v1/2022.acl-long.356",
+    "relevance_note": "Human-human dataset of multi-session conversations where partners learn about each other over time. Shows retrieval-augmented and summarize-and-recall methods outperform standard encoder-decoders for long-term conversation. Directly addresses conversational memory persistence.",
+    "target_rq": "RQ-C5"
+  },
+  {
+    "id": "https://openalex.org/W4392011662",
+    "title": "Understanding the Impact of Long-Term Memory on Self-Disclosure with Large Language Model-Driven Chatbots for Public Health Intervention",
+    "year": 2024,
+    "cited_by_count": 50,
+    "first_author": "Eunkyung Jo",
+    "doi": "https://doi.org/10.1145/3613904.3642420",
+    "relevance_note": "Empirical study of CareCall LLM chatbot with long-term memory (1,252 call logs + interviews). Finds LTM enhances disclosure and familiarity but surfaces challenges around chronic conditions and privacy. Rare empirical evidence on LTM impact in real deployment.",
+    "target_rq": "RQ-C1"
+  },
+  {
+    "id": "https://openalex.org/W4380993239",
+    "title": "Unifying Large Language Models and Knowledge Graphs: A Roadmap",
+    "year": 2023,
+    "cited_by_count": 100,
+    "first_author": "Shirui Pan",
+    "doi": "https://doi.org/10.48550/arxiv.2306.08302",
+    "relevance_note": "Roadmap for LLM+KG integration: KG-enhanced LLMs, LLM-augmented KGs, and synergized approaches. Covers embedding, completion, construction, and bidirectional reasoning. Relevant to knowledge graph approaches for structured memory beyond vector retrieval.",
+    "target_rq": "RQ-C5"
+  },
+  {
+    "id": "https://openalex.org/W4403589311",
+    "title": "Graph Retrieval-Augmented Generation: A Survey",
+    "year": 2024,
+    "cited_by_count": 22,
+    "first_author": "Boci Peng",
+    "doi": "https://doi.org/10.48550/arxiv.2408.08921",
+    "relevance_note": "First comprehensive survey of GraphRAG: graph-based indexing, graph-guided retrieval, and graph-enhanced generation. Covers relational knowledge retrieval that flat vector search misses. Unique academic depth on structured retrieval for knowledge-intensive tasks.",
+    "target_rq": "RQ-C2"
+  },
+  {
+    "id": "https://openalex.org/W4389523765",
+    "title": "Is ChatGPT Good at Search? Investigating Large Language Models as Re-Ranking Agents",
+    "year": 2023,
+    "cited_by_count": 179,
+    "first_author": "Weiwei Sun",
+    "doi": "https://doi.org/10.18653/v1/2023.emnlp-main.923",
+    "relevance_note": "RankGPT: shows LLMs can match/exceed supervised rerankers via listwise prompting. Introduces permutation distillation to compress ranking ability into small models (440M beats 3B supervised). Directly relevant to reranking in memex retrieval pipeline.",
+    "target_rq": "RQ-C2"
+  },
+  {
+    "id": "https://openalex.org/W4390832893",
+    "title": "Personal LLM Agents: Insights and Survey about the Capability, Efficiency and Security",
+    "year": 2024,
+    "cited_by_count": 30,
+    "first_author": "Yuanchun Li",
+    "doi": "https://doi.org/10.48550/arxiv.2401.05459",
+    "relevance_note": "Survey on personal LLM agents deeply integrated with personal data and devices. Covers architecture, capability, efficiency, and security challenges. Directly addresses the memex use case of personal AI assistants with persistent memory.",
+    "target_rq": "RQ-C1"
+  },
+  {
+    "id": "https://openalex.org/W4387800467",
+    "title": "A Comprehensive Survey on Vector Database: Storage and Retrieval Technique, Challenge",
+    "year": 2023,
+    "cited_by_count": 26,
+    "first_author": "Ma, Le",
+    "doi": "https://doi.org/10.48550/arxiv.2310.11703",
+    "relevance_note": "Systematic architectural review of vector databases from storage and retrieval dimensions. Covers indexing strategies, integration with LLMs, and emerging directions. Provides academic depth on VDB internals beyond vendor comparisons in web research.",
+    "target_rq": "RQ-C3"
+  },
+  {
+    "id": "https://openalex.org/W4391900009",
+    "title": "Generative Representational Instruction Tuning",
+    "year": 2024,
+    "cited_by_count": 13,
+    "first_author": "Niklas Muennighoff",
+    "doi": "https://doi.org/10.48550/arxiv.2402.09906",
+    "relevance_note": "GRIT: trains a single LLM for both generation and embedding tasks via instruction tuning. Unification speeds up RAG by 60%+ for long documents by eliminating separate retrieval and generation models. Novel architecture insight for memex efficiency.",
+    "target_rq": "RQ-C3"
+  },
+  {
+    "id": "https://openalex.org/W4399115160",
+    "title": "NV-Embed: Improved Techniques for Training LLMs as Generalist Embedding Models",
+    "year": 2024,
+    "cited_by_count": 10,
+    "first_author": "Chankyu Lee",
+    "doi": "https://doi.org/10.48550/arxiv.2405.17428",
+    "relevance_note": "Top-ranked MTEB model. Introduces latent attention pooling, removes causal attention mask during training, two-stage contrastive instruction tuning. Provides specific architectural techniques for building high-quality embedding models.",
+    "target_rq": "RQ-C3"
+  }
+]

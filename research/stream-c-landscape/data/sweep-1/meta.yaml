@@ -1,0 +1,50 @@
+# Stream C Landscape Recon — Sweep 1
+# Collected: 2026-04-13
+# Source: OpenAlex API (https://api.openalex.org/works)
+# Sort: cited_by_count:desc
+# Per page: 50
+
+sweeps:
+  - file: openalex-c1-rag-survey.jsonl
+    search: ""retrieval augmented generation" survey"
+    filter: "publication_year:2022-2026"
+    results_saved: 50
+  - file: openalex-c1-memory-agents.jsonl
+    search: ""memory augmented" "large language model" agent"
+    filter: "publication_year:2022-2026"
+    results_saved: 50
+  - file: openalex-c1-memgpt.jsonl
+    search: "MemGPT OR Letta OR "hierarchical memory" "language model""
+    filter: "publication_year:2022-2026"
+    results_saved: 50
+  - file: openalex-c2-hybrid-retrieval.jsonl
+    search: ""hybrid retrieval" dense sparse"
+    filter: "publication_year:2022-2026"
+    results_saved: 50
+  - file: openalex-c2-contextual-retrieval.jsonl
+    search: ""contextual retrieval" OR "context-aware retrieval" language model"
+    filter: "publication_year:2022-2026"
+    results_saved: 50
+  - file: openalex-c2-reranking.jsonl
+    search: ""cross-encoder" reranking retrieval"
+    filter: "publication_year:2022-2026"
+    results_saved: 50
+  - file: openalex-c3-vector-db.jsonl
+    search: ""vector database" OR "vector search" benchmark"
+    filter: "publication_year:2022-2026"
+    results_saved: 50
+  - file: openalex-c3-embeddings.jsonl
+    search: "embedding model "text retrieval" benchmark MTEB"
+    filter: "publication_year:2022-2026"
+    results_saved: 50
+  - file: openalex-c4-pkm.jsonl
+    search: ""personal knowledge management" OR "personal information management" tool"
+    filter: "publication_year:2018-2026"
+    results_saved: 50
+  - file: openalex-c1-conversational-memory.jsonl
+    search: ""conversational memory" OR "dialogue memory" system"
+    filter: "publication_year:2022-2026"
+    results_saved: 50
+
+total_files: 10
+total_records: 500
