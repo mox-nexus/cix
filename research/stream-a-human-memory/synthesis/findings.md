@@ -2,7 +2,7 @@
 
 **Scope:** research/stream-a-human-memory/scope.md
 **Sources:** 20 papers, 176 claims across cognitive psychology, cognitive neuroscience, phenomenology, embodied cognition, metacognition
-**Note:** Verification (CoVE) phase was skipped for pace. All claims are from peer-reviewed Tier 1 sources with verbatim quotes. Risk of paraphrase drift is low for abstract-level extraction from canonical papers. Flag any suspicious claims during review.
+**Verification:** CoVE completed on 15 load-bearing claims. Results: 11 VERIFIED, 4 CORRECTED, 0 REFUTED. Corrections applied inline below (marked with [CORRECTED]). See verification/load-bearing-claims.md for full CoVE protocol output.
 
 ---
 
@@ -33,9 +33,9 @@ DIVERGENCE: Squire 1982 vs Nader 2009 is a historical progression, not a live de
 ARCHITECTURAL IMPLICATION: **LOAD-BEARING.** The "stored unit" in memex is not static. Every recall is a potential modification event. Memex should model recall as a write operation, not a read operation. Trail annotations, re-access patterns, and re-retrieval contexts should be stored because they literally change what the memory IS. The append-only TrailEvent model from the pre-disaster design session is exactly right — each access creates a new version of the memory.
 
 ### Finding 0.3: Permanent storage is neocortical; hippocampal structures handle formation
-CLAIM: Long-term memory is stored in neocortex, not in the hippocampal/medial temporal structures that are essential for its formation and initial consolidation.
+CLAIM: Squire proposes that long-term memory is stored in neocortex, not in the hippocampal/medial temporal structures that are essential for its formation and initial consolidation. [CORRECTED — source hedges with "It appears that"; extraction originally stated as fact]
 EVIDENCE:
-- [squire1982:c6] "permanent memory storage normally occurs outside the brain regions affected in amnesia"
+- [squire1982:c6] "It appears that these brain regions constitute an essential neuroanatomical substrate for the formation of new memories" — note hedge
 - [squire1982:c2] H.M. retained premorbid memories but couldn't form new declarative ones
 - [cabeza2000:c1-c2] Encoding activates left prefrontal + medial temporal; retrieval activates prefrontal + medial temporal + posterior midline
 CONFIDENCE: HIGH
@@ -83,7 +83,7 @@ EVIDENCE:
 - [metcalfe1986:c8] "predictive metacognitions were nonexistent for the problems"
 - [metcalfewiebe1987:c12] FOK-performance gamma for insight = .08 (vs .40 for algebra)
 - [metcalfewiebe1987:c14] "The idea that subjects may have privileged access to idiosyncratic information... was overwhelmingly wrong"
-- [metcalfewiebe1987:c8] 78% of correct insight solutions showed ≤1 point warmth change on 10-point scale
+- [metcalfewiebe1987:c8] 78% of correct insight solutions showed ≤1 point warmth change on 10-point scale [CORRECTED — primary source is Metcalfe 1986b, cited in Metcalfe & Wiebe 1987 introduction]
 CONFIDENCE: HIGH — replicated across two Metcalfe studies, two different measures (FOK and warmth), two experiment designs
 ARCHITECTURAL IMPLICATION: **LOAD-BEARING.** Memex cannot detect insight BEFORE it happens via user self-report. Pre-click signals ("I feel like I'm getting close") are unreliable for insight. Detection must be post-hoc.
 
@@ -145,9 +145,9 @@ CONFIDENCE: MEDIUM — well-cited (2593) but single theoretical account
 ARCHITECTURAL IMPLICATION: Memex currently decomposes conversations into individual messages (Frames). If dialogue is actually about ALIGNMENT between speakers, the unit of memory should be the alignment event (where the two speakers converged or diverged), not the individual message. This suggests a new primitive: an "alignment frame" that captures the state of shared understanding at a point in the conversation.
 
 ### Finding 2.4: Mental representations are purpose-neutral
-CLAIM: What humans store is not indexed to anticipated future use. Storage is broad, veridical, and purpose-neutral — giving adaptive flexibility for unanticipated future needs.
+CLAIM: Wilson argues that what humans store appears to be largely purpose-neutral — not indexed to anticipated future use, or at minimum containing information beyond the originally conceived purpose. This gives adaptive flexibility. [CORRECTED — source hedges with "appear to be to a large extent" and offers weaker alternative]
 EVIDENCE:
-- [wilson2002:c11] "Our mental representations... appear to be to a large extent purpose-neutral"
+- [wilson2002:c11] "Our mental representations... appear to be to a large extent purpose-neutral, or at least to contain information beyond that needed for the originally conceived purpose" — note double hedge
 - [wilson2002:c12] Purpose-neutral encoding gives "an enormous advantage in problem-solving flexibility"
 - [wilson2002:c10] Glenberg proposes memory as "encoding of patterns of possible physical interaction" — but Wilson partially rejects this for being too action-indexed
 CONFIDENCE: MEDIUM — Wilson's verdict, supported by argument but limited direct evidence cited
@@ -167,8 +167,8 @@ EVIDENCE:
 CONFIDENCE: HIGH — Tulving's framework, replicated experimentally by Wiseman & Tulving 1976
 ARCHITECTURAL IMPLICATION: **THIS IS THE FOG-MATCH.** Yash's intuition that recall happens when "the fog matches" is exactly synergistic ecphory. Retrieval is not content-similarity search alone — it's the match between the searcher's current state and the encoded state. Memex's retrieval should consider not just WHAT the user is searching for (query content) but the CONTEXT in which they're searching (what conversation they're in, what topic they've been working on, what mood/project/focus). This argues for contextual retrieval features beyond pure semantic search.
 
-### Finding 3.2: Reconsolidation requires spatial context reinstatement in humans
-CLAIM: In human episodic memory, reconsolidation-based interference only occurs when the person is in the same spatial environment as the original learning. Context reinstatement is a prerequisite for memory modification.
+### Finding 3.2: Reconsolidation-based interference in humans is context-dependent
+CLAIM: In one human study, reactivation-dependent interference with consolidated episodic memory occurred only when subjects were in the same spatial environment as original learning. [CORRECTED — original claim overgeneralized from one study's interference effects to "reconsolidation requires context reinstatement" in general]
 EVIDENCE:
 - [nader2009:c12] "reactivation-dependent interference effects in consolidated episodic memory were found only when human subjects were exposed to the interfering material in the same environment in which the original learning took place"
 CONFIDENCE: MEDIUM — single finding, but from a well-controlled study
