@@ -1,0 +1,149 @@
+{
+  "beeman-2004-neural-insight": {
+    "title": "Neural Activity When People Solve Verbal Problems with Insight",
+    "authors": [
+      "Mark Beeman",
+      "Edward M. Bowden",
+      "Jason Haberman",
+      "Jennifer L. Frymiare",
+      "Stella Arambel-Liu",
+      "R.E. Greenblatt",
+      "Paul J. Reber",
+      "John Kounios"
+    ],
+    "year": 2004,
+    "citations": 1029,
+    "venue": "PLoS Biology",
+    "abstract": "People sometimes solve problems with a unique process called insight, accompanied by an \"Aha!\" experience. It has long been unclear whether different cognitive and neural processes lead to insight versus noninsight solutions, or if solutions differ only in subsequent subjective feeling. Recent behavioral studies indicate distinct patterns of performance and suggest differential hemispheric involvement for insight and noninsight solutions. Subjects solved verbal problems, and after each correct solution indicated whether they solved with or without insight. We observed two objective neural correlates of insight. Functional magnetic resonance imaging (Experiment 1) revealed increased activity in the right hemisphere anterior superior temporal gyrus for insight relative to noninsight solutions. The same region was active during initial solving efforts. Scalp electroencephalogram recordings (Experiment 2) revealed a sudden burst of high-frequency (gamma-band) neural activity in the same area beginning 0.3 s prior to insight solutions. This right anterior temporal area is associated with making connections across distantly related information during comprehension. Although all problem solving relies on a largely shared cortical network, the sudden flash of insight occurs when solvers engage distinct neural and cognitive processes that allow them to see connections that previously eluded them.",
+    "rq": "RQ1"
+  },
+  "friston-2017-active-inference": {
+    "title": "Active Inference, Curiosity and Insight",
+    "authors": [
+      "Karl Friston",
+      "Meiyu Lin",
+      "Chris Frith",
+      "Giovanni Pezzulo",
+      "J. Allan Hobson",
+      "Sasha Ondobaka"
+    ],
+    "year": 2017,
+    "citations": 376,
+    "venue": "Neural Computation",
+    "abstract": "This article offers a formal account of curiosity and insight in terms of active (Bayesian) inference. It deals with the dual problem of inferring states of the world and learning its statistical structure. In contrast to current trends in machine learning (e.g., deep learning), we focus on how people attain insight and understanding using just a handful of observations, which are solicited through curious behavior. We use simulations of abstract rule learning and approximate Bayesian inference to show that minimizing (expected) variational free energy leads to active sampling of novel contingencies. This epistemic behavior closes explanatory gaps in generative models of the world, thereby reducing uncertainty and satisfying curiosity. We then move from epistemic learning to model selection or structure learning to show how abductive processes emerge when agents test plausible hypotheses about symmetries (i.e., invariances or rules) in their generative models. The ensuing Bayesian model reduction evinces mechanisms associated with sleep and has all the hallmarks of \"aha\" moments. This formulation moves toward a computational account of consciousness in the pre-Cartesian sense of sharable knowledge (i.e., con: \"together\"; scire: \"to know\").",
+    "rq": "RQ1"
+  },
+  "subramaniam-2008-affect-insight": {
+    "title": "A Brain Mechanism for Facilitation of Insight by Positive Affect",
+    "authors": [
+      "Karuna Subramaniam",
+      "John Kounios",
+      "Todd B. Parrish",
+      "Mark Beeman"
+    ],
+    "year": 2008,
+    "citations": 382,
+    "venue": "Journal of Cognitive Neuroscience",
+    "abstract": "Previous research has shown that people solve insight or creative problems better when in a positive mood (assessed or induced), although the precise mechanisms and neural substrates of this facilitation remain unclear. We assessed mood and personality variables in 79 participants before they attempted to solve problems that can be solved by either an insight or an analytic strategy. Participants higher in positive mood solved more problems, and specifically more with insight, compared with participants lower in positive mood. fMRI was performed on 27 of the participants while they solved problems. Positive mood (and to a lesser extent and in the opposite direction, anxiety) was associated with changes in brain activity during a preparatory interval preceding each solved problem; modulation of preparatory activity in several areas biased people to solve either with insight or analytically. Analyses examined whether (a) positive mood modulated activity in brain areas showing responsivity during preparation; (b) positive mood modulated activity in areas showing stronger activity for insight than noninsight trials either during preparation or solution; and (c) insight effects occurred in areas that showed mood-related effects during preparation. Across three analyses, the ACC showed sensitivity to both mood and insight, demonstrating that positive mood alters preparatory activity in ACC, biasing participants to engage in processing conducive to insight solving. This result suggests that positive mood enhances insight, at least in part, by modulating attention and cognitive control mechanisms via ACC, perhaps enhancing sensitivity to detect non-prepotent solution candidates.",
+    "rq": "RQ1"
+  },
+  "sandkuhler-2008-deconstructing": {
+    "title": "Deconstructing Insight: EEG Correlates of Insightful Problem Solving",
+    "authors": [
+      "Simone Sandk\u00fchler",
+      "Joydeep Bhattacharya"
+    ],
+    "year": 2008,
+    "citations": 219,
+    "venue": "PLoS ONE",
+    "abstract": "Our results provide a first account of cognitive insight by dissociating its constituent components and potential neural correlates.",
+    "rq": "RQ1"
+  },
+  "pickering-garrod-2004-dialogue": {
+    "title": "Toward a mechanistic psychology of dialogue",
+    "authors": [
+      "Martin J. Pickering",
+      "Simon Garrod"
+    ],
+    "year": 2004,
+    "citations": 2593,
+    "venue": "Behavioral and Brain Sciences",
+    "abstract": "Traditional mechanistic accounts of language processing derive almost entirely from the study of monologue. Yet, the most natural and basic form of language use is dialogue. As a result, these accounts may only offer limited theories of the mechanisms that underlie language processing in general. We propose a mechanistic account of dialogue, the interactive alignment account, and use it to derive a number of predictions about basic language processes. The account assumes that, in dialogue, the linguistic representations employed by the interlocutors become aligned at many levels, as a result of a largely automatic process. This process greatly simplifies production and comprehension in dialogue. After considering the evidence for the interactive alignment model, we concentrate on three aspects of processing that follow from it. It makes use of a simple interactive inference mechanism, enables the development of local dialogue routines that greatly simplify language processing, and explains the origins of self-monitoring in production. We consider the need for a grammatical framework that is designed to deal with language in dialogue rather than monologue, and discuss a range of implications of the account.",
+    "rq": "RQ2"
+  },
+  "stafford-daly-1984-conversation": {
+    "title": "CONVERSATIONAL MEMORY.",
+    "authors": [
+      "Laura Stafford",
+      "John A. Daly"
+    ],
+    "year": 1984,
+    "citations": 108,
+    "venue": "Human Communication Research",
+    "abstract": "While there has recently been a notable increase in attempts by memory researchers to focus on more naturalistic stimuli little attention has been paid to conversations. Conversations represent stimuli that are distinctly different in a number of ways from most other stimuli that people are required to remember. Conversations are jointly created, constantly updated, and necessarily are readily accessible by participants. The present study, exploring people's memory for natural conversations in which they participate, finds that even after only five minutes people are able to recollect only about 10% of what was said in a social exchange. Further, the mode of recall (written versus oral) and the presence and type of memory goals affected what and how much of the interaction was recalled. Subjects also remembered more of their partner's comments in the interaction than their own. Finally, oral communication anxiety affected both the production of discourse in the conversations and recall of the interactions, while writing apprehension impacted subjects' written recalls of their conversations.",
+    "rq": "RQ2"
+  },
+  "roediger-craik-2014-tulving-festschrift": {
+    "title": "Varieties of Memory and Consciousness: Essays in Honour of Endel Tulving",
+    "authors": [
+      "Henry L. Roediger",
+      "Fergus I. M. Craik"
+    ],
+    "year": 2014,
+    "citations": 1654,
+    "venue": "Medical Entomology and Zoology",
+    "abstract": "Contents: Part I:Encoding and Retrieval Processes. H.L. Roediger, III, M.S. Weldon, B.H. Challis, Explaining Dissociations Between Implicit and Explicit Measures of Retention: A Processing Account. F.I.M. Craik, On the Making of Episodes. M.J. Watkins, Willful and Nonwillful Determinants of Memory. R. Ratcliff, G. McKoon, Memory Models, Text Processing, and Cue-Dependent Retrieval. B.B. Murdock, Jr., The Past, the Present, and the Future: Comments on Section 1. Part II:Neuropsychology. L. Weiskrantz, Remembering Dissociations. L.S. Cermak, Synergistic Ecphory and the Amnesic Patient. M. Moscovitch, Confabulation and the Frontal Systems: Strategic Versus Associative Retrieval in Neuropsychological Theories of Memory. D.S. Olton, Inferring Psychological Dissociations from Experimental Dissociations: The Temporal Context of Episodic Memory. M. Kinsbourne, The Boundaries of Episodic Remembering: Comments on the Second Section. Part III:Classification Systems for Memory. J.R. Anderson, A Rational Analysis of Human Memory. D. Broadbent, Lasting Representations and Temporary Processes. J.H. Neely, Experimental Dissociations and the Episodic/Semantic Memory Distinction. R.G. Crowder, Modularity and Dissociations in Memory Systems. L-G. Nilsson, Classification of Human Memory: Comments on the Third Section. Part IV:Consciousness, Emotion, and Memory. R.A. Bjork, Retrieval Inhibition as an Adaptive Mechanism in Human Memory. E. Eich, Theoretical Issues in State Dependent Memory. D.L. Schacter, On the Relation Between Memory and Consciousness: Dissociable Interactions and Conscious Experience. L.L. Jacoby, C.M. Kelley, J. Dywan, Memory Attributions. R.S. Lockhart, Consciousness and the Function of Remembered Episodes: Comments on the Fourth Section.",
+    "rq": "RQ3"
+  },
+  "wiseman-tulving-1976-encoding": {
+    "title": "Encoding specificity: Relation between recall superiority and recognition failure.",
+    "authors": [
+      "Sandor Wiseman",
+      "Endel Tulving"
+    ],
+    "year": 1976,
+    "citations": 107,
+    "venue": "Journal of Experimental Psychology Human Learning & Memory",
+    "abstract": "The results of four experiments show that (a) recall superiority over recognition is reversed by the use of unrelated word pairs in the study list, and (b) the reversal of recall superiority leaves intact the phenomenon of recognition failure of recallable words. These results extend the generality of encoding specificity and suggest that although recall superiority is a sufficient condition for recognition failure of recallable words it is not a necessary condition. In memory experiments in which people are required to remember the items of a list, the most effective retrieval cues are almost always nominal copies of to-be-remembe red items. If such cues are ineffective, it is unlikely that any other cues will succeed. Under certain experimental conditions, however, copies of list items are not the most effective cues for retrieval\u2014in the presence of other cues, people do recall learned list words that they fail to recognize. This phenomenon of recognition failure of recallable words has been manifested in a number of experiments in which the same procedure, with only minor variations, has been used (e.g., Tulving, 1974; Tulving & Thomson, 1973; Watkins & Tulving, 1975; Wiseman & Tulving, 1975). In these experiments, learners studied a list of pairs of ,associatively related words. One word of each pair was designated as the to-be-remembered (TBR) or target word; the other word was",
+    "rq": "RQ3"
+  },
+  "thiede-anderson-2003-monitoring": {
+    "title": "Accuracy of metacognitive monitoring affects learning of texts.",
+    "authors": [
+      "Keith W. Thiede",
+      "Mary C. Anderson",
+      "David J. Therriault"
+    ],
+    "year": 2003,
+    "citations": 742,
+    "venue": "Journal of Educational Psychology",
+    "abstract": "Metacognitive monitoring affects regulation of study, and this affects overall learning. The authors created differences in monitoring accuracy by instructing participants to generate a list of 5 keywords that captured the essence of each text. Accuracy was greater for a group that wrote keywords after a delay (delayed-keyword group) than for a group that wrote keywords immediately after reading (immediatekeyword group) and a group that did not write keywords (no-keyword group). The superior monitoring accuracy produced more effective regulation of study. Differences in monitoring accuracy and regulation of study, in turn, produced greater overall test performance (reading comprehension) for the delayedkeyword group versus the other groups. The results are framed in the context of a discrepancy-reduction model of self-regulated study. Many models of self-regulated learning can be classified as",
+    "rq": "RQ4"
+  },
+  "rauchs-2005-sleep-memory": {
+    "title": "The relationships between memory systems and sleep stages",
+    "authors": [
+      "G\u00e9raldine Rauchs",
+      "B\u00e9atrice Desgranges",
+      "J. Foret",
+      "Francis Eustache"
+    ],
+    "year": 2005,
+    "citations": 267,
+    "venue": "Journal of Sleep Research",
+    "abstract": "Sleep function remains elusive despite our rapidly increasing comprehension of the processes generating and maintaining the different sleep stages. Several lines of evidence support the hypothesis that sleep is involved in the off-line reprocessing of recently-acquired memories. In this review, we summarize the main results obtained in the field of sleep and memory consolidation in both animals and humans, and try to connect sleep stages with the different memory systems. To this end, we have collated data obtained using several methodological approaches, including electrophysiological recordings of neuronal ensembles, post-training modifications of sleep architecture, sleep deprivation and functional neuroimaging studies. Broadly speaking, all the various studies emphasize the fact that the four long-term memory systems (procedural memory, perceptual representation system, semantic and episodic memory, according to Tulving's SPI model; Tulving, 1995) benefit either from non-rapid eye movement (NREM) (not just SWS) or rapid eye movement (REM) sleep, or from both sleep stages. Tulving's classification of memory systems appears more pertinent than the declarative/non-declarative dichotomy when it comes to understanding the role of sleep in memory. Indeed, this model allows us to resolve several contradictions, notably the fact that episodic and semantic memory (the two memory systems encompassed in declarative memory) appear to rely on different sleep stages. Likewise, this model provides an explanation for why the acquisition of various types of skills (perceptual-motor, sensory-perceptual and cognitive skills) and priming effects, subserved by different brain structures but all designated by the generic term of implicit or non-declarative memory, may not benefit from the same sleep stages.",
+    "rq": "RQ0"
+  },
+  "cabeza-nyberg-2000-imaging": {
+    "title": "Imaging Cognition II: An Empirical Review of 275 PET and fMRI Studies",
+    "authors": [
+      "Roberto Cabeza",
+      "Lars Nyberg"
+    ],
+    "year": 2000,
+    "citations": 3639,
+    "venue": "Journal of Cognitive Neuroscience",
+    "abstract": "Positron emission tomography (PET) and functional magnetic resonance imaging (fMRI) have been extensively used to explore the functional neuroanatomy of cognitive functions. Here we review 275 PET and fMRI studies of attention (sustained, selective, Stroop, orientation, divided), perception (object, face, space/motion, smell), imagery (object, space/motion), language (written/spoken word recognition, spoken/no spoken response), working memory (verbal/numeric, object, spatial, problem solving), semantic memory retrieval (categorization, generation), episodic memory encoding (verbal, object, spatial), episodic memory retrieval (verbal, nonverbal, success, effort, mode, context), priming (perceptual, conceptual), and procedural memory (conditioning, motor, and nonmotor skill learning). To identify consistent activation patterns associated with these cognitive operations, data from 412 contrasts were summarized at the level of cortical Brodmann's areas, insula, thalamus, medial-temporal lobe (including hippocampus), basal ganglia, and cerebellum. For perception and imagery, activation patterns included primary and secondary regions in the dorsal and ventral pathways. For attention and working memory, activations were usually found in prefrontal and parietal regions. For language and semantic memory retrieval, typical regions included left prefrontal and temporal regions. For episodic memory encoding, consistently activated regions included left prefrontal and medial temporal regions. For episodic memory retrieval, activation patterns included prefrontal, medial temporal, and posterior midline regions. For priming, deactivations in prefrontal (conceptual) or extrastriate (perceptual) regions were consistently seen. For procedural memory, activations were found in motor as well as in non-motor brain areas. Analysis of regional activations across cognitive domains suggested that several brain regions, including the cerebellum, are engaged by a variety of cognitive challenges. These observations are discussed in relation to functional specialization as well as functional integration.",
+    "rq": "RQ0"
+  }
+}
