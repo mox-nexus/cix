@@ -1,0 +1,116 @@
+{
+  "Beeman - Neural Activity": {
+    "title": "Neural Activity When People Solve Verbal Problems with Insight",
+    "abstract": "People sometimes solve problems with a unique process called insight, accompanied by an \"Aha!\" experience. It has long been unclear whether different cognitive and neural processes lead to insight versus noninsight solutions, or if solutions differ only in subsequent subjective feeling. Recent behavioral studies indicate distinct patterns of performance and suggest differential hemispheric involvement for insight and noninsight solutions. Subjects solved verbal problems, and after each correct solution indicated whether they solved with or without insight. We observed two objective neural correlates of insight. Functional magnetic resonance imaging (Experiment 1) revealed increased activity in the right hemisphere anterior superior temporal gyrus for insight relative to noninsight solutions. The same region was active during initial solving efforts. Scalp electroencephalogram recordings (Experiment 2) revealed a sudden burst of high-frequency (gamma-band) neural activity in the same area beginning 0.3 s prior to insight solutions. This right anterior temporal area is associated with making connections across distantly related information during comprehension. Although all problem solving relies on a largely shared cortical network, the sudden flash of insight occurs when solvers engage distinct neural and cognitive processes that allow them to see connections that previously eluded them.",
+    "authors": [
+      "Mark Beeman",
+      "Edward M. Bowden",
+      "Jason Haberman",
+      "Jennifer L. Frymiare",
+      "Stella Arambel-Liu",
+      "R.E. Greenblatt",
+      "Paul J. Reber",
+      "John Kounios"
+    ],
+    "year": 2004,
+    "citations": 1029,
+    "pdf_url": "https://journals.plos.org/plosbiology/article/file?id=10.1371/journal.pbio.0020097&type=printable",
+    "venue": "PLoS Biology",
+    "source_id": "https://openalex.org/W2087038843"
+  },
+  "Friston - Active Inference": {
+    "title": "Active Inference, Curiosity and Insight",
+    "abstract": "This article offers a formal account of curiosity and insight in terms of active (Bayesian) inference. It deals with the dual problem of inferring states of the world and learning its statistical structure. In contrast to current trends in machine learning (e.g., deep learning), we focus on how people attain insight and understanding using just a handful of observations, which are solicited through curious behavior. We use simulations of abstract rule learning and approximate Bayesian inference to show that minimizing (expected) variational free energy leads to active sampling of novel contingencies. This epistemic behavior closes explanatory gaps in generative models of the world, thereby reducing uncertainty and satisfying curiosity. We then move from epistemic learning to model selection or structure learning to show how abductive processes emerge when agents test plausible hypotheses about symmetries (i.e., invariances or rules) in their generative models. The ensuing Bayesian model reduction evinces mechanisms associated with sleep and has all the hallmarks of \"aha\" moments. This formulation moves toward a computational account of consciousness in the pre-Cartesian sense of sharable knowledge (i.e., con: \"together\"; scire: \"to know\").",
+    "authors": [
+      "Karl Friston",
+      "Meiyu Lin",
+      "Chris Frith",
+      "Giovanni Pezzulo",
+      "J. Allan Hobson",
+      "Sasha Ondobaka"
+    ],
+    "year": 2017,
+    "citations": 376,
+    "pdf_url": "https://discovery.ucl.ac.uk/1570070/1/Friston_Active%20Inference%20Curiosity%20and%20Insight.pdf",
+    "venue": "Neural Computation",
+    "source_id": "https://openalex.org/W2743911451"
+  },
+  "Pickering - dialogue": {
+    "title": "Toward a mechanistic psychology of dialogue",
+    "abstract": "Traditional mechanistic accounts of language processing derive almost entirely from the study of monologue. Yet, the most natural and basic form of language use is dialogue. As a result, these accounts may only offer limited theories of the mechanisms that underlie language processing in general. We propose a mechanistic account of dialogue, the interactive alignment account, and use it to derive a number of predictions about basic language processes. The account assumes that, in dialogue, the linguistic representations employed by the interlocutors become aligned at many levels, as a result of a largely automatic process. This process greatly simplifies production and comprehension in dialogue. After considering the evidence for the interactive alignment model, we concentrate on three aspects of processing that follow from it. It makes use of a simple interactive inference mechanism, enables the development of local dialogue routines that greatly simplify language processing, and explains the origins of self-monitoring in production. We consider the need for a grammatical framework that is designed to deal with language in dialogue rather than monologue, and discuss a range of implications of the account.",
+    "authors": [
+      "Martin J. Pickering",
+      "Simon Garrod"
+    ],
+    "year": 2004,
+    "citations": 2593,
+    "pdf_url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/83442BA495E0D5F81BDB615E4109DBD2/S0140525X04000056a.pdf/div-class-title-toward-a-mechanistic-psychology-of-dialogue-div.pdf",
+    "venue": "Behavioral and Brain Sciences",
+    "source_id": "https://openalex.org/W2159398820"
+  },
+  "Stafford - CONVERSATIONAL": {
+    "title": "CONVERSATIONAL MEMORY.",
+    "abstract": "While there has recently been a notable increase in attempts by memory researchers to focus on more naturalistic stimuli little attention has been paid to conversations. Conversations represent stimuli that are distinctly different in a number of ways from most other stimuli that people are required to remember. Conversations are jointly created, constantly updated, and necessarily are readily accessible by participants. The present study, exploring people's memory for natural conversations in which they participate, finds that even after only five minutes people are able to recollect only about 10% of what was said in a social exchange. Further, the mode of recall (written versus oral) and the presence and type of memory goals affected what and how much of the interaction was recalled. Subjects also remembered more of their partner's comments in the interaction than their own. Finally, oral communication anxiety affected both the production of discourse in the conversations and recall of the interactions, while writing apprehension impacted subjects' written recalls of their conversations.",
+    "authors": [
+      "Laura Stafford",
+      "John A. Daly"
+    ],
+    "year": 1984,
+    "citations": 108,
+    "pdf_url": null,
+    "venue": "Human Communication Research",
+    "source_id": "https://openalex.org/W4251883946"
+  },
+  "Roediger - Varieties": {
+    "title": "Varieties of Memory and Consciousness: Essays in Honour of Endel Tulving",
+    "abstract": "Contents: Part I:Encoding and Retrieval Processes. H.L. Roediger, III, M.S. Weldon, B.H. Challis, Explaining Dissociations Between Implicit and Explicit Measures of Retention: A Processing Account. F.I.M. Craik, On the Making of Episodes. M.J. Watkins, Willful and Nonwillful Determinants of Memory. R. Ratcliff, G. McKoon, Memory Models, Text Processing, and Cue-Dependent Retrieval. B.B. Murdock, Jr., The Past, the Present, and the Future: Comments on Section 1. Part II:Neuropsychology. L. Weiskrantz, Remembering Dissociations. L.S. Cermak, Synergistic Ecphory and the Amnesic Patient. M. Moscovitch, Confabulation and the Frontal Systems: Strategic Versus Associative Retrieval in Neuropsychological Theories of Memory. D.S. Olton, Inferring Psychological Dissociations from Experimental Dissociations: The Temporal Context of Episodic Memory. M. Kinsbourne, The Boundaries of Episodic Remembering: Comments on the Second Section. Part III:Classification Systems for Memory. J.R. Anderson, A Rational Analysis of Human Memory. D. Broadbent, Lasting Representations and Temporary Processes. J.H. Neely, Experimental Dissociations and the Episodic/Semantic Memory Distinction. R.G. Crowder, Modularity and Dissociations in Memory Systems. L-G. Nilsson, Classification of Human Memory: Comments on the Third Section. Part IV:Consciousness, Emotion, and Memory. R.A. Bjork, Retrieval Inhibition as an Adaptive Mechanism in Human Memory. E. Eich, Theoretical Issues in State Dependent Memory. D.L. Schacter, On the Relation Between Memory and Consciousness: Dissociable Interactions and Conscious Experience. L.L. Jacoby, C.M. Kelley, J. Dywan, Memory Attributions. R.S. Lockhart, Consciousness and the Function of Remembered Episodes: Comments on the Fourth Section.",
+    "authors": [
+      "Henry L. Roediger",
+      "Fergus I. M. Craik"
+    ],
+    "year": 2014,
+    "citations": 1654,
+    "pdf_url": "http://ci.nii.ac.jp/ncid/BA0752784X",
+    "venue": "Medical Entomology and Zoology",
+    "source_id": "https://openalex.org/W1586677966"
+  },
+  "Wiseman - Encoding specificity": {
+    "title": "Encoding specificity: Relation between recall superiority and recognition failure.",
+    "abstract": "The results of four experiments show that (a) recall superiority over recognition is reversed by the use of unrelated word pairs in the study list, and (b) the reversal of recall superiority leaves intact the phenomenon of recognition failure of recallable words. These results extend the generality of encoding specificity and suggest that although recall superiority is a sufficient condition for recognition failure of recallable words it is not a necessary condition. In memory experiments in which people are required to remember the items of a list, the most effective retrieval cues are almost always nominal copies of to-be-remembe red items. If such cues are ineffective, it is unlikely that any other cues will succeed. Under certain experimental conditions, however, copies of list items are not the most effective cues for retrieval\u2014in the presence of other cues, people do recall learned list words that they fail to recognize. This phenomenon of recognition failure of recallable words has been manifested in a number of experiments in which the same procedure, with only minor variations, has been used (e.g., Tulving, 1974; Tulving & Thomson, 1973; Watkins & Tulving, 1975; Wiseman & Tulving, 1975). In these experiments, learners studied a list of pairs of ,associatively related words. One word of each pair was designated as the to-be-remembered (TBR) or target word; the other word was",
+    "authors": [
+      "Sandor Wiseman",
+      "Endel Tulving"
+    ],
+    "year": 1976,
+    "citations": 107,
+    "pdf_url": null,
+    "venue": "Journal of Experimental Psychology Human Learning & Memory",
+    "source_id": "https://openalex.org/W2131343965"
+  },
+  "Thiede - metacognitive": {
+    "title": "Accuracy of metacognitive monitoring affects learning of texts.",
+    "abstract": "Metacognitive monitoring affects regulation of study, and this affects overall learning. The authors created differences in monitoring accuracy by instructing participants to generate a list of 5 keywords that captured the essence of each text. Accuracy was greater for a group that wrote keywords after a delay (delayed-keyword group) than for a group that wrote keywords immediately after reading (immediatekeyword group) and a group that did not write keywords (no-keyword group). The superior monitoring accuracy produced more effective regulation of study. Differences in monitoring accuracy and regulation of study, in turn, produced greater overall test performance (reading comprehension) for the delayedkeyword group versus the other groups. The results are framed in the context of a discrepancy-reduction model of self-regulated study. Many models of self-regulated learning can be classified as",
+    "authors": [
+      "Keith W. Thiede",
+      "Mary C. Anderson",
+      "David J. Therriault"
+    ],
+    "year": 2003,
+    "citations": 742,
+    "pdf_url": null,
+    "venue": "Journal of Educational Psychology",
+    "source_id": "https://openalex.org/W2099893266"
+  },
+  "Clark - Whatever next": {
+    "title": "Whatever next? Predictive brains, situated agents, and the future of cognitive science",
+    "abstract": "Brains, it has recently been argued, are essentially prediction machines. They are bundles of cells that support perception and action by constantly attempting to match incoming sensory inputs with top-down expectations or predictions. This is achieved using a hierarchical generative model that aims to minimize prediction error within a bidirectional cascade of cortical processing. Such accounts offer a unifying model of perception and action, illuminate the functional role of attention, and may neatly capture the special contribution of cortical processing to adaptive success. This target article critically examines this \"hierarchical prediction machine\" approach, concluding that it offers the best clue yet to the shape of a unified science of mind and action. Sections 1 and 2 lay out the key elements and implications of the approach. Section 3 explores a variety of pitfalls and challenges, spanning the evidential, the methodological, and the more properly conceptual. The paper ends (sections 4 and 5) by asking how such approaches might impact our more general vision of mind, experience, and agency.",
+    "authors": [
+      "Andy Clark"
+    ],
+    "year": 2013,
+    "citations": 5703,
+    "pdf_url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/33542C736E17E3D1D44E8D03BE5F4CD9/S0140525X12000477a.pdf/div-class-title-whatever-next-predictive-brains-situated-agents-and-the-future-of-cognitive-science-div.pdf",
+    "venue": "Behavioral and Brain Sciences",
+    "source_id": "https://openalex.org/W2153791616"
+  }
+}
