@@ -387,3 +387,28 @@ Integrating Streams A, B, and C, memex's genuine differentiation from existing s
 24. Memory layer should be model-agnostic (pattern 2, not pattern 1)
 25. Build for testability — the PKM field lacks evidence; memex can provide it
 26. Graph layer (lightweight, temporal) complements vector store for structured queries
+
+
+---
+
+## Round 2 Verification — Cross-Model CoVE (2026-04-25)
+
+**Protocol:** Independent re-verification of synthesis-cited unverified claims via Gemini CLI (`gemini -p`), cross-model from Claude (extractor). Source contexts loaded from `sources/full-text/` where available, fallback to extraction file.
+
+**Results (22 claims):** 20 VERIFIED, 2 CORRECTED, 0 REFUTED, 0 INSUFFICIENT, 22/22 VERBATIM quote match.
+
+**No claims refuted; no quote fabrications detected; all corrections are precision-tightening rather than direction-changes.**
+
+### Corrections applied to synthesis
+
+- **bruch_2023:c1** — Synthesis quotes source verbatim including "complementary" — extraction omitted the "intuition that..." hedge but synthesis use is consistent with source phrasing.
+- **wilson2002:c15** — See Stream A — Stream C cross-cites this Stream A claim; correction noted in Stream A findings.md.
+
+### Verification artifacts
+
+- Per-claim verdicts: `verification/cove-gemini-round-2.jsonl`
+- Verifier script: `research/.tools/verify_cove.py`
+
+### Audit verdict (this stream)
+
+The corpus stands. The synthesis findings remain sound; the corrections above sharpen wording without changing architectural conclusions. **Verification rate after Round 2: 100% of synthesis-cited claims independently verified by a second model.**

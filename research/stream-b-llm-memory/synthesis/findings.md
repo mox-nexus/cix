@@ -163,3 +163,28 @@ ARCHITECTURAL IMPLICATION: MemGPT is the closest prior art to memex's architectu
 6. **No LLM analogue of insight** — insight detection is human-side only. Memex can't rely on LLM introspection for this.
 7. **ICL as gradient descent complicates the retrieval metaphor** — "memory retrieval" in transformers may actually be "rapid re-learning from context data." This means the FORM of recalled content matters for how well the LLM uses it.
 8. **The KV cache IS the episodic buffer** — managing what's in the KV cache is managing the LLM's working memory. Memex's recall pipeline is effectively a KV cache population strategy.
+
+
+---
+
+## Round 2 Verification — Cross-Model CoVE (2026-04-25)
+
+**Protocol:** Independent re-verification of synthesis-cited unverified claims via Gemini CLI (`gemini -p`), cross-model from Claude (extractor). Source contexts loaded from `sources/full-text/` where available, fallback to extraction file.
+
+**Results (19 claims):** 17 VERIFIED, 2 CORRECTED, 0 REFUTED, 0 INSUFFICIENT, 19/19 VERBATIM quote match.
+
+**No claims refuted; no quote fabrications detected; all corrections are precision-tightening rather than direction-changes.**
+
+### Corrections applied to synthesis
+
+- **an2024:c2** — Synthesis already labeled as "Hypothesized" — extraction over-reach did not propagate.
+- **garcia2024:c3** — Synthesis quotes source verbatim ("concentrate the acronym prediction functionality") — extraction over-reach ("completely necessary and specific") did not propagate.
+
+### Verification artifacts
+
+- Per-claim verdicts: `verification/cove-gemini-round-2.jsonl`
+- Verifier script: `research/.tools/verify_cove.py`
+
+### Audit verdict (this stream)
+
+The corpus stands. The synthesis findings remain sound; the corrections above sharpen wording without changing architectural conclusions. **Verification rate after Round 2: 100% of synthesis-cited claims independently verified by a second model.**

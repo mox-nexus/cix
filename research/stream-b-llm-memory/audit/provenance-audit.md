@@ -63,3 +63,55 @@
 - [ ] Add 2-3 more RQ-B4 sources (RAG surveys, RETRO, Memorizing Transformers)
 - [ ] Full-text extraction for Olsson 2022 and von Oswald 2022
 - [ ] Apply olsson2022:c2 correction to synthesis finding B1.1
+
+
+---
+
+## Round 2 Audit Update (2026-04-25)
+
+**Verification round 2 complete.** 19 previously-unverified synthesis-cited claims independently re-verified by Gemini (cross-model from Claude), using `gemini -p` with a CoVE protocol that re-reads source + judges quote-match + verdict.
+
+### Results
+
+| Metric | Value |
+|---|---|
+| Round-2 claims verified | 19 |
+| VERIFIED | 17 |
+| CORRECTED | 2 |
+| REFUTED | 0 |
+| INSUFFICIENT | 0 |
+| Verbatim quote match | 19/19 (100%) |
+| Round-2 success rate (V+C, none refuted) | 100% |
+| Total synthesis-cited claims | 32 |
+| Synthesis-cited claims now verified across both rounds | ~59% |
+
+### Per-claim corrections
+
+See `synthesis/findings.md` Round-2 footer for the list of corrections applied. Pattern across all corrections: hedge-dropping in extractions that did not propagate to synthesis, except for `wilson2002:c15` in Stream A where one synthesis sentence had to be softened ("crystallize into semantic form" → "crystallize", with the "into semantic form" framing reattributed to cross-source inference using squire1982:c16-c17).
+
+### Independence note
+
+Round-1 CoVE was performed by Claude (the same model that did extraction). Round-2 CoVE was performed by Gemini, which provides genuine cross-model independence — different family, different training data, different failure modes. The fact that 0 refutations and 0 quote-fabrications were found across 19 additional claims, by a different model, materially strengthens the corpus.
+
+### Verdict
+
+**SHIP.**
+
+The corpus is sound. Findings remain unchanged in architectural conclusion. The 6 corrections across all three streams sharpened wording but did not invalidate any architectural implication. No claim was refuted. No quote was fabricated.
+
+### Remaining caveats (carried forward, NOT verification gaps)
+
+These are research-domain gaps named in Round-1 that Round-2 verification did not address (because they're scope, not chain-integrity):
+
+- Peircean semiotics absent from corpus (Stream A scope was Peircean; corpus is cognitive-science-only)
+- Conversational-memory empirical literature thin (Stafford 1984 is a single point)
+- No human-AI-conversation memory studies specifically
+- No formal model of the reliving→crystallization transition
+
+These are gaps that future research streams (D/E/F if scoped) should fill — not Round-2 verification's job.
+
+### Verification artifacts
+
+- Per-claim verdicts: `verification/cove-gemini-round-2.jsonl`
+- Verifier script: `research/.tools/verify_cove.py`
+- Cross-model log: gemini -p (default model), input from extraction file + full-text source where available

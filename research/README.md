@@ -34,3 +34,36 @@ The intent is that if any architectural choice is later questioned ("why append-
 ## Durability
 
 Research artifacts are tracked in git on the `lance` branch. The branch should be pushed to `origin` as a backup as soon as elicit phase produces meaningful content, so a second disk wipe cannot destroy the research investment.
+
+
+---
+
+## Update — Round 2 verification (2026-04-25)
+
+All three streams have completed Round 2 cross-model verification. **Final verdict: SHIP across all streams.**
+
+| Stream | Round 1 | Round 2 | Final verdict |
+|---|---|---|---|
+| A — Human memory | 15/50 verified (Claude) | +47 verified (Gemini) | SHIP |
+| B — LLM memory | 15/44 verified (Claude) | +19 verified (Gemini) | SHIP |
+| C — Landscape | 10/85 verified (Claude) | +22 verified (Gemini) | SHIP |
+| **Total** | **40 (Claude)** | **+88 (Gemini)** | — |
+
+Across Round 2: **88 claims, 82 VERIFIED, 6 CORRECTED, 0 REFUTED, 0 INSUFFICIENT, 88/88 verbatim quote-match.**
+
+The 6 corrections are precision-tightening (hedge-dropping, scope over-reach in extractions). Only one synthesis sentence required editing (`wilson2002:c15` in Stream A). The architectural implications stand as written.
+
+**The corpus is now ready to inform memex-next design.** Outputs flowing forward:
+
+1. `concepts.md` — distillation, the ideas memex-next designs from
+2. `stream-c-landscape/references/` — architecture comparisons (Mem0/Letta/Zep/Cognee), DB-options synthesis (Lance + DuckDB chosen), LanceDB deep dive
+3. `stream-{a,b,c}-*/synthesis/findings.md` — verified findings with research-grounded architectural implications
+
+Verifier script: `research/.tools/verify_cove.py`. Reusable for future research streams.
+
+### Open research gaps (not verification gaps — scope gaps for future rounds)
+
+- Peircean semiotics (absent from corpus; load-bearing for scope.md framing)
+- Conversational memory empirical literature (only Stafford 1984)
+- Human-AI conversation insight studies (no direct studies)
+- Formal model of the reliving→crystallization transition

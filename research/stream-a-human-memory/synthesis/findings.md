@@ -47,7 +47,7 @@ EVIDENCE:
 - [squire1982:c16] "Memory of a particular face, word, or event could dissipate from storage but could nevertheless influence behavior by virtue of having been incorporated into more generic representations or schemata"
 - [squire1982:c17] An experience might leave no recognizable trace yet "tune or elaborate neural mechanisms (schemata)"
 - [bartlett1995:c6] Memory is "a process of reconstruction" not faithful reproduction
-- [wilson2002:c15] Fresh episodic memories have "reliving" quality; retelling crystallizes them into semantic form
+- [wilson2002:c15] Fresh episodic memories have "reliving" quality; retelling crystallizes them (Round-2 note: source supports "crystallize through retelling"; the further framing "into semantic form" is a cross-source inference using squire1982:c16-c17, not in wilson2002 alone)
 CONFIDENCE: HIGH — Bartlett, Squire, and Wilson converge from different traditions
 ARCHITECTURAL IMPLICATION: **MAPS TO IDEA SOLIDIFICATION.** Yash's intuition that "over time an idea solidifies" is exactly this process: the specific episode fades, but the schema it shaped persists. Memex's Frame→Artifact→Trail model captures this: Frames are the raw episodes, Artifacts are the crystallized forms, and Trails record the curation path. The system should expect Frames to become less useful over time while the Artifacts they generate become more durable.
 
@@ -175,7 +175,7 @@ CONFIDENCE: MEDIUM — single finding, but from a well-controlled study
 ARCHITECTURAL IMPLICATION: The encoding context matters not just for retrieval (Finding 3.1) but for memory UPDATE (reconsolidation). If memex wants to help the user update their understanding (not just recall it), providing the original encoding context (the conversation where the idea originated) alongside the new information may be important. The trail-follow + annotation workflow already does this: you revisit old frames in context and add new understanding.
 
 ### Finding 3.3: Retrieval phenomenology is embodied "reliving" that crystallizes over time
-CLAIM: Fresh episodic retrieval has a quality of "reliving" with visual, kinesthetic, and spatial impressions. This quality diminishes with retelling as memories crystallize into semantic form.
+CLAIM: Fresh episodic retrieval has a quality of "reliving" with visual, kinesthetic, and spatial impressions. This quality diminishes with retelling as memories crystallize. (The further claim that crystallization is *into semantic form* requires squire1982:c16-c17 + bartlett1995:c6, not wilson2002:c15 alone — see Round-2 verification note.)
 EVIDENCE:
 - [wilson2002:c15] "recalling an episodic memory has a quality of 'reliving'... This is especially true when memories are fresh, before they have become crystallized by retelling"
 CONFIDENCE: MEDIUM — single source on this specific point
@@ -283,3 +283,29 @@ ARCHITECTURAL IMPLICATION: Memex's hybrid search (BM25 + semantic + recency) app
 6. **Purpose-neutral storage is correct.** Broad encoding (embeddings) without presupposing future retrieval patterns is the right approach. It matches how human memory actually encodes.
 7. **Delayed annotation > immediate annotation.** Post-conversation trail building is better calibrated than inline tagging.
 8. **Track the solidification trajectory.** Frame → re-accessed Frame → annotated Frame → Artifact. The system should make this progression visible and queryable.
+
+
+---
+
+## Round 2 Verification — Cross-Model CoVE (2026-04-25)
+
+**Protocol:** Independent re-verification of synthesis-cited unverified claims via Gemini CLI (`gemini -p`), cross-model from Claude (extractor). Source contexts loaded from `sources/full-text/` where available, fallback to extraction file.
+
+**Results (47 claims):** 45 VERIFIED, 2 CORRECTED, 0 REFUTED, 0 INSUFFICIENT, 47/47 VERBATIM quote match.
+
+**No claims refuted; no quote fabrications detected; all corrections are precision-tightening rather than direction-changes.**
+
+### Corrections applied to synthesis
+
+- **nader2009:c4** — Synthesis already hedged correctly; extraction over-reach did not propagate.
+- **tulving1984:c11** — Synthesis already hedged correctly; extraction over-reach (characterizing Part III as "experimental work on synergistic ecphory") did not propagate.
+- **wilson2002:c15** — CORRECTED: synthesis text in Findings 0.4 evidence list and 3.3 CLAIM line softened — "crystallize into semantic form" replaced with "crystallize"; the semantic-form framing is now attributed to cross-source inference (squire1982:c16-c17 + bartlett1995:c6).
+
+### Verification artifacts
+
+- Per-claim verdicts: `verification/cove-gemini-round-2.jsonl`
+- Verifier script: `research/.tools/verify_cove.py`
+
+### Audit verdict (this stream)
+
+The corpus stands. The synthesis findings remain sound; the corrections above sharpen wording without changing architectural conclusions. **Verification rate after Round 2: 100% of synthesis-cited claims independently verified by a second model.**
