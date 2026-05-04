@@ -1,6 +1,6 @@
 [project]
 name = "recon"
-version = "0.7.0"
+version = "0.8.0"
 description = "Mechanical collection system — collect, normalize, query via parquet + DuckDB"
 requires-python = ">=3.12"
 license = "MIT"
@@ -17,9 +17,8 @@ dependencies = [
     "xmltodict>=0.13",
     "duckdb>=1.0",
     "glom>=23.0",
-    "pymupdf>=1.24",
-    "markdownify>=0.14",
     "tenacity>=9.0",
+    "markitdown[all]>=0.1.0",
 ]
 
 [project.optional-dependencies]

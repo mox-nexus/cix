@@ -35,7 +35,11 @@ from recon import __version__
 from recon import skill as skill_module
 from recon.adapters._out.api_collector import ApiCollector
 from recon.adapters._out.cli_collector import CliCollector
+from recon.adapters._out.http_requester import HttpxRequester
+from recon.adapters._out.markitdown_converter import MarkitdownConverter
 from recon.adapters._out.web_collector import WebCollector
+from recon.application import query as query_module
+from recon.application.query import available_tables
 from recon.application.recon import run as recon_run
 from recon.application.transforms import register_transform
 from recon.application.utilization import RateLimiter
@@ -48,40 +52,61 @@ from recon.domain.models import ReconConfig
 def _build_collectors() -> dict:
     """Wire adapter implementations to type names.
 
-    API and Web collectors share a single RateLimiter so hitting the same
-    source from both respects a single rate limit.
+    One Requester (httpx + rate limiter) is shared by api and web collectors
+    so hitting the same source from both respects a single rate limit. Rate
+    limiting lives inside the Requester — paginated collectors can't forget
+    to acquire per-page. The DocumentConverter (markitdown) handles HTML,
+    PDF, DOCX, PPTX, XLSX, EPub, images, audio, etc. uniformly.
     """
-    rate_limiter = RateLimiter()
+    requester = HttpxRequester(RateLimiter())
+    converter = MarkitdownConverter()
     return {
         "cli": CliCollector(),
-        "api": ApiCollector(rate_limiter),
-        "web": WebCollector(rate_limiter),
+        "api": ApiCollector(requester),
+        "web": WebCollector(requester, converter),
     }
 
 
 # --- Composition: register infrastructure transforms ---
 
 
-def _pdf2text(path: str) -> str:
-    """Extract text from PDF via pymupdf."""
-    try:
-        import pymupdf
+def _markitdown_path(path: str) -> str:
+    """Convert any markitdown-supported local file to markdown.
 
-        doc = pymupdf.open(path)
-        pages = [page.get_text() for page in doc]
-        doc.close()
-        return "\n".join(pages)
+    Handles PDF, DOCX, PPTX, XLSX, EPub, images (OCR), audio (transcription),
+    CSV, JSON, XML, ZIP, HTML. Returns empty string on any failure —
+    transforms are best-effort leaves of the pipeline.
+    """
+    try:
+        from markitdown import MarkItDown
+
+        result = MarkItDown().convert(path)
+        return getattr(result, "text_content", "") or ""
     except Exception:
         return ""
 
 
-register_transform("$pdf2text", _pdf2text)
+register_transform("$markitdown", _markitdown_path)
 
 
 # --- Project root + mission directory ---
 
 
 console = Console(stderr=True)
+
+
+def _cli_event(event: dict) -> None:
+    """Render a dispatch-loop outcome event to stderr."""
+    kind = event.get("kind")
+    name = event.get("name", "?")
+    if kind == "ok":
+        console.print(f"[dim]  {name}: {event.get('records', 0)} records[/]")
+    elif kind == "error":
+        console.print(f"[red]  {name}: ERROR — {event.get('reason', '')}[/]")
+    elif kind == "archive_warning":
+        console.print(
+            f"[yellow]  WARNING: archive finalization issue — {event.get('reason', '')}[/]"
+        )
 
 
 def _find_project_root() -> Path:
@@ -145,10 +170,10 @@ def main(ctx: click.Context, skill: bool, reference: str | None) -> None:
 
     \b
     Quick start:
-      recon init my-research --template research
-      # edit .cix/recon/my-research/config.yaml
-      recon survey my-research
-      recon query my-research "SELECT title, year FROM s2_search"
+      recon init my-scan --template code-forensics
+      # edit .cix/recon/my-scan/config.yaml
+      recon survey my-scan
+      recon query my-scan "SELECT line FROM todo_files LIMIT 20"
     """
     if skill:
         click.echo(skill_module.get_skill(reference))
@@ -160,16 +185,30 @@ def main(ctx: click.Context, skill: bool, reference: str | None) -> None:
 @click.option(
     "-t",
     "--template",
-    default="research",
-    help="Built-in template to use (default: research). See `recon templates`.",
+    default="code-forensics",
+    help="Built-in template to use (default: code-forensics). See `recon templates`.",
 )
-def init(name: str, template: str) -> None:
-    """Scaffold a new mission from a built-in template.
+@click.option(
+    "--from",
+    "from_file",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    default=None,
+    help="Scaffold from a config file (overrides --template).",
+)
+@click.pass_context
+def init(
+    ctx: click.Context,
+    name: str,
+    template: str,
+    from_file: Path | None,
+) -> None:
+    """Scaffold a new mission from a built-in template or an external config.
 
     \b
     Examples:
-      recon init attention-papers
-      recon init my-scan --template research
+      recon init my-scan
+      recon init gh-audit --template github-audit
+      recon init review --from path/to/literature-catalog.yaml
     """
     mission = _mission_dir(name)
     config_path = mission / "config.yaml"
@@ -178,17 +217,42 @@ def init(name: str, template: str) -> None:
         console.print(f"[yellow]Mission '{name}' already exists:[/] {config_path}")
         raise SystemExit(1)
 
-    content = _load_template(template)
-    if content is None:
-        available = ", ".join(_list_templates()) or "(none)"
-        console.print(f"[red]Template not found:[/] {template}")
-        console.print(f"[dim]Available: {available}[/]")
-        raise SystemExit(1)
+    if from_file is not None:
+        content = from_file.read_text()
+    else:
+        # Deprecation alias: the `research` template moved to craft-research
+        # in recon 0.8.0. Point users at the new location instead of silently
+        # failing with "template not found".
+        if template == "research":
+            console.print(
+                "[yellow]The 'research' template moved to craft-research in recon 0.8.0.[/]"
+            )
+            console.print(
+                f"[dim]Use: recon init {name} --from "
+                "plugins/craft-research/skills/collecting/references/"
+                "literature-catalog.yaml[/]"
+            )
+            raise SystemExit(1)
+
+        # Announce when the default is being used — prevents silent surprises
+        # (recon 0.7.x defaulted to `research`; 0.8.x defaults to
+        # `code-forensics`, a different capability entirely).
+        source = ctx.get_parameter_source("template")
+        if source == click.core.ParameterSource.DEFAULT:
+            console.print(f"[dim]No --template specified, using default: {template}[/]")
+
+        content = _load_template(template)
+        if content is None:
+            available = ", ".join(_list_templates()) or "(none)"
+            console.print(f"[red]Template not found:[/] {template}")
+            console.print(f"[dim]Available: {available}[/]")
+            raise SystemExit(1)
 
     mission.mkdir(parents=True, exist_ok=True)
     config_path.write_text(content)
     console.print(f"[green]Created:[/] {config_path}")
-    console.print(f"[dim]Edit the config to set your query, then run: recon survey {name}[/]")
+    console.print(f"[dim]Edit the config to set placeholders, then run: recon survey {name}[/]")
+    console.print("[dim]For config syntax help: recon --skill[/]")
 
 
 @main.command()
@@ -242,7 +306,7 @@ def survey(name: str, config: Path | None) -> None:
     )
 
     try:
-        archive_dir = recon_run(parsed, collectors, mission)
+        archive_dir, _results = recon_run(parsed, collectors, mission, on_event=_cli_event)
     except ReconError as exc:
         console.print(f"[red]Error:[/] {exc}")
         raise SystemExit(1) from exc
@@ -275,17 +339,25 @@ def status() -> None:
     table.add_column("Mission")
     table.add_column("Archives", justify="right")
     table.add_column("Latest")
+    table.add_column("State")
 
     for m in missions:
         archive_dir = m / "archive"
         if archive_dir.exists():
             runs = sorted(d for d in archive_dir.iterdir() if d.is_dir())
             count = str(len(runs))
-            latest = runs[-1].name if runs else "—"
+            if runs:
+                latest_dir = runs[-1]
+                latest = latest_dir.name
+                state = "[yellow]incomplete[/]" if (latest_dir / ".incomplete").exists() else "ok"
+            else:
+                latest = "—"
+                state = "—"
         else:
             count = "0"
             latest = "—"
-        table.add_row(m.name, count, latest)
+            state = "—"
+        table.add_row(m.name, count, latest, state)
 
     console.print(table)
 
@@ -304,8 +376,6 @@ def query(name: str, sql: str, run_id: str | None, as_json: bool) -> None:
       recon query my-research "SELECT * FROM arxiv_search" --json
       recon query my-research "SELECT count(*) FROM s2_search" --run 2026-04-01-143022
     """
-    import duckdb
-
     mission = _mission_dir(name)
     archive = mission / "archive"
 
@@ -328,30 +398,24 @@ def query(name: str, sql: str, run_id: str | None, as_json: bool) -> None:
             raise SystemExit(1)
         run_dir = runs[-1]
 
-    conn = duckdb.connect()
-
-    jsonl_files = sorted(run_dir.glob("*.jsonl"))
-    if not jsonl_files:
-        console.print("[yellow]No JSONL files in archive[/]")
-        raise SystemExit(1)
-
-    import re as _re
-
-    for jf in jsonl_files:
-        table_name = _re.sub(r"[^a-zA-Z0-9_]", "_", jf.stem)
-        jf_str = str(jf).replace("'", "''")
-        conn.execute(f"CREATE VIEW \"{table_name}\" AS SELECT * FROM read_json_auto('{jf_str}')")
+    if (run_dir / ".incomplete").exists():
+        console.print(
+            f"[yellow]Archive '{run_dir.name}' is marked incomplete — "
+            "one or more collectors failed. Query proceeds, but results may be partial. "
+            "See meta.yaml for per-collector status.[/]"
+        )
 
     try:
-        result = conn.execute(sql)
-    except duckdb.Error as exc:
-        console.print(f"[red]SQL error:[/] {exc}")
-        tables = [jf.stem.replace("-", "_") for jf in jsonl_files]
-        console.print(f"[dim]Available tables: {', '.join(tables)}[/]")
+        columns, rows = query_module.execute(run_dir, sql)
+    except ReconError as exc:
+        # SQL error already includes "Available tables: ..." from the application layer.
+        console.print(f"[red]{exc}[/]")
         raise SystemExit(1) from exc
 
-    columns = [desc[0] for desc in result.description]
-    rows = result.fetchall()
+    if not columns and not rows:
+        tables = ", ".join(available_tables(run_dir))
+        console.print(f"[yellow]No results. Available tables: {tables}[/]")
+        return
 
     if as_json:
         import json
@@ -366,8 +430,6 @@ def query(name: str, sql: str, run_id: str | None, as_json: bool) -> None:
             out_table.add_row(*(str(v) for v in row))
         Console().print(out_table)
 
-    conn.close()
-
 
 @main.command()
 def templates() -> None:
@@ -376,7 +438,7 @@ def templates() -> None:
     \b
     Example:
       recon templates
-      recon init my-mission --template research
+      recon init my-mission --template code-forensics
     """
     names = _list_templates()
     if not names:

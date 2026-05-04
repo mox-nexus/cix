@@ -1,0 +1,64 @@
+# Code forensics — mine a local git repository via CLI tools.
+#
+# Demonstrates:
+#   • local sources (cwd handling)
+#   • cli collectors (shell commands with parsed stdout)
+#   • patterns fan-out (run one collector N times with different {pattern})
+#   • no HTTP, no auth, fully offline
+#
+# Works on any git repo. Default target is the current working directory
+# at survey time — edit `url:` below to point at a different path.
+#
+# Usage:
+#   recon init my-scan --template code-forensics
+#   # (optional) edit url and patterns
+#   recon survey my-scan
+#   recon query my-scan "SELECT line FROM todo_files LIMIT 20"
+#
+# All collectors produce {line_number, line} records by default.
+# Parse structured fields in DuckDB via split_part / regexp_extract.
+
+catalog:
+  - name: repo
+    type: local
+    url: .
+    timeout: 60
+
+collectors:
+  # Recent commit log — pipe-delimited for DuckDB split_part.
+  #
+  # DuckDB example:
+  #   SELECT
+  #     split_part(line, '|', 1) AS hash,
+  #     split_part(line, '|', 2) AS author,
+  #     to_timestamp(split_part(line, '|', 3)::BIGINT) AS committed_at,
+  #     split_part(line, '|', 4) AS subject
+  #   FROM git_log;
+  - name: git-log
+    type: cli
+    source: repo
+    run: "git log --no-merges -n 200 --pretty=format:'%H|%an|%at|%s'"
+
+  # Files containing TODO-style markers — one path per record.
+  # Explicit `.` path avoids rg's stdin-reading behavior under subprocess.
+  - name: todo-files
+    type: cli
+    source: repo
+    run: "rg -l -e 'TODO|FIXME|XXX|HACK' -g '!*.lock' -g '!.git' -g '!node_modules' -g '!dist' -g '!build' -g '!target' ."
+
+  # Fan-out example: per-directory Python file count.
+  # Each pattern runs the command once; results tagged with _pattern.
+  - name: py-file-counts
+    type: cli
+    source: repo
+    run: "find {pattern} -type f -name '*.py' 2>/dev/null | wc -l"
+    patterns:
+      - "src"
+      - "tests"
+      - "docs"
+
+  # Directories by line count — biggest subtrees first.
+  - name: dir-sizes
+    type: cli
+    source: repo
+    run: "du -sk */ 2>/dev/null | sort -rn | head -20"

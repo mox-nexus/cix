@@ -1,0 +1,76 @@
+# Factual grounding — Wikipedia (encyclopedic) + Wikidata (structured).
+#
+# Demonstrates:
+#   • two no-auth HTTP APIs with very different shapes
+#   • SPARQL query embedded in a YAML param block
+#   • deeply-nested JSON unpacking via glom-style paths
+#
+# Neither API requires authentication. Both ask for a descriptive
+# user-agent (already set at the source level).
+#
+# Usage:
+#   recon init facts --template factual-ground
+#   # edit the Wikipedia search term and/or the SPARQL query
+#   recon survey facts
+#   recon query facts \
+#     "SELECT title, word_count FROM wiki_search ORDER BY word_count DESC"
+
+catalog:
+  - name: wikipedia
+    type: api
+    url: https://en.wikipedia.org/w
+    rate_limit: { rps: 5, burst: 3 }
+    user_agent: "recon/0.8.0 (https://github.com/mox-labs/cix)"
+
+  - name: wikidata
+    type: api
+    url: https://query.wikidata.org
+    rate_limit: { rps: 1, burst: 1 }
+    user_agent: "recon/0.8.0 (https://github.com/mox-labs/cix)"
+    timeout: 90
+
+collectors:
+  # MediaWiki full-text search. Replace srsearch with your query.
+  - name: wiki-search
+    type: api
+    source: wikipedia
+    endpoint: /api.php
+    params:
+      action: query
+      list: search
+      srsearch: "Turing machine"   # <-- edit search term
+      srlimit: "10"
+      format: json
+    extract: "query.search"
+    normalize:
+      title: title
+      snippet: snippet
+      page_id: pageid
+      size: size
+      word_count: wordcount
+      timestamp: timestamp
+
+  # Wikidata SPARQL — structured facts. Bindings come back as
+  # {varname: {type: ..., value: ...}} — extract with .value.
+  #
+  # This query lists computer scientists (Q82594) with birth dates.
+  # Replace the WHERE clause with your own SPARQL.
+  - name: wikidata-scientists
+    type: api
+    source: wikidata
+    endpoint: /sparql
+    params:
+      format: json
+      query: |
+        SELECT ?person ?personLabel ?birth WHERE {
+          ?person wdt:P106 wd:Q82594 .
+          ?person wdt:P569 ?birth .
+          SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+        }
+        ORDER BY DESC(?birth)
+        LIMIT 10
+    extract: "results.bindings"
+    normalize:
+      person_uri: "person.value"
+      name: "personLabel.value"
+      birth_date: "birth.value"

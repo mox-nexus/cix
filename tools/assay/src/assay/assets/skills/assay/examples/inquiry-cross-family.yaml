@@ -1,0 +1,36 @@
+# Sample inquiry — cross-family verification with all three Phase 1 voice backends.
+#
+# Copy to .cix/assay/<your-inquiry>/inquiry.yaml, edit `claims_path`, then:
+#   assay validate <your-inquiry>
+#   assay verify <your-inquiry>
+
+name: cross-family-example
+description: Three-voice cross-family verification (Claude + Gemini + local MLX-Qwen)
+
+mechanisms:
+  - name: cross_family
+    config:
+      depth: reextract        # one of: anchored | reextract | blind
+      voices:
+        - name: claude
+          backend: anthropic
+          model: claude-opus-4-7
+          api_key_env: ANTHROPIC_API_KEY
+          timeout_seconds: 90.0
+          max_tokens: 800
+
+        - name: gemini
+          backend: gemini-cli
+          model: ""           # CLI default; or set explicitly e.g. "gemini-2.0-flash"
+          timeout_seconds: 90.0
+
+        - name: mlx
+          backend: mlx-server
+          model: unsloth/Qwen3.6-35B-A3B-UD-MLX-4bit
+          base_url: http://localhost:8080
+          timeout_seconds: 120.0
+          max_tokens: 800
+
+claims_path: ./claims.jsonl
+output_dir: .cix/assay
+sleep_seconds_between_calls: 0.5

@@ -6,12 +6,14 @@ You'll learn the **probe → normalize → survey** workflow by doing it. Total 
 
 ## Before you start
 
-Install recon as an editable tool:
+Install recon from the cix repo:
 
 ```bash
-uv tool install --editable tools/recon
+uv tool install "git+https://github.com/mox-labs/cix#subdirectory=tools/recon"
 recon --version
 ```
+
+(If you're developing inside the cix monorepo, `uv tool install --editable tools/recon` works too — points at your working copy.)
 
 Export a GitHub personal access token so the API gives you the real rate limit (5,000/hr instead of 60/hr):
 
@@ -46,8 +48,9 @@ catalog:
     auth:
       header: Authorization
       env: GITHUB_TOKEN
+      prefix: "Bearer "
     rate_limit: { rps: 1, burst: 2 }
-    user_agent: "recon/0.7.0 (first-survey walkthrough)"
+    user_agent: "recon/0.8.0 (first-survey walkthrough)"
 
 collectors:
   - name: probe
@@ -58,6 +61,8 @@ collectors:
       per_page: "1"
     # no normalize block — emit the raw record
 ```
+
+> **Auth note.** GitHub's API requires the `Bearer ` prefix on the token. `auth.prefix` prepends it to whatever `$GITHUB_TOKEN` holds. Without the prefix, GitHub returns 401. For legacy classic PATs you can also use `prefix: "token "`.
 
 Run it:
 
@@ -153,8 +158,9 @@ catalog:
     auth:
       header: Authorization
       env: GITHUB_TOKEN
+      prefix: "Bearer "
     rate_limit: { rps: 1, burst: 2 }
-    user_agent: "recon/0.7.0 (dep-releases monitor)"
+    user_agent: "recon/0.8.0 (dep-releases monitor)"
 
 collectors:
   - name: tokio
@@ -249,8 +255,9 @@ Every hour, a fresh timestamped archive lands under `.cix/recon/dep-releases/arc
 
 ## Where to go next
 
+- [search-api-post-body.md](./search-api-post-body.md) — walkthrough for POST-body search APIs (Exa, Firecrawl, Tavily, Serper, Perplexity)
 - `recon --skill` — the full skill Claude loads to author configs
-- `recon --skill -r config-patterns` — nine domain patterns (code mining, RSS, dependency audits, issue triage, doc surveys, and more) as complete copy-and-adapt configs
+- `recon --skill -r config-patterns` — domain patterns (code mining, RSS, dependency audits, issue triage, doc surveys, modern search APIs) as complete copy-and-adapt configs
 - `recon --skill -r normalize-spec` — full normalize spec syntax including transforms (`$html2text`, `$inverted_index`, `$pdf2text`, `$join`, `$first`)
 - [capability.md](../explanation/capability.md) — the deeper "why" behind the tool
 - The `examples/` directory in the skill bundle — ready-to-run configs for probe-then-survey, code mining, and API monitoring

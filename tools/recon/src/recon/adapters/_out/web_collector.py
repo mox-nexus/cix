@@ -1,76 +1,45 @@
-"""WebCollector — fetches web pages, converts HTML to markdown, returns records.
+"""WebCollector — fetch a document, convert it to markdown, yield a record.
 
-Uses markdownify (Python Turndown equivalent) to preserve document structure
-as markdown — headings, links, lists, code blocks. Not plain text stripping.
-Rate limiting injected via RateLimiter. Retry via tenacity.
+HTTP is delegated to the injected Requester (shared rate-limited instance);
+conversion is delegated to the injected DocumentConverter (markitdown by
+default — handles HTML, PDF, DOCX, PPTX, XLSX, EPub, CSV, JSON, XML, ZIP,
+images with OCR, audio transcription, YouTube).
+
+The collector is now format-agnostic: same code path for a web page, a PDF
+URL, a DOCX download, or a YouTube transcript. Returns Iterator[dict] —
+yields one record today; streaming-many-records is reserved for future
+multi-page crawlers.
 """
 
 from __future__ import annotations
 
 import re
+from collections.abc import Iterator
 from typing import Any
 
-import httpx
-from markdownify import markdownify as md
-from tenacity import (
-    retry,
-    retry_if_exception,
-    stop_after_attempt,
-    wait_exponential,
-)
-
-from recon import DEFAULT_USER_AGENT
-from recon.application.utilization import RateLimiter
+from recon.adapters._out.api_collector import Requester
+from recon.domain.converters import DocumentConverter
 from recon.domain.exceptions import CollectionError
+from recon.domain.http import HttpResponse
 from recon.domain.models import CollectorEntry, SourceEntry
 
 _MAX_CONTENT_CHARS = 100_000
-_MAX_REDIRECTS = 10
-
-
-def _extract_title(html: str) -> str:
-    """Extract <title> from HTML via regex."""
-    match = re.search(r"<title[^>]*>(.*?)</title>", html, re.IGNORECASE | re.DOTALL)
-    return match.group(1).strip() if match else ""
-
-
-def _is_retryable(exc: BaseException) -> bool:
-    """Retry on 5xx and transport errors. Not 429 — web pages don't rate-limit like APIs."""
-    if isinstance(exc, httpx.HTTPStatusError):
-        return exc.response.status_code >= 500
-    return isinstance(exc, httpx.TransportError)
-
-
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=1, max=8),
-    retry=retry_if_exception(_is_retryable),
-    reraise=True,
-)
-def _fetch(
-    client: httpx.Client,
-    url: str,
-    *,
-    headers: dict[str, str],
-) -> httpx.Response:
-    """HTTP GET with retry on 5xx/transport errors."""
-    resp = client.get(url, headers=headers)
-    resp.raise_for_status()
-    return resp
 
 
 class WebCollector:
-    """Fetches web pages, converts HTML to markdown. Rate limiting + retry."""
+    """HTTP GET → document-to-markdown conversion → one JSONL record."""
 
-    def __init__(self, rate_limiter: RateLimiter) -> None:
-        self._rate_limiter = rate_limiter
+    def __init__(self, requester: Requester, converter: DocumentConverter) -> None:
+        self._requester = requester
+        self._converter = converter
 
     def collect(
         self,
         entry: CollectorEntry,
         source: SourceEntry | None,
-    ) -> list[dict[str, Any]]:
-        """Fetch page, convert to markdown, return as record."""
+        *,
+        raw_store: Any | None = None,
+    ) -> Iterator[dict[str, Any]]:
         if not source:
             msg = f"Web collector '{entry.name}' requires a source"
             raise CollectionError(msg)
@@ -79,49 +48,34 @@ class WebCollector:
         if entry.endpoint:
             url = f"{url}{entry.endpoint}"
 
-        self._rate_limiter.acquire(source)
-
-        ua = source.user_agent or DEFAULT_USER_AGENT
         headers = {
-            "User-Agent": ua,
-            "Accept": "text/html, text/markdown, */*",
+            "User-Agent": source.user_agent or "recon/web",
+            # Widened from HTML-only so non-HTML content types (PDF, DOCX,
+            # images, audio) are served directly by the origin.
+            "Accept": "*/*",
         }
+        resp: HttpResponse = self._requester.get(source, url, headers=headers)
 
-        try:
-            with httpx.Client(
-                timeout=source.timeout,
-                follow_redirects=True,
-                max_redirects=_MAX_REDIRECTS,
-            ) as client:
-                resp = _fetch(client, url, headers=headers)
-        except (httpx.HTTPStatusError, httpx.TransportError) as exc:
-            msg = f"Web fetch failed after retries: {url}"
-            raise CollectionError(msg) from exc
+        if raw_store is not None:
+            raw_store.save_http(
+                entry.name,
+                resp.body,
+                status=resp.status_code,
+                url=resp.url,
+                headers=resp.headers,
+                content_type=resp.content_type,
+            )
 
-        content_type = resp.headers.get("content-type", "")
-        raw = resp.text
+        result = self._converter.convert(resp.body, resp.content_type, resp.url)
 
-        if "text/html" in content_type:
-            title = _extract_title(raw)
-            # Truncate raw HTML before conversion to bound markdownify memory
-            if len(raw) > _MAX_CONTENT_CHARS * 3:
-                raw = raw[: _MAX_CONTENT_CHARS * 3]
-            content = md(raw, strip=["img", "script", "style", "noscript"])
-        else:
-            title = ""
-            content = raw
-
-        content = re.sub(r"\n{3,}", "\n\n", content).strip()
-
+        content = re.sub(r"\n{3,}", "\n\n", result.text).strip()
         if len(content) > _MAX_CONTENT_CHARS:
             content = content[:_MAX_CONTENT_CHARS] + "\n\n[Content truncated due to length...]"
 
-        return [
-            {
-                "url": str(resp.url),
-                "title": title,
-                "content": content,
-                "status_code": resp.status_code,
-                "content_type": content_type.split(";")[0].strip(),
-            }
-        ]
+        yield {
+            "url": resp.url,
+            "title": result.title,
+            "content": content,
+            "status_code": resp.status_code,
+            "content_type": resp.content_type,
+        }

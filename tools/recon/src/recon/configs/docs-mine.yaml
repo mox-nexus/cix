@@ -1,0 +1,47 @@
+# Docs mining — fetch documentation pages, convert HTML to markdown.
+#
+# Demonstrates:
+#   • web source (HTML → markdown via markdownify)
+#   • multiple web collectors sharing one source
+#   • fixed output schema for web collectors
+#     {url, title, content, status_code, content_type}
+#
+# Web collectors do NOT support URL fan-out — each page is a separate
+# collector entry. To crawl many pages, duplicate the collector block
+# (or generate the config programmatically from a sitemap).
+#
+# Usage:
+#   recon init python-docs --template docs-mine
+#   # edit endpoints to target pages you care about
+#   recon survey python-docs
+#   recon query python-docs \
+#     "SELECT title, length(content) FROM python_tutorial"
+
+catalog:
+  - name: python-docs
+    type: web
+    url: https://docs.python.org/3
+    rate_limit: { rps: 1, burst: 2 }
+    user_agent: "recon/0.8.0 (https://github.com/mox-labs/cix)"
+    timeout: 30
+
+collectors:
+  - name: python-tutorial
+    type: web
+    source: python-docs
+    endpoint: /tutorial/introduction.html
+
+  - name: python-datastructures
+    type: web
+    source: python-docs
+    endpoint: /tutorial/datastructures.html
+
+  - name: python-classes
+    type: web
+    source: python-docs
+    endpoint: /tutorial/classes.html
+
+  - name: python-modules
+    type: web
+    source: python-docs
+    endpoint: /tutorial/modules.html

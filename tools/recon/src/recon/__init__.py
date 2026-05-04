@@ -1,6 +1,6 @@
 """Recon — mechanical collection system. Collect, normalize, query."""
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 # Shared browser-like UA — avoids AI-blocking 403s on academic sites.
 DEFAULT_USER_AGENT = (
