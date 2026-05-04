@@ -4,8 +4,11 @@
   "description": "Multi-session workflow for mining tacit knowledge from code and code-adjacent artifacts (git history, doc comments, RFCs, PRs, issues, discussions, tests). Use when the user asks to 'mine this codebase / collection / domain for expert knowledge', 'extract why-not-just-what from these repos', 'capture the design rationale public datasets miss', 'extract programming plans / oscillations / battle scars / type signatures / schemas / program-and-domain models / tradeoffs / antipatterns / aesthetics', or 'set up multi-session expert-mining'. Output: typed JSONL corpus with verbatim provenance, accumulated across sessions. Eight mining modes — four extraction (oscillations, scars, signatures, schemas) capturing direct WHY signal, four synthesis (models, tradeoffs, antipatterns, aesthetics) layering interpretation. Principles emerge via rule-of-three promotion across synthesis modes.",
   "author": {
     "name": "Mox Labs",
-    "email": "mox.rnd@gmail.com"
+    "email": "mox.rnd@gmail.com",
+    "url": "https://github.com/mox-nexus"
   },
+  "homepage": "https://github.com/mox-nexus/cix/tree/main/plugins/radix",
+  "repository": "https://github.com/mox-nexus/cix",
   "license": "MIT",
   "keywords": [
     "code-mining",
