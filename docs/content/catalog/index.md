@@ -1,8 +1,10 @@
 # Extension Catalog
 
-*Coming soon.*
-
 Extensions that embody collaborative intelligence principles.
+
+## Current
+
+- [memex-next](memex-next/index.md) — personal memory system for human-AI collaboration archives. Selective amplification: encoding broad, decay default, principle-gated, LLM-executed.
 
 ---
 

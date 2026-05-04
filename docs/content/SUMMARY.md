@@ -13,3 +13,6 @@
     - [First Principles](library/explanation/first-principles-ci.md)
   - [Reference]()
     - [Bibliography](library/reference/bibliography.md)
+- [Catalog](catalog/index.md)
+  - [memex-next](catalog/memex-next/index.md)
+- [Lab](lab/index.md)
