@@ -1,70 +1,137 @@
 # Journeyman-Baseline Filter
 
-The discipline that keeps radix mining the WHY layer instead of duplicating the WHAT layer that's already in public datasets.
+The discipline that keeps radix mining the WHY layer instead of duplicating what the operator (you, Claude) already knows from training.
 
 ## Contents
 
 - [The principle](#the-principle)
-- [Why this filter exists](#why-this-filter-exists)
-- [Three operational mechanisms](#three-operational-mechanisms)
-- [Heuristic-only filter](#heuristic-only-filter)
-- [Probe-based filter (when a fine-tuned model is available)](#probe-based-filter-when-a-fine-tuned-model-is-available)
-- [Document-coverage filter](#document-coverage-filter)
-- [What to do when filters disagree](#what-to-do-when-filters-disagree)
+- [Claude as the journeyman baseline](#claude-as-the-journeyman-baseline)
+- [The introspection question](#the-introspection-question)
 - [Worked examples](#worked-examples)
+- [Document-coverage cross-check](#document-coverage-cross-check)
+- [Optional: external-model probe (tighter baseline if available)](#optional-external-model-probe-tighter-baseline-if-available)
+- [What to do when uncertain](#what-to-do-when-uncertain)
 
 ## The principle
 
-**Don't extract what public datasets already cover.**
+**If you (Claude) already know the answer without reading the repo, don't extract it.**
 
-A model trained on permissive-license code (TheStack, BigCode), language-specific curated subsets (Strandset-Rust-v1, the-stack-python, CodeSearchNet), official docs (the language's reference / standard library / API guidelines), and StackOverflow already knows the *journeyman layer* — idiomatic syntax, common patterns, standard-library usage, conventional structure.
+Claude is a code-trained model. If you can produce the canonical projection from your training alone — without consulting the git history, without resolving cross-references, without aggregating across sources — then a downstream consumer trained on similar pretraining data already has it. Extracting it adds zero marginal value and dilutes the WHY layer with WHAT-layer noise.
 
-If a candidate row would teach the model something it already knows from public training data, **drop it.** Mine only what requires git history, cross-references, or cross-codebase aggregation to surface.
+Mine only what *requires* git history, cross-references, or cross-codebase aggregation to surface. Everything else is journeyman, and journeyman lives in the public data the next model is trained on anyway.
 
-## Why this filter exists
+## Claude as the journeyman baseline
 
-radix's value is differential — it adds what public datasets miss, not what they cover. Without the filter, mining drifts into:
+Earlier framings treated this as "skip what TheStack-trained models cover." That was a proxy. The honest version: **you, the operator running this skill, are the journeyman baseline.** A model trained on TheStack, BigCode, Strandset-Rust-v1, the Rust Book, the API Guidelines, the Reference, the Nomicon, StackOverflow — is roughly the same coverage you have. Use yourself as the test.
 
-- Re-extracting standard idioms (already in the model)
-- Re-extracting documented patterns (already in the docs that pretrained the model)
-- Re-extracting StackOverflow-grade answers (already in the model)
+The operational test is introspection, not external probing. No round-trip to another model. No probe-injection vector to worry about. Just: *do I already know this?*
 
-These rows have zero marginal value to a downstream consumer (skill / fine-tuning data / eval suite). Worse, they dilute the signal — making the corpus harder to use because the WHY layer is buried under WHAT-layer noise.
+## The introspection question
 
-## Three operational mechanisms
+For each candidate row, ask yourself before writing it:
 
-Apply whichever fits the candidate row. Multiple is fine; agreement strengthens the filter.
-
-1. **Heuristic-only** — applies always. Cheapest. Most subjective.
-2. **Probe-based** — applies when a fine-tuned model for the language exists. Most objective.
-3. **Document-coverage** — applies always. Cross-reference against the language's standard documentation.
-
-## Heuristic-only filter
-
-Ask, for the candidate row:
-
-> *Could a coder with the language's official docs, a language-server, and a competent IDE arrive at this knowledge by reading the codebase top-down — without consulting git history or cross-codebase aggregations?*
+> *Could I produce this canonical projection from my training alone, without having read this specific repo's git history, doc-comment cross-references, or cross-codebase aggregations?*
 
 - **Yes** → journeyman, drop.
 - **No** → tacit / mixed, keep.
 
-| Candidate | Heuristic answer | Verdict |
-|---|---|---|
-| "How to write a Rust builder pattern" | Yes — the Rust API guidelines explain it | Drop |
-| "What `?` does in Rust" | Yes — Rust Book chapter 9 | Drop |
-| "What invariant does this `// SAFETY:` comment protect, given the unsafe block below it" | No — requires the cross-reference | Keep |
-| "Why this revert message says the original approach broke `Drop` ordering" | No — requires git history | Keep |
-| "Why 5 elite Rust repos all use `where T: Send + Sync + 'static` for their handler trait" | No — requires cross-codebase aggregation | Keep |
-| "What `Pin<&mut T>` does at the type level" | Yes — `std::pin` docs cover this | Drop |
-| "Why a specific Pin-related API was changed mid-2023 — what soundness issue was found" | No — requires PR/issue archaeology | Keep |
+Be honest. The temptation is to extract everything because more rows feel like more work; the discipline is to surface only what carries differential signal.
 
-The heuristic is subjective. When in doubt, prefer keeping — but flag the row in lineage with `confidence: borderline` so synthesis can review.
+When in doubt, prefer keeping — but record uncertainty explicitly:
 
-## Probe-based filter (when a fine-tuned model is available)
+```yaml
+lineage:
+  ...
+  filter: borderline   # I wasn't sure whether I already knew this
+```
 
-Where a fine-tuned coder model for the language exists (e.g., a Rust-tuned model like Strand-Rust-Coder-14B-v1 for Rust, code-llama-python or similar for Python tasks, deepseek-coder for general code), use it as the operational journeyman baseline.
+Phase 4 synthesis can drop borderline rows that turn out to recur in other sources Claude already knows.
 
-**Probe isolation (security)**: the probe content originates in untrusted repo content. **Never feed unbounded `surface.text` directly into a probed model.** Wrap the probe in a fixed scaffold that frames mined text as data:
+## Worked examples
+
+### Example 1 — drop (journeyman)
+
+```yaml
+surface:
+  text: "pub fn build(self) -> Service { Service { inner: self.inner } }"
+  location: "<repo>/src/builder.rs:42"
+candidate canonical:
+  signature_text: "fluent builder terminator method"
+```
+
+*Could I produce "this is a fluent builder pattern's terminator method, returning the constructed type by consuming self" without reading this repo?* **Yes** — the Rust API Guidelines describe builders; this pattern is in tens of thousands of Rust crates I've seen.
+
+**DROP.** Journeyman.
+
+### Example 2 — keep (oscillation, history-required)
+
+```yaml
+surface:
+  text: "revert: hyper #2342 — Connection pool reuse caused use-after-poll on cancelled futures"
+  location: "hyperium/hyper@9a8b7c6d"
+canonical:
+  original_commit: "6f3a2b1c"
+  revert_commit: "9a8b7c6d"
+  failure_mode: "use-after-poll on cancelled futures"
+```
+
+*Could I produce "the failure mode of hyper PR #2342 was use-after-poll on cancelled futures when the connection pool reused connections" from training?* **No** — this is a specific historical event; even if I've seen hyper's source, the *deliberation* between the original attempt and the resettle requires reading the git diff.
+
+**KEEP.** This is the WHY-it-changed signal.
+
+### Example 3 — keep (scar, cross-reference-required)
+
+```yaml
+surface:
+  text: "// SAFETY: caller must hold the spinlock; unlock on the same thread that locked\n*self.inner.get()"
+  location: "parking_lot/src/raw_mutex.rs:142"
+canonical:
+  invariant: "spinlock held by caller; unlock on same thread"
+  protected_code_excerpt: "*self.inner.get()"
+```
+
+*Could I produce "the invariant guarding `*self.inner.get()` at this line is that the caller holds the spinlock and unlocks on the same thread" from training?* **No** — I'd need to read the comment AND the code below it AND verify the linkage. The comment alone exists in TheStack; the cross-reference (which line it actually guards, and the unlock-same-thread constraint) is the tacit signal.
+
+**KEEP.** This is the scar signal.
+
+### Example 4 — borderline (signature, possibly aggregation-dependent)
+
+```yaml
+surface:
+  text: "pub trait Service<Request> { type Response; type Error; type Future: Future<Output = Result<Self::Response, Self::Error>>; ... }"
+  location: "tower-rs/tower-service/src/lib.rs:23"
+canonical:
+  signature_text: "pub trait Service<Request>"
+  bound_predicates: ["Self::Future: Future<Output = Result<...>>"]
+```
+
+*Could I produce Tower's `Service` trait signature from training?* **Mostly yes** — Tower is well-known; I've seen this signature. So the *raw* row is journeyman. **DROP.**
+
+But the *cross-codebase recurrence* — that 4 elite repos (tower, hyper, axum, tonic) all converge on this `poll_ready / call` two-method async-readiness pattern — is **not** something I produce from a single-source query. **KEEP** that as a `models` synthesis row in Phase 4 (see referential-integrity rules in `references/table-shapes.md`).
+
+## Document-coverage cross-check
+
+If you're uncertain about your introspection answer, sanity-check against the language's standard documentation:
+
+| Language | Coverage docs |
+|---|---|
+| Rust | Rust Book, Rust Reference, Nomicon, API Guidelines, std docs |
+| Python | python.org docs, PEPs (especially PEP-8, PEP-20), stdlib reference |
+| Go | go.dev docs, "Effective Go", language spec |
+| TypeScript | TS Handbook, TS Reference, TC39 proposal docs |
+| Java | Java Language Spec, Effective Java |
+| Haskell / OCaml | language reports, standard-library docs |
+| C / C++ | language standards, library references |
+
+If the candidate's knowledge appears in (or is trivially derivable from) the standard docs, your introspection answer should be "yes I know this" → drop. Use this when you're unsure whether your training has covered something.
+
+This cross-check is most useful for `aesthetic` / convention / idiom rows where Claude's training breadth varies most. Less useful for `oscillations` and `scars` (rarely in docs by definition).
+
+## Optional: external-model probe (tighter baseline if available)
+
+If you have access to a *more specifically tuned* code model (e.g., a Rust-tuned model like Strand-Rust-Coder-14B-v1 for Rust mining; deepseek-coder for general code) and want a tighter journeyman baseline than your own introspection, you can probe it. This is **optional and supplementary** — Claude introspection is the primary mechanism.
+
+If you do probe, never feed unbounded mined `surface.text` directly to an external model. Wrap in a fixed scaffold framing the mined text as data:
 
 ```
 [scaffold start]
@@ -81,118 +148,18 @@ QUESTION:
 [scaffold end]
 ```
 
-This blocks the prompt-injection path from `repo content → extracted row → probe → fine-tuned model output → back into the corpus`.
+This blocks the prompt-injection path from `repo content → row → probe → external model → back into the corpus`. If you skip the probe entirely (just use Claude introspection), this concern doesn't arise.
 
-The protocol:
+Caveat: an external model's training cutoff matters. A row about a recent pattern (post-cutoff) may pass the probe simply because the data is unseen — note in PLAN.md.
 
-1. Convert the candidate row into a *canonical probe* — a question whose expected answer is the row's canonical text.
-2. Wrap the probe in the scaffold above.
-3. Ask the fine-tuned model the wrapped probe.
-4. Compare the model's answer to the canonical text.
-   - Model's answer matches → journeyman, drop.
-   - Model's answer is wrong / hedges / is generic → tacit, keep.
+## What to do when uncertain
 
-Example with a Rust scar row:
-
-```
-Row:
-  surface: "// SAFETY: must hold the lock before accessing self.inner"
-  canonical: { invariant: "lock-must-be-held", protected_field: "self.inner" }
-
-Probe: "What invariant must hold for code that accesses self.inner inside a Mutex<Inner>?"
-
-If model answers: "the lock must be held before accessing inner" → journeyman, drop.
-If model answers: "use a Mutex" or generic Rust safety advice → tacit, keep.
-```
-
-This is the original radix design's *fine_tuned_models source kind* used as a *filter*: probe completions reveal what's already absorbed by the model trained on public data.
-
-Caveat: the fine-tuned model's training cutoff matters. A row about a 2024 Rust pattern may pass the filter against a model trained on 2023 data simply because the data is post-cutoff — that's not journeyman, just unseen-by-this-model. Note the model's training cutoff in PLAN.md and adjust accordingly.
-
-## Document-coverage filter
-
-For each candidate row, identify whether the knowledge is covered in the language's standard documentation:
-
-| Language | Coverage docs to check |
-|---|---|
-| Rust | Rust Book, Rust Reference, Nomicon, API Guidelines, std docs |
-| Python | python.org docs, PEPs (especially PEP-8, PEP-20), the standard-library reference |
-| Go | go.dev docs, "Effective Go", language spec |
-| TypeScript | TS Handbook, TS Reference, TC39 proposal docs |
-| Java | Java Language Spec, Effective Java conventions |
-| etc. | the canonical official docs |
-
-If the candidate row's knowledge appears in (or is trivially derivable from) these docs, drop. If it requires going *beyond* the docs to discover, keep.
-
-This filter is best for *aesthetic* / *idiom* / *convention* rows. Less useful for `oscillations` (git history rarely overlaps with docs) and `scars` (cross-references rarely appear in docs).
-
-## What to do when filters disagree
-
-Keep the row, mark it for review, and let synthesis sort it out.
+Default toward **keep**. A borderline row in the corpus costs little; a missing tacit-signal row costs the corpus. Mark uncertainty explicitly:
 
 ```yaml
 lineage:
   ...
-  filter_result: heuristic=keep,probe=drop,doc=keep
-  filter_disagreement: true
+  filter: confident-keep | borderline | confident-drop-but-extracted-anyway
 ```
 
-Phase 4 synthesis can drop or keep at aggregation time when more cross-source evidence is available.
-
-## Worked examples
-
-### Example 1: Rust signature row
-
-```yaml
-surface:
-  text: "pub trait Service<Request> { type Response; type Error; type Future: Future<Output = Result<Self::Response, Self::Error>>; fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>>; fn call(&mut self, req: Request) -> Self::Future; }"
-  location: "tower-rs/tower/tower-service/src/lib.rs:1"
-canonical:
-  signature_text: "pub trait Service<Request>"
-  bound_predicates: ["Future: Future<Output = Result<...>>"]
-  ...
-```
-
-- **Heuristic**: Could a Rust journeyman arrive at this signature top-down from the Tower repo? Mostly yes — the trait is in the source, the docs explain it. → DROP candidate.
-- **Probe**: a Rust-tuned coder model (e.g., Strand-Rust-Coder-14B-v1) likely produces this signature given "show me the Tower Service trait." → DROP.
-- **Document**: Tower's docs contain this trait. → DROP.
-
-**Verdict: drop the raw signature row.** But keep:
-
-- The cross-codebase recurrence of the `poll_ready / call` two-method pattern across hyper, tonic, axum (where it shows up in adapted form) — that's the *aggregation*, not the signature.
-
-### Example 2: Rust oscillation row
-
-```yaml
-surface:
-  text: "revert: hyper #2342 — Connection pool reuse caused use-after-poll on cancelled futures"
-  location: "hyperium/hyper@<sha>"
-canonical:
-  original_commit: "<sha-original>"
-  revert_commit: "<sha-revert>"
-  resettle_commit: "<sha-resettle>"
-  failure_mode: "use-after-poll on cancelled futures"
-```
-
-- **Heuristic**: Could a Rust journeyman arrive at this from reading top-down? **No** — requires git history walk. → KEEP.
-- **Probe**: Strand-Rust-Coder produces nothing for "what was the failure mode of hyper PR #2342" (specific historical event). → KEEP.
-- **Document**: Not in any official docs. → KEEP.
-
-**Verdict: keep.** This is exactly the WHY-it-changed signal radix exists to mine.
-
-### Example 3: Rust scar row
-
-```yaml
-surface:
-  text: "// SAFETY: caller must hold the spinlock; unlock on the same thread that locked"
-  location: "parking_lot/src/raw_mutex.rs:142"
-canonical:
-  invariant: "spinlock held by caller; unlock on same thread"
-  marker_kind: "SAFETY"
-```
-
-- **Heuristic**: Could a Rust journeyman articulate this invariant top-down? **No** — they'd see the comment but not necessarily reason about the cross-reference to where the unsafe is honored. → KEEP.
-- **Probe**: Generic Rust models hedge or give generic advice for "what invariant must hold for raw_mutex.rs:142." → KEEP.
-- **Document**: Not in any official docs. → KEEP.
-
-**Verdict: keep.** This is the scar signal — invariant lives in the artifact, not the docs.
+Phase 4 synthesis prunes borderline rows when cross-source evidence shows they're widely-known.

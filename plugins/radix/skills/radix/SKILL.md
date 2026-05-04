@@ -223,7 +223,7 @@ For each finding, append a row to `extracts/<source-name>.<mode>.jsonl`:
 
 Per-mode canonical shapes in `references/table-shapes.md`. Don't invent your own.
 
-**Apply the journeyman-baseline filter** (see `references/journeyman-filter.md`). If a candidate row would teach a public-dataset-trained model something it already knows, drop it.
+**Apply the journeyman-baseline filter** (see `references/journeyman-filter.md`). The test is introspection: *if you (Claude) already know this answer without reading the repo, drop it.* You are the journeyman baseline. Mine only what requires git history, cross-references, or cross-codebase aggregation to surface — everything else is already in the pretraining distribution downstream consumers come from.
 
 **Failure-mode degradation contract**: if a tool fails (`git clone` errors, `gh` unauthenticated, ast-grep can't parse, repo has shallow history blocking oscillations), record under STATUS.md `## Blocked` with the specific tool + reason; emit zero rows for that mode rather than guess; move on. Silent zero-yield without a Blocked entry is a discipline violation.
 
@@ -336,7 +336,7 @@ lineage:
 1. **Read before extracting.** No reconnaissance = noise. Phase 3b is not optional.
 2. **Surface verbatim, always.** Every row carries the source quote. No row without provenance.
 3. **One mode per pass.** Don't fan across modes simultaneously.
-4. **Apply the journeyman filter.** If public-dataset-trained models already produce the answer, it's not the WHY layer — drop.
+4. **Apply the journeyman filter.** If you already know the answer from training (without reading the repo's git history, cross-references, or cross-codebase aggregations), it's not the WHY layer — drop. You are the journeyman baseline.
 5. **Pin commits before pull.** Record SHA at clone or before any update. All rows in one extraction-pass JSONL share one `lineage.commit`; if you pull mid-pass, restart.
 6. **Update STATUS.md every session.** STATUS.md is the continuity contract.
 7. **Don't invent canonical shapes.** Use `references/table-shapes.md`.
