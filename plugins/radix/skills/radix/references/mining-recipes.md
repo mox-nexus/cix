@@ -51,7 +51,17 @@ Phrase-relevance is for *unknown* work. Direct lookup (`git log --grep` on a kno
 
 ## Artifact source types
 
-The 10 primary sources that hold WHY-layer signal, ranked by typical signal density:
+The 10 primary sources that hold WHY-layer signal, ranked by typical signal density.
+
+**Per-repo variation**: not all repos use the same conventions. Some examples:
+- `rust-lang/rust-analyzer` puts its design-doc archaeology in `docs/dev/` (architecture.md, lsp-extensions.md, syntax.md) plus a dev-blog-style `docs/dev/style.md`. No `rfcs/` directory; the dev docs ARE the deliberation artifact.
+- `tokio-rs/tokio` does deliberation primarily in PRs + `RELEASES.md` + occasional design docs in `tokio/CONTRIBUTING.md`. No top-level `rfcs/`.
+- `hyperium/hyper` keeps RFC-equivalent material in its CHANGELOG.md (substantial entries explain breakage rationale) plus PR threads.
+- `bytecodealliance/wasmtime` and `WebAssembly/component-model` use `docs/` heavily.
+- `rust-lang/rfcs` IS the RFC repo for the language itself; its `text/` directory is the gold standard.
+- `tower-rs/tower` and `axum` use repo-internal `docs/` plus extensive PR discussions.
+
+**Don't filter by filename or directory name.** If `rfcs/` doesn't exist, look for `docs/dev/`, `docs/architecture/`, `docs/design/`, `RELEASES.md`, substantial CHANGELOG entries, or `CONTRIBUTING.md`. Phase 3b reconnaissance (read README + ARCHITECTURE + ls docs/) tells you where deliberation lives in this specific repo.
 
 | Source | Where it lives | Primary mode it feeds | Typical density |
 |---|---|---|---|
@@ -87,6 +97,29 @@ git log --all --grep="^revert\|^Revert" --oneline | wc -l
 
 If the count is low (< 5 across the repo's history), oscillations may not be the highest-yield mode for this source — switch to scars or signatures.
 
+### Find oscillation hotspots via code-maat (when available)
+
+`code-maat` finds files that change together (temporal coupling) and high-churn complexity hotspots. For oscillations specifically: paired temporal-coupling between a file and itself across reverts is a candidate-oscillation signal.
+
+```bash
+# Generate the git log code-maat consumes
+git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames > /tmp/git.log
+
+# Hotspots — files with most revisions (where archaeology is densest)
+java -jar /path/to/code-maat-standalone.jar -l /tmp/git.log -c git2 -a revisions | head -20
+
+# Temporal coupling — files that change together
+java -jar /path/to/code-maat-standalone.jar -l /tmp/git.log -c git2 -a coupling | head -30
+
+# Code age (lines) — old, high-churn lines are oscillation candidates
+java -jar /path/to/code-maat-standalone.jar -l /tmp/git.log -c git2 -a age | head -20
+
+# Author ownership — single-owner files often hide tacit decisions
+java -jar /path/to/code-maat-standalone.jar -l /tmp/git.log -c git2 -a entity-ownership | head -20
+```
+
+Use the hotspot list to prioritize WHICH files to walk for revert + fix-rationale archaeology. A file with 200 revisions and high temporal coupling to a sibling is a far better oscillation-mining target than a file changed twice.
+
 ### Walk the oscillation triple
 
 For each revert commit, find the original (what was reverted) and the resettlement (what came after):
@@ -114,15 +147,72 @@ git log --all --pretty=format:'%h%n%s%n%b%n---' | rg -B1 -A6 -i "(why|rationale|
 git log --all --grep="fix" --pretty=format:'%h %s' | rg -i "(fix.*\(was|fix.*\(reverts|fix.*\(replaces)"
 ```
 
-### From PRs (when archaeology is rich)
+### From PRs, issues, and discussions
+
+The forge layer (GitHub) carries deliberation artifacts that aren't in git history. **All `gh` calls must be read-only** — see the Threat model in SKILL.md (`gh pr view`, `gh pr list`, `gh issue view`, `gh issue list`, `gh api` GET, `gh repo view` only).
+
+**PRs — closed-without-merge = rejected approaches:**
 
 ```bash
-# Closed-without-merge PRs (rejected approaches)
-gh pr list --state closed --limit 200 --json number,title,body,mergedAt --jq '.[] | select(.mergedAt == null) | "PR #\(.number): \(.title)"'
+# Closed-without-merge PRs (rejected approaches feeding antipatterns)
+gh pr list --state closed --limit 200 --json number,title,body,mergedAt --jq '.[] | select(.mergedAt == null) | "PR #\(.number): \(.title)"' | head
 
-# PR threads with substantive review (sample for archaeology)
+# Substantive PR with discussion (read for tradeoff archaeology)
 gh pr view <N> --comments
+gh pr view <N> --json title,body,comments,reviews
+
+# PRs that took multiple iterations (signal of deliberation density)
+gh pr list --state merged --json number,title,reviewDecision,reviews \
+  --jq '.[] | select(.reviews | length > 5) | "#\(.number) \(.title) — \(.reviews | length) reviews"' | head
 ```
+
+**Issues — failure-mode reports + abandoned approaches:**
+
+```bash
+# Closed issues with "wontfix" / "by design" labels = often hide deliberation
+gh issue list --state closed --label "wontfix" --limit 50 --json number,title,body
+gh issue list --state closed --label "by design" --limit 50 --json number,title,body
+
+# Long issue threads (substantial discussion)
+gh issue list --state all --limit 300 --json number,title,comments \
+  --jq '.[] | select(.comments > 20) | "#\(.number) (\(.comments) comments): \(.title)"' | head
+
+# View specific issue with full comment thread
+gh issue view <N> --comments
+
+# Issues mentioning specific patterns (e.g., "soundness", "deadlock", "leak")
+gh issue list --state all --search "soundness" --limit 50
+gh issue list --state all --search "deadlock OR data-race" --limit 50
+```
+
+**Discussions — debate, consensus formation (newer feature; not all repos use them):**
+
+```bash
+# List discussions (uses GraphQL via gh api)
+gh api graphql -f query='query($owner: String!, $repo: String!) {
+  repository(owner: $owner, name: $repo) {
+    discussions(first: 50) {
+      nodes { number title category { name } answer { body } comments(first: 1) { totalCount } }
+    }
+  }
+}' -F owner=<owner> -F repo=<repo>
+
+# View a specific discussion
+gh api repos/<owner>/<repo>/discussions/<N>
+```
+
+**Triage signal density before deep mining**:
+
+```bash
+echo "PRs (closed-without-merge):"
+gh pr list --state closed --limit 200 --json mergedAt --jq 'map(select(.mergedAt == null)) | length'
+echo "Issues (closed):"
+gh issue list --state closed --limit 1000 --json number | jq 'length'
+echo "Discussions enabled?"
+gh api repos/<owner>/<repo> --jq '.has_discussions'
+```
+
+If any are zero or low, that surface is sparse for this repo — don't sink time there.
 
 ## scars — battle-scar comments + protected code
 
@@ -277,9 +367,15 @@ jq -c 'select(.canonical.item_kind == "struct" or .canonical.item_kind == "trait
 For richer cross-item relationships within a module, drive a language server:
 
 ```bash
-# Rust — use rust-analyzer for find-references, type-on-hover via LSP client
-# (LSP-based extraction is harder to script; use rust-analyzer's CLI subset where available)
-rust-analyzer analysis-stats . | head    # gives stats on the workspace
+# Rust — rust-analyzer CLI subset (LSP-based extraction is fiddly to script — use sparingly)
+rust-analyzer analysis-stats .                 # workspace stats: types, traits, impls, items
+rust-analyzer diagnostics . 2>/dev/null | head # surface compile-time concerns
+rust-analyzer symbols < <(echo '{"uri":"file://'$(pwd)'/src/lib.rs"}')  # symbol enumeration
+
+# When rust-analyzer earns its keep over ast-grep: cross-file type resolution. If a signature
+# row's bound depends on a type defined elsewhere ("where T: SomeTraitFromAnotherCrate"),
+# rust-analyzer can resolve the trait path; ast-grep cannot.
+# When it doesn't earn its keep: per-file structural patterns. Use ast-grep — faster, scriptable.
 
 # Tree-sitter direct
 tree-sitter parse src/lib.rs --quiet | head -100   # raw AST
@@ -345,15 +441,24 @@ Per Burkhardt 1997, expert advantage is concentrated in the *static* situation m
 ### Find decision archaeology
 
 ```bash
-# RFCs — typically in rfcs/ directory
+# RFCs — typically in rfcs/ directory (Rust language, WebAssembly/component-model, etc.)
 ls rfcs/ rfc/ docs/rfcs/ 2>/dev/null
 rg "(rejected|alternatives considered|drawbacks|unresolved questions)" rfcs/ rfc/ 2>/dev/null
+
+# Project-internal design docs (rust-analyzer's docs/dev, tower's docs, etc.)
+ls docs/dev/ docs/design/ docs/architecture/ 2>/dev/null
+cat docs/dev/architecture.md docs/dev/style.md 2>/dev/null  # rust-analyzer pattern
+rg "(why|rationale|chose|alternative|considered)" docs/dev/ docs/design/ 2>/dev/null
+
+# RELEASES.md / CHANGELOG.md with substantive entries (tokio, hyper)
+cat RELEASES.md CHANGELOG.md NEWS.md 2>/dev/null | head -300
+rg -B1 -A5 "(breaking|removed|deprecated|behavior change|design change)" RELEASES.md CHANGELOG.md 2>/dev/null | head -100
 
 # PR threads with substantive review
 gh pr list --state merged --limit 100 --json number,title,body --jq '.[] | select(.body | length > 500)'
 gh pr view <N> --comments
 
-# ADRs — architecture decision records
+# ADRs — architecture decision records (less common in Rust ecosystem, more common in Go/Java)
 ls docs/adr/ docs/architecture/ adr/ 2>/dev/null
 rg "^## (Decision|Alternatives|Rationale|Consequences)" docs/
 
