@@ -1,0 +1,22 @@
+{
+  "name": "antifragile",
+  "version": "0.1.0",
+  "description": "Diagnose endogenous fragility in platform systems and apply the ACES (Adaptable, Composable, Extensible Software) inversion. Use when: reviewing platform architecture for structural fragility, identifying which channel of the cycle (stasis, drag, opacity) is active, testing a candidate boundary, applying ACES to security or other domains, or diagnosing why architectural investment compounds.",
+  "author": {
+    "name": "Mox Labs",
+    "email": "mox.rnd@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "antifragile",
+    "aces",
+    "structural-fragility",
+    "platform-engineering",
+    "architecture",
+    "coupling",
+    "boundaries",
+    "diagnosis",
+    "taleb",
+    "dijkstra"
+  ]
+}
