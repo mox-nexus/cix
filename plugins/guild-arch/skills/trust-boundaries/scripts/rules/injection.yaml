@@ -1,0 +1,156 @@
+# Injection-class Semgrep rules for whitehat / trust-boundaries.
+#
+# Goal: surface candidate instances of the injection class (user data reaching
+# an interpreter that treats it as code). Each finding needs architectural
+# evaluation — these are pattern matches, not conclusions.
+#
+# Covers: SQL, shell, HTML (XSS), OS command, Python eval/exec, JS eval,
+# template injection, unsafe deserialization.
+
+rules:
+  # --- SQL injection: Python ---
+  - id: python-sql-fstring
+    pattern-either:
+      - pattern: $CURSOR.execute(f"...")
+      - pattern: $CURSOR.executemany(f"...")
+      - pattern: |
+          $QUERY = f"... {$VAR} ..."
+          ...
+          $CURSOR.execute($QUERY)
+      - pattern: $CURSOR.execute("..." + $VAR + "...")
+      - pattern: $CURSOR.execute("..." % $VAR)
+      - pattern: $CURSOR.execute("...".format($VAR))
+    message: |
+      SQL injection risk: query built by string formatting/concatenation reaches a cursor.
+      Class: injection — untrusted data crosses into the SQL interpreter.
+      Fix (class elimination): use parameterized queries — `cursor.execute("... WHERE x = %s", (value,))`.
+      Fix (structural): adopt an ORM/query-builder (SQLAlchemy, Django ORM) that makes concatenation impossible.
+    severity: ERROR
+    languages: [python]
+
+  # --- SQL injection: JS / TS ---
+  - id: js-sql-template-literal
+    pattern-either:
+      - pattern: $CLIENT.query(`... ${$VAR} ...`)
+      - pattern: $CLIENT.query("..." + $VAR + "...")
+      - pattern: $KNEX.raw(`... ${$VAR} ...`)
+    message: |
+      SQL injection risk: query built by template literal / concatenation.
+      Fix (class elimination): parameterized — `client.query('... WHERE x = $1', [value])`.
+      Structural: adopt a typed query builder (Kysely, Drizzle, Prisma).
+    severity: ERROR
+    languages: [javascript, typescript]
+
+  # --- Shell injection: Python ---
+  - id: python-shell-true-interpolated
+    pattern-either:
+      - pattern: subprocess.run(f"...", shell=True)
+      - pattern: subprocess.call(f"...", shell=True)
+      - pattern: subprocess.Popen(f"...", shell=True)
+      - pattern: os.system(f"...")
+      - pattern: os.popen(f"...")
+      - pattern: subprocess.run("..." + $VAR + "...", shell=True)
+      - pattern: subprocess.run("...".format($VAR), shell=True)
+    message: |
+      Shell injection risk: command built from string interpolation passed to shell=True.
+      Fix (class elimination): pass a list — `subprocess.run(["cmd", arg1, arg2])` — no shell=True.
+      Structural: if a shell is truly required, `shlex.quote()` every interpolated value; prefer the list form.
+    severity: ERROR
+    languages: [python]
+
+  # --- Python eval/exec on non-constant input ---
+  - id: python-eval-on-variable
+    pattern-either:
+      - pattern: eval($X)
+      - pattern: exec($X)
+    pattern-not: eval("...")
+    pattern-not: exec("...")
+    message: |
+      Unsafe dynamic evaluation: eval/exec on a non-constant.
+      Fix: remove. There is almost never a legitimate use — AST whitelisting (ast.literal_eval) or a purpose-built parser replaces it.
+    severity: ERROR
+    languages: [python]
+
+  # --- JS eval / Function ---
+  - id: js-eval-or-function-constructor
+    pattern-either:
+      - pattern: eval($X)
+      - pattern: new Function($X)
+      - pattern: Function($X)
+    message: |
+      Unsafe dynamic evaluation.
+      Fix: remove. Replace with a structured parser or predefined action dispatch.
+    severity: ERROR
+    languages: [javascript, typescript]
+
+  # --- XSS: innerHTML with non-constant input ---
+  - id: js-innerhtml-assignment
+    pattern-either:
+      - pattern: $EL.innerHTML = $X
+      - pattern: $EL.outerHTML = $X
+    pattern-not: $EL.innerHTML = "..."
+    pattern-not: $EL.outerHTML = "..."
+    message: |
+      XSS risk: innerHTML/outerHTML assignment from a non-constant.
+      Fix (class elimination): use textContent = value, or a templating library that autoescapes (React/JSX, lit-html, Svelte).
+    severity: WARNING
+    languages: [javascript, typescript]
+
+  # --- React dangerouslySetInnerHTML ---
+  - id: react-dangerously-set-inner-html
+    pattern: dangerouslySetInnerHTML={{__html: $X}}
+    pattern-not: dangerouslySetInnerHTML={{__html: "..."}}
+    message: |
+      XSS risk: dangerouslySetInnerHTML with non-literal content.
+      Fix: render as text, or sanitize via DOMPurify before this expression.
+    severity: WARNING
+    languages: [javascript, typescript]
+
+  # --- Python YAML unsafe load ---
+  - id: python-yaml-load-unsafe
+    pattern-either:
+      - pattern: yaml.load($X)
+      - pattern: yaml.load($X, Loader=yaml.Loader)
+      - pattern: yaml.load($X, Loader=yaml.FullLoader)
+    pattern-not: yaml.load($X, Loader=yaml.SafeLoader)
+    message: |
+      Unsafe deserialization: yaml.load without SafeLoader allows arbitrary Python object construction.
+      Fix: `yaml.safe_load(x)`.
+    severity: ERROR
+    languages: [python]
+
+  # --- Python pickle on non-trusted source ---
+  - id: python-pickle-load
+    pattern-either:
+      - pattern: pickle.load($X)
+      - pattern: pickle.loads($X)
+      - pattern: cPickle.load($X)
+      - pattern: cPickle.loads($X)
+    message: |
+      Unsafe deserialization: pickle.load on external data is code execution.
+      Fix: use JSON, msgpack, or protobuf for untrusted data. Pickle is for trusted, in-process state only.
+    severity: ERROR
+    languages: [python]
+
+  # --- Go: SQL concatenation / Sprintf ---
+  - id: go-sql-sprintf
+    pattern-either:
+      - pattern: $DB.Exec(fmt.Sprintf("...", $ARGS))
+      - pattern: $DB.Query(fmt.Sprintf("...", $ARGS))
+      - pattern: $DB.QueryRow(fmt.Sprintf("...", $ARGS))
+    message: |
+      SQL injection risk: query built by fmt.Sprintf.
+      Fix: parameterized — `db.Exec("... WHERE x = ?", value)`.
+    severity: ERROR
+    languages: [go]
+
+  # --- Go: os/exec with interpolated shell ---
+  - id: go-exec-shell-interpolated
+    pattern-either:
+      - pattern: exec.Command("sh", "-c", fmt.Sprintf("...", $ARGS))
+      - pattern: exec.Command("bash", "-c", fmt.Sprintf("...", $ARGS))
+    message: |
+      Shell injection risk: shell command interpolates user data.
+      Fix: pass args to exec.Command directly — no `sh -c`.
+    severity: ERROR
+    languages: [go]

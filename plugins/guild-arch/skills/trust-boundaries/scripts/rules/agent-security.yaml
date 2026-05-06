@@ -1,0 +1,113 @@
+# Agent / LLM security Semgrep rules.
+#
+# Targets: system prompts containing secrets, over-permissioned tool configs,
+# direct LLM output reaching dangerous sinks, markdown-image exfiltration
+# patterns, dual-LLM anti-patterns.
+#
+# These are CANDIDATE patterns. LLM-app architecture varies widely; every hit
+# needs architectural evaluation (trust boundaries, lethal trifecta walk).
+
+rules:
+  - id: system-prompt-contains-api-key
+    pattern-either:
+      - pattern-regex: '(?is)system[_\s-]*prompt\s*[:=].*?(sk-|ghp_|xoxb-|AKIA|Bearer\s+[A-Za-z0-9_-]{16,})'
+      - pattern-regex: '(?i)system:.*?(api[_-]?key|secret[_-]?key|password|bearer\s)'
+    message: |
+      System prompt appears to contain an API key or credential-shaped string.
+      Treat system prompts as public: they leak (Willison: "treat your own internal prompts as effectively public data").
+      Fix: move the secret out of the prompt. Use tools that call authenticated APIs on behalf of the model; the model never sees the credential.
+    severity: ERROR
+    languages: [python, javascript, typescript, generic]
+
+  - id: anthropic-tool-shell-arbitrary
+    pattern-either:
+      - pattern: |
+          {
+            "name": "execute_shell",
+            ...
+          }
+      - pattern: |
+          {
+            "name": "run_command",
+            ...
+          }
+      - pattern: |
+          {
+            "name": "bash",
+            ...
+          }
+    message: |
+      Agent tool named for arbitrary shell / command execution.
+      Lethal trifecta: once combined with untrusted input + private data, this tool is the attacker's RCE.
+      Fix: replace open-ended shell with specific typed tools (e.g., `run_linter`, `get_file_status`).
+      If genuinely required, require human-in-the-loop approval per invocation.
+      Reference: OWASP LLM06 — "Avoid the use of open-ended extensions where possible (e.g., run a shell command, fetch a URL, etc.)."
+    severity: WARNING
+    languages: [python, javascript, typescript, generic]
+
+  - id: llm-output-to-shell
+    pattern-either:
+      - pattern: subprocess.run($LLM_OUTPUT, shell=True)
+      - pattern: os.system($LLM_OUTPUT)
+      - pattern: exec.Command("sh", "-c", $LLM_OUTPUT)
+    message: |
+      LLM output reaching a shell interpreter.
+      Class: improper output handling (OWASP LLM05). Treat model output as untrusted user input — zero-trust at the sink.
+      Fix: parse LLM output into a typed action dispatch; each action maps to a safe, bounded implementation.
+    severity: ERROR
+    languages: [python, go]
+
+  - id: llm-output-to-eval
+    pattern-either:
+      - pattern: eval($LLM_OUTPUT)
+      - pattern: exec($LLM_OUTPUT)
+      - pattern: new Function($LLM_OUTPUT)
+    message: |
+      LLM output reaching a dynamic-execution sink.
+      Prompt injection becomes RCE. Fix: remove dynamic execution entirely; use structured action dispatch.
+    severity: ERROR
+    languages: [python, javascript, typescript]
+
+  - id: web-fetch-in-llm-loop-unguarded
+    pattern-either:
+      - pattern: |
+          async def $FN(..., url: str, ...):
+              ...
+              response = await httpx.get(url)
+              ...
+              return await llm.complete(response.text)
+    message: |
+      Pattern suggests: fetch URL from agent input → feed response text directly into LLM context → reply.
+      Lethal trifecta indicator: untrusted content (fetched URL) enters the model's context.
+      Fix: (1) confirm the URL is attacker-unreachable, OR (2) use a dual-LLM pattern — quarantined LLM summarizes, privileged LLM consumes the summary, OR (3) isolated context window for web content (cf. Claude Code's web-fetch isolation).
+    severity: WARNING
+    languages: [python]
+
+  - id: markdown-image-from-llm-output
+    pattern-either:
+      - pattern-regex: '!\[[^\]]*\]\(\s*{[^}]*}\s*\)'
+    message: |
+      Markdown image URL interpolated from a runtime value — potentially from LLM output.
+      Exfiltration vector: if rendered to a user's browser/IDE, the attacker's URL is fetched and can carry private data in the query string.
+      Fix: (1) don't render attacker-controllable markdown, (2) if rendering is required, strip image tags and external-scheme links, (3) use a CSP or content-security renderer that disallows external image fetches.
+    severity: WARNING
+    languages: [generic]
+    paths:
+      include:
+        - "*.py"
+        - "*.js"
+        - "*.ts"
+
+  - id: openai-bash-tool-unrestricted
+    pattern-either:
+      - pattern: |
+          tools=[
+            {"type": "function", "function": {"name": "bash", ...}},
+            ...
+          ]
+    message: |
+      OpenAI/Anthropic function-calling tool named "bash" or similar.
+      Open-ended shell tool is OWASP LLM06's excessive-agency anti-pattern.
+      Fix: replace with specific typed tools. If a shell is genuinely required, require human approval per call + allowlist commands.
+    severity: WARNING
+    languages: [python, javascript, typescript]
