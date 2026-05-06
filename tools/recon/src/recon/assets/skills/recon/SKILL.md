@@ -1,7 +1,7 @@
 ---
 name: recon
-description: "This skill should be used when the user asks to 'collect data from an API', 'scrape a website', 'mine a codebase', 'fetch from multiple sources', 'normalize this response', 'query across sources with SQL', 'build a dataset', 'monitor something over time', 'run a survey', 'find papers', 'scan repos for patterns', 'track releases', 'audit dependencies', 'aggregate structured data', 'write a recon config', or needs to transform unstructured/semi-structured data from heterogeneous sources into queryable structured JSONL."
-version: 0.7.0
+description: "This skill should be used when the user asks to 'collect data from an API', 'scrape a website', 'mine a codebase', 'fetch from multiple sources', 'normalize this response', 'query across sources with SQL', 'build a dataset', 'monitor something over time', 'schedule a recurring survey', 'cron this', 'run a survey', 'find papers', 'scan repos for patterns', 'track releases', 'audit dependencies', 'snapshot an API', 'diff API state over time', 'extract structured records', 'build a JSONL dataset', 'use Exa', 'use Firecrawl', 'use Tavily', 'use Serper', 'use Perplexity', 'call a search API', 'convert a PDF to markdown', 'convert a DOCX', 'ingest documents', 'aggregate structured data', 'write a recon config', or needs to transform unstructured/semi-structured data from heterogeneous sources into queryable structured JSONL."
+version: 0.8.0
 ---
 
 # Recon
@@ -50,10 +50,13 @@ The common shape: *something out there has data in some response format; Claude 
 - [The Workflow](#the-workflow)
 - [Probe Before Survey](#probe-before-survey)
 - [Config Anatomy](#config-anatomy)
+- [POST with JSON Body](#post-with-json-body)
 - [Fan-Out](#fan-out)
 - [CLI Commands](#cli-commands)
 - [Writing Configs](#writing-configs)
 - [Reading Results](#reading-results)
+- [Sentinels and Error Signals](#sentinels-and-error-signals)
+- [Preserving Raw Captures](#preserving-raw-captures)
 - [Limitations](#limitations)
 
 ## The Workflow
@@ -203,11 +206,101 @@ collectors:
 
 | Type | How it works | Key fields |
 |------|-------------|------------|
-| `api` | HTTP request → JSON/XML → normalize → JSONL | `endpoint`, `params`, `extract`, `normalize` |
+| `api` | HTTP request → JSON/XML → normalize → JSONL | `endpoint`, `params`, `method`, `body`, `extract`, `normalize` |
 | `cli` | Shell command → parse stdout → normalize → JSONL | `run`, `patterns`, `normalize` |
 | `web` | HTTP GET → HTML to markdown → JSONL | `endpoint` (optional) |
 
 For normalize spec syntax and built-in transforms: see [normalize-spec.md](references/normalize-spec.md).
+
+## POST with JSON Body
+
+Modern search and scraping APIs (Exa, Firecrawl, Serper, Tavily, Perplexity, GraphQL endpoints) take a **POST with a JSON body**, not query-string params. Recon supports this directly.
+
+Three config knobs make it work:
+
+1. **`body:` on the collector** — a dict sent as the JSON request body when `method: POST` (also works for `PUT`, `PATCH`, `DELETE`).
+2. **`auth.prefix:` on the source** — prepended to the resolved env value. `"Bearer "` for `Authorization: Bearer $TOKEN`, `"token "` for GitHub-style, empty for plain header auth like `x-api-key`.
+3. **`{placeholder}` substitution in body strings** — values from `params:` are substituted into string values in `body` recursively, same as the `endpoint` path interpolation. The config stays a template; changing the search term is a one-line edit to `params`, not a regeneration of the whole YAML. Non-string values (ints, bools, lists, nested dicts) pass through; only string values get substituted. **Unresolved `{foo}` raises `CollectionError` before any HTTP request fires** — the collector refuses to send a body with missing placeholders, so you get a loud failure at probe time instead of silent 400s or empty results at production scale. Add every referenced key to `params:`.
+
+### Exa — neural search
+
+```yaml
+catalog:
+  - name: exa
+    type: api
+    url: https://api.exa.ai
+    auth: { header: x-api-key, env: EXA_API_KEY }   # no prefix needed
+    rate_limit: { rps: 1, burst: 2 }
+
+collectors:
+  - name: exa-search
+    type: api
+    source: exa
+    endpoint: /search
+    method: POST
+    params:
+      topic: "transformer attention mechanism"   # change me, don't regenerate the YAML
+    body:
+      query: "{topic}"                           # templated
+      numResults: 10                             # literal int stays literal
+      type: "neural"
+      contents:
+        text: true
+    extract: "results"
+    normalize:
+      title: title
+      url: url
+      text: "text"
+      score: score
+```
+
+### Firecrawl — scrape a URL to markdown
+
+```yaml
+catalog:
+  - name: firecrawl
+    type: api
+    url: https://api.firecrawl.dev
+    auth:
+      header: Authorization
+      env: FIRECRAWL_API_KEY
+      prefix: "Bearer "           # ← the prefix is the important part
+    rate_limit: { rps: 1, burst: 2 }
+
+collectors:
+  - name: scrape
+    type: api
+    source: firecrawl
+    endpoint: /v1/scrape
+    method: POST
+    params:
+      target_url: "https://example.com/article"
+    body:
+      url: "{target_url}"
+      formats: ["markdown", "links"]
+      onlyMainContent: true
+    extract: "data"               # Firecrawl wraps the result in {success, data: {...}}
+    normalize:
+      markdown: markdown
+      title: "metadata.title"
+      source_url: "metadata.sourceURL"
+```
+
+### The pattern for any POST-body search API
+
+Same shape works for Serper (`/search`), Tavily (`/search`), Perplexity (`/chat/completions`), Linkup (`/search`), You.com — swap the URL, auth, body fields, and `extract` path. See [config-patterns.md](references/config-patterns.md#modern-search-apis-post-body) for full examples including Tavily and Serper.
+
+### Auth prefix cheatsheet
+
+Store the raw credential in the env var; `auth.prefix` is prepended at request time.
+
+| Service | `header` | `prefix` |
+|---|---|---|
+| Exa | `x-api-key` | `""` |
+| Firecrawl, Tavily, Perplexity, OpenAI-compatible | `Authorization` | `"Bearer "` |
+| Serper | `X-API-KEY` | `""` |
+| GitHub (modern fine-grained) | `Authorization` | `"Bearer "` |
+| GitHub (classic PAT) | `Authorization` | `"token "` |
 
 ## Fan-Out
 
@@ -252,8 +345,8 @@ Translate user intent into a complete config. Do not leave `{placeholder}` value
 **Always probe first** (see [Probe Before Survey](#probe-before-survey)). Write a minimal config with `limit: "1"` (or equivalent) and no `normalize:` block. Inspect the raw JSONL. Then add the normalize spec based on what you actually saw. Then bump limits and run the full survey.
 
 **Starting points:**
-- Built-in research template: `recon init <mission> --template research` (academic paper search across S2 / arXiv / OpenAlex / Zenodo)
-- Pattern library for other domains — see [config-patterns.md](references/config-patterns.md) (academic, code mining single/multi-repo, content tracking)
+- Built-in templates: `recon templates` lists them. Each is a runnable starter for a distinct capability (code forensics, GitHub audit, docs mining, release tracking, factual grounding, RSS/Atom monitoring). Scaffold with `recon init <mission> --template <name>`. Plugin-owned catalogs (e.g. craft-research's academic catalog) load via `recon init <mission> --from <path>`.
+- Pattern library for other domains — see [config-patterns.md](references/config-patterns.md) (code mining single/multi-repo, code-maat forensics, release monitoring, RSS, dependency audits, doc surveys, issue triage, content tracking)
 
 For normalize spec syntax and built-in transforms: [normalize-spec.md](references/normalize-spec.md).
 
@@ -282,6 +375,56 @@ ORDER BY citations DESC
 ### Meta.yaml
 
 Each archive includes `meta.yaml` with run metadata: timestamp, collector results (status, record count, timing).
+
+## Sentinels and Error Signals
+
+Recon marks three conditions explicitly so downstream tooling (and Claude reading an archive) never has to guess.
+
+**`{"_empty": true}`** — a collector produced zero records. Recon writes this single-record sentinel to the JSONL so DuckDB `read_json_auto` has a valid file to read. Query for it with `WHERE NOT coalesce(_empty, false)` to exclude:
+
+```sql
+SELECT * FROM s2_search WHERE NOT coalesce(_empty, false)
+```
+
+**`.incomplete` file at archive root** — at least one collector errored, or `meta.yaml` itself failed to write. `recon status` shows the archive state as `incomplete`; `recon query` prints a yellow warning before running the SQL. Read `meta.yaml` to see which collectors failed:
+
+```yaml
+collectors:
+  - name: arxiv-search
+    status: error
+    error: "[arxiv-search against 'arxiv'] HTTP request failed after retries: ..."
+    seconds: 60.04
+```
+
+**Output-name collision (pre-flight abort)** — if two collectors would write to the same filename (e.g., a pinned `foo-arxiv` collector plus a fan-out `foo` over source `arxiv` — both compute `foo-arxiv.jsonl`), recon raises `ReconError` **before** creating the archive directory. No partial write can happen. The error message names the colliding output(s). Rename one of the colliding collectors to fix.
+
+**Unresolved `{placeholder}` in body** — if an `api` collector has a `body:` that still contains `{foo}` after substitution from `params:`, recon raises `CollectionError` before the HTTP request fires, listing the missing keys. No silent 400s. Add the referenced key to `params:`.
+
+## Preserving Raw Captures
+
+Set `preserve_raw: true` at the top of the config to save the raw fetched bytes (HTTP response body or CLI stdout) alongside the processed JSONL:
+
+```yaml
+preserve_raw: true
+catalog:
+  - name: ...
+collectors:
+  - ...
+```
+
+Layout under `archive/<ts>/raw/<collector_name>/`:
+
+| File | Contents |
+|---|---|
+| `body` | Raw HTTP response bytes (for api/web) or full CLI stdout |
+| `meta.yaml` | Type-tagged metadata: `sha256`, `bytes`, `captured_at`, plus `{status, url, headers, content_type}` for HTTP or `{command, cwd, exit_code, patterns}` for CLI |
+
+Three reasons to turn this on:
+- **Re-normalize without re-fetching** — change the `normalize:` spec, re-run your downstream tooling against the raw snapshot, no rate-limit budget consumed.
+- **Audit** — `sha256` + timestamp + headers prove what the server said at capture time.
+- **Experimentation** — try different normalize specs, converters, or extraction paths against a frozen input.
+
+Trade-off: ~2× disk usage per mission. Off by default.
 
 ## Timeouts and Fallbacks
 
@@ -314,7 +457,7 @@ Load on demand for deeper detail. Access from Claude with `recon --skill -r <nam
 
 | Need | Reference |
 |------|-----------|
-| Config patterns across 9 domains (academic, code mining, release monitoring, RSS, dependency audits, doc surveys, issue triage, content tracking) | [config-patterns.md](references/config-patterns.md) |
+| Config patterns across 9 domains (code mining, code-maat forensics, release monitoring, RSS, dependency audits, doc surveys, issue triage, content tracking) | [config-patterns.md](references/config-patterns.md) |
 | Normalize spec syntax, path resolution, built-in transforms | [normalize-spec.md](references/normalize-spec.md) |
 
 ### Example Configs
@@ -326,11 +469,19 @@ Ready-to-run YAML configs in `examples/`. Copy, adapt the placeholders, write to
 | [`probe-then-survey.yaml`](examples/probe-then-survey.yaml) | The three-stage iterative workflow with three annotated stages (probe → normalize → survey) for an OpenAlex search |
 | [`code-mining-multi-repo.yaml`](examples/code-mining-multi-repo.yaml) | Fan-out across local repos with ripgrep patterns, git log, and unsafe census collectors |
 | [`api-monitoring.yaml`](examples/api-monitoring.yaml) | Periodic state capture via cron — GitHub releases API with diff-across-archives pattern |
+| [`exa-post-body.yaml`](examples/exa-post-body.yaml) | Exa neural search via POST with JSON body — `{placeholder}` templating + x-api-key auth |
 
 ### Built-in Templates
 
-Bundled with the recon tool, loadable via `recon init <mission> --template <name>`:
+Bundled with the recon tool, loadable via `recon init <mission> --template <name>`. Each template demonstrates a distinct recon capability so the set collectively documents what the tool can do.
 
-| Template | Domain |
-|----------|--------|
-| `research` | Academic paper search across Semantic Scholar, arXiv, OpenAlex, Zenodo |
+| Template | Demonstrates |
+|----------|--------------|
+| `code-forensics` | Local source + cli collectors, patterns fan-out, no HTTP/auth |
+| `github-audit` | API source with optional header auth, path-level placeholders, multi-endpoint collection |
+| `docs-mine` | Web source + web collectors, HTML → markdown with fixed output schema |
+| `package-registries` | Multi-source API (PyPI / npm / crates.io) normalized to one common schema |
+| `factual-ground` | Wikipedia MediaWiki API + Wikidata SPARQL with deeply-nested JSON unpacking |
+| `rss-monitor` | `response_format: xml` with attribute extraction via `.@attr` — Atom feeds |
+
+Domain-specific catalogs (e.g. academic literature for craft-research) live inside the consuming plugin, not inside recon. Scaffold from them via `recon init <mission> --from <path>`.

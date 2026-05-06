@@ -19,8 +19,9 @@ catalog:
     auth:
       header: Authorization
       env: GITHUB_TOKEN                # set GITHUB_TOKEN in environment
+      prefix: "Bearer "                # GitHub requires "Bearer <token>"
     rate_limit: { rps: 1, burst: 2 }   # GitHub unauth: 60/hr, auth: 5000/hr
-    user_agent: "recon/0.7.0 (api-monitoring example)"
+    user_agent: "recon/0.8.0 (api-monitoring example)"
 
 collectors:
   # Track releases for a single repo (pin with source:)

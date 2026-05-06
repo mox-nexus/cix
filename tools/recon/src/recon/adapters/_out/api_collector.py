@@ -1,89 +1,71 @@
-"""ApiCollector — auth, retry, normalize, return records.
+"""ApiCollector — delegates HTTP to an injected Requester; yields records.
 
-Rate limiting injected via RateLimiter. Retry via tenacity.
-Uses glom for response extraction.
+No direct httpx import. No rate limiter (that's inside the Requester).
+Constructor-injected dependencies are explicit: tests pass a fake Requester
+without monkeypatching anything.
 """
 
 from __future__ import annotations
 
 import os
-import sys
-from typing import Any
+from collections.abc import Iterator, Mapping
+from typing import Any, Protocol
 
-import httpx
 from glom import GlomError, glom
-from tenacity import (
-    retry,
-    retry_if_exception,
-    stop_after_attempt,
-    wait_exponential,
-)
 
 from recon import DEFAULT_USER_AGENT
-from recon.application.recon import substitute
+from recon.application.recon import find_unresolved, substitute
 from recon.application.transforms import apply_normalize
-from recon.application.utilization import RateLimiter
 from recon.domain.exceptions import CollectionError
+from recon.domain.http import HttpResponse
 from recon.domain.models import CollectorEntry, SourceEntry
 
-# --- Retry ---
 
+class Requester(Protocol):
+    """The port: given a source + HTTP parameters, return an HttpResponse.
 
-def _is_retryable(exc: BaseException) -> bool:
-    """Retry on 429, 5xx, and transport errors."""
-    if isinstance(exc, httpx.HTTPStatusError):
-        return exc.response.status_code == 429 or exc.response.status_code >= 500
-    return isinstance(exc, httpx.TransportError)
+    Rate limiting is the Requester's responsibility, not the collector's.
+    """
 
+    def request(
+        self,
+        source: SourceEntry,
+        method: str,
+        url: str,
+        *,
+        params: dict[str, str] | None = ...,
+        headers: dict[str, str] | None = ...,
+        json_body: dict[str, Any] | None = ...,
+    ) -> HttpResponse: ...
 
-def _retry_wait(retry_state: Any) -> float:
-    """Use retry-after header if present, else exponential backoff."""
-    exc = retry_state.outcome.exception()
-    if isinstance(exc, httpx.HTTPStatusError):
-        retry_after = exc.response.headers.get("retry-after")
-        if retry_after:
-            try:
-                return float(retry_after)
-            except ValueError:
-                pass
-    return wait_exponential(multiplier=1, min=1, max=8)(retry_state)
-
-
-@retry(
-    stop=stop_after_attempt(3),
-    wait=_retry_wait,
-    retry=retry_if_exception(_is_retryable),
-    reraise=True,
-)
-def _fetch(
-    client: httpx.Client,
-    method: str,
-    url: str,
-    *,
-    params: dict[str, str],
-    headers: dict[str, str],
-) -> httpx.Response:
-    """HTTP request with retry on 429/5xx/transport errors."""
-    resp = client.request(method, url, params=params, headers=headers)
-    resp.raise_for_status()
-    return resp
-
-
-# --- Collector ---
+    def get(
+        self,
+        source: SourceEntry,
+        url: str,
+        *,
+        headers: dict[str, str] | None = ...,
+    ) -> HttpResponse: ...
 
 
 class ApiCollector:
-    """HTTP collection with auth, retry. Rate limiting via injected RateLimiter."""
+    """Fetches structured data from an HTTP API and yields records.
 
-    def __init__(self, rate_limiter: RateLimiter) -> None:
-        self._rate_limiter = rate_limiter
+    Returns an Iterator so large responses don't force list materialization
+    at the call site. (True streaming into normalize/sink requires the
+    requester to return a streaming body; current Requester buffers.)
+    """
+
+    def __init__(self, requester: Requester, env: Mapping[str, str] | None = None) -> None:
+        self._requester = requester
+        self._env = env if env is not None else os.environ
 
     def collect(
         self,
         entry: CollectorEntry,
         source: SourceEntry | None,
-    ) -> list[dict[str, Any]]:
-        """Collect from HTTP source, normalize, return records."""
+        *,
+        raw_store: Any | None = None,
+    ) -> Iterator[dict[str, Any]]:
         if not source:
             msg = f"API collector '{entry.name}' requires a source"
             raise CollectionError(msg)
@@ -91,25 +73,41 @@ class ApiCollector:
             msg = f"API collector '{entry.name}' has no endpoint"
             raise CollectionError(msg)
 
-        self._rate_limiter.acquire(source)
-
         url = self._build_url(source.url, entry.endpoint, entry.params or {})
         query_params = self._build_query_params(entry.params or {})
-        auth_headers = self._resolve_auth(source)
-        ua = source.user_agent or DEFAULT_USER_AGENT
-        headers = {"User-Agent": ua, **auth_headers}
+        headers = self._build_headers(source)
 
-        if source.auth.param and source.auth.env:
-            api_key = os.environ.get(source.auth.env, "")
-            if api_key:
-                query_params[source.auth.param] = api_key
+        body: dict[str, Any] | None = None
+        if entry.body:
+            body = substitute(entry.body, entry.params or {})
+            unresolved = find_unresolved(body)
+            if unresolved:
+                missing = ", ".join(sorted(set(unresolved)))
+                msg = (
+                    f"API collector '{entry.name}' body has unresolved placeholder(s): "
+                    f"{{{missing}}}. Add them to params: — sending this literally to the "
+                    f"server will silently fail or return empty results."
+                )
+                raise CollectionError(msg)
 
-        with httpx.Client(timeout=source.timeout, follow_redirects=True) as client:
-            try:
-                resp = _fetch(client, entry.method, url, params=query_params, headers=headers)
-            except (httpx.HTTPStatusError, httpx.TransportError) as exc:
-                msg = f"HTTP collection failed after retries: {url}"
-                raise CollectionError(msg) from exc
+        resp = self._requester.request(
+            source,
+            entry.method,
+            url,
+            params=query_params,
+            headers=headers,
+            json_body=body,
+        )
+
+        if raw_store is not None:
+            raw_store.save_http(
+                entry.name,
+                resp.body,
+                status=resp.status_code,
+                url=resp.url,
+                headers=resp.headers,
+                content_type=resp.content_type,
+            )
 
         data = self._parse_response(resp, entry.response_format)
 
@@ -118,21 +116,26 @@ class ApiCollector:
 
         records = _ensure_list(data)
 
-        if entry.normalize and records:
-            records = [apply_normalize(record, entry.normalize) for record in records]
-
-        return records
+        if entry.normalize:
+            for record in records:
+                yield apply_normalize(record, entry.normalize)
+        else:
+            yield from records
 
     # --- Private ---
+
+    def _build_headers(self, source: SourceEntry) -> dict[str, str]:
+        ua = source.user_agent or DEFAULT_USER_AGENT
+        return {"User-Agent": ua, **self._resolve_auth(source)}
 
     def _resolve_auth(self, source: SourceEntry) -> dict[str, str]:
         auth = source.auth
         if not auth.header or not auth.env:
             return {}
-        value = os.environ.get(auth.env, "")
+        value = self._env.get(auth.env, "")
         if not value:
             return {}
-        return {auth.header: value}
+        return {auth.header: f"{auth.prefix}{value}"}
 
     def _build_url(
         self,
@@ -144,22 +147,25 @@ class ApiCollector:
         return f"{base_url.rstrip('/')}{path}"
 
     def _build_query_params(self, params: dict[str, str]) -> dict[str, str]:
-        """Build query params, warning and dropping unresolved {placeholders}."""
+        """Drop entries whose values still contain {placeholder}."""
         resolved = {}
         for k, v in params.items():
-            if "{" in v:
-                print(
-                    f"  WARNING: dropping unresolved param {k}={v!r} "
-                    f"— edit config to set actual values",
-                    file=sys.stderr,
-                )
-            else:
-                resolved[k] = v
+            if isinstance(v, str) and "{" in v:
+                continue
+            resolved[k] = v
         return resolved
 
-    def _parse_response(self, resp: httpx.Response, fmt: str) -> Any:
+    def _parse_response(self, resp: HttpResponse, fmt: str) -> Any:
+        import json
+
         if fmt == "json":
-            return resp.json()
+            if not resp.text:
+                return None
+            try:
+                return json.loads(resp.text)
+            except json.JSONDecodeError as exc:
+                msg = f"Response is not valid JSON from {resp.url}: {exc}"
+                raise CollectionError(msg) from exc
         if fmt == "xml":
             import xmltodict
 

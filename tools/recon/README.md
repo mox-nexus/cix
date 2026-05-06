@@ -17,6 +17,12 @@ For the full argument, see [docs/explanation/capability.md](docs/explanation/cap
 ## Install
 
 ```bash
+uv tool install "git+https://github.com/mox-labs/cix#subdirectory=tools/recon"
+```
+
+Or, for local development inside the cix monorepo:
+
+```bash
 uv tool install --editable tools/recon
 ```
 
@@ -31,36 +37,45 @@ Claude loads the skill on demand via `recon --skill` — no plugin registration 
 ## Quick start
 
 ```bash
+# List the built-in scaffoldable templates
+recon templates
+
 # Scaffold a mission from a built-in template
-recon init papers --template research
+recon init my-scan --template code-forensics
 
-# Edit the config to point at real queries (the template has placeholders)
-$EDITOR .cix/recon/papers/config.yaml
+# Or scaffold from an external config file (e.g. a plugin-owned catalog)
+recon init my-scan --from path/to/catalog.yaml
 
-# Run — archives land under .cix/recon/papers/archive/<timestamp>/
-recon survey papers
+# Edit the config as needed (templates ship with placeholders)
+$EDITOR .cix/recon/my-scan/config.yaml
+
+# Run — archives land under .cix/recon/my-scan/archive/<timestamp>/
+recon survey my-scan
 
 # Query the result with SQL (DuckDB reads JSONL natively)
-recon query papers "SELECT title, year FROM s2_search ORDER BY year DESC LIMIT 10"
+recon query my-scan "SELECT line FROM todo_files LIMIT 20"
 ```
 
-For an end-to-end walkthrough of the probe → normalize → survey workflow against a non-academic task, see [docs/how-to/first-survey.md](docs/how-to/first-survey.md).
+For an end-to-end walkthrough of the probe → normalize → survey workflow, see [docs/how-to/first-survey.md](docs/how-to/first-survey.md).
 
 ## Domains
 
-Recon is general-purpose. The built-in `research` template is one instance. Common uses across domains:
+Recon is general-purpose. The built-in templates each showcase a distinct capability — they are examples, not the tool's purpose. Common uses across domains:
 
-| Domain | What the config collects |
-|---|---|
-| Code mining | `rg`, `git log`, `gh api`, `code-maat` (hotspots, coupling, knowledge distribution) across multiple repos via fan-out |
-| Release monitoring | GitHub releases, PyPI, crates.io, npm |
-| Dependency audits | `cargo tree`, `npm ls`, `pip-audit` |
-| Literature review | Semantic Scholar, arXiv, OpenAlex, Zenodo |
-| Competitive analysis | Product pages, pricing, changelogs (web collector) |
-| Doc site survey | Scrape docs trees, extract structure |
-| Issue triage | `gh issue list` across repos with labels |
-| API state snapshots | Any REST endpoint captured periodically |
-| Content tracking | RSS feeds, blog indices, changelog pages |
+| Domain | What the config collects | Starter template |
+|---|---|---|
+| Code forensics | `rg`, `git log`, filesystem stats with patterns fan-out | `code-forensics` |
+| GitHub audit | Issues, PRs, releases via REST API | `github-audit` |
+| Doc site survey | Scrape pages, HTML → markdown | `docs-mine` |
+| Package registries | Normalize PyPI / npm / crates.io into one schema | `package-registries` |
+| Factual grounding | Wikipedia + Wikidata SPARQL | `factual-ground` |
+| Content tracking | RSS / Atom feeds via XML parsing | `rss-monitor` |
+| Literature review | Semantic Scholar, arXiv, OpenAlex, Zenodo | *(in craft-research plugin — see below)* |
+| Dependency audits | `cargo tree`, `npm ls`, `pip-audit` | *(see config-patterns.md)* |
+| Issue triage | `gh issue list` across repos with labels | *(see config-patterns.md)* |
+| API state snapshots | Any REST endpoint captured periodically | *(see config-patterns.md)* |
+
+Domain-specific catalogs (like literature review for craft-research) live inside the consuming plugin, not inside recon. Use `recon init <mission> --from <path>` to scaffold from a plugin-owned catalog.
 
 The common shape: *something out there has data in some response format, and Claude needs to reason over it as structured records.* Recon bridges that.
 
