@@ -1,0 +1,55 @@
+# forensic-claim-verification — built-in template
+#
+# Cross-family verification of forensic claims (e.g., from SEC filings)
+# using three voice backends: Claude (Anthropic API), Gemini (CLI), and
+# local MLX Qwen (via mlx_lm.server).
+#
+# Edit `claims_path` to point at your JSONL of claims.
+# Each claim looks like:
+#
+#   {
+#     "id": "F003-cap-rate-FY2025",
+#     "statement": "EXPE FY2025 SBC capitalization rate is 19.9%",
+#     "expected_value": "19.9%",
+#     "question": "What is the SBC capitalization rate for FY2025?",
+#     "source": {
+#       "id": "10-K 0001324424-26-000008 Note 9",
+#       "accession": "0001324424-26-000008",
+#       "section": "Note 9",
+#       "excerpt": "We capitalized $99 million of stock-based compensation expense ..."
+#     }
+#   }
+
+name: forensic-claim-verification
+description: Cross-family verification of forensic claims against primary sources
+
+mechanisms:
+  - name: cross_family
+    config:
+      depth: reextract  # one of: anchored | reextract | blind
+      voices:
+        - name: claude
+          backend: anthropic
+          model: claude-opus-4-7
+          api_key_env: ANTHROPIC_API_KEY
+          timeout_seconds: 90.0
+          max_tokens: 800
+        - name: gemini
+          backend: gemini-cli
+          model: ""    # use CLI default; or set explicitly
+          timeout_seconds: 90.0
+        - name: mlx
+          backend: mlx-server
+          model: unsloth/Qwen3.6-35B-A3B-UD-MLX-4bit
+          base_url: http://localhost:8080
+          timeout_seconds: 120.0
+          max_tokens: 1500
+          extra:
+            # Qwen3-family internal "thinking" eats 1500-2000+ tokens before
+            # the visible answer; disable for direct forensic responses.
+            chat_template_kwargs:
+              enable_thinking: false
+
+claims_path: ./claims.jsonl
+output_dir: .cix/assay
+sleep_seconds_between_calls: 0.5
