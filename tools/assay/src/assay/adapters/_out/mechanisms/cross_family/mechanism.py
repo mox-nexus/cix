@@ -18,7 +18,6 @@ from assay.adapters._out.mechanisms.cross_family.config import CrossFamilyConfig
 from assay.adapters._out.mechanisms.cross_family.voice.port import Voice, VoiceReading
 from assay.domain.models import Claim, MechanismResult, Verdict
 
-
 _NAME = "cross_family"
 
 

@@ -95,7 +95,9 @@ class InquiryRunner:
                 error_only += 1
 
             if on_progress:
-                on_progress(InquiryProgress(claim=claim, mechanism_results=results, adjudication=adj))
+                on_progress(
+                    InquiryProgress(claim=claim, mechanism_results=results, adjudication=adj)
+                )
 
             if self._sleep > 0:
                 time.sleep(self._sleep)

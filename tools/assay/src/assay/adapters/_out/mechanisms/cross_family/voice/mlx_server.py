@@ -19,15 +19,12 @@ from assay.adapters._out.mechanisms.cross_family.prompt_builder import build_pro
 from assay.adapters._out.mechanisms.cross_family.voice.port import VoiceReading
 from assay.domain.models import Claim
 
-
 # Qwen3 emits internal reasoning either as <think>...</think> tags (when
 # the server doesn't pre-strip them) or as a "Thinking Process:" preamble
 # followed by "==========" separator. Both are stripped defensively in case
 # disable_thinking does not take effect (e.g., on a different model).
 _THINK_TAG_RX = re.compile(r"<think>.*?</think>", re.DOTALL)
-_THINK_HEADER_RX = re.compile(
-    r"^\s*Thinking Process:.*?(?:={3,}|\n\n)", re.DOTALL | re.IGNORECASE
-)
+_THINK_HEADER_RX = re.compile(r"^\s*Thinking Process:.*?(?:={3,}|\n\n)", re.DOTALL | re.IGNORECASE)
 
 
 class MlxServerVoice:
@@ -66,18 +63,27 @@ class MlxServerVoice:
                     json=body,
                 )
         except Exception as e:
-            return _error_reading(self.name, self.model, depth, f"exception: {e}", "", time.time() - t0)
+            return _error_reading(
+                self.name, self.model, depth, f"exception: {e}", "", time.time() - t0
+            )
         elapsed = time.time() - t0
 
         if resp.status_code != 200:
             return _error_reading(
-                self.name, self.model, depth, f"HTTP {resp.status_code}: {resp.text[:200]}", "", elapsed
+                self.name,
+                self.model,
+                depth,
+                f"HTTP {resp.status_code}: {resp.text[:200]}",
+                "",
+                elapsed,
             )
 
         data = resp.json()
         choices = data.get("choices", [])
         if not choices:
-            return _error_reading(self.name, self.model, depth, "no choices in response", str(data)[:200], elapsed)
+            return _error_reading(
+                self.name, self.model, depth, "no choices in response", str(data)[:200], elapsed
+            )
 
         text = choices[0].get("message", {}).get("content", "").strip()
         # Defense-in-depth: strip thinking artifacts even if disable did not take effect.
@@ -99,7 +105,9 @@ class MlxServerVoice:
         )
 
 
-def _error_reading(name: str, model: str, depth: CoVeDepth, reason: str, raw: str, elapsed: float = 0.0) -> VoiceReading:
+def _error_reading(
+    name: str, model: str, depth: CoVeDepth, reason: str, raw: str, elapsed: float = 0.0
+) -> VoiceReading:
     return VoiceReading(
         voice_name=name,
         voice_model=model,

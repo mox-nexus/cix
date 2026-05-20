@@ -14,16 +14,15 @@ Pure domain — no I/O, no API specifics, no DuckDB. Adapters bring those.
 from __future__ import annotations
 
 import hashlib
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
-
 # --- Verdict shape ---
 
 
-class Verdict(str, Enum):
+class Verdict(StrEnum):
     """The discrete shape every mechanism must project its result to.
 
     Mechanisms also attach mechanism-specific evidence (logprob trace,
@@ -47,12 +46,20 @@ class PrimarySource(BaseModel):
     so that re-runs are reproducible and tampering is detectable.
     """
 
-    id: str = Field(description="Stable source identifier (e.g., '10-K 0001324424-26-000008 Note 9')")
+    id: str = Field(
+        description="Stable source identifier (e.g., '10-K 0001324424-26-000008 Note 9')"
+    )
     accession: str | None = Field(default=None, description="EDGAR accession number, if applicable")
-    section: str | None = Field(default=None, description="Section / note / item locator within the source")
-    excerpt: str = Field(description="Verbatim excerpt of the source containing or relevant to the claim")
+    section: str | None = Field(
+        default=None, description="Section / note / item locator within the source"
+    )
+    excerpt: str = Field(
+        description="Verbatim excerpt of the source containing or relevant to the claim"
+    )
     retrieved_at: str | None = Field(default=None, description="ISO-8601 retrieval timestamp")
-    sha256: str | None = Field(default=None, description="SHA-256 of the full source document at retrieval")
+    sha256: str | None = Field(
+        default=None, description="SHA-256 of the full source document at retrieval"
+    )
     fetch_url: str | None = Field(default=None, description="URL the source was fetched from")
 
 
@@ -114,8 +121,12 @@ class MechanismResult(BaseModel):
     """
 
     claim_id: str
-    claim_sha256: str = Field(description="Content hash of the claim at the time of mechanism execution")
-    mechanism: str = Field(description="Mechanism family identifier (e.g., 'cross_family', 'trace_budget')")
+    claim_sha256: str = Field(
+        description="Content hash of the claim at the time of mechanism execution"
+    )
+    mechanism: str = Field(
+        description="Mechanism family identifier (e.g., 'cross_family', 'trace_budget')"
+    )
     verdict: Verdict
     confidence: float | None = Field(
         default=None,
@@ -148,7 +159,9 @@ class Adjudication(BaseModel):
     converged: bool = Field(description="True iff all non-error mechanisms agree on Verdict")
     diverged: bool = Field(description="True iff at least one mechanism disagrees with another")
     error_count: int
-    final_verdict: Verdict = Field(description="Aggregate verdict; UNCERTAIN if diverged or all errored")
+    final_verdict: Verdict = Field(
+        description="Aggregate verdict; UNCERTAIN if diverged or all errored"
+    )
     notes: str | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -173,6 +186,10 @@ class InquiryConfig(BaseModel):
     name: str
     description: str | None = None
     mechanisms: list[MechanismSpec]
-    claims_path: str = Field(description="Path to JSONL file of claims, or directory of claim JSONs")
-    output_dir: str = Field(default=".cix/assay", description="Where verdicts and adjudications land")
+    claims_path: str = Field(
+        description="Path to JSONL file of claims, or directory of claim JSONs"
+    )
+    output_dir: str = Field(
+        default=".cix/assay", description="Where verdicts and adjudications land"
+    )
     sleep_seconds_between_calls: float = 0.5

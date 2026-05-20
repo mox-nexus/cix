@@ -35,14 +35,21 @@ class GeminiCliVoice:
         try:
             res = subprocess.run(cmd, capture_output=True, text=True, timeout=self._timeout)
         except subprocess.TimeoutExpired:
-            return _error_reading(self.name, self.model, depth, f"timeout after {self._timeout}s", "")
+            return _error_reading(
+                self.name, self.model, depth, f"timeout after {self._timeout}s", ""
+            )
         except FileNotFoundError:
             return _error_reading(self.name, self.model, depth, "gemini CLI not on PATH", "")
         elapsed = time.time() - t0
 
         if res.returncode != 0:
             return _error_reading(
-                self.name, self.model, depth, f"gemini exit {res.returncode}: {res.stderr[:200]}", res.stdout, elapsed
+                self.name,
+                self.model,
+                depth,
+                f"gemini exit {res.returncode}: {res.stderr[:200]}",
+                res.stdout,
+                elapsed,
             )
 
         text = res.stdout.strip()
@@ -60,7 +67,9 @@ class GeminiCliVoice:
         )
 
 
-def _error_reading(name: str, model: str, depth: CoVeDepth, reason: str, raw: str, elapsed: float = 0.0) -> VoiceReading:
+def _error_reading(
+    name: str, model: str, depth: CoVeDepth, reason: str, raw: str, elapsed: float = 0.0
+) -> VoiceReading:
     return VoiceReading(
         voice_name=name,
         voice_model=model,

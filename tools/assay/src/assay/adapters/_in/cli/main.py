@@ -20,7 +20,6 @@ from __future__ import annotations
 import importlib.resources
 import json
 import shutil
-import sys
 from pathlib import Path
 
 import click
@@ -65,7 +64,11 @@ def _print_progress(p: InquiryProgress) -> None:
         v = r.verdict.value
         bits.append(f"{r.mechanism}={v}")
     final = p.adjudication.final_verdict.value
-    state = "DIVERGED" if p.adjudication.diverged else ("CONVERGED" if p.adjudication.converged else "MIXED")
+    state = (
+        "DIVERGED"
+        if p.adjudication.diverged
+        else ("CONVERGED" if p.adjudication.converged else "MIXED")
+    )
     CONSOLE.print(f"  {p.claim.id:<40s}  [{state:9s}]  final={final:<9s}  ({', '.join(bits)})")
     if p.adjudication.diverged:
         # Auto-print divergent mechanism reasoning
@@ -80,7 +83,12 @@ def _print_progress(p: InquiryProgress) -> None:
 @click.group(invoke_without_command=True)
 @click.version_option(__version__, "--version", "-v")
 @click.option("--skill", is_flag=True, help="Print the claude-loadable skill description and exit.")
-@click.option("-r", "--reference", default=None, help="With --skill: print named reference file from references/.")
+@click.option(
+    "-r",
+    "--reference",
+    default=None,
+    help="With --skill: print named reference file from references/.",
+)
 @click.pass_context
 def main(ctx: click.Context, skill: bool, reference: str | None) -> None:
     """assay — cross-family verification harness."""
@@ -129,11 +137,15 @@ def init(inquiry: str, template: str) -> None:
     dst = dst_dir / INQUIRY_FILE
     # Rewrite the name field so inquiry-dir and config.name match.
     import yaml as _yaml
+
     raw = _yaml.safe_load(src.read_text(encoding="utf-8"))
     raw["name"] = inquiry
     dst.write_text(_yaml.safe_dump(raw, sort_keys=False), encoding="utf-8")
     CONSOLE.print(f"[green]Scaffolded[/green] {dst}")
-    CONSOLE.print(f"Edit then run: [cyan]assay validate {inquiry}[/cyan] && [cyan]assay verify {inquiry}[/cyan]")
+    CONSOLE.print(
+        f"Edit then run: [cyan]assay validate {inquiry}[/cyan] && "
+        f"[cyan]assay verify {inquiry}[/cyan]"
+    )
 
 
 @main.command()
@@ -158,7 +170,10 @@ def validate(inquiry: str) -> None:
         if tmp.exists():
             shutil.rmtree(tmp)
     _ = runner  # suppress unused
-    CONSOLE.print(f"[green]OK[/green]  {cfg.name}: {len(cfg.mechanisms)} mechanism(s); claims at {cfg.claims_path}")
+    CONSOLE.print(
+        f"[green]OK[/green]  {cfg.name}: {len(cfg.mechanisms)} mechanism(s); "
+        f"claims at {cfg.claims_path}"
+    )
 
 
 @main.command()
@@ -224,7 +239,10 @@ def show(inquiry: str, claim_id: str) -> None:
         CONSOLE.print(f"[yellow]no results for claim {claim_id}[/yellow]")
         return
     for r in rows:
-        CONSOLE.print(f"\n[bold cyan]{r['mechanism']}[/bold cyan]  verdict=[bold]{r['verdict']}[/bold]  ({r['elapsed_seconds']:.1f}s)")
+        CONSOLE.print(
+            f"\n[bold cyan]{r['mechanism']}[/bold cyan]  "
+            f"verdict=[bold]{r['verdict']}[/bold]  ({r['elapsed_seconds']:.1f}s)"
+        )
         CONSOLE.print(f"  summary: {r['summary']}")
         ev = r.get("evidence")
         if ev:
