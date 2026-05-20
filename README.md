@@ -2,8 +2,14 @@
 
 Collaborative Intelligence Extensions for Claude Code.
 
-> [!WARNING]
-> **Experimental.** This project is under active development and experiments are being conducted. APIs, extension formats, and conventions may change. Questions, feedback, and ideas welcome in [Discussions](https://github.com/mox-nexus/cix/discussions).
+> [!IMPORTANT]
+> **Archived — superseded by [mox-labs/gnx](https://github.com/mox-labs/gnx).**
+>
+> The work continues under a new name and home. `gnx` (generative noetic extensions for agents) is the active successor — same lineage, sharpened framing, hosted under `mox-labs`. See the [gnx README](https://github.com/mox-labs/gnx) for current direction and the place in the broader stack ([slick](https://github.com/mox-labs/slick) → gnx → [geist.sh](https://github.com/mox-labs/geist.sh)).
+>
+> All in-flight plugins, tools, and architecture work has been merged to `main` here as the wind-down state. Branches preserved for reference (not merged) are documented in [BRANCHES.md](./BRANCHES.md).
+>
+> This repo is left read-only for historical reference. Issues and PRs are no longer accepted.
 
 AI reliably improves immediate task performance while simultaneously degrading the cognitive foundations that enable future performance. The interaction design — not the technology — determines which outcome you get. cix is a marketplace of cognitive extensions designed around the research: tools that amplify human capability rather than replace it.
 
