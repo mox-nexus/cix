@@ -6,7 +6,6 @@ migration. Each run gets its own subdirectory; the store appends to it.
 
 from __future__ import annotations
 
-import json
 from collections.abc import Iterable
 from pathlib import Path
 
@@ -39,11 +38,13 @@ class DuckdbVerdictStore:
         # them as `mechanism_results` and `adjudications`.
         if self._results_path.exists():
             con.execute(
-                f"CREATE VIEW mechanism_results AS SELECT * FROM read_json_auto('{self._results_path}')"
+                "CREATE VIEW mechanism_results AS "
+                f"SELECT * FROM read_json_auto('{self._results_path}')"
             )
         if self._adjudications_path.exists():
             con.execute(
-                f"CREATE VIEW adjudications AS SELECT * FROM read_json_auto('{self._adjudications_path}')"
+                "CREATE VIEW adjudications AS "
+                f"SELECT * FROM read_json_auto('{self._adjudications_path}')"
             )
         # Use fetchall() + manual dict construction — avoids requiring
         # pandas/numpy as a runtime dep just to render rows.

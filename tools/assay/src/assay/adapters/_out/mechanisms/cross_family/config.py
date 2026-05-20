@@ -7,13 +7,13 @@ and SEP's "sample count" live in their own respective mechanism configs.
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, Field
 
 
-class CoVeDepth(str, Enum):
+class CoVeDepth(StrEnum):
     """Depth of cross-examination per Dhuliawala 2023 CoVE.
 
     Names describe the mechanism (independence-from-the-claim), not the cost.

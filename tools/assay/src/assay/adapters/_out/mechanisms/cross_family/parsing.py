@@ -13,9 +13,7 @@ import re
 
 _VERDICT_RX = re.compile(r"VERDICT:\s*(AGREE|DISAGREE|UNCERTAIN)\b", re.IGNORECASE)
 _EXTRACTED_RX = re.compile(r"EXTRACTED:\s*(.+?)(?:\n[A-Z][A-Z _]+:|\Z)", re.IGNORECASE | re.DOTALL)
-_SPAN_RX = re.compile(
-    r"SUPPORTING SPAN:\s*(.+?)(?:\n[A-Z][A-Z _]+:|\Z)", re.IGNORECASE | re.DOTALL
-)
+_SPAN_RX = re.compile(r"SUPPORTING SPAN:\s*(.+?)(?:\n[A-Z][A-Z _]+:|\Z)", re.IGNORECASE | re.DOTALL)
 _REASON_RX = re.compile(r"REASON:\s*(.+?)(?:\n[A-Z][A-Z _]+:|\Z)", re.IGNORECASE | re.DOTALL)
 
 

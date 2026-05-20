@@ -5,7 +5,7 @@ Single location for dependency injection. The CLI imports from here.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from assay.adapters._out.claim_store.jsonl import JsonlClaimStore
@@ -21,7 +21,6 @@ from assay.domain.models import InquiryConfig, MechanismSpec
 from assay.domain.ports._out.mechanism import Mechanism
 from assay.domain.services.inquiry_runner import InquiryRunner
 
-
 # --- Voice factory (cross-family) ---
 
 
@@ -36,7 +35,9 @@ def _build_voice(cfg: VoiceConfig) -> Voice:
     backend = cfg.backend
     cls = _VOICE_BACKENDS.get(backend)
     if cls is None:
-        raise InquiryConfigError(f"unknown voice backend: {backend!r} (known: {list(_VOICE_BACKENDS)})")
+        raise InquiryConfigError(
+            f"unknown voice backend: {backend!r} (known: {list(_VOICE_BACKENDS)})"
+        )
     return cls(cfg)
 
 
@@ -57,7 +58,9 @@ _MECHANISM_BUILDERS = {
 def _build_mechanism(spec: MechanismSpec) -> Mechanism:
     builder = _MECHANISM_BUILDERS.get(spec.name)
     if builder is None:
-        raise InquiryConfigError(f"unknown mechanism: {spec.name!r} (known: {list(_MECHANISM_BUILDERS)})")
+        raise InquiryConfigError(
+            f"unknown mechanism: {spec.name!r} (known: {list(_MECHANISM_BUILDERS)})"
+        )
     return builder(spec)
 
 
@@ -75,7 +78,7 @@ def compose(config: InquiryConfig, run_dir: str | None = None) -> tuple[InquiryR
     if run_dir is None:
         import os
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         ts = now.strftime("%Y%m%dT%H%M%S") + f"{now.microsecond // 1000:03d}Z"
         run_dir_path = Path(config.output_dir) / config.name / f"run-{ts}-pid{os.getpid()}"
     else:

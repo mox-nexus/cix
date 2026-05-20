@@ -17,7 +17,6 @@ from assay.adapters._out.mechanisms.cross_family.prompt_builder import build_pro
 from assay.adapters._out.mechanisms.cross_family.voice.port import VoiceReading
 from assay.domain.models import Claim
 
-
 _API_URL = "https://api.anthropic.com/v1/messages"
 _API_VERSION = "2023-06-01"
 
@@ -38,7 +37,9 @@ class AnthropicVoice:
         prompt = build_prompt(claim, depth)
         api_key = os.environ.get(self._api_key_env, "")
         if not api_key:
-            return _error_reading(self.name, self.model, depth, f"missing env {self._api_key_env}", "")
+            return _error_reading(
+                self.name, self.model, depth, f"missing env {self._api_key_env}", ""
+            )
 
         t0 = time.time()
         try:
@@ -60,13 +61,20 @@ class AnthropicVoice:
             elapsed = time.time() - t0
             if resp.status_code != 200:
                 return _error_reading(
-                    self.name, self.model, depth, f"HTTP {resp.status_code}: {resp.text[:200]}", "", elapsed
+                    self.name,
+                    self.model,
+                    depth,
+                    f"HTTP {resp.status_code}: {resp.text[:200]}",
+                    "",
+                    elapsed,
                 )
             data = resp.json()
             blocks = data.get("content", [])
             text = "".join(b.get("text", "") for b in blocks if b.get("type") == "text").strip()
         except Exception as e:
-            return _error_reading(self.name, self.model, depth, f"exception: {e}", "", time.time() - t0)
+            return _error_reading(
+                self.name, self.model, depth, f"exception: {e}", "", time.time() - t0
+            )
 
         parsed = parse_response(text)
         return VoiceReading(

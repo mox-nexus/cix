@@ -13,7 +13,6 @@ from __future__ import annotations
 from assay.adapters._out.mechanisms.cross_family.config import CoVeDepth
 from assay.domain.models import Claim
 
-
 _HEADER = """You are an independent verification voice for a forensic verification harness.
 Be precise; cite the source span; reply in the exact format requested.
 Never speculate beyond what the source supports."""
