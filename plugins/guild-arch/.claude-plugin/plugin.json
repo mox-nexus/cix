@@ -1,7 +1,7 @@
 {
   "name": "guild-arch",
-  "version": "0.1.0",
-  "description": "Provides multi-perspective architectural reasoning through specialized agents. Use when: user asks to 'review architecture', 'evaluate this design', 'check production readiness', 'scaffold a service', or needs boundary, resilience, or performance analysis.",
+  "version": "0.2.0",
+  "description": "Provides multi-perspective architectural reasoning through specialized agents, plus trust-boundaries security reasoning (SBD principles tagged [FORCING] vs [POSTURE], lethal trifecta, pit-of-success primitives, false-confidence traps, Semgrep/Gitleaks/zizmor scanning). Use when: user asks to 'review architecture', 'evaluate this design', 'check production readiness', 'scaffold a service', 'threat model this', 'is this exploitable', 'review security architecturally', or needs boundary, resilience, performance, or security-architectural analysis.",
   "author": {
     "name": "Mox Labs",
     "email": "mox.rnd@gmail.com"
@@ -12,6 +12,9 @@
     "design",
     "operations",
     "council",
-    "hexagonal"
+    "hexagonal",
+    "trust-boundaries",
+    "security-by-design",
+    "threat-modeling"
   ]
 }
