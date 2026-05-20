@@ -1,7 +1,5 @@
 """Tests for plaintext source adapter."""
 
-from pathlib import Path
-
 from memex.adapters._out.sources.plaintext import PlaintextAdapter
 
 
@@ -42,7 +40,10 @@ class TestPlaintextAdapter:
 
     def test_ingest_plain_text(self, tmp_path):
         f = tmp_path / "notes.txt"
-        f.write_text("This is a plain text file with enough content to be meaningful and pass the minimum fragment length check.")
+        f.write_text(
+            "This is a plain text file with enough content to be meaningful and pass "
+            "the minimum fragment length check."
+        )
         fragments = list(self.adapter.ingest(f))
         assert len(fragments) == 1
         assert fragments[0].role == "document"
@@ -53,11 +54,14 @@ class TestPlaintextAdapter:
         f = tmp_path / "doc.md"
         f.write_text(
             "# Introduction\n\n"
-            "This is the introduction section with enough content to pass the minimum length requirement for fragment creation.\n\n"
+            "This is the introduction section with enough content to pass the minimum "
+            "length requirement for fragment creation.\n\n"
             "## Methods\n\n"
-            "This is the methods section with detailed description of approaches used in this study and their justification.\n\n"
+            "This is the methods section with detailed description of approaches used "
+            "in this study and their justification.\n\n"
             "## Results\n\n"
-            "These are the results of the analysis including key findings and their statistical significance.\n"
+            "These are the results of the analysis including key findings and their "
+            "statistical significance.\n"
         )
         fragments = list(self.adapter.ingest(f))
         assert len(fragments) == 3
@@ -76,7 +80,10 @@ class TestPlaintextAdapter:
     def test_ingest_idempotent_ids(self, tmp_path):
         """Same file produces same fragment IDs (stable hashing)."""
         f = tmp_path / "doc.md"
-        f.write_text("This is content with enough text to pass the minimum fragment length check for the plaintext adapter.")
+        f.write_text(
+            "This is content with enough text to pass the minimum fragment length "
+            "check for the plaintext adapter."
+        )
         ids_first = [frag.id for frag in self.adapter.ingest(f)]
         ids_second = [frag.id for frag in self.adapter.ingest(f)]
         assert ids_first == ids_second
@@ -87,7 +94,8 @@ class TestPlaintextAdapter:
             "# Title\n\n"
             "Short.\n\n"  # Too short, should be skipped
             "## Real Section\n\n"
-            "This section has enough content to be meaningful as a fragment and should be included in the output.\n"
+            "This section has enough content to be meaningful as a fragment "
+            "and should be included in the output.\n"
         )
         fragments = list(self.adapter.ingest(f))
         # "Short." section should be skipped (< 50 chars)
@@ -95,6 +103,9 @@ class TestPlaintextAdapter:
 
     def test_conversation_id_is_file_path(self, tmp_path):
         f = tmp_path / "doc.txt"
-        f.write_text("Enough content here to create a fragment that meets the minimum length requirement for the adapter.")
+        f.write_text(
+            "Enough content here to create a fragment that meets the minimum length "
+            "requirement for the adapter."
+        )
         fragments = list(self.adapter.ingest(f))
         assert fragments[0].conversation_id == str(f.resolve())

@@ -196,17 +196,13 @@ class PlaintextAdapter:
 
         if len(sections) <= 1:
             # No headings — single fragment for the whole file
-            yield self._make_fragment(
-                path, file_id, "whole", path.name, content.strip(), timestamp
-            )
+            yield self._make_fragment(path, file_id, "whole", path.name, content.strip(), timestamp)
             return
 
         # First section before any heading (preamble)
         preamble = sections[0].strip()
         if preamble and len(preamble) >= _MIN_FRAGMENT_LENGTH:
-            yield self._make_fragment(
-                path, file_id, "preamble", path.name, preamble, timestamp
-            )
+            yield self._make_fragment(path, file_id, "preamble", path.name, preamble, timestamp)
 
         # Heading + body pairs
         for i in range(1, len(sections), 2):
@@ -253,7 +249,9 @@ class PlaintextAdapter:
                 continue
 
             # Curate raw: exclude content field (already in Fragment.content)
-            curated_raw = {k: v for k, v in entry.raw.items() if k != "content"} if entry.raw else None
+            curated_raw = (
+                {k: v for k, v in entry.raw.items() if k != "content"} if entry.raw else None
+            )
             yield self._make_fragment(
                 path,
                 file_id,
@@ -313,8 +311,12 @@ class PlaintextAdapter:
                     body = "\n\n".join(current_content).strip()
                     if len(body) >= _MIN_FRAGMENT_LENGTH:
                         yield self._make_fragment(
-                            path, file_id, f"section-{section_idx}",
-                            current_heading, body, timestamp,
+                            path,
+                            file_id,
+                            f"section-{section_idx}",
+                            current_heading,
+                            body,
+                            timestamp,
                         )
                     section_idx += 1
 
@@ -328,8 +330,12 @@ class PlaintextAdapter:
             body = "\n\n".join(current_content).strip()
             if len(body) >= _MIN_FRAGMENT_LENGTH:
                 yield self._make_fragment(
-                    path, file_id, f"section-{section_idx}",
-                    current_heading, body, timestamp,
+                    path,
+                    file_id,
+                    f"section-{section_idx}",
+                    current_heading,
+                    body,
+                    timestamp,
                 )
 
     # ── Helpers ────────────────────────────────────────────────────

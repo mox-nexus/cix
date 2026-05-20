@@ -1143,7 +1143,7 @@ def sources():
     table.add_column("Adapter", style="green")
     table.add_column("Formats")
 
-    _FORMAT_MAP = {
+    format_map = {
         "claude_conversations": ".json, .zip",
         "openai": ".json, .zip",
         "plaintext": ".md, .txt, .pdf, .docx, source code",
@@ -1151,7 +1151,7 @@ def sources():
 
     for adapter in service.source_adapters:
         kind = adapter.source_kind()
-        formats = _FORMAT_MAP.get(kind, ".json, .zip")
+        formats = format_map.get(kind, ".json, .zip")
         table.add_row(kind, adapter.__class__.__name__, formats)
 
     obs.console.print(table)

@@ -16,7 +16,11 @@ import warnings
 from pathlib import Path
 
 from memex.adapters._out.corpus import DuckDBCorpus
-from memex.adapters._out.sources import ClaudeConversationsAdapter, OpenAIConversationsAdapter, PlaintextAdapter
+from memex.adapters._out.sources import (
+    ClaudeConversationsAdapter,
+    OpenAIConversationsAdapter,
+    PlaintextAdapter,
+)
 from memex.config.settings import Settings, get_settings
 from memex.domain.ports._out.embedding import EmbeddingPort
 from memex.domain.services import ExcavationService
@@ -27,6 +31,7 @@ os.environ.setdefault("COREML_DELEGATE_NO_SYNC", "1")  # CoreML sync warnings
 # macOS CoreML emits native NSLog ("Context leak", "IsInputSupported") to fd 2.
 # These are benign — unsupported ops fall back to CPU. Suppress via os_log level.
 import sys
+
 if sys.platform == "darwin":
     os.environ.setdefault("OS_ACTIVITY_MODE", "disable")
 logging.getLogger("onnxruntime").setLevel(logging.ERROR)

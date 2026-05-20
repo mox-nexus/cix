@@ -199,8 +199,7 @@ class Dispatcher:
             p.get("limit", 20),
         )
         return [
-            {"fragment": _fragment_to_dict(f), "hops": h, "edge_type": et}
-            for f, h, et in results
+            {"fragment": _fragment_to_dict(f), "hops": h, "edge_type": et} for f, h, et in results
         ]
 
     # --- TrailPort handlers ---
