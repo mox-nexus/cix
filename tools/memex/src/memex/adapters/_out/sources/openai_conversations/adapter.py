@@ -27,11 +27,15 @@ class OpenAIConversationsAdapter:
         # Check filename first
         if "chatgpt" in name or "openai" in name:
             return path.suffix in (".zip", ".json")
-        # For zip files, check contents for conversations.json (ChatGPT export signature)
+        # For zip files, check contents for conversations.json or sharded conversations-*.json
         if path.suffix == ".zip":
             try:
                 with zipfile.ZipFile(path, "r") as zf:
-                    return "conversations.json" in zf.namelist()
+                    return any(
+                        n == "conversations.json" or
+                        (n.startswith("conversations-") and n.endswith(".json"))
+                        for n in zf.namelist()
+                    )
             except zipfile.BadZipFile:
                 return False
         return False
@@ -138,8 +142,9 @@ class OpenAIConversationsAdapter:
                 raise ValueError(f"No JSON files found in {path}")
 
             with tempfile.TemporaryDirectory() as tmpdir:
-                extracted = zf.extract(json_files[0], tmpdir)
-                yield from self._ingest_json(Path(extracted))
+                for json_file in sorted(json_files):
+                    extracted = zf.extract(json_file, tmpdir)
+                    yield from self._ingest_json(Path(extracted))
 
     def _parse_timestamp(self, ts: float | int | None) -> datetime | None:
         """Parse Unix timestamp to datetime."""

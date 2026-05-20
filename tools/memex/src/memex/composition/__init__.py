@@ -16,7 +16,7 @@ import warnings
 from pathlib import Path
 
 from memex.adapters._out.corpus import DuckDBCorpus
-from memex.adapters._out.sources import ClaudeConversationsAdapter, OpenAIConversationsAdapter, PlaintextAdapter
+from memex.adapters._out.sources import ClaudeConversationsAdapter, GeminiAdapter, OpenAIConversationsAdapter, PlaintextAdapter
 from memex.config.settings import Settings, get_settings
 from memex.domain.ports._out.embedding import EmbeddingPort
 from memex.domain.services import ExcavationService
@@ -90,26 +90,86 @@ def detect_providers(override: str = "auto") -> list[str]:
 _embedder: EmbeddingPort | None = None
 
 
+def _mlx_available() -> bool:
+    """Check if mlx-embeddings is installed (Apple Silicon native path)."""
+    try:
+        import mlx_embeddings  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+def _st_available() -> bool:
+    """Check if sentence-transformers (PyTorch GPU path) is installed."""
+    try:
+        import sentence_transformers  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+def _resolve_backend(requested: str) -> str:
+    """Resolve "auto" to the best available backend."""
+    if requested != "auto":
+        return requested
+    if _mlx_available():
+        return "mlx"
+    if _st_available():
+        return "sentence-transformers"
+    return "onnx"
+
+
+_DEFAULT_MODELS = {
+    "mlx": "mlx-community/Qwen3-Embedding-0.6B-4bit-DWQ",
+    "sentence-transformers": "Qwen/Qwen3-Embedding-0.6B",
+    "onnx": "nomic-ai/nomic-embed-text-v1.5",
+}
+
+
 def get_embedder(settings: Settings | None = None) -> EmbeddingPort:
     """Get or create embedder (cached after first creation).
 
-    Uses fastembed (ONNX) with nomic-embed-text-v1.5 (768-dim).
-    No torch dependency. Same quality as nomic[local], cosine ~0.9999.
-    ONNX resource settings flow from Settings (env vars / config.toml).
+    Backend selection flows from config (embedding.backend):
+    - "mlx": mlx-embeddings, native Apple Silicon Metal (fastest on Mac)
+    - "sentence-transformers": PyTorch MPS/CUDA (cross-platform GPU)
+    - "onnx": fastembed ONNX Runtime (lightest install, CPU)
+    - "auto": tries mlx → sentence-transformers → onnx (first available)
+
+    Model defaults per backend, overridable via embedding.model in config.
     """
     global _embedder
     if _embedder is not None:
         return _embedder
 
-    from memex.adapters._out.embedding.fastembed_embedder import FastEmbedEmbedder
-
     s = settings or get_settings()
-    providers = detect_providers(s.onnx_provider)
-    _embedder = FastEmbedEmbedder(
-        onnx_batch_size=s.onnx_batch_size,
-        onnx_threads=s.onnx_threads,
-        providers=providers,
-    )
+    backend = _resolve_backend(s.embedding_backend)
+    model = s.embedding_model if s.embedding_model != "auto" else _DEFAULT_MODELS.get(backend, "auto")
+
+    if backend == "mlx":
+        from memex.adapters._out.embedding.mlx_embedder import MLXEmbedder
+
+        _embedder = MLXEmbedder(
+            model_name=model,
+            dimensions=s.embedding_dimensions,
+            batch_size=s.embedding_batch_size,
+        )
+    elif backend == "sentence-transformers":
+        from memex.adapters._out.embedding.st_embedder import SentenceTransformerEmbedder
+
+        _embedder = SentenceTransformerEmbedder(
+            model_name=model,
+            dimensions=s.embedding_dimensions,
+            batch_size=s.embedding_batch_size,
+        )
+    else:
+        from memex.adapters._out.embedding.fastembed_embedder import FastEmbedEmbedder
+
+        providers = detect_providers(s.onnx_provider)
+        _embedder = FastEmbedEmbedder(
+            onnx_batch_size=s.onnx_batch_size,
+            onnx_threads=s.onnx_threads,
+            providers=providers,
+        )
     return _embedder
 
 
@@ -283,6 +343,7 @@ def create_service(
         remote = RemoteCorpusAdapter(default_socket_path())
         adapters = [
             ClaudeConversationsAdapter(),
+            GeminiAdapter(),
             OpenAIConversationsAdapter(),
             PlaintextAdapter(),
         ]
@@ -318,6 +379,7 @@ def create_service(
 
     adapters = [
         ClaudeConversationsAdapter(),
+        GeminiAdapter(),
         OpenAIConversationsAdapter(),
         PlaintextAdapter(),
     ]

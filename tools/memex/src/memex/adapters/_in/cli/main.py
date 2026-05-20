@@ -367,16 +367,17 @@ def _ingest_inline(path: Path):
     _do_ingest(path, wizard=True)
 
 
-def _do_ingest(path: Path, *, wizard: bool = False):
+def _do_ingest(path: Path, *, wizard: bool = False, no_embed: bool = False):
     """Shared ingest logic for both init wizard and ingest command.
 
     Calls through ExcavationService — no direct infrastructure access.
-    Always embeds. If embedding fails mid-flight, `memex backfill` recovers.
+    When no_embed is False (default), embeds after storing.
+    When no_embed is True, stores only — run 'memex backfill' later.
     """
     from memex.config.settings import get_settings
 
-    with obs.status("Loading embedding model..."):
-        service = create_service(with_embedder=True, direct=True)
+    with obs.status("Loading embedding model..." if not no_embed else "Connecting..."):
+        service = create_service(with_embedder=not no_embed, direct=True)
 
     try:
         with obs.status("Parsing..."):
@@ -384,7 +385,7 @@ def _do_ingest(path: Path, *, wizard: bool = False):
 
         obs.dim(f"Parsed {parsed:,} fragments, stored {stored:,} new")
 
-        if stored > 0 and service.embedder:
+        if stored > 0 and service.embedder and not no_embed:
             with Progress(
                 SpinnerColumn(),
                 TextColumn("[progress.description]{task.description}"),
@@ -419,6 +420,9 @@ def _do_ingest(path: Path, *, wizard: bool = False):
             obs.console.print('    [cyan]memex dig "that auth discussion"[/cyan]')
             obs.console.print("    [cyan]memex status[/cyan]")
             obs.console.print()
+        elif no_embed:
+            obs.success(f"Stored {stored:,} fragments (keyword-searchable)")
+            obs.hint("memex backfill  # enable semantic search")
         else:
             obs.success(f"Ingested {stored:,} fragments")
             obs.hint('memex dig "your query" to search')
@@ -432,12 +436,12 @@ def _do_ingest(path: Path, *, wizard: bool = False):
         ensure_daemon()
 
 
-def _ingest_directory(directory: Path):
+def _ingest_directory(directory: Path, *, no_embed: bool = False):
     """Ingest all matching files in a directory recursively."""
     from memex.config.settings import get_settings
 
-    with obs.status("Loading embedding model..."):
-        service = create_service(with_embedder=True, direct=True)
+    with obs.status("Loading embedding model..." if not no_embed else "Connecting..."):
+        service = create_service(with_embedder=not no_embed, direct=True)
 
     try:
         # Find all files that match any adapter
@@ -762,20 +766,25 @@ def similar(fragment_ref: str, limit: int, fmt: str):
 
 @main.command()
 @click.argument("path", type=click.Path(exists=True, path_type=Path))
-def ingest(path: Path):
+@click.option("--no-embed", is_flag=True, help="Store without embedding. Run 'memex backfill' later.")
+def ingest(path: Path, no_embed: bool = False):
     """Ingest a file or directory into the corpus.
 
     Parses, stores, embeds, and indexes in one step.
     If interrupted, run 'memex backfill' to finish embedding.
 
+    For large imports (1000+ conversations), use --no-embed to store
+    first (fast), then run 'memex backfill' separately.
+
     Example:
         memex ingest ~/Downloads/conversations.json
         memex ingest ~/exports/           # Recurse directory
+        memex ingest large-export.zip --no-embed
     """
     if path.is_dir():
-        _ingest_directory(path)
+        _ingest_directory(path, no_embed=no_embed)
     else:
-        _do_ingest(path)
+        _do_ingest(path, no_embed=no_embed)
 
 
 @main.command()

@@ -16,11 +16,15 @@ from pydantic_settings import BaseSettings
 # Shared key map for TOML → flat settings translation
 _CONFIG_KEY_MAP = {
     ("corpus", "path"): "corpus_path",
+    ("embedding", "backend"): "embedding_backend",
+    ("embedding", "model"): "embedding_model",
+    ("embedding", "dimensions"): "embedding_dimensions",
+    ("embedding", "batch_size"): "embedding_batch_size",
     ("embedding", "onnx_batch_size"): "onnx_batch_size",
     ("embedding", "onnx_threads"): "onnx_threads",
+    ("embedding", "provider"): "onnx_provider",
     ("ingest", "batch_size"): "batch_size",
     ("search", "rerank_by_default"): "rerank_by_default",
-    ("embedding", "provider"): "onnx_provider",
     ("search", "semantic_weight"): "semantic_weight",
 }
 
@@ -118,9 +122,15 @@ class Settings(BaseSettings):
     # Ingest
     batch_size: int = 100
 
-    # Embedding
-    onnx_batch_size: int = 4  # Documents per ONNX inference call (lower = less RAM)
-    onnx_threads: int = 2  # ONNX inter-op threads (lower = less RAM)
+    # Embedding — backend selection and model config
+    embedding_backend: str = "auto"  # "auto", "mlx", "onnx", "sentence-transformers"
+    embedding_model: str = "auto"  # "auto" picks best for backend, or explicit HF model name
+    embedding_dimensions: int = 768
+    embedding_batch_size: int = 64  # Texts per inference call (MLX/ST path)
+
+    # ONNX-specific (only used when embedding_backend = "onnx")
+    onnx_batch_size: int = 4
+    onnx_threads: int = 2
     onnx_provider: str = "auto"  # "auto", "coreml", "cuda", or "cpu"
 
     # Search

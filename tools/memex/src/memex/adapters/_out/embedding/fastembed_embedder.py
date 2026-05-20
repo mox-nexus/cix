@@ -11,9 +11,16 @@ for convenience in non-bulk paths (single queries, small batches).
 
 from collections.abc import Iterator
 from functools import cached_property
+from itertools import batched
 
 from memex.adapters._out.onnx_quiet import suppress_native_stderr
 from memex.domain.models import EmbeddingConfig
+
+# Hard cap on characters fed to the embedder. nomic-embed-text-v1.5 supports
+# 8192 tokens but ~1000 tokens (~4000 chars) captures the semantic content of
+# real Claude fragments without runaway attention memory. Attention is
+# O(batch * seq_len²) — halving seq_len quarters per-call working set.
+_MAX_EMBED_CHARS = 4000
 
 
 class FastEmbedEmbedder:
@@ -86,11 +93,24 @@ class FastEmbedEmbedder:
     def embed_stream(self, texts: Iterator[str]) -> Iterator[list[float]]:
         """Stream embeddings one at a time from fastembed's generator.
 
-        Accepts an iterator of texts. Each vector is yielded as a
-        Python list[float], then the numpy array is eligible for GC.
-        Callers can write each embedding to storage immediately
-        without accumulating them all in memory.
+        Each input text is capped to ``_MAX_EMBED_CHARS`` and chunked into
+        ``onnx_batch_size``-sized lists, one list per ``model.embed`` call.
+        This is the shape the reference pattern in the data-store skill
+        prescribes, and it matters for ORT memory behavior: passing a
+        large iterator through a single ``embed`` call keeps ORT's per-
+        session scratch allocated for the whole iteration, which under
+        length-sorted input ratchets the arena watermark across the run.
+        Per-call chunking lets each ``embed`` call release its scratch
+        between calls.
+
+        Only the embedding input is clipped — fragment text stored in the
+        corpus is untouched, so keyword search sees full content.
         """
+        capped = (t[:_MAX_EMBED_CHARS] for t in texts)
         with suppress_native_stderr():
-            for embedding in self.model.embed(texts, batch_size=self._onnx_batch_size):
-                yield embedding.tolist()
+            for chunk in batched(capped, self._onnx_batch_size):
+                chunk_list = list(chunk)
+                for embedding in self.model.embed(
+                    chunk_list, batch_size=self._onnx_batch_size
+                ):
+                    yield embedding.tolist()

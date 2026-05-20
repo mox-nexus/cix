@@ -329,6 +329,7 @@ class DuckDBCorpusAdapter:
                             embedding, ?::FLOAT[{dim}]
                         ) as distance
                     FROM fragments
+                    WHERE embedding IS NOT NULL
                     ORDER BY distance ASC
                     LIMIT ?
                 )
@@ -349,6 +350,7 @@ class DuckDBCorpusAdapter:
                     source_kind, source_id, metadata,
                     array_cosine_distance(embedding, ?::FLOAT[{dim}]) as distance
                 FROM fragments
+                WHERE embedding IS NOT NULL
                 ORDER BY distance ASC
                 LIMIT ?
                 """,
@@ -376,10 +378,18 @@ class DuckDBCorpusAdapter:
         return result[0] if result else 0
 
     def _unembedded_ids_by_length(self) -> list[str]:
+        # DESC order: longest fragments first. Two reasons:
+        # 1. Fail fast — if the corpus will OOM on a huge fragment, it hits
+        #    immediately rather than 20 min in after a successful sorted-short tail.
+        # 2. Shape-cache friendliness — the ORT / CoreML arena ratchets to the
+        #    max shape on the first batch, then every subsequent batch reuses
+        #    that footprint. Ascending order grows the arena monotonically
+        #    across the entire run, which is the worst case for ONNX grow-only
+        #    arena allocators.
         return [
             row[0]
             for row in self.con.execute(
-                "SELECT id FROM fragments WHERE embedding IS NULL ORDER BY LENGTH(content)"
+                "SELECT id FROM fragments WHERE embedding IS NULL ORDER BY LENGTH(content) DESC"
             ).fetchall()
         ]
 
@@ -390,30 +400,34 @@ class DuckDBCorpusAdapter:
             list(ids),
         ).fetchall()
 
-    def _write_embedding(self, frag_id: str, embedding: list[float]) -> None:
-        self.con.execute(
+    def _write_embedding_batch(self, pairs: list[tuple[str, list[float]]]) -> None:
+        """Batch write embeddings via executemany.
+
+        DuckDB is an OLAP engine — single-row UPDATEs are ~3/sec while
+        executemany amortizes per-statement overhead and can approach
+        the bulk-write ceiling. This is the critical path for backfill
+        throughput.
+        """
+        self.con.executemany(
             f"""
             UPDATE fragments
             SET embedding = ?::FLOAT[{self._conn.embedding_dim}]
             WHERE id = ?
             """,
-            (embedding, frag_id),
+            [(emb, fid) for fid, emb in pairs],
         )
-
-    def _write_one(self, pair: tuple[str, list[float]]) -> tuple[str, list[float]]:
-        frag_id, embedding = pair
-        self._write_embedding(frag_id, embedding)
-        return pair
 
     def _embed_rows(
         self,
         rows: Iterator[tuple[str, str]],
         embedder_stream: Callable[[Iterator[str]], Iterator[list[float]]],
         batch_size: int,
-    ) -> Iterator[tuple[str, list[float]]]:
+    ) -> Iterator[list[tuple[str, list[float]]]]:
+        """Embed rows in batches, yielding batch-sized lists of (id, embedding) pairs."""
         for batch in batched(rows, batch_size):
-            ids, contents = zip(*batch)
-            yield from zip(ids, embedder_stream(iter(contents)))
+            ids, contents = zip(*batch, strict=True)
+            pairs = list(zip(ids, embedder_stream(iter(contents)), strict=True))
+            yield pairs
 
     def backfill_embeddings(
         self,
@@ -421,7 +435,7 @@ class DuckDBCorpusAdapter:
         batch_size: int = 100,
         on_progress: Callable[[int, int], None] | None = None,
     ) -> int:
-        """Backfill embeddings — streaming FP pipeline, no accumulation."""
+        """Backfill embeddings — batch-write pipeline for throughput."""
         if not self._conn.embedding_dim:
             msg = "Corpus created without embedding support. Pass embedding_dim."
             raise ValueError(msg)
@@ -439,15 +453,18 @@ class DuckDBCorpusAdapter:
                 for id_batch in batched(unembedded_ids, batch_size)
             )
 
-            embedded = self._embed_rows(rows, embedder_stream, batch_size)
-            pipeline: Iterator = map(self._write_one, embedded)
-            pipeline = tap_every(pipeline, 1000, lambda _: self._conn.checkpoint())
+            embedded_count = 0
+            for pairs_batch in self._embed_rows(rows, embedder_stream, batch_size):
+                self._write_embedding_batch(pairs_batch)
+                embedded_count += len(pairs_batch)
 
-            if on_progress:
-                c = count(1)
-                pipeline = tap(pipeline, lambda _: on_progress(next(c), total))
+                if embedded_count % 1000 < batch_size:
+                    self._conn.checkpoint()
 
-            return sum(1 for _ in pipeline)
+                if on_progress:
+                    on_progress(embedded_count, total)
+
+            return embedded_count
         finally:
             self._conn.checkpoint()
             self._conn.create_hnsw_index()
