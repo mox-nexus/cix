@@ -19,7 +19,14 @@
         "email": "mox.rnd@gmail.com"
       },
       "license": "MIT",
-      "keywords": ["architecture", "design", "multi-agent", "review", "hexagonal", "operations"],
+      "keywords": [
+        "architecture",
+        "design",
+        "multi-agent",
+        "review",
+        "hexagonal",
+        "operations"
+      ],
       "category": "architecture"
     },
     {
@@ -32,7 +39,13 @@
         "email": "mox.rnd@gmail.com"
       },
       "license": "MIT",
-      "keywords": ["collaborative-intelligence", "reasoning", "verification", "transparency", "control"],
+      "keywords": [
+        "collaborative-intelligence",
+        "reasoning",
+        "verification",
+        "transparency",
+        "control"
+      ],
       "category": "foundation"
     },
     {
@@ -45,46 +58,81 @@
         "email": "mox.rnd@gmail.com"
       },
       "license": "MIT",
-      "keywords": ["research", "synthesis", "papers", "citations", "literature-review", "deep-research"],
+      "keywords": [
+        "research",
+        "synthesis",
+        "papers",
+        "citations",
+        "literature-review",
+        "deep-research"
+      ],
       "category": "methodology"
     },
     {
       "name": "craft-rhetoric",
       "source": "./plugins/craft-rhetoric",
-      "description": "Write content that lands — docs, presentations, tutorials, research papers. Sharpens your thinking while handling the delivery craft.",
+      "description": "Write content that lands \u2014 docs, presentations, tutorials, research papers. Sharpens your thinking while handling the delivery craft.",
       "version": "0.3.0",
       "author": {
         "name": "Mox Labs",
         "email": "mox.rnd@gmail.com"
       },
       "license": "MIT",
-      "keywords": ["rhetoric", "explanations", "documentation", "teaching", "diagrams", "dataviz", "animation", "staging", "comprehension", "pedagogy"],
+      "keywords": [
+        "rhetoric",
+        "explanations",
+        "documentation",
+        "teaching",
+        "diagrams",
+        "dataviz",
+        "animation",
+        "staging",
+        "comprehension",
+        "pedagogy"
+      ],
       "category": "communication"
     },
     {
       "name": "craft-extensions",
       "source": "./plugins/craft-extensions",
-      "description": "Build Claude Code extensions and developer tools — skills, agents, hooks, commands, MCP servers, and the data layers behind them.",
+      "description": "Build Claude Code extensions and developer tools \u2014 skills, agents, hooks, commands, MCP servers, and the data layers behind them.",
       "version": "0.1.0",
       "author": {
         "name": "Mox Labs",
         "email": "mox.rnd@gmail.com"
       },
       "license": "MIT",
-      "keywords": ["extensions", "skills", "agents", "hooks", "commands", "mcp", "data-store", "reasoning", "collaborative-intelligence"],
+      "keywords": [
+        "extensions",
+        "skills",
+        "agents",
+        "hooks",
+        "commands",
+        "mcp",
+        "data-store",
+        "reasoning",
+        "collaborative-intelligence"
+      ],
       "category": "meta"
     },
     {
       "name": "craft-evals",
       "source": "./plugins/craft-evals",
-      "description": "Write evals that measure what matters — for agents, skills, MCP servers, and prompts.",
+      "description": "Write evals that measure what matters \u2014 for agents, skills, MCP servers, and prompts.",
       "version": "0.3.0",
       "author": {
         "name": "Mox Labs",
         "email": "mox.rnd@gmail.com"
       },
       "license": "MIT",
-      "keywords": ["evals", "evaluation", "testing", "agents", "skills", "mcp"],
+      "keywords": [
+        "evals",
+        "evaluation",
+        "testing",
+        "agents",
+        "skills",
+        "mcp"
+      ],
       "category": "testing"
     },
     {
@@ -97,8 +145,41 @@
         "email": "mox.rnd@gmail.com"
       },
       "license": "MIT",
-      "keywords": ["collection", "recon", "research", "data", "apis", "code-mining", "jsonl", "duckdb"],
+      "keywords": [
+        "collection",
+        "recon",
+        "research",
+        "data",
+        "apis",
+        "code-mining",
+        "jsonl",
+        "duckdb"
+      ],
       "category": "tools"
+    },
+    {
+      "name": "antifragile",
+      "source": "./plugins/antifragile",
+      "description": "Diagnose endogenous fragility in platform systems and apply the ACES (Adaptable, Composable, Extensible Software) inversion. Prescriptive framework for the Stasis/Drag/Opacity cycle.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Mox Labs",
+        "email": "mox.rnd@gmail.com"
+      },
+      "license": "MIT",
+      "keywords": [
+        "antifragile",
+        "aces",
+        "structural-fragility",
+        "platform-engineering",
+        "architecture",
+        "coupling",
+        "boundaries",
+        "diagnosis",
+        "taleb",
+        "dijkstra"
+      ],
+      "category": "architecture"
     }
   ]
 }
