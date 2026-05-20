@@ -11,5 +11,5 @@ os.environ.setdefault("TQDM_DISABLE", "1")
 warnings.filterwarnings("ignore", message=".*unauthenticated.*")
 warnings.filterwarnings("ignore", message=".*HF_HUB_DISABLE_PROGRESS_BARS.*")
 
-__version__ = "0.2.1-experimental"
+__version__ = "0.3.0"
 __status__ = "experimental"  # stable, beta, experimental, deprecated

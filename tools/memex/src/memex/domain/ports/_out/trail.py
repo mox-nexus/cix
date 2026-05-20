@@ -31,3 +31,11 @@ class TrailPort(Protocol):
     def delete_trail(self, trail_name: str) -> bool:
         """Delete a trail."""
         ...
+
+    def search_trails(self, query: str) -> list[TrailSummary]:
+        """Search trails by name or description."""
+        ...
+
+    def trails_for_fragment(self, fragment_id: str) -> list[TrailSummary]:
+        """Get all trails that contain a given fragment."""
+        ...

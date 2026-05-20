@@ -18,7 +18,6 @@ onnx_threads = 4
 provider = "coreml"
 
 [ingest]
-embed_by_default = false
 batch_size = 200
 
 [search]
@@ -30,7 +29,6 @@ semantic_weight = 0.8
         assert result["onnx_batch_size"] == 8
         assert result["onnx_threads"] == 4
         assert result["onnx_provider"] == "coreml"
-        assert result["embed_by_default"] is False
         assert result["batch_size"] == 200
         assert result["rerank_by_default"] is False
         assert result["semantic_weight"] == 0.8
@@ -69,7 +67,6 @@ class TestSettings:
         assert s.onnx_batch_size == 4
         assert s.onnx_threads == 2
         assert s.onnx_provider == "auto"
-        assert s.embed_by_default is True
         assert s.rerank_by_default is True
         assert s.semantic_weight == 0.6
 

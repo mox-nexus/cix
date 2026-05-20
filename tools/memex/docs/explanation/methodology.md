@@ -38,7 +38,7 @@ Memex implements Bush's vision with modern tools:
 | Bush's Concept | Memex Implementation |
 |----------------|---------------------|
 | Personal knowledge corpus | DuckDB-backed fragment store |
-| Associative trails | FOLLOWS edges between fragments |
+| Associative trails | Trails (curated paths) + FOLLOWS/SIMILAR_TO edges + multi-hop traversal |
 | Selection by content | Hybrid search (BM25 + semantic + reranking) |
 | Intimate supplement | Local-first, convention-over-config |
 
@@ -112,8 +112,9 @@ The atomic entity in memex is the **Fragment** -- a self-contained unit of colla
 Fragments are extracted during ingestion. Each carries:
 - **Content**: The actual text
 - **Provenance**: Where it came from (source_kind, source_id, timestamp)
+- **Metadata**: Optional structured data (title, page, file, line number)
 - **Embedding**: Vector representation for semantic search
-- **FOLLOWS edges**: Links to chronologically adjacent fragments
+- **Edges**: FOLLOWS (temporal), SIMILAR_TO (semantic), and extensible types
 
 The fragment granularity is a design decision with consequences:
 
@@ -150,13 +151,15 @@ Memex follows hexagonal architecture (ports and adapters) to separate concerns:
 
 **Domain**: Pure business logic with no external dependencies. Fragment, Provenance, EmbeddingConfig are plain models. ExcavationService orchestrates use cases through port interfaces.
 
-**Ports**: Protocol-based interfaces (`typing.Protocol` with `@runtime_checkable`). Four driven ports:
+**Ports**: Protocol-based interfaces (`typing.Protocol`). Six driven ports:
 - `CorpusPort` -- persistence and search
+- `GraphPort` -- fragment relationships (edges, traversal)
+- `TrailPort` -- curated paths through fragments
 - `EmbeddingPort` -- vector generation
 - `RerankerPort` -- cross-encoder reranking
 - `SourcePort` -- format-specific ingestion
 
-**Adapters**: Concrete implementations. DuckDB for corpus, fastembed for embeddings, Rich+Click for CLI.
+**Adapters**: Concrete implementations. DuckDB for corpus/graph/trails (split into focused adapters sharing one connection), fastembed for embeddings, Rich+Click for CLI. A daemon adapter (`RemoteCorpusAdapter`) talks to `memexd` over Unix socket for concurrent access.
 
 **Why this matters for users:** The architecture means memex can swap components without changing behavior. A new embedding model, a different storage engine, or an additional source format (Gemini, custom) requires one new adapter -- zero domain changes.
 

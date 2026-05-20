@@ -111,6 +111,30 @@ memex trail add "token expiry bug" @1 -n "Fix: added clock tolerance to JWT veri
 
 A fragment can appear on multiple trails. The same conversation about JWT might appear on both "auth decisions" and "token expiry bug" — different trails, different context, different annotations.
 
+## Searching Trails
+
+Find trails by name or description:
+
+```bash
+memex trail search "auth"          # Trails matching "auth" in name or description
+```
+
+Find which trails contain a specific fragment:
+
+```bash
+memex dig "JWT validation"
+memex trail which @3               # Which trails contain this fragment?
+```
+
+Programmatic access via API:
+
+```python
+from memex.api import Memex
+with Memex() as m:
+    trails = m.search_trails("auth")
+    trails = m.trails_for_fragment("fragment-id")
+```
+
 ## Managing Trails
 
 ```bash
