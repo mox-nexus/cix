@@ -1,7 +1,7 @@
 {
   "name": "ci-scaffolds",
-  "version": "0.5.0",
-  "description": "Provides research-grounded scaffolds for effective human-AI collaboration. Use when: user asks to 'verify this', 'check my reasoning', 'calibrate trust', or needs decision frameworks, claim verification, or transparency in AI-assisted work.",
+  "version": "0.6.0",
+  "description": "Provides research-grounded scaffolds for effective human-AI collaboration and teaching-oriented review. Use when: user asks to 'verify this', 'check my reasoning', 'calibrate trust', 'write a security finding', 'audit this', 'teach me about this vulnerability', 'bring in mudge', or needs decision frameworks, claim verification, transparency, or mastery-oriented review posture. Composes with guild-arch/trust-boundaries for the security-review reasoning half.",
   "author": {
     "name": "Mox Labs",
     "email": "mox.rnd@gmail.com"
@@ -12,6 +12,8 @@
     "reasoning",
     "verification",
     "transparency",
-    "control"
+    "control",
+    "security-review",
+    "mastery-teaching"
   ]
 }

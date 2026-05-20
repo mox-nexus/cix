@@ -4,7 +4,7 @@ Research-grounded scaffolds for effective human-AI collaboration.
 
 ## What This Is
 
-Scaffolding for collaborative building — temporary support designed to be outgrown. Every scaffold is backed by research evidence from 50+ studies (CHI, PNAS, Lancet, NeurIPS, HICSS). Three skills, two agents, four hooks, aligned with the Software Craftsmanship Manifesto.
+Scaffolding for collaborative building — temporary support designed to be outgrown. Every scaffold is backed by research evidence from 50+ studies (CHI, PNAS, Lancet, NeurIPS, HICSS). Four skills, three agents, driven by skill triggers (no hooks), aligned with the Software Craftsmanship Manifesto.
 
 ## When It Activates
 
@@ -49,16 +49,11 @@ Scaffolding for collaborative building — temporary support designed to be outg
 | **Mode** | Socratic — asks questions | Directive — routes to technique |
 | **Goal** | You articulate → you discover | Problem classified → solved |
 
-### Hooks
+### Activation — triggers, not hooks
 
-| Hook | Event | Detects | Response |
-|------|-------|---------|----------|
-| `detect-stuck` | PostToolUse:Bash + UserPromptSubmit | 3+ failures OR frustration language | Spawns Mr. Wolf |
-| `scaffolding-cleanup-gate` | PreToolUse:Bash | Debug artifacts in commits | Blocks commit with list |
-| `incomplete-refactoring-guard` | PostToolUse:Bash | Old names after rename | Directs cleanup |
-| `session-start` | SessionStart | Session begins | Shows available skills |
+As of 0.6.0, ci-scaffolds has **no hooks**. Skill frontmatter `description` triggers carry activation: when a user's prompt matches a skill's triggers (e.g., "review code", "I'm stuck", "security review", "bring in mudge"), the skill loads and Claude can delegate to the appropriate agent. This is simpler, more composable with other skills/plugins, and does not produce the schema-validation errors that hooks incurred.
 
-All hooks are **suggestive** (decision: "allow" with message), never blocking — preserving user agency while nudging behavior. Opt-out: `SKIP_MRWOLF_HOOKS=1` or `SKIP_CLEANUP_HOOKS=1`.
+The previous hook-based triggers (Wolf on repeated failures, cleanup-gate on commits, refactoring guard on renames, session-start context load) are subsumed by: the problem-solving skill (Wolf), the building skill (cleanup hygiene + refactoring completeness), and plain skill descriptions (session-start replaced by on-demand loading).
 
 ## Structure
 
@@ -91,13 +86,8 @@ ci-scaffolds/
 │           └── iteration-limits.md
 ├── agents/
 │   ├── mrwolf.md                 # Structured problem solver
-│   └── duck.md                   # Rubber duck (Socratic dialogue)
-├── hooks/
-│   ├── hooks.json
-│   ├── detect-stuck.sh                  # Wolf trigger (failures + frustration)
-│   ├── scaffolding-cleanup-gate.sh      # Pre-commit debug artifact check
-│   ├── incomplete-refactoring-guard.sh  # Post-commit old name check
-│   └── session-start.sh                 # Context loading
+│   ├── duck.md                   # Rubber duck (Socratic dialogue)
+│   └── mudge.md                  # Security review (falsification-disciplined)
 ├── docs/
 │   ├── explanation/              # Human-optimized (WHY)
 │   │   ├── methodology.md
