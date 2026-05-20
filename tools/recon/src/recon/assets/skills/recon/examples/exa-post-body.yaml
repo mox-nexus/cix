@@ -1,0 +1,76 @@
+# Example: Exa neural search via POST with JSON body
+#
+# Demonstrates:
+#   • POST method with JSON body ({query, numResults, type, contents})
+#   • `{placeholder}` substitution in body strings (params drives template)
+#   • x-api-key auth (no prefix — raw key in env var)
+#   • extract path into the `results` array
+#   • normalize spec mapping API response fields to flat JSONL columns
+#
+# Prerequisite:
+#   export EXA_API_KEY=your-key-here
+#
+# Usage:
+#   recon init exa-discovery --from path/to/exa-post-body.yaml
+#   # edit params.topic to change the search; body template stays put
+#   recon survey exa-discovery
+#   recon query exa-discovery "SELECT title, url, score FROM exa_search ORDER BY score DESC LIMIT 10"
+#
+# Why template the body:
+#   Changing the search term means editing one line in params: — not
+#   regenerating the YAML. Deterministic substitution via substitute().
+
+catalog:
+  - name: exa
+    type: api
+    url: https://api.exa.ai
+    auth:
+      header: x-api-key
+      env: EXA_API_KEY
+      # No prefix — Exa uses raw x-api-key header
+    rate_limit: { rps: 1, burst: 2 }
+    user_agent: "recon/0.8.0 (exa-discovery)"
+
+collectors:
+  - name: exa-search
+    type: api
+    source: exa
+    endpoint: /search
+    method: POST
+    params:
+      # ↓↓↓ change me, don't regenerate the YAML ↓↓↓
+      topic: "state-space models post-Mamba"
+      # ↑↑↑ substituted into body.query below ↑↑↑
+    body:
+      query: "{topic}"              # templated from params.topic
+      numResults: 15                # literal int passes through
+      type: "neural"                # keyword | neural | auto
+      contents:
+        text: true                  # include full text of each result
+        summary: true               # include Exa-generated summary
+    extract: "results"              # Exa wraps results in {results: [...]}
+    normalize:
+      title: title
+      url: url
+      published: publishedDate
+      author: author
+      score: score
+      text: text
+      summary: summary
+
+# Expected JSONL shape per record:
+#   {
+#     "title": "Mamba: Linear-Time Sequence Modeling...",
+#     "url": "https://arxiv.org/abs/2312.00752",
+#     "published": "2023-12-01T00:00:00.000Z",
+#     "author": "Albert Gu",
+#     "score": 0.87,
+#     "text": "...",
+#     "summary": "..."
+#   }
+#
+# To combine with Firecrawl scrape:
+#   1. run this mission, get URLs back
+#   2. `recon query exa-discovery "SELECT url FROM exa_search WHERE score > 0.5"` → list
+#   3. scaffold a second mission with Firecrawl scrape collector per URL
+#   See config-patterns.md#modern-search-apis-post-body for the composed pattern.

@@ -1,0 +1,60 @@
+# RSS / Atom monitoring — track news feeds, blog posts, GitHub release feeds.
+#
+# Demonstrates:
+#   • response_format: xml with xmltodict parsing
+#   • attribute extraction via .@attrname (e.g. link.@href)
+#   • temporal awareness — each survey produces a new timestamped archive
+#     that can be diffed against previous runs to surface "what's new"
+#
+# Recon's xmltodict config hardcodes force_list=(entry, author, link,
+# category), which matches the Atom format. For RSS 2.0 feeds where
+# <item> is the container, single-item responses may come back as a dict
+# rather than a list. Prefer Atom where available.
+#
+# Usage:
+#   recon init my-feeds --template rss-monitor
+#   # edit endpoints to target your feeds
+#   recon survey my-feeds
+#   # re-run later to get a fresh archive; diff across runs
+#   recon query my-feeds "SELECT title, published FROM hn_frontpage"
+
+catalog:
+  - name: hn
+    type: api
+    url: https://hnrss.org
+    rate_limit: { rps: 0.5, burst: 1 }
+    user_agent: "recon/0.8.0 (https://github.com/mox-labs/cix)"
+
+  - name: gh-releases
+    type: api
+    url: https://github.com
+    rate_limit: { rps: 1, burst: 2 }
+    user_agent: "recon/0.8.0 (https://github.com/mox-labs/cix)"
+
+collectors:
+  - name: hn-frontpage
+    type: api
+    source: hn
+    endpoint: /frontpage.atom
+    response_format: xml
+    extract: "feed.entry"
+    normalize:
+      title: title
+      link: "link.@href"
+      published: published
+      author: "author.name"
+
+  # GitHub's per-repo releases Atom feed. Edit the path segment to
+  # point at a different repo.
+  - name: cpython-releases
+    type: api
+    source: gh-releases
+    endpoint: /python/cpython/releases.atom
+    response_format: xml
+    extract: "feed.entry"
+    normalize:
+      title: title
+      link: "link.@href"
+      published: published
+      author: "author.name"
+      updated: updated

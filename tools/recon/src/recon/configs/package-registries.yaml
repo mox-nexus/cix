@@ -1,0 +1,76 @@
+# Releases tracking — normalize package metadata across PyPI, npm, crates.io.
+#
+# Demonstrates:
+#   • multi-source API collection with heterogeneous response shapes
+#   • cross-source normalization to a single common schema
+#     {name, version, description, source_url}
+#
+# Each collector fetches ONE package by name. To track multiple packages,
+# duplicate the collector block with a different endpoint. There is no
+# fan-out for API collectors; only cli collectors have `patterns`.
+#
+# No authentication required for any of the three registries.
+#
+# Usage:
+#   recon init track --template releases-track
+#   # edit the package names in the endpoints below
+#   recon survey track
+#   recon query track \
+#     "SELECT name, version FROM pypi_info UNION ALL SELECT name, version FROM npm_info"
+
+catalog:
+  - name: pypi
+    type: api
+    url: https://pypi.org
+    rate_limit: { rps: 5, burst: 3 }
+    user_agent: "recon/0.8.0 (https://github.com/mox-labs/cix)"
+
+  - name: npm
+    type: api
+    url: https://registry.npmjs.org
+    rate_limit: { rps: 5, burst: 3 }
+    user_agent: "recon/0.8.0 (https://github.com/mox-labs/cix)"
+
+  - name: crates
+    type: api
+    url: https://crates.io
+    rate_limit: { rps: 1, burst: 2 }
+    user_agent: "recon/0.8.0 (https://github.com/mox-labs/cix)"
+
+collectors:
+  # PyPI — path-based lookup by exact package name.
+  # Replace "pydantic" with your target package.
+  - name: pypi-info
+    type: api
+    source: pypi
+    endpoint: /pypi/pydantic/json
+    normalize:
+      name: "info.name"
+      version: "info.version"
+      summary: "info.summary"
+      source_url: "info.home_page"
+      license: "info.license"
+
+  # npm — path-based lookup. Replace "typescript" with your target.
+  - name: npm-info
+    type: api
+    source: npm
+    endpoint: /typescript
+    normalize:
+      name: name
+      version: "dist-tags.latest"
+      released_at: "time.modified"
+      source_url: "repository.url"
+      description: description
+
+  # crates.io — path-based lookup. Replace "serde" with your target.
+  - name: crates-info
+    type: api
+    source: crates
+    endpoint: /api/v1/crates/serde
+    normalize:
+      name: "crate.name"
+      version: "crate.max_version"
+      released_at: "crate.updated_at"
+      source_url: "crate.repository"
+      description: "crate.description"

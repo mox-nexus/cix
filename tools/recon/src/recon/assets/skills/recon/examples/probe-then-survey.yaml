@@ -25,7 +25,7 @@ catalog:
   - name: openalex
     type: api
     url: https://api.openalex.org
-    user_agent: "recon/0.7.0 (mailto:user@example.com)"
+    user_agent: "recon/0.8.0 (mailto:user@example.com)"
 
 collectors:
   - name: probe
@@ -50,7 +50,7 @@ collectors:
 #   - name: openalex
 #     type: api
 #     url: https://api.openalex.org
-#     user_agent: "recon/0.7.0 (mailto:user@example.com)"
+#     user_agent: "recon/0.8.0 (mailto:user@example.com)"
 #
 # collectors:
 #   - name: probe
@@ -80,7 +80,7 @@ collectors:
 #     type: api
 #     url: https://api.openalex.org
 #     rate_limit: { rps: 10, burst: 5 }
-#     user_agent: "recon/0.7.0 (mailto:user@example.com)"
+#     user_agent: "recon/0.8.0 (mailto:user@example.com)"
 #
 # collectors:
 #   - name: oa-search

@@ -10,6 +10,8 @@ from pathlib import Path
 import pytest
 from recon.adapters._out.api_collector import ApiCollector
 from recon.adapters._out.cli_collector import CliCollector
+from recon.adapters._out.http_requester import HttpxRequester
+from recon.adapters._out.markitdown_converter import MarkitdownConverter
 from recon.adapters._out.web_collector import WebCollector
 from recon.application.recon import run
 from recon.application.utilization import RateLimiter
@@ -17,9 +19,23 @@ from recon.domain.exceptions import CollectionError
 from recon.domain.models import CollectorEntry, ReconConfig, SourceEntry
 
 
+def _requester():
+    return HttpxRequester(RateLimiter())
+
+
 def _collectors():
-    rl = RateLimiter()
-    return {"cli": CliCollector(), "api": ApiCollector(rl), "web": WebCollector(rl)}
+    req = _requester()
+    conv = MarkitdownConverter()
+    return {
+        "cli": CliCollector(),
+        "api": ApiCollector(req),
+        "web": WebCollector(req, conv),
+    }
+
+
+def _api_records(entry, source):
+    """Helper — materializes the streaming iterator for test assertions."""
+    return list(ApiCollector(_requester()).collect(entry, source))
 
 
 # --- OpenAlex (no auth, fast) ---
@@ -49,7 +65,7 @@ class TestOpenAlexLive:
                 "citations": "cited_by_count",
             },
         )
-        records = ApiCollector(RateLimiter()).collect(entry, source)
+        records = _api_records(entry, source)
         assert len(records) == 3
         assert all(r["title"] is not None for r in records)
         assert all(isinstance(r["year"], int) for r in records)
@@ -77,7 +93,7 @@ class TestOpenAlexLive:
                 "abstract": "abstract_inverted_index|$inverted_index",
             },
         )
-        records = ApiCollector(RateLimiter()).collect(entry, source)
+        records = _api_records(entry, source)
         assert len(records) == 3
         # At least one paper should have an abstract (some don't)
         abstracts = [r["abstract"] for r in records if r["abstract"]]
@@ -116,7 +132,7 @@ class TestOpenAlexLive:
         with tempfile.TemporaryDirectory() as tmp:
             mission = Path(tmp) / "m"
             mission.mkdir()
-            archive = run(config, _collectors(), mission)
+            archive, _ = run(config, _collectors(), mission)
             jsonl = archive / "oa-search.jsonl"
             assert jsonl.exists()
             records = [json.loads(line) for line in jsonl.read_text().splitlines()]
@@ -149,7 +165,7 @@ class TestS2Live:
             normalize={"title": "title", "year": "year"},
         )
         try:
-            records = ApiCollector(RateLimiter()).collect(entry, source)
+            records = _api_records(entry, source)
             assert len(records) == 2
             assert all(r["title"] is not None for r in records)
         except CollectionError:
@@ -178,7 +194,7 @@ class TestArxivLive:
             },
         )
         try:
-            records = ApiCollector(RateLimiter()).collect(entry, source)
+            records = _api_records(entry, source)
             assert len(records) == 2
             assert all(r["title"] is not None for r in records)
             # Authors should be a list
@@ -212,7 +228,7 @@ class TestZenodoLive:
                 "authors": "metadata.creators.*.name",
             },
         )
-        records = ApiCollector(RateLimiter()).collect(entry, source)
+        records = _api_records(entry, source)
         assert len(records) == 2
         assert all(r["title"] is not None for r in records)
         # Abstract should be plain text (no HTML tags)
@@ -248,7 +264,7 @@ class TestFanOutLive:
         )
         mission = tmp_path / "mission"
         mission.mkdir()
-        archive = run(config, _collectors(), mission)
+        archive, _ = run(config, _collectors(), mission)
 
         a_lines = (archive / "read-a.jsonl").read_text().splitlines()
         b_lines = (archive / "read-b.jsonl").read_text().splitlines()
@@ -277,7 +293,7 @@ class TestFanOutLive:
         )
         mission = tmp_path / "mission"
         mission.mkdir()
-        archive = run(config, _collectors(), mission)
+        archive, _ = run(config, _collectors(), mission)
 
         assert (archive / "ok.jsonl").exists()
         import yaml

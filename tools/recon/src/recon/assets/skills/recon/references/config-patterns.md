@@ -4,7 +4,6 @@ Complete config examples for common recon use cases. Copy, adapt, write to `.cix
 
 ## Contents
 
-- [Academic Research](#academic-research)
 - [Code Mining (Multi-Repo)](#code-mining-multi-repo)
 - [Code Mining (Single Repo)](#code-mining-single-repo)
 - [Forensic Code Analysis with code-maat](#forensic-code-analysis-with-code-maat)
@@ -14,113 +13,7 @@ Complete config examples for common recon use cases. Copy, adapt, write to `.cix
 - [Dependency Audits](#dependency-audits)
 - [Doc Site Survey](#doc-site-survey)
 - [Issue Triage Across Repos](#issue-triage-across-repos)
-
-## Academic Research
-
-Search across 4 academic APIs. Each collector pins to its source because APIs have different endpoints, params, and response shapes.
-
-```yaml
-catalog:
-  - name: semantic-scholar
-    type: api
-    url: https://api.semanticscholar.org/graph/v1
-    auth: { header: x-api-key, env: S2_API_KEY }
-    rate_limit: { rps: 0.33, burst: 1 }
-
-  - name: arxiv
-    type: api
-    url: https://export.arxiv.org/api
-
-  - name: openalex
-    type: api
-    url: https://api.openalex.org
-    auth: { param: api_key, env: OPENALEX_API_KEY }
-    rate_limit: { rps: 10, burst: 5 }
-    user_agent: "recon/0.7.0 (mailto:user@example.com)"
-
-  - name: zenodo
-    type: api
-    url: https://zenodo.org/api
-    rate_limit: { rps: 1, burst: 2 }
-    user_agent: "recon/0.7.0 (https://github.com/user/project)"
-
-collectors:
-  - name: s2-search
-    type: api
-    source: semantic-scholar
-    endpoint: /paper/search
-    params:
-      query: "transformer attention mechanisms"
-      limit: "20"
-      fields: "title,abstract,year,authors,citationCount,openAccessPdf,venue"
-    extract: "data"
-    normalize:
-      title: title
-      abstract: abstract
-      authors: "authors.*.name"
-      year: year
-      citations: citationCount
-      pdf_url: "openAccessPdf.url"
-      venue: venue
-
-  - name: arxiv-search
-    type: api
-    source: arxiv
-    endpoint: /query
-    params:
-      search_query: "transformer attention mechanisms"
-      max_results: "20"
-    response_format: xml
-    extract: "feed.entry"
-    normalize:
-      title: title
-      abstract: summary
-      authors: "author.*.name"
-      year: published
-      source_id: id
-
-  - name: openalex-search
-    type: api
-    source: openalex
-    endpoint: /works
-    params:
-      search: "transformer attention mechanisms"
-      per_page: "20"
-      select: "id,title,doi,publication_year,cited_by_count,authorships,open_access,abstract_inverted_index,primary_location"
-    extract: "results"
-    normalize:
-      title: display_name
-      abstract: "abstract_inverted_index|$inverted_index"
-      authors: "authorships.*.author.display_name"
-      year: publication_year
-      citations: cited_by_count
-      pdf_url: "open_access.oa_url"
-      venue: "primary_location.source.display_name"
-
-  - name: zenodo-search
-    type: api
-    source: zenodo
-    endpoint: /records
-    params:
-      q: "transformer attention mechanisms"
-      size: "20"
-      sort: bestmatch
-    extract: "hits.hits"
-    normalize:
-      title: "metadata.title"
-      abstract: "metadata.description|$html2text"
-      authors: "metadata.creators.*.name"
-      year: "metadata.publication_date"
-      source_id: doi
-```
-
-**Query example:**
-```sql
-SELECT title, year, citations FROM s2_search
-WHERE citations > 50 ORDER BY citations DESC
-```
-
----
+- [Modern Search APIs (POST body)](#modern-search-apis-post-body)
 
 ## Code Mining (Multi-Repo)
 
@@ -422,8 +315,9 @@ catalog:
     auth:
       header: Authorization
       env: GITHUB_TOKEN
+      prefix: "Bearer "
     rate_limit: { rps: 1, burst: 2 }
-    user_agent: "recon/0.7.0 (release-monitor)"
+    user_agent: "recon/0.8.0 (release-monitor)"
 
 collectors:
   - name: tokio-releases
@@ -630,3 +524,234 @@ SELECT 'tokio' AS repo, title FROM issues_tokio WHERE 'bug' = ANY(labels)
 UNION ALL
 SELECT 'axum', title FROM issues_axum WHERE 'bug' = ANY(labels)
 ```
+
+---
+
+## Modern Search APIs (POST body)
+
+Exa, Firecrawl, Serper, Tavily, Perplexity, Linkup, and most modern search APIs take a POST with a JSON body instead of GET + query-string. Recon supports this via `method: POST` + `body:` on the collector, and `auth.prefix:` on the source (for `Authorization: Bearer $KEY` style auth).
+
+**Keep configs as templates.** Put the changing values in `params:` and reference them as `{placeholder}` in `body:` string values. The substitution is recursive through dicts and lists; non-string values (ints, bools) pass through literally. This means swapping a search term is a one-line edit — no regeneration of the whole YAML, no LLM in the loop for a mechanical operation. **Unresolved `{foo}` raises `CollectionError` before the request fires**, listing the missing keys — so a forgotten `params:` entry fails loudly at probe time instead of silently at production scale.
+
+### Exa — neural and keyword search
+
+```yaml
+catalog:
+  - name: exa
+    type: api
+    url: https://api.exa.ai
+    auth: { header: x-api-key, env: EXA_API_KEY }
+    rate_limit: { rps: 1, burst: 2 }
+
+collectors:
+  - name: exa-neural
+    type: api
+    source: exa
+    endpoint: /search
+    method: POST
+    params:
+      topic: "transformer attention mechanism survey"
+      category: "research paper"
+    body:
+      query: "{topic}"
+      numResults: 15
+      type: "neural"
+      category: "{category}"
+      contents:
+        text: true
+        summary: true
+    extract: "results"
+    normalize:
+      title: title
+      url: url
+      text: "text"
+      summary: summary
+      score: score
+      published: publishedDate
+```
+
+**Query example:**
+```sql
+SELECT title, url, score FROM exa_neural WHERE score > 0.7 ORDER BY score DESC
+```
+
+### Firecrawl — scrape a URL to markdown
+
+```yaml
+catalog:
+  - name: firecrawl
+    type: api
+    url: https://api.firecrawl.dev
+    auth:
+      header: Authorization
+      env: FIRECRAWL_API_KEY
+      prefix: "Bearer "
+    rate_limit: { rps: 1, burst: 2 }
+
+collectors:
+  - name: scrape
+    type: api
+    source: firecrawl
+    endpoint: /v1/scrape
+    method: POST
+    params:
+      target_url: "https://example.com/article"
+    body:
+      url: "{target_url}"
+      formats: ["markdown", "links"]
+      onlyMainContent: true
+    extract: "data"                  # wraps result in {success, data: {...}}
+    normalize:
+      markdown: markdown
+      title: "metadata.title"
+      description: "metadata.description"
+      source_url: "metadata.sourceURL"
+      status_code: "metadata.statusCode"
+```
+
+**Note:** Firecrawl's async `/crawl` endpoint (submit → poll → retrieve) is not a good fit for recon's one-shot model. Use `/v1/scrape` (sync) for single-URL scrapes, or shell out to the Firecrawl SDK via a `cli` collector for multi-URL crawls.
+
+### Tavily — LLM-optimized search
+
+```yaml
+catalog:
+  - name: tavily
+    type: api
+    url: https://api.tavily.com
+    auth:
+      header: Authorization
+      env: TAVILY_API_KEY
+      prefix: "Bearer "
+    rate_limit: { rps: 2, burst: 5 }
+
+collectors:
+  - name: tavily-search
+    type: api
+    source: tavily
+    endpoint: /search
+    method: POST
+    params:
+      topic: "recent advances in state-space models"
+    body:
+      query: "{topic}"
+      search_depth: "advanced"
+      max_results: 10
+      include_raw_content: true
+    extract: "results"
+    normalize:
+      title: title
+      url: url
+      content: content
+      raw_content: raw_content
+      score: score
+```
+
+### Serper — Google results via API
+
+```yaml
+catalog:
+  - name: serper
+    type: api
+    url: https://google.serper.dev
+    auth: { header: X-API-KEY, env: SERPER_API_KEY }   # no "Bearer" prefix
+    rate_limit: { rps: 5, burst: 10 }
+
+collectors:
+  - name: serper-web
+    type: api
+    source: serper
+    endpoint: /search
+    method: POST
+    params:
+      query: "arxiv transformer survey 2025"
+    body:
+      q: "{query}"
+      num: 20
+      gl: "us"
+      hl: "en"
+    extract: "organic"                 # Serper returns {organic: [...], knowledgeGraph: {...}}
+    normalize:
+      title: title
+      url: link
+      snippet: snippet
+      position: position
+```
+
+### Perplexity — completions as a search backend
+
+Perplexity's `/chat/completions` is chat-shaped, but you can use it as a search-with-synthesis collector:
+
+```yaml
+catalog:
+  - name: perplexity
+    type: api
+    url: https://api.perplexity.ai
+    auth:
+      header: Authorization
+      env: PERPLEXITY_API_KEY
+      prefix: "Bearer "
+    rate_limit: { rps: 0.5, burst: 1 }
+
+collectors:
+  - name: pplx
+    type: api
+    source: perplexity
+    endpoint: /chat/completions
+    method: POST
+    params:
+      question: "What are the most-cited papers on mixture of experts from 2024?"
+    body:
+      model: "sonar-large-online"
+      messages:
+        - role: "system"
+          content: "Be precise. List sources with URLs."
+        - role: "user"
+          content: "{question}"
+    # response shape: {choices: [{message: {content: "..."}}], citations: [...]}
+    normalize:
+      answer: "choices.0.message.content"
+      citations: "citations"
+      model: model
+```
+
+### Composed mission — Exa discovery → Firecrawl scrape
+
+Two collectors, two sources, one mission. Run Exa search first, then pipe URLs into a Firecrawl scrape collector. Because recon is mechanical, you run this in two missions (or one mission run twice with config edits) — Claude reads the Exa archive, writes URLs into a second config, and runs the scrape.
+
+```yaml
+# mission 1: exa.yaml — discovery
+catalog:
+  - name: exa
+    type: api
+    url: https://api.exa.ai
+    auth: { header: x-api-key, env: EXA_API_KEY }
+
+collectors:
+  - name: discovery
+    type: api
+    source: exa
+    endpoint: /search
+    method: POST
+    params:
+      topic: "state space models post-Mamba"
+    body: { query: "{topic}", numResults: 10, type: "neural" }
+    extract: "results"
+    normalize: { title: title, url: url, score: score }
+```
+
+After `recon survey exa-discovery`, query `SELECT url FROM discovery WHERE score > 0.6`, take the URLs, and scaffold a second mission that fans out a Firecrawl scrape collector across those URLs (one collector per URL, or a catalog of `api` sources each with a different endpoint pre-baked).
+
+### Auth prefix cheatsheet
+
+| Service | `header` | `prefix` | Env var holds |
+|---|---|---|---|
+| Exa | `x-api-key` | `""` | raw key |
+| Firecrawl | `Authorization` | `"Bearer "` | raw key (prefix adds "Bearer ") |
+| Tavily | `Authorization` | `"Bearer "` | raw key |
+| Serper | `X-API-KEY` | `""` | raw key |
+| Perplexity | `Authorization` | `"Bearer "` | raw key |
+| OpenAI-compatible | `Authorization` | `"Bearer "` | raw key |
+| GitHub (legacy) | `Authorization` | `"token "` | PAT |
+| GitHub (modern) | `Authorization` | `"Bearer "` | fine-grained token |
+
+When in doubt, probe with the minimal config (no normalize), inspect the JSONL, then add the normalize spec.

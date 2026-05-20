@@ -5,7 +5,7 @@ No infrastructure dependencies. These flow through the hexagon.
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel
 
@@ -18,11 +18,14 @@ class AuthConfig(BaseModel, frozen=True):
     Use `header` for header-based auth (e.g., x-api-key).
     Use `param` for query-string auth (e.g., OpenAlex api_key).
     `env` names the environment variable holding the secret.
+    `prefix` is prepended to the resolved value (e.g., "Bearer " for
+    `Authorization: Bearer <token>`).
     """
 
     header: str = ""
     param: str = ""
     env: str = ""
+    prefix: str = ""
 
 
 class RateLimitConfig(BaseModel, frozen=True):
@@ -60,7 +63,7 @@ class CollectorEntry(BaseModel, frozen=True):
 
     `type` discriminates which fields are relevant:
     - cli: `run`, `patterns`, `normalize`
-    - api: `endpoint`, `params`, `method`, `response_format`, `extract`, `normalize`
+    - api: `endpoint`, `params`, `method`, `body`, `response_format`, `extract`, `normalize`
     - web: `endpoint` (optional, appended to source URL)
     """
 
@@ -75,7 +78,8 @@ class CollectorEntry(BaseModel, frozen=True):
     # api fields
     endpoint: str | None = None
     params: dict[str, str] | None = None
-    method: Literal["GET", "POST"] = "GET"
+    method: Literal["GET", "POST", "PUT", "PATCH", "DELETE"] = "GET"
+    body: dict[str, Any] | None = None
     response_format: Literal["json", "xml", "html", "text"] = "json"
     extract: str | None = None
 
@@ -87,7 +91,17 @@ class CollectorEntry(BaseModel, frozen=True):
 
 
 class ReconConfig(BaseModel, frozen=True):
-    """One YAML file per mission. Catalog + collectors."""
+    """One YAML file per mission. Catalog + collectors.
+
+    `preserve_raw: true` stores the raw fetched bytes (HTTP response body,
+    CLI stdout) alongside the processed JSONL in `archive/<ts>/raw/<collector>/`,
+    with sha256 + metadata. Enables three use cases:
+      - Re-normalization without re-fetching (a)
+      - Audit: prove what the server actually said (b)
+      - Experimentation: try different normalize/converter on the same snapshot (c)
+    Default is off because raw captures ~2x disk usage per mission.
+    """
 
     catalog: list[SourceEntry] = []
     collectors: list[CollectorEntry]
+    preserve_raw: bool = False

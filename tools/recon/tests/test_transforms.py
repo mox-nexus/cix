@@ -161,27 +161,28 @@ class TestApplyNormalize:
         assert result["x"] == "hello"
 
 
-class TestPdf2Text:
-    """Test $pdf2text transform via pymupdf (registered by CLI composition root)."""
+class TestMarkitdown:
+    """Test $markitdown transform via markitdown (registered by CLI composition root).
 
-    def test_roundtrip(self, tmp_path):
-        """Create a PDF with pymupdf, extract text with $pdf2text."""
-        import pymupdf
-        from recon.adapters._in.cli import _pdf2text
+    markitdown handles PDF, DOCX, PPTX, XLSX, EPub, CSV, JSON, XML, ZIP, HTML,
+    images (OCR), audio. Tests cover the roundtrip + the best-effort failure
+    contract (missing file returns empty string, does not raise).
+    """
 
-        # Create a test PDF
-        doc = pymupdf.open()
-        page = doc.new_page()
-        page.insert_text((72, 72), "Recon extraction test.", fontsize=14)
-        pdf_path = tmp_path / "test.pdf"
-        doc.save(str(pdf_path))
-        doc.close()
+    def test_roundtrip_csv(self, tmp_path):
+        """Create a simple CSV, convert to markdown via $markitdown."""
+        from recon.adapters._in.cli import _markitdown_path
 
-        text = _pdf2text(str(pdf_path))
-        assert "Recon extraction test." in text
+        csv_path = tmp_path / "data.csv"
+        csv_path.write_text("name,city\nAlice,Paris\nBob,Berlin\n")
 
-    def test_missing_file(self):
-        """Non-existent file returns empty string."""
-        from recon.adapters._in.cli import _pdf2text
+        text = _markitdown_path(str(csv_path))
+        # markitdown converts CSV to a markdown table — check for cell values
+        assert "Alice" in text
+        assert "Paris" in text
 
-        assert _pdf2text("/nonexistent/file.pdf") == ""
+    def test_missing_file_returns_empty(self):
+        """Non-existent file returns empty string (best-effort contract)."""
+        from recon.adapters._in.cli import _markitdown_path
+
+        assert _markitdown_path("/nonexistent/file.pdf") == ""
